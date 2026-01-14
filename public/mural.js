@@ -10,14 +10,17 @@ $(document).ready(function () {
             { data: 'instituicao', render: function (data, type, row) { return `<a href="view-mural.html?id=${row.id}">${row.instituicao}</a>` } },
             { data: 'periodo' },
             { data: 'vagas' },
-            { data: 'convenio', render: function (data) { return data === '1' ? 'Sim' : 'Não'; } },
             { data: 'dataInscricao', render: function (data) { 
                 if (!data) return '';
                 const date = new Date(data);
                 return date.toLocaleDateString('pt-BR');
             }},
-            {
-                data: null,
+            { data: 'dataSelecao', render: function (data) { 
+                if (!data) return '';
+                const date = new Date(data);
+                return date.toLocaleDateString('pt-BR');
+            }}, 
+            { data: null,
                 render: function (data, type, row) {
                     return `
     <button onclick="window.location.href='edit-mural.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>

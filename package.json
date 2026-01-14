@@ -6,15 +6,23 @@
   "version": "0.0.0",
   "description": "",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "node",
+    "express",
+    "mariadb"
+  ],
+  "author": "Luis Acosta",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.13.2",
     "express": "^5.2.1",
-    "mariadb": "^3.4.5"
+    "mariadb": "^3.4.5",
+    "nodemon": "^3.1.11"
   }
 }

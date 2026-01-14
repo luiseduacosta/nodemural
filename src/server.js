@@ -1,5 +1,5 @@
 import express from 'express';
-import path from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import mariadb from 'mariadb';
 
@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 const pool = mariadb.createPool({
   host: 'localhost',
@@ -18,10 +18,15 @@ const pool = mariadb.createPool({
   database: 'tccess'
 });
 
-// app.get('*', (req, res) => {
-// res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
+// --- INDEX ENDPOINTS ---
+app.get('/', (req, res) => {
+   res.sendFile(path.join(__dirname, '../public', 'index.html'));
+});
 
+// --- ALUNOS ENDPOINTS ---
+
+console.log({ __filename });
+console.log({ __dirname });
 // --- ALUNOS ENDPOINTS ---
 // READ ONE
 app.get('/alunos/:id', async (req, res) => {
@@ -451,7 +456,7 @@ app.get('/mural', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM mural_estagio ORDER BY periodo DESC, instituicao ASC');
+    const rows = await conn.query('SELECT * FROM mural_estagio ORDER BY periodo DESC, dataInscricao ASC');
     return res.json(rows);
   } catch (err) {
     return res.status(500).json({ error: err.message });
