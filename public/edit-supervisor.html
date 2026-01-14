@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <title>Editar Supervisor(a)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Editar Supervisor(a)</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="editSupervisorForm">
+                    <input type="hidden" id="supervisorId">
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Celular</label>
+                        <input type="text" class="form-control" id="celular" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">CRESS</label>
+                        <input type="text" class="form-control" id="cress" required>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="viewRecord()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="edit-supervisor.js"></script>
+
+</body>
+
+</html>

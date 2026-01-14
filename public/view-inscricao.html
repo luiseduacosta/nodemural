@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <title>Visualizar Inscrição</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Detalhes da Inscrição</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">ID</label>
+                        <p class="form-control-plaintext" id="view-id"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Registro</label>
+                        <p class="form-control-plaintext" id="view-registro"></p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Aluno(a)</label>
+                    <p class="form-control-plaintext" id="view-aluno"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Instituição</label>
+                    <p class="form-control-plaintext" id="view-instituicao"></p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Período</label>
+                        <p class="form-control-plaintext" id="view-periodo"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Data da Inscrição</label>
+                        <p class="form-control-plaintext" id="view-data"></p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Timestamp</label>
+                    <p class="form-control-plaintext" id="view-timestamp"></p>
+                </div>
+
+                <div class="mt-4">
+                    <a href="inscricoes.html" class="btn btn-secondary">Voltar</a>
+                    <button onclick="editRecord()" class="btn btn-warning">Editar</button>
+                    <button onclick="deleteRecord()" class="btn btn-danger">Excluir</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="view-inscricao.js"></script>
+
+</body>
+
+</html>

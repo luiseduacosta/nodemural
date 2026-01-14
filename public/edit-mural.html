@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <title>Editar Mural</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Editar Mural de Estágio</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="editMuralForm">
+                    <input type="hidden" id="muralId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Instituição</label>
+                            <select class="form-select" id="instituicao_id" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Período (formato: YYYY-1 ou YYYY-2)</label>
+                            <input type="text" class="form-control" id="periodo" placeholder="2024-1" pattern="\d{4}-[12]" required>
+                            <small class="text-muted">Ex: 2024-1 (primeiro semestre) ou 2024-2 (segundo semestre)</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Vagas</label>
+                            <input type="number" class="form-control" id="vagas" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Convênio</label>
+                            <select class="form-select" id="convenio" required>
+                                <option value="0">Não</option>
+                                <option value="1">Sim</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Carga Horária</label>
+                            <input type="number" class="form-control" id="cargaHoraria" min="0">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Final de Semana</label>
+                            <select class="form-select" id="final_de_semana">
+                                <option value="">Selecione...</option>
+                                <option value="S">Sim</option>
+                                <option value="N">Não</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Horário</label>
+                            <select class="form-select" id="horario">
+                                <option value="">Selecione...</option>
+                                <option value="M">Manhã</option>
+                                <option value="T">Tarde</option>
+                                <option value="N">Noite</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Benefícios</label>
+                        <input type="text" class="form-control" id="beneficios" maxlength="70">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Requisitos</label>
+                        <textarea class="form-control" id="requisitos" rows="3" maxlength="455"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data de Inscrição</label>
+                            <input type="date" class="form-control" id="dataInscricao">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data de Seleção</label>
+                            <input type="date" class="form-control" id="dataSelecao">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Horário da Seleção</label>
+                            <input type="text" class="form-control" id="horarioSelecao" maxlength="5" placeholder="14:00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Local da Seleção</label>
+                            <input type="text" class="form-control" id="localSelecao" maxlength="70">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Forma de Seleção</label>
+                            <select class="form-select" id="formaSelecao">
+                                <option value="">Selecione...</option>
+                                <option value="E">Entrevista</option>
+                                <option value="P">Prova</option>
+                                <option value="A">Análise de Currículo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Local de Inscrição</label>
+                            <select class="form-select" id="localInscricao">
+                                <option value="0">Não</option>
+                                <option value="1">Sim</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contato</label>
+                            <input type="text" class="form-control" id="contato" maxlength="70">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" maxlength="70">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Professor ID</label>
+                            <input type="number" class="form-control" id="professor_id">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Turma Estágio ID</label>
+                            <input type="number" class="form-control" id="turmaestagio_id">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Data Fax</label>
+                            <input type="date" class="form-control" id="datafax">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Outras Informações</label>
+                        <textarea class="form-control" id="outras" rows="4"></textarea>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="viewRecord()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="edit-mural.js"></script>
+
+</body>
+
+</html>
