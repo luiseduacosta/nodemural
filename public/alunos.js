@@ -1,3 +1,4 @@
+$(document).ready(function () {
   const form = document.getElementById('alunoForm');
   const table = $('#alunosTable').DataTable({
     order: [[1, 'asc']],
@@ -7,8 +8,9 @@
     },
     columns: [
       { data: 'id' },
-      { data: 'nome' },
+      { data: 'nome', render: function (data, type, row) { return `<a href="view-alunos.html?id=${row.id}">${row.nome}</a>` } },
       { data: 'email' },
+      { data: 'ingresso' },
       {
         data: null,
         render: function (data, type, row) {
@@ -28,7 +30,19 @@
     e.preventDefault();
     const aluno = {
       nome: document.getElementById('nome').value,
-      email: document.getElementById('email').value
+      email: document.getElementById('email').value,
+      ingresso: document.getElementById('ingresso').value,
+      telefone: document.getElementById('telefone').value,
+      celular: document.getElementById('celular').value,
+      cpf: document.getElementById('cpf').value,
+      identidade: document.getElementById('identidade').value,
+      orgao: document.getElementById('orgao').value,
+      nascimento: document.getElementById('nascimento').value,
+      cep: document.getElementById('cep').value,
+      endereco: document.getElementById('endereco').value,
+      municipio: document.getElementById('municipio').value,
+      bairro: document.getElementById('bairro').value,
+      observacoes: document.getElementById('observacoes').value
     };
 
     const id = document.getElementById('alunoId').value;
@@ -56,9 +70,21 @@
       }
 
       const aluno = JSON.parse(responseText);
+      document.getElementById('alunoId').value = aluno.id;
       document.getElementById('nome').value = aluno.nome;
       document.getElementById('email').value = aluno.email;
-      document.getElementById('alunoId').value = aluno.id;
+      document.getElementById('ingresso').value = aluno.ingresso;
+      document.getElementById('telefone').value = aluno.telefone;
+      document.getElementById('celular').value = aluno.celular;
+      document.getElementById('cpf').value = aluno.cpf;
+      document.getElementById('identidade').value = aluno.identidade;
+      document.getElementById('orgao').value = aluno.orgao;
+      document.getElementById('nascimento').value = aluno.nascimento;
+      document.getElementById('cep').value = aluno.cep;
+      document.getElementById('endereco').value = aluno.endereco;
+      document.getElementById('municipio').value = aluno.municipio;
+      document.getElementById('bairro').value = aluno.bairro;
+      document.getElementById('observacoes').value = aluno.observacoes;
     } catch (error) {
       console.error('Edit error:', error);
       alert(`Error loading aluno data: ${error.message}`);
@@ -72,3 +98,7 @@
     }
   };
 
+  window.viewRecord = function () {
+    window.location.href = 'view-alunos.html?id=' + this.id;
+  };
+})

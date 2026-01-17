@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 
 <head>
-    <title>Nova Inscrição</title>
+    <title>Inscrição para seleção de estágio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -12,7 +12,7 @@
 
         <div id="menu-container"></div>
 
-        <h1 class="mb-4">Nova Inscrição de Estágio</h1>
+        <h1 class="mb-4">Inscrição para seleção de estágio</h1>
 
         <div class="card">
             <div class="card-body">
@@ -26,27 +26,29 @@
 
                     <div class="mb-3">
                         <label class="form-label">Instituição/Vaga</label>
-                        <input type="text" class="form-control" id="instituicao" readonly>
+                        <select class="form-select" id="muralestagio_id" required>
+                            <option value="">Selecione a instituição/vaga...</option>
+                        </select>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Período</label>
-                            <input type="text" class="form-control" id="periodo" readonly>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Data da Inscrição</label>
-                            <input type="date" class="form-control" id="data" required>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Data da Inscrição</label>
+                        <input type="date" class="form-control" id="data" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Período</label>
+                        <input type="text" class="form-control" id="periodo" readonly>
+                        <small class="text-muted">Este campo será preenchido automaticamente ao selecionar a
+                            vaga</small>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Registro</label>
-                        <input type="number" class="form-control" id="registro" value="0" readonly>
-                        <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o aluno</small>
+                        <input type="number" class="form-control" id="registro" value="" readonly>
+                        <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o
+                            aluno</small>
                     </div>
-
-                    <input type="hidden" id="muralestagio_id">
 
                     <div class="mt-4">
                         <a href="mural.html" class="btn btn-secondary">Cancelar</a>
@@ -55,7 +57,7 @@
                 </form>
             </div>
         </div>
-        
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>

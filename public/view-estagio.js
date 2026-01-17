@@ -17,13 +17,13 @@ $(document).ready(async function () {
         }
 
         const estagio = await response.json();
-        
+
         // Populate the view fields
         document.getElementById('view-id').textContent = estagio.id;
         document.getElementById('view-instituicao').textContent = estagio.instituicao;
         document.getElementById('view-cnpj').textContent = estagio.cnpj;
-        document.getElementById('view-beneficio').textContent = estagio.beneficio || 'N/A';
-        
+        document.getElementById('view-beneficio').textContent = estagio.beneficio || 'Sem dados';
+
         // Store the ID for edit function
         window.currentEstagioId = id;
     } catch (error) {
@@ -34,6 +34,6 @@ $(document).ready(async function () {
 });
 
 // Function to redirect to edit mode
-window.editRecord = function() {
+window.editRecord = function () {
     window.location.href = `edit-estagio.html?id=${window.currentEstagioId}`;
 };

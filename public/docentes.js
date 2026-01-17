@@ -74,3 +74,6 @@ $(document).ready(function () {
         }
     };
 });
+window.viewRecord = function () {
+    window.location.href = 'view-docentes.html?id=' + this.id;
+};
