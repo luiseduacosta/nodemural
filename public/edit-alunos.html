@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Aluno(a)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Editar Aluno(a)</h1>
+            <a href="view-alunos.html" class="btn btn-secondary">Voltar</a>
+        </div>
+
+        <form id="editAlunoForm" class="row g-3">
+            <input type="hidden" id="id" name="id">
+
+            <div class="col-md-6">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="col-md-6">
+                <label for="nomesocial" class="form-label">Nome Social</label>
+                <input type="text" class="form-control" id="nomesocial" name="nomesocial">
+            </div>
+            <div class="col-md-4">
+                <label for="registro" class="form-label">Registro</label>
+                <input type="text" class="form-control" id="registro" name="registro">
+            </div>
+            <div class="col-md-4">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="col-md-4">
+                <label for="ingresso" class="form-label">Ingresso (AAAA-S)</label>
+                <input type="text" class="form-control" id="ingresso" name="ingresso" placeholder="ex: 2023-1" required>
+                <div class="invalid-feedback">Formato inválido. Use AAAA-S (0, 1 ou 2).</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="telefone" name="telefone">
+            </div>
+            <div class="col-md-6">
+                <label for="celular" class="form-label">Celular</label>
+                <input type="text" class="form-control" id="celular" name="celular">
+            </div>
+
+            <div class="col-md-4">
+                <label for="cpf" class="form-label">CPF</label>
+                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00">
+                <div class="invalid-feedback">Formato inválido. Use 000.000.000-00.</div>
+            </div>
+            <div class="col-md-4">
+                <label for="identidade" class="form-label">Identidade</label>
+                <input type="text" class="form-control" id="identidade" name="identidade">
+            </div>
+            <div class="col-md-4">
+                <label for="orgao" class="form-label">Orgão</label>
+                <input type="text" class="form-control" id="orgao" name="orgao">
+            </div>
+            <div class="col-md-4">
+                <label for="nascimento" class="form-label">Nascimento</label>
+                <input type="date" class="form-control" id="nascimento" name="nascimento" placeholder="dd-mm-aaaa"
+                    data-date-language="pt-BR">
+                <div class="invalid-feedback">Formato inválido. Use dd-mm-aaaa.</div>
+            </div>
+            <div class="col-md-4">
+                <label for="cep" class="form-label">CEP</label>
+                <input type="text" class="form-control" id="cep" name="cep" placeholder="00000-000">
+                <div class="invalid-feedback">Formato inválido. Use 00000-000.</div>
+            </div>
+            <div class="col-md-4">
+                <label for="endereco" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="endereco" name="endereco">
+            </div>
+
+            <div class="col-md-6">
+                <label for="municipio" class="form-label">Município</label>
+                <input type="text" class="form-control" id="municipio" name="municipio">
+            </div>
+            <div class="col-md-6">
+                <label for="bairro" class="form-label">Bairro</label>
+                <input type="text" class="form-control" id="bairro" name="bairro">
+            </div>
+
+            <div class="col-12">
+                <label for="observacoes" class="form-label">Observações</label>
+                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="edit-alunos.js"></script>
+
+</body>
+
+</html>

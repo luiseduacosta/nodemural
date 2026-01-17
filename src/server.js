@@ -133,24 +133,18 @@ app.get('/docentes', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    let query = 'SELECT id, nome, email, celular FROM docentes';
+    let query = 'SELECT id, nome, siape, email, celular FROM docentes';
     let params = [];
 
     if (req.query.search) {
-      query += ' WHERE nome LIKE ? OR email LIKE ?';
+      query += ' WHERE nome LIKE ? OR siape LIKE ? OR email LIKE ? OR celular LIKE ?';
       const searchTerm = `%${req.query.search}%`;
-      params = [searchTerm, searchTerm];
+      params = [searchTerm, searchTerm, searchTerm, searchTerm];
     }
 
     query += ' ORDER BY nome ASC';
 
-    console.log(query);
-    console.log(params);
-    console.log('Query executed successfully');
-
     const rows = await conn.query(query, params);
-    console.log('Rows returned: ' + rows.length);
-    console.log(rows);
     return res.json(rows);
   } catch (err) {
     console.error('Error fetching docentes:', err);
@@ -165,7 +159,7 @@ app.get('/docentes/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT id, nome, email, celular FROM docentes WHERE id = ?', [req.params.id]);
+    const rows = await conn.query('SELECT id, nome, siape, email, celular FROM docentes WHERE id = ?', [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Docente not found' });
     }
@@ -183,8 +177,8 @@ app.post('/docentes', async (req, res) => {
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      'INSERT INTO docentes (nome, email, celular) VALUES (?, ?, ?)',
-      [req.body.nome, req.body.email, req.body.celular]
+      'INSERT INTO docentes (nome, siape, email, celular) VALUES (?, ?, ?, ?)',
+      [req.body.nome, req.body.siape, req.body.email, req.body.celular]
     );
     res.status(201).json({ id: Number(result.insertId) });
   } catch (err) {
@@ -200,8 +194,8 @@ app.put('/docentes/:id', async (req, res) => {
   try {
     conn = await pool.getConnection();
     await conn.query(
-      'UPDATE docentes SET nome = ?, email = ?, celular = ? WHERE id = ?',
-      [req.body.nome, req.body.email, req.body.celular, req.params.id]
+      'UPDATE docentes SET nome = ?, siape = ?, email = ?, celular = ? WHERE id = ?',
+      [req.body.nome, req.body.siape, req.body.email, req.body.celular, req.params.id]
     );
     res.status(204).end();
   } catch (err) {

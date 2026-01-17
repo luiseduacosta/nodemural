@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    const form = document.getElementById('docenteForm');
     const table = $('#docentesTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
@@ -8,14 +7,15 @@ $(document).ready(function () {
         },
         columns: [
             { data: 'id' },
-            { data: 'nome' },
+            { data: 'nome', render: function (data, type, row) { return '<a href="view-docente.html?id=' + row.id + '">' + row.nome + '</a>'; } },
+            { data: 'siape' },
             { data: 'email' },
             { data: 'celular', defaultContent: '' },
             {
                 data: null,
                 render: function (data, type, row) {
                     return `
-    <button onclick = "editDocente(${row.id})" class="btn btn-sm btn-warning" > Editar</button>
+    <button onclick="editDocente(${row.id})" class="btn btn-sm btn-warning">Editar</button>
     <button onclick="deleteDocente(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
 `;
                 }
@@ -26,54 +26,22 @@ $(document).ready(function () {
         }
     });
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const docente = {
-            nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value,
-            celular: document.getElementById('celular').value
-        };
-
-        const id = document.getElementById('docenteId').value;
-        const url = id ? `/docentes/${id}` : '/docentes';
-        const method = id ? 'PUT' : 'POST';
-
-        await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(docente)
-        });
-
-        form.reset();
-        document.getElementById('docenteId').value = '';
-        table.ajax.reload();
-    });
-
-    window.editDocente = async (id) => {
-        try {
-            const response = await fetch(`/docentes/${id}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch docente');
-            }
-
-            const docente = await response.json();
-            document.getElementById('nome').value = docente.nome;
-            document.getElementById('email').value = docente.email;
-            document.getElementById('celular').value = docente.celular || '';
-            document.getElementById('docenteId').value = docente.id;
-        } catch (error) {
-            console.error('Edit error:', error);
-            alert(`Error loading docente data: ${error.message}`);
-        }
+    window.editDocente = function (id) {
+        window.location.href = `edit-docentes.html?id=${id}`;
     };
 
     window.deleteDocente = async (id) => {
         if (confirm('Tem certeza que deseja excluir este docente?')) {
-            await fetch(`/docentes/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            try {
+                const response = await fetch(`/docentes/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Failed to delete docente');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting docente:', error);
+                alert('Erro ao excluir docente');
+            }
         }
     };
 });
-window.viewRecord = function () {
-    window.location.href = 'view-docentes.html?id=' + this.id;
-};

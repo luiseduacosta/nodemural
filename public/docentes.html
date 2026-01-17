@@ -1,50 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Docentes</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docentes - Listagem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 </head>
 
 <body>
 
     <div class="container mt-5">
-        
+
         <div id="menu-container"></div>
 
-        <h1 class="mb-4">Docentes</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Docentes</h1>
+            <a href="new-docentes.html" class="btn btn-primary">Novo(a) Docente</a>
+        </div>
 
-            <form id="docenteForm" class="mb-4">
-                <input type="hidden" id="docenteId">
-                <div class="mb-3">
-                    <label class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="nome" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Celular</label>
-                    <input type="text" class="form-control" id="celular">
-                </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </form>
-
-            <table id="docentesTable" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Celular</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <table id="docentesTable" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Siape</th>
+                    <th>Email</th>
+                    <th>Celular</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
@@ -54,5 +42,6 @@
     <script src="menu.js"></script>
     <script src="docentes.js"></script>
 
-    </body>
+</body>
+
 </html>
