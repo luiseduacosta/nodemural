@@ -26,6 +26,10 @@ $(document).ready(async function () {
 
         // Store the ID for edit function
         window.currentEstagioId = id;
+
+        // Check if there are visitas for this instituição
+        await checkVisitas();
+
     } catch (error) {
         console.error('Error loading estagio:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -37,3 +41,31 @@ $(document).ready(async function () {
 window.editRecord = function () {
     window.location.href = `edit-estagio.html?id=${window.currentEstagioId}`;
 };
+
+async function checkVisitas() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    try {
+        const response = await fetch(`/visitas?instituicao_id=${id}`);
+        if (response.ok) {
+            const visitas = await response.json();
+            if (visitas.length > 0) {
+                // Has visitas - go to visitas list filtered by this institution
+                window.verVisitas = function () {
+                    window.location.href = `visitas.html?instituicao_id=${id}`;
+                };
+            } else {
+                // No visitas - go to new-visita with institution pre-selected
+                window.verVisitas = function () {
+                    window.location.href = `new-visita.html?instituicao_id=${id}`;
+                };
+            }
+        }
+    } catch (error) {
+        console.error('Error checking visitas:', error);
+        // Default to new visita if error
+        window.verVisitas = function () {
+            window.location.href = `new-visita.html?instituicao_id=${id}`;
+        };
+    }
+}

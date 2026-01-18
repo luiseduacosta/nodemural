@@ -675,4 +675,97 @@ app.delete('/inscricoes/:id', async (req, res) => {
   }
 });
 
+// --- VISITAS ENDPOINTS ---
+
+// READ ALL VISITAS
+app.get('/visitas', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    let query = `SELECT v.*, e.instituicao 
+                 FROM visita v 
+                 LEFT JOIN estagio e ON v.instituicao_id = e.id`;
+    let params = [];
+
+    if (req.query.instituicao_id) {
+      query += ' WHERE v.instituicao_id = ?';
+      params.push(req.query.instituicao_id);
+    }
+
+    query += ' ORDER BY v.data DESC';
+
+    const rows = await conn.query(query, params);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// READ ONE VISITA
+app.get('/visitas/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query('SELECT visita.*, estagio.instituicao FROM visita left join estagio on visita.instituicao_id = estagio.id WHERE visita.id = ?', [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Visita not found' });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// CREATE VISITA
+app.post('/visitas', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query(
+      'INSERT INTO visita (instituicao_id, data, responsavel, motivo, avaliacao, descricao) VALUES (?, ?, ?, ?, ?, ?)',
+      [req.body.instituicao_id, req.body.data, req.body.responsavel, req.body.motivo, req.body.avaliacao, req.body.descricao]
+    );
+    res.status(201).json({ id: Number(result.insertId) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// UPDATE VISITA
+app.put('/visitas/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query(
+      'UPDATE visita SET instituicao_id = ?, data = ?, responsavel = ?, motivo = ?, avaliacao = ?, descricao = ? WHERE id = ?',
+      [req.body.instituicao_id, req.body.data, req.body.responsavel, req.body.motivo, req.body.avaliacao, req.body.descricao, req.params.id]
+    );
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// DELETE VISITA
+app.delete('/visitas/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query('DELETE FROM visita WHERE id = ?', [req.params.id]);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
 app.listen(3333, () => console.log('Server running on port 3333'));

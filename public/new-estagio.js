@@ -1,6 +1,10 @@
 $(document).ready(function () {
     const form = document.getElementById('newEstagioForm');
 
+    // Input Masks
+    $('#cnpj').inputmask('99.999.999/9999-99');
+    $('#cep').inputmask('99999-999');
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         

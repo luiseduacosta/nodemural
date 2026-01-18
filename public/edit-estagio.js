@@ -1,6 +1,6 @@
 $(document).ready(async function () {
     const form = document.getElementById('estagioForm');
-    
+
     // Define editEstagio function first
     const editEstagio = async (id) => {
         try {
@@ -14,7 +14,7 @@ $(document).ready(async function () {
             document.getElementById('cnpj').value = estagio.cnpj;
             document.getElementById('beneficio').value = estagio.beneficio || '';
             document.getElementById('estagioId').value = estagio.id;
-            
+
             // Store the ID for view function
             window.currentEstagioId = id;
         } catch (error) {
@@ -23,7 +23,7 @@ $(document).ready(async function () {
             window.location.href = 'estagio.html';
         }
     };
-    
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
@@ -61,6 +61,6 @@ $(document).ready(async function () {
 });
 
 // Function to redirect to view mode
-window.viewRecord = function() {
+window.viewRecord = function () {
     window.location.href = `view-estagio.html?id=${window.currentEstagioId}`;
 };

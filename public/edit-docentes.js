@@ -3,6 +3,11 @@ $(document).ready(async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
+    // Input Masks
+    $('#cep').inputmask('99999-999');
+    $('#cpf').inputmask('999.999.999-99');
+    $('#nascimento').inputmask('99-99-9999');
+
     if (!id) {
         alert('ID do docente não fornecido');
         window.location.href = 'view-docentes.html';
