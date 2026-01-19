@@ -30,6 +30,9 @@ $(document).ready(async function () {
         // Check if there are visitas for this instituição
         await checkVisitas();
 
+        // Load mural items
+        await fetchMural(id);
+
     } catch (error) {
         console.error('Error loading estagio:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -67,5 +70,39 @@ async function checkVisitas() {
         window.verVisitas = function () {
             window.location.href = `new-visita.html?instituicao_id=${id}`;
         };
+    }
+}
+
+async function fetchMural(id) {
+    try {
+        const response = await fetch(`/estagio/${id}/mural`);
+        if (response.ok) {
+            const murals = await response.json();
+            const tbody = document.querySelector('#table-mural tbody');
+            tbody.innerHTML = '';
+
+            if (murals.length === 0) {
+                document.getElementById('no-mural-msg').classList.remove('d-none');
+                document.getElementById('table-mural').classList.add('d-none');
+            } else {
+                document.getElementById('no-mural-msg').classList.add('d-none');
+                document.getElementById('table-mural').classList.remove('d-none');
+
+                murals.forEach(m => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${m.id}</td>
+                        <td>${m.periodo}</td>
+                        <td>${m.vagas}</td>
+                        <td>
+                            <a href="view-mural.html?id=${m.id}" class="btn btn-sm btn-info">Visualizar</a>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching mural:', error);
     }
 }

@@ -15,7 +15,7 @@ $(document).ready(async function () {
         }
 
         const mural = await response.json();
-        
+
         // Helper function to format dates
         const formatDate = (date) => {
             if (!date) return 'N/A';
@@ -38,6 +38,7 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = mural.id;
         document.getElementById('view-periodo').textContent = mural.periodo || 'N/A';
         document.getElementById('view-instituicao').textContent = mural.instituicao;
+        document.getElementById('view-link-estagio').href = `/view-estagio.html?id=${mural.instituicao_id}`;
         document.getElementById('view-vagas').textContent = mural.vagas;
         document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
         document.getElementById('view-cargaHoraria').textContent = mural.cargaHoraria || 'N/A';
@@ -54,7 +55,7 @@ $(document).ready(async function () {
         document.getElementById('view-contato').textContent = mural.contato || 'N/A';
         document.getElementById('view-email').textContent = mural.email || 'N/A';
         document.getElementById('view-outras').textContent = mural.outras || 'N/A';
-        
+
         window.currentMuralId = id;
     } catch (error) {
         console.error('Error loading mural:', error);
@@ -63,10 +64,10 @@ $(document).ready(async function () {
     }
 });
 
-window.editRecord = function() {
+window.editRecord = function () {
     window.location.href = `edit-mural.html?id=${window.currentMuralId}`;
 };
 
-window.inscrever = function() {
+window.inscrever = function () {
     window.location.href = `new-inscricao.html?muralestagio_id=${window.currentMuralId}`;
 };

@@ -14,29 +14,71 @@
 
         <h1 class="mb-4">Detalhes da Instituição</h1>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">ID</label>
-                    <p class="form-control-plaintext" id="view-id"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Instituição</label>
-                    <p class="form-control-plaintext" id="view-instituicao"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">CNPJ</label>
-                    <p class="form-control-plaintext" id="view-cnpj"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Benefício</label>
-                    <p class="form-control-plaintext" id="view-beneficio"></p>
-                </div>
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados"
+                    type="button" role="tab" aria-controls="dados" aria-selected="true">Dados da Instituição</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="mural-tab" data-bs-toggle="tab" data-bs-target="#mural" type="button"
+                    role="tab" aria-controls="mural" aria-selected="false">Mural de Estágios</button>
+            </li>
+        </ul>
 
-                <div class="mt-4">
-                    <a href="estagio.html" class="btn btn-secondary">Voltar</a>
-                    <button onclick="editRecord()" class="btn btn-warning">Editar</button>
-                    <button onclick="verVisitas()" class="btn btn-info" id="btnVisitas">Visitas</button>
+        <div class="tab-content" id="myTabContent">
+            <!-- DADOS TAB -->
+            <div class="tab-pane fade show active" id="dados" role="tabpanel" aria-labelledby="dados-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ID</label>
+                            <p class="form-control-plaintext" id="view-id"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Instituição</label>
+                            <p class="form-control-plaintext" id="view-instituicao"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">CNPJ</label>
+                            <p class="form-control-plaintext" id="view-cnpj"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Benefício</label>
+                            <p class="form-control-plaintext" id="view-beneficio"></p>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="estagio.html" class="btn btn-secondary">Voltar</a>
+                            <button onclick="editRecord()" class="btn btn-warning">Editar</button>
+                            <button onclick="verVisitas()" class="btn btn-info" id="btnVisitas">Visitas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MURAL TAB -->
+            <div class="tab-pane fade" id="mural" role="tabpanel" aria-labelledby="mural-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="table-mural">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Período</th>
+                                        <th>Vagas</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                            <div id="no-mural-msg" class="alert alert-info d-none">
+                                Nenhum registro de mural encontrado para esta instituição.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

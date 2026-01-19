@@ -1,8 +1,16 @@
 $(document).ready(function () {
-    const table = $('#inscricoesTable').DataTable({
+    let table;
+
+    table = $('#inscricoesTable').DataTable({
         order: [[3, 'desc'], [1, 'asc']],
         ajax: {
             url: '/inscricoes',
+            data: function (d) {
+                const periodo = $('#periodoFilter').val();
+                if (periodo) {
+                    d.periodo = periodo;
+                }
+            },
             dataSrc: ''
         },
         columns: [
@@ -30,6 +38,46 @@ $(document).ready(function () {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
         }
+    });
+
+    // Load Periodos and Config
+    loadFilters();
+
+    async function loadFilters() {
+        try {
+            // 1. Get Distinct Periods
+            const periodosRes = await fetch('/inscricoes/periodos');
+            const periodos = await periodosRes.json();
+
+            const select = $('#periodoFilter');
+            select.empty();
+
+            // Add periods from DB
+            periodos.forEach(p => {
+                select.append(new Option(p.periodo, p.periodo));
+            });
+
+            // 2. Get Default Config
+            const configRes = await fetch('/configuracoes');
+            if (configRes.ok) {
+                const config = await configRes.json();
+                if (config.mural_periodo_atual) {
+                    select.val(config.mural_periodo_atual);
+                }
+            }
+
+            // Reload table with the new default filter
+            table.ajax.reload();
+
+        } catch (error) {
+            console.error('Error loading filters:', error);
+            $('#periodoFilter').html('<option value="">Erro ao carregar</option>');
+        }
+    }
+
+    // Handle Change
+    $('#periodoFilter').on('change', function () {
+        table.ajax.reload();
     });
 
     window.deleteInscricao = async (id) => {

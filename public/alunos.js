@@ -14,7 +14,7 @@ $(document).ready(function () {
         data: null,
         render: function (data, type, row) {
           return `
-            <button onclick="window.location.href='edit-aluno.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
+            <button onclick="window.location.href='edit-alunos.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
             <button onclick="deleteAluno(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
           `;
         }

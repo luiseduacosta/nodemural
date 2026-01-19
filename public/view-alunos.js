@@ -40,6 +40,40 @@ $(document).ready(async function () {
 
         // Store the ID for edit function
         window.currentAlunoId = id;
+
+        // Fetch Inscricoes
+        try {
+            const inscResponse = await fetch(`/alunos/${id}/inscricoes`);
+            if (inscResponse.ok) {
+                const inscricoes = await inscResponse.json();
+                const tbody = document.querySelector('#table-inscricoes tbody');
+
+                if (inscricoes.length === 0) {
+                    document.getElementById('table-inscricoes').classList.add('d-none');
+                    document.getElementById('no-inscricoes-msg').classList.remove('d-none');
+                } else {
+                    inscricoes.forEach(ins => {
+                        const tr = document.createElement('tr');
+
+                        const dateLocal = ins.data ? new Date(ins.data).toLocaleDateString('pt-BR') : '';
+
+                        tr.innerHTML = `
+                            <td>${ins.id}</td>
+                            <td>${ins.instituicao || '-'}</td>
+                            <td>${ins.periodo || '-'}</td>
+                            <td>${dateLocal}</td>
+                            <td>
+                                <a href="view-inscricao.html?id=${ins.id}" class="btn btn-sm btn-primary">Ver</a>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            }
+        } catch (errInsc) {
+            console.error("Error fetching inscricoes:", errInsc);
+        }
+
     } catch (error) {
         console.error('Error loading aluno:', error);
         alert(`Erro ao carregar dados: ${error.message}`);

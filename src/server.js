@@ -28,9 +28,9 @@ app.get('/', (req, res) => {
 app.get('/alunos/:id', async (req, res) => {
   const alunoId = req.params.id;
   if (alunoId) {
-    console.log('Aluno ID is ' + alunoId);
+    // console.log('Aluno ID is ' + alunoId);
   } else {
-    console.log('Falta o aluno ID');
+    // console.log('Falta o aluno ID');
     return res.status(400).json({ error: 'Falta o aluno ID' });
   }
   let conn;
@@ -38,17 +38,17 @@ app.get('/alunos/:id', async (req, res) => {
     conn = await pool.getConnection();
     const rows = await conn.query('SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos WHERE id = ?', [alunoId]);
     if (rows.length === 0) {
-      console.log('Aluno não encontrado');
+      // console.log('Aluno não encontrado');
       return res.status(404).json({ error: 'Aluno not found' });
     } else if (rows.length > 1) {
-      console.log('Aluno encontrado');
+      // console.log('Aluno encontrado');
       return res.status(500).json({ error: 'Aluno encontrado' });
     }
-    console.log('Aluno encontrado');
+    // console.log('Aluno encontrado');
     res.setHeader('Content-Type', 'application/json');
     return res.json(rows[0]);
   } catch (err) {
-    console.error('Error fetching aluno:', err);
+    // console.error('Error fetching aluno:', err);
     return res.status(500).json({ error: err.message });
   } finally {
     if (conn) conn.end();
@@ -121,6 +121,27 @@ app.delete('/alunos/:id', async (req, res) => {
     res.status(204).end();
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// READ INSCRICOES OF A STUDENT
+app.get('/alunos/:id/inscricoes', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(
+      `SELECT i.*, m.instituicao 
+       FROM inscricoes i 
+       LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id 
+       WHERE i.aluno_id = ? 
+       ORDER BY i.data DESC`,
+      [req.params.id]
+    );
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   } finally {
     if (conn) conn.end();
   }
@@ -247,6 +268,27 @@ app.get('/estagio/:id', async (req, res) => {
     return res.json(rows[0]);
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET MURAL BY INSTITUICAO
+app.get('/estagio/:id/mural', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `
+      SELECT id, periodo, vagas 
+      FROM mural_estagio 
+      WHERE instituicao_id = ?
+      ORDER BY periodo DESC
+    `;
+    const rows = await conn.query(query, [req.params.id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
   } finally {
     if (conn) conn.end();
   }
@@ -575,13 +617,34 @@ app.get('/inscricoes', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query(
-      `SELECT i.*, a.nome as aluno_nome, m.instituicao 
+    let query = `SELECT i.*, a.nome as aluno_nome, m.instituicao 
        FROM inscricoes i 
        LEFT JOIN alunos a ON i.aluno_id = a.id 
-       LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id 
-       ORDER BY i.periodo DESC, a.nome ASC`
-    );
+       LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id`;
+
+    let params = [];
+    if (req.query.periodo) {
+      query += ' WHERE i.periodo = ?';
+      params.push(req.query.periodo);
+    }
+
+    query += ' ORDER BY i.periodo DESC, a.nome ASC';
+
+    const rows = await conn.query(query, params);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET DISTINCT PERIODOS FOR INSCRICOES
+app.get('/inscricoes/periodos', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query('SELECT DISTINCT periodo FROM inscricoes ORDER BY periodo DESC');
     return res.json(rows);
   } catch (err) {
     return res.status(500).json({ error: err.message });
