@@ -7,7 +7,7 @@ $(document).ready(function () {
         },
 
         columns: [
-            { data: 'id'},
+            { data: 'id' },
             { data: 'instituicao', render: function (data, type, row) { return `<a href="view-estagio.html?id=${row.id}">${row.instituicao}</a>` } },
             { data: 'cnpj' },
             { data: 'beneficio', defaultContent: '' },
@@ -22,7 +22,7 @@ $(document).ready(function () {
             }
         ],
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
         }
     });
 

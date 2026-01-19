@@ -446,7 +446,33 @@ app.get('/mural', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM mural_estagio ORDER BY periodo DESC, dataInscricao ASC');
+    let query = 'SELECT * FROM mural_estagio';
+    let params = [];
+
+    if (req.query.periodo) {
+      query += ' WHERE periodo = ?';
+      params.push(req.query.periodo);
+    }
+
+    query += ' ORDER BY periodo DESC, dataInscricao ASC';
+
+    const rows = await conn.query(query, params);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET DISTINCT PERIODOS
+app.get('/mural/periodos', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    // Distinct periods from mural_estagio
+    const rows = await conn.query('SELECT DISTINCT periodo FROM mural_estagio ORDER BY periodo DESC');
+    // Row structure: [ { periodo: '2024-1' }, ... ]
     return res.json(rows);
   } catch (err) {
     return res.status(500).json({ error: err.message });

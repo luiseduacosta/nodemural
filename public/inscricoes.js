@@ -6,15 +6,17 @@ $(document).ready(function () {
             dataSrc: ''
         },
         columns: [
-            { data: 'id'},
+            { data: 'id' },
             { data: 'aluno_nome', render: function (data, type, row) { return `<a href="view-inscricao.html?id=${row.id}">${data || 'N/A'}</a>` } },
             { data: 'instituicao' },
             { data: 'periodo' },
-            { data: 'data', render: function (data) { 
-                if (!data) return '';
-                const date = new Date(data);
-                return date.toLocaleDateString('pt-BR');
-            }},
+            {
+                data: 'data', render: function (data) {
+                    if (!data) return '';
+                    const date = new Date(data);
+                    return date.toLocaleDateString('pt-BR');
+                }
+            },
             {
                 data: null,
                 render: function (data, type, row) {
@@ -26,7 +28,7 @@ $(document).ready(function () {
             }
         ],
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
         }
     });
 
