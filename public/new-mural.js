@@ -6,7 +6,16 @@ $(document).ready(async function () {
         const response = await fetch('/estagio');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
-        
+
+        // Clear existing options
+        select.innerHTML = '';
+
+        // Add default option
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Selecione uma instituição';
+        select.appendChild(option);
+
         instituicoes.forEach(inst => {
             const option = document.createElement('option');
             option.value = inst.id;
@@ -17,9 +26,20 @@ $(document).ready(async function () {
         console.error('Error loading instituições:', error);
     }
 
+    // Load default mural_periodo_atual from the configuration table and put de value in the periodo input. It has only one row.
+    try {
+        const response = await fetch('/configuracoes');
+        const configuracoes = await response.json();
+        // Put the value in the periodo input
+        document.getElementById('periodo').value = configuracoes.mural_periodo_atual;
+
+    } catch (error) {
+        console.error('Error loading periodo:', error);
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const mural = {
             instituicao_id: document.getElementById('instituicao_id').value || null,
             instituicao: document.getElementById('instituicao_id').selectedOptions[0].text,

@@ -22,6 +22,9 @@ topMenu = `
           <li class="nav-item">
             <a class="nav-link" href="supervisores.html">Supervisores(as)</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="view-configuracoes.html">Configurações</a>
+          </li>
         </ul>
     </div>
 </nav>

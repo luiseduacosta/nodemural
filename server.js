@@ -1,5 +1,5 @@
 import express from 'express';
-import path, { dirname } from 'path';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import mariadb from 'mariadb';
 
@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const pool = mariadb.createPool({
   host: 'localhost',
@@ -18,10 +18,9 @@ const pool = mariadb.createPool({
   database: 'tccess'
 });
 
-// --- INDEX ENDPOINTS ---
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'));
-});
+// app.get('*', (req, res) => {
+// res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
 
 // --- ALUNOS ENDPOINTS ---
 // READ ONE
@@ -36,7 +35,7 @@ app.get('/alunos/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos WHERE id = ?', [alunoId]);
+    const rows = await conn.query('SELECT id, nome, email FROM alunos WHERE id = ?', [alunoId]);
     if (rows.length === 0) {
       console.log('Aluno não encontrado');
       return res.status(404).json({ error: 'Aluno not found' });
@@ -60,13 +59,13 @@ app.get('/alunos', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos ORDER BY nome ASC';
+    let query = 'SELECT id, nome, email, registro FROM alunos ORDER BY nome ASC';
     let params = [];
 
     if (req.query.search) {
-      query += ' WHERE nome LIKE ? OR nomesocial LIKE ? OR registro LIKE ? OR email LIKE ?';
+      query += ' WHERE nome LIKE ? OR email LIKE ?';
       const searchTerm = `%${req.query.search}%`;
-      params = [searchTerm, searchTerm, searchTerm, searchTerm];
+      params = [searchTerm, searchTerm];
     }
 
     const rows = await conn.query(query, params);
@@ -84,8 +83,8 @@ app.post('/alunos', async (req, res) => {
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      'INSERT INTO alunos (nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [req.body.nome, req.body.nomesocial, req.body.registro, req.body.email, req.body.ingresso, req.body.telefone, req.body.celular, req.body.cpf, req.body.identidade, req.body.orgao, req.body.nascimento, req.body.cep, req.body.endereco, req.body.municipio, req.body.bairro, req.body.observacoes]
+      'INSERT INTO alunos (nome, email) VALUES (?, ?)',
+      [req.body.nome, req.body.email]
     );
     res.status(201).json({ id: Number(result.insertId) });
   } catch (err) {
@@ -101,8 +100,8 @@ app.put('/alunos/:id', async (req, res) => {
   try {
     conn = await pool.getConnection();
     await conn.query(
-      'UPDATE alunos SET nome = ?, nomesocial = ?, registro = ?, email = ?, ingresso = ?, telefone = ?, celular = ?, cpf = ?, identidade = ?, orgao = ?, nascimento = ?, cep = ?, endereco = ?, municipio = ?, bairro = ?, observacoes = ? WHERE id = ?',
-      [req.body.nome, req.body.nomesocial, req.body.registro, req.body.email, req.body.ingresso, req.body.telefone, req.body.celular, req.body.cpf, req.body.identidade, req.body.orgao, req.body.nascimento, req.body.cep, req.body.endereco, req.body.municipio, req.body.bairro, req.body.observacoes, req.params.id]
+      'UPDATE alunos SET nome = ?, email = ? WHERE id = ?',
+      [req.body.nome, req.body.email, req.params.id]
     );
     res.status(204).end();
   } catch (err) {
@@ -133,18 +132,24 @@ app.get('/docentes', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    let query = 'SELECT id, nome, siape, email, celular FROM docentes';
+    let query = 'SELECT id, nome, email, celular FROM docentes';
     let params = [];
 
     if (req.query.search) {
-      query += ' WHERE nome LIKE ? OR siape LIKE ? OR email LIKE ? OR celular LIKE ?';
+      query += ' WHERE nome LIKE ? OR email LIKE ?';
       const searchTerm = `%${req.query.search}%`;
-      params = [searchTerm, searchTerm, searchTerm, searchTerm];
+      params = [searchTerm, searchTerm];
     }
 
     query += ' ORDER BY nome ASC';
 
+    console.log(query);
+    console.log(params);
+    console.log('Query executed successfully');
+
     const rows = await conn.query(query, params);
+    console.log('Rows returned: ' + rows.length);
+    console.log(rows);
     return res.json(rows);
   } catch (err) {
     console.error('Error fetching docentes:', err);
@@ -159,7 +164,7 @@ app.get('/docentes/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT id, nome, siape, email, celular FROM docentes WHERE id = ?', [req.params.id]);
+    const rows = await conn.query('SELECT id, nome, email, celular FROM docentes WHERE id = ?', [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Docente not found' });
     }
@@ -177,8 +182,8 @@ app.post('/docentes', async (req, res) => {
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      'INSERT INTO docentes (nome, siape, email, celular) VALUES (?, ?, ?, ?)',
-      [req.body.nome, req.body.siape, req.body.email, req.body.celular]
+      'INSERT INTO docentes (nome, email, celular) VALUES (?, ?, ?)',
+      [req.body.nome, req.body.email, req.body.celular]
     );
     res.status(201).json({ id: Number(result.insertId) });
   } catch (err) {
@@ -194,8 +199,8 @@ app.put('/docentes/:id', async (req, res) => {
   try {
     conn = await pool.getConnection();
     await conn.query(
-      'UPDATE docentes SET nome = ?, siape = ?, email = ?, celular = ? WHERE id = ?',
-      [req.body.nome, req.body.siape, req.body.email, req.body.celular, req.params.id]
+      'UPDATE docentes SET nome = ?, email = ?, celular = ? WHERE id = ?',
+      [req.body.nome, req.body.email, req.body.celular, req.params.id]
     );
     res.status(204).end();
   } catch (err) {
@@ -446,7 +451,7 @@ app.get('/mural', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM mural_estagio ORDER BY periodo DESC, dataInscricao ASC');
+    const rows = await conn.query('SELECT * FROM mural_estagio ORDER BY periodo DESC, instituicao ASC');
     return res.json(rows);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -588,39 +593,22 @@ app.get('/inscricoes/:id', async (req, res) => {
   }
 });
 
-// READ INSCRICOES BY ALUNO ID AND MURALESTAGIO ID
-app.get('/inscricoes/:aluno_id/:muralestagio_id', async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    const rows = await conn.query(
-      'SELECT * FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? LIMIT 1',
-      [req.params.aluno_id, req.params.muralestagio_id]
-    );
-    return res.json(rows);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  } finally {
-    if (conn) conn.end();
-  }
-});
-
 // CREATE INSCRICAO
 app.post('/inscricoes', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-
+    
     // Check if student already registered for this mural in this period
     const existing = await conn.query(
       'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND periodo = ?',
       [req.body.aluno_id, req.body.muralestagio_id, req.body.periodo]
     );
-
+    
     if (existing.length > 0) {
       return res.status(400).json({ error: 'Aluno já inscrito nesta vaga para este período' });
     }
-
+    
     const result = await conn.query(
       'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo) VALUES (?, ?, ?, ?, ?)',
       [req.body.registro || 0, req.body.aluno_id, req.body.muralestagio_id, req.body.data, req.body.periodo]
@@ -638,17 +626,17 @@ app.put('/inscricoes/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-
+    
     // Check if another student already registered for this mural in this period
     const existing = await conn.query(
       'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND periodo = ? AND id != ?',
       [req.body.aluno_id, req.body.muralestagio_id, req.body.periodo, req.params.id]
     );
-
+    
     if (existing.length > 0) {
       return res.status(400).json({ error: 'Aluno já inscrito nesta vaga para este período' });
     }
-
+    
     await conn.query(
       'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ? WHERE id = ?',
       [req.body.registro || 0, req.body.aluno_id, req.body.muralestagio_id, req.body.data, req.body.periodo, req.params.id]
@@ -677,7 +665,7 @@ app.delete('/inscricoes/:id', async (req, res) => {
 
 // --- VISITAS ENDPOINTS ---
 
-// READ ALL VISITAS
+// READ ALL VISITAS with optional filter
 app.get('/visitas', async (req, res) => {
   let conn;
   try {
@@ -686,14 +674,14 @@ app.get('/visitas', async (req, res) => {
                  FROM visita v 
                  LEFT JOIN estagio e ON v.instituicao_id = e.id`;
     let params = [];
-
+    
     if (req.query.instituicao_id) {
       query += ' WHERE v.instituicao_id = ?';
       params.push(req.query.instituicao_id);
     }
-
+    
     query += ' ORDER BY v.data DESC';
-
+    console.log(query, params);    
     const rows = await conn.query(query, params);
     return res.json(rows);
   } catch (err) {
@@ -703,12 +691,18 @@ app.get('/visitas', async (req, res) => {
   }
 });
 
-// READ ONE VISITA
+// READ ONE VISITA with JOIN
 app.get('/visitas/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT visita.*, estagio.instituicao FROM visita left join estagio on visita.instituicao_id = estagio.id WHERE visita.id = ?', [req.params.id]);
+    const rows = await conn.query(
+      `SELECT v.*, e.instituicao 
+       FROM visita v 
+       LEFT JOIN estagio e ON v.instituicao_id = e.id 
+       WHERE v.id = ?`,
+      [req.params.id]
+    );
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Visita not found' });
     }
@@ -726,8 +720,8 @@ app.post('/visitas', async (req, res) => {
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      'INSERT INTO visita (instituicao_id, data, responsavel, motivo, avaliacao, descricao) VALUES (?, ?, ?, ?, ?, ?)',
-      [req.body.instituicao_id, req.body.data, req.body.responsavel, req.body.motivo, req.body.avaliacao, req.body.descricao]
+      'INSERT INTO visita (instituicao_id, data, motivo, responsavel, descricao, avaliacao) VALUES (?, ?, ?, ?, ?, ?)',
+      [req.body.instituicao_id, req.body.data, req.body.motivo, req.body.responsavel, req.body.descricao, req.body.avaliacao]
     );
     res.status(201).json({ id: Number(result.insertId) });
   } catch (err) {
@@ -743,8 +737,8 @@ app.put('/visitas/:id', async (req, res) => {
   try {
     conn = await pool.getConnection();
     await conn.query(
-      'UPDATE visita SET instituicao_id = ?, data = ?, responsavel = ?, motivo = ?, avaliacao = ?, descricao = ? WHERE id = ?',
-      [req.body.instituicao_id, req.body.data, req.body.responsavel, req.body.motivo, req.body.avaliacao, req.body.descricao, req.params.id]
+      'UPDATE visita SET instituicao_id = ?, data = ?, motivo = ?, responsavel = ?, descricao = ?, avaliacao = ? WHERE id = ?',
+      [req.body.instituicao_id, req.body.data, req.body.motivo, req.body.responsavel, req.body.descricao, req.body.avaliacao, req.params.id]
     );
     res.status(204).end();
   } catch (err) {
@@ -760,97 +754,6 @@ app.delete('/visitas/:id', async (req, res) => {
   try {
     conn = await pool.getConnection();
     await conn.query('DELETE FROM visita WHERE id = ?', [req.params.id]);
-    res.status(204).end();
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  } finally {
-    if (conn) conn.end();
-  }
-});
-
-
-// --- CONFIGURACOES ENDPOINTS ---
-
-// READ CONFIGURATION (Singleton)
-app.get('/configuracoes', async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM configuracoes LIMIT 1');
-    if (rows.length === 0) {
-      // If table is empty, we might return 404 or a default object
-      // For now, let's assume it should behave like a 404 if not found since user said "store only one record"
-      return res.status(404).json({ error: 'Configuracoes not found' });
-    }
-    return res.json(rows[0]);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  } finally {
-    if (conn) conn.end();
-  }
-});
-
-// UPDATE CONFIGURATION (Singleton)
-// We generally update the single row that exists. 
-// We can use a specific ID if we know it (e.g. 1) or update "WHERE id = (SELECT id FROM configuracoes LIMIT 1)" logic 
-// but safer is to update by ID passed in body or just update the first row if we are strict.
-// Given strict strict constraints, let's accept PUT /configuracoes (no ID needed in URL technically if singleton, but RESTful usually expects resource).
-// However, the user said "edit". Let's do PUT /configuracoes (updates the single record).
-app.put('/configuracoes', async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-
-    // We update the single record. We assume ID 1 or just update the first found.
-    // Let's rely on the body having the fields.
-    // NOTE: The ID might be in the body, but we shouldn't update the ID.
-
-    const {
-      mural_periodo_atual,
-      curso_turma_atual,
-      curso_abertura_inscricoes,
-      curso_encerramento_inscricoes,
-      termo_compromisso_periodo,
-      termo_compromisso_inicio,
-      termo_compromisso_final,
-      periodo_calendario_academico
-    } = req.body;
-
-    // We'll update the row with ID 1 (default) or we can fetch the ID first. 
-    // Let's assume there is only one row and we update it.
-    // A safe way is to update where id is not null order by id limit 1, or just hardcode ID 1 if we know it is 1.
-    // Let's use logic: update the row that exists.
-
-    // First get the ID
-    const rows = await conn.query('SELECT id FROM configuracoes LIMIT 1');
-    if (rows.length === 0) {
-      return res.status(404).json({ error: 'No configuration record to update' });
-    }
-    const id = rows[0].id;
-
-    await conn.query(
-      `UPDATE configuracoes SET 
-        mural_periodo_atual = ?, 
-        curso_turma_atual = ?, 
-        curso_abertura_inscricoes = ?, 
-        curso_encerramento_inscricoes = ?, 
-        termo_compromisso_periodo = ?, 
-        termo_compromisso_inicio = ?, 
-        termo_compromisso_final = ?, 
-        periodo_calendario_academico = ? 
-      WHERE id = ?`,
-      [
-        mural_periodo_atual,
-        curso_turma_atual,
-        curso_abertura_inscricoes,
-        curso_encerramento_inscricoes,
-        termo_compromisso_periodo,
-        termo_compromisso_inicio,
-        termo_compromisso_final,
-        periodo_calendario_academico,
-        id
-      ]
-    );
     res.status(204).end();
   } catch (err) {
     res.status(500).json({ error: err.message });
