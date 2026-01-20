@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Estagiário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Novo Estagiário</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="newEstagioForm">
+
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="aluno_id" class="form-label">Aluno *</label>
+                            <select class="form-select" id="aluno_id" name="aluno_id" required>
+                                <option value="">Selecione um aluno</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nivel" class="form-label">Nível *</label>
+                            <select class="form-select" id="nivel" name="nivel" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="9">9 - Continuação (própria conta)</option>
+                            </select>
+                            <small class="text-muted">O nível será calculado automaticamente ao selecionar o aluno</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="instituicao_id" class="form-label">Instituição *</label>
+                            <select class="form-select" id="instituicao_id" name="instituicao_id" required>
+                                <option value="">Selecione uma instituição</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="supervisor_id" class="form-label">Supervisor</label>
+                            <select class="form-select" id="supervisor_id" name="supervisor_id">
+                                <option value="">Selecione um supervisor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="professor_id" class="form-label">Professor *</label>
+                            <select class="form-select" id="professor_id" name="professor_id" required>
+                                <option value="">Selecione um professor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="turmaestagio_id" class="form-label">Turma de Estágio</label>
+                            <select class="form-select" id="turmaestagio_id" name="turmaestagio_id">
+                                <option value="">Selecione uma turma</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="periodo" class="form-label">Período *</label>
+                            <input type="text" class="form-control" id="periodo" name="periodo" 
+                                   placeholder="ex: 2024-1" pattern="\d{4}-[12]" required>
+                            <small class="text-muted">Formato: AAAA-S (ex: 2024-1)</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="data_inicio" class="form-label">Data Início</label>
+                            <input type="date" class="form-control" id="data_inicio" name="data_inicio">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="data_fim" class="form-label">Data Fim</label>
+                            <input type="date" class="form-control" id="data_fim" name="data_fim">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='estagiarios.html'">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="new-estagiario.js"></script>
+
+</body>
+
+</html>
