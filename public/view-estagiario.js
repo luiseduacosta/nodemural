@@ -16,12 +16,6 @@ $(document).ready(async function () {
 
         const estagiario = await response.json();
 
-        // Format dates
-        const dataInicio = estagiario.data_inicio ? 
-            new Date(estagiario.data_inicio).toLocaleDateString('pt-BR') : '-';
-        const dataFim = estagiario.data_fim ? 
-            new Date(estagiario.data_fim).toLocaleDateString('pt-BR') : '-';
-
         // Nivel display
         let nivelDisplay = estagiario.nivel;
         if (estagiario.nivel == 9) {
@@ -37,8 +31,6 @@ $(document).ready(async function () {
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';
         document.getElementById('view-supervisor').textContent = estagiario.supervisor_nome || '-';
         document.getElementById('view-periodo').textContent = estagiario.periodo || '-';
-        document.getElementById('view-data-inicio').textContent = dataInicio;
-        document.getElementById('view-data-fim').textContent = dataFim;
         document.getElementById('view-turma').textContent = estagiario.turma_nome || '-';
         document.getElementById('view-observacoes').textContent = estagiario.observacoes || '-';
 

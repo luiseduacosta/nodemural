@@ -77,7 +77,7 @@ $(document).ready(async function () {
 
     // Load turmas de estagio
     try {
-        const response = await fetch('/turma_estagio');
+        const response = await fetch('/turma_estagios');
         if (response.ok) {
             const turmas = await response.json();
             const select = document.getElementById('turmaestagio_id');
@@ -117,8 +117,6 @@ $(document).ready(async function () {
         document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || '';
         document.getElementById('periodo').value = estagiario.periodo || '';
         document.getElementById('nivel').value = estagiario.nivel || '1';
-        document.getElementById('data_inicio').value = formatDateForInput(estagiario.data_inicio);
-        document.getElementById('data_fim').value = formatDateForInput(estagiario.data_fim);
         document.getElementById('observacoes').value = estagiario.observacoes || '';
 
     } catch (error) {
@@ -139,8 +137,6 @@ $(document).ready(async function () {
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
             nivel: document.getElementById('nivel').value,
-            data_inicio: document.getElementById('data_inicio').value || null,
-            data_fim: document.getElementById('data_fim').value || null,
             observacoes: document.getElementById('observacoes').value || null
         };
 
