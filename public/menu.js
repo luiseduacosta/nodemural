@@ -14,6 +14,9 @@ topMenu = `
             <a class="nav-link" href="alunos.html">Alunos(as)</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="estagiarios.html">Estagiários</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="docentes.html">Docentes</a>
           </li>
           <li class="nav-item">

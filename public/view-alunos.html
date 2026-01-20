@@ -26,6 +26,10 @@
                 <button class="nav-link" id="inscricoes-tab" data-bs-toggle="tab" data-bs-target="#inscricoes"
                     type="button" role="tab" aria-controls="inscricoes" aria-selected="false">Inscrições</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="estagios-tab" data-bs-toggle="tab" data-bs-target="#estagios"
+                    type="button" role="tab" aria-controls="estagios" aria-selected="false">Estágios</button>
+            </li>
         </ul>
 
         <div class="tab-content" id="alunoTabContent">
@@ -124,6 +128,32 @@
                         </table>
                         <div id="no-inscricoes-msg" class="alert alert-info d-none">
                             Nenhuma inscrição encontrada para este aluno.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESTAGIOS TAB -->
+            <div class="tab-pane fade" id="estagios" role="tabpanel" aria-labelledby="estagios-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped" id="table-estagios">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Instituição</th>
+                                    <th>Período</th>
+                                    <th>Nível</th>
+                                    <th>Professor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                        <div id="no-estagios-msg" class="alert alert-info d-none">
+                            Nenhum estágio encontrado para este aluno.
                         </div>
                     </div>
                 </div>

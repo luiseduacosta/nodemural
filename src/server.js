@@ -858,6 +858,207 @@ app.delete('/visitas/:id', async (req, res) => {
 });
 
 
+// --- ESTAGIARIOS ENDPOINTS ---
+
+// READ ALL ESTAGIARIOS with JOIN
+app.get('/estagiarios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT e.*, 
+      a.nome as aluno_nome, a.registro as aluno_registro,
+      d.nome as professor_nome,
+      s.nome as supervisor_nome,
+      i.instituicao as instituicao_nome,
+      t.turma as turma_nome
+      FROM estagiarios e
+      LEFT JOIN alunos a ON e.aluno_id = a.id
+      LEFT JOIN docentes d ON e.professor_id = d.id
+      LEFT JOIN supervisores s ON e.supervisor_id = s.id
+      LEFT JOIN estagio i ON e.instituicao_id = i.id
+      LEFT JOIN turma_estagio t ON e.turmaestagio_id = t.id
+      ORDER BY e.periodo DESC, a.nome ASC`;
+    const rows = await conn.query(query);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// READ ONE ESTAGIARIO with JOIN
+app.get('/estagiarios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT e.*, 
+      a.nome as aluno_nome, a.registro as aluno_registro, a.ajuste2020 as aluno_ajuste2020,
+      d.nome as professor_nome,
+      s.nome as supervisor_nome,
+      i.instituicao as instituicao_nome,
+      t.turma as turma_nome
+      FROM estagiarios e
+      LEFT JOIN alunos a ON e.aluno_id = a.id
+      LEFT JOIN docentes d ON e.professor_id = d.id
+      LEFT JOIN supervisores s ON e.supervisor_id = s.id
+      LEFT JOIN estagio i ON e.instituicao_id = i.id
+      LEFT JOIN turma_estagio t ON e.turmaestagio_id = t.id
+      WHERE e.id = ?`;
+    const rows = await conn.query(query, [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Estagiario not found' });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET ESTAGIARIOS BY ALUNO_ID
+app.get('/alunos/:id/estagiarios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT e.*, 
+      i.instituicao as instituicao_nome,
+      d.nome as professor_nome,
+      s.nome as supervisor_nome
+      FROM estagiarios e
+      LEFT JOIN estagio i ON e.instituicao_id = i.id
+      LEFT JOIN docentes d ON e.professor_id = d.id
+      LEFT JOIN supervisores s ON e.supervisor_id = s.id
+      WHERE e.aluno_id = ?
+      ORDER BY e.periodo DESC, e.nivel ASC`;
+    const rows = await conn.query(query, [req.params.id]);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET NEXT NIVEL FOR A STUDENT
+app.get('/alunos/:id/next-nivel', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    
+    // Get student's ajuste2020 value
+    const alunoRows = await conn.query('SELECT ajuste2020 FROM alunos WHERE id = ?', [req.params.id]);
+    if (alunoRows.length === 0) {
+      return res.status(404).json({ error: 'Aluno not found' });
+    }
+    const ajuste2020 = alunoRows[0].ajuste2020;
+    
+    // Get maximum nivel for this student
+    const nivelRows = await conn.query(
+      'SELECT MAX(nivel) as max_nivel FROM estagiarios WHERE aluno_id = ? AND nivel < 9',
+      [req.params.id]
+    );
+    
+    let nextNivel = 1;
+    if (nivelRows.length > 0 && nivelRows[0].max_nivel !== null) {
+      const maxNivel = nivelRows[0].max_nivel;
+      const maxAllowed = (ajuste2020 == 0) ? 4 : 3;
+      
+      if (maxNivel < maxAllowed) {
+        nextNivel = maxNivel + 1;
+      } else {
+        nextNivel = maxAllowed;
+      }
+    }
+    
+    return res.json({ next_nivel: nextNivel, ajuste2020: ajuste2020 });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// CREATE ESTAGIARIO
+app.post('/estagiarios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query(
+      `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id, 
+       turmaestagio_id, periodo, nivel, data_inicio, data_fim, observacoes) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        req.body.aluno_id, req.body.professor_id, req.body.supervisor_id, 
+        req.body.instituicao_id, req.body.turmaestagio_id, req.body.periodo, 
+        req.body.nivel, req.body.data_inicio, req.body.data_fim, req.body.observacoes
+      ]
+    );
+    res.status(201).json({ id: Number(result.insertId) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// UPDATE ESTAGIARIO
+app.put('/estagiarios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query(
+      `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?, 
+       instituicao_id = ?, turmaestagio_id = ?, periodo = ?, nivel = ?, 
+       data_inicio = ?, data_fim = ?, observacoes = ? WHERE id = ?`,
+      [
+        req.body.aluno_id, req.body.professor_id, req.body.supervisor_id, 
+        req.body.instituicao_id, req.body.turmaestagio_id, req.body.periodo, 
+        req.body.nivel, req.body.data_inicio, req.body.data_fim, req.body.observacoes,
+        req.params.id
+      ]
+    );
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// DELETE ESTAGIARIO
+app.delete('/estagiarios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query('DELETE FROM estagiarios WHERE id = ?', [req.params.id]);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// --- CONFIGURACOES ENDPOINTS ---
+
+// --- TURMA_ESTAGIO ENDPOINTS ---
+
+// READ ALL TURMA_ESTAGIO
+app.get('/turma_estagio', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query('SELECT * FROM turma_estagio ORDER BY turma ASC');
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
 // --- CONFIGURACOES ENDPOINTS ---
 
 // READ CONFIGURATION (Singleton)
