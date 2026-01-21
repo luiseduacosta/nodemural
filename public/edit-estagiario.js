@@ -102,6 +102,31 @@ $(document).ready(async function () {
 
         const estagiario = await response.json();
 
+        // Load Configuracoes and Check Periodo
+        try {
+            const configResponse = await fetch('/configuracoes');
+            if (configResponse.ok) {
+                const configuracoes = await configResponse.json();
+                const containerperiodo = document.getElementById('menssagem_periodo');
+                const containernivel = document.getElementById('menssagem_nivel');
+                if (configuracoes.termo_compromisso_periodo !== estagiario.periodo) {
+                    containerperiodo.innerHTML = `<div id="menssagem_periodo_alert" class="alert alert-warning">
+                            O período do estagiário (${estagiario.periodo}) não corresponde ao período atual do termo de compromisso ${configuracoes.termo_compromisso_periodo}.
+                        </div>`;
+                    containerperiodo.style.display = 'block';
+                    containernivel.innerHTML = `<div id="menssagem_nivel_alert" class="alert alert-warning">
+                            O nível do estagiário (${estagiario.nivel}) corresponde ao período ${estagiario.periodo}. O período atual do termo de compromisso é ${configuracoes.termo_compromisso_periodo}.
+                        </div>`;
+                    containernivel.style.display = 'block';
+                } else {
+                    containerperiodo.style.display = 'none';
+                    containernivel.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading configuracoes:', error);
+        }
+
         // Format dates for input type="date" (YYYY-MM-DD)
         const formatDateForInput = (dateStr) => {
             if (!dateStr) return '';
@@ -131,7 +156,7 @@ $(document).ready(async function () {
 
         const estagiario = {
             aluno_id: document.getElementById('aluno_id').value,
-            professor_id: document.getElementById('professor_id').value,
+            professor_id: document.getElementById('professor_id').value || null,
             supervisor_id: document.getElementById('supervisor_id').value || null,
             instituicao_id: document.getElementById('instituicao_id').value,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,

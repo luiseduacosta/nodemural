@@ -273,6 +273,24 @@ app.get('/estagio/:id', async (req, res) => {
   }
 });
 
+// READ SUPERVISORES DO ESTAGIO
+app.get('/estagio/:id/supervisores', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query('SELECT * FROM supervisores WHERE id IN (SELECT supervisor_id FROM inst_super WHERE instituicao_id = ?) ORDER BY nome ASC', [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Supervisores not found' });
+    }
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+
 // GET MURAL BY INSTITUICAO
 app.get('/estagio/:id/mural', async (req, res) => {
   let conn;
@@ -981,33 +999,40 @@ app.get('/estagiarios/:id/next-nivel', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-
-    // Get student's ajuste2020 value
-    const estagiarioRows = await conn.query('SELECT ajuste2020 FROM estagiarios WHERE id = ?', [req.params.id]);
+    // Get student's ajuste2020 value order by nivel desc
+    const estagiarioRows = await conn.query('SELECT ajuste2020, nivel, instituicao_id, professor_id, supervisor_id, turmaestagio_id, periodo FROM estagiarios WHERE aluno_id = ? ORDER BY nivel DESC LIMIT 1', [req.params.id]);
     if (estagiarioRows.length === 0) {
-      return res.status(404).json({ error: 'Estagiario not found' });
-    }
-    const ajuste2020 = estagiarioRows[0].ajuste2020;
+      return res.json({ next_nivel: 1, ajuste2020: 1, professor_id: null, supervisor_id: null, instituicao_id: null, turmaestagio_id: null, periodo: null });
+    } else {
+      const ajuste2020 = estagiarioRows[0].ajuste2020;
+      const nivel = estagiarioRows[0].nivel;
+      const instituicao_id = estagiarioRows[0].instituicao_id;
+      const professor_id = estagiarioRows[0].professor_id;
+      const supervisor_id = estagiarioRows[0].supervisor_id;
+      const turmaestagio_id = estagiarioRows[0].turmaestagio_id;
+      const periodo = estagiarioRows[0].periodo;
 
-    // Get maximum nivel for this student
-    const nivelRows = await conn.query(
-      'SELECT MAX(nivel) as max_nivel FROM estagiarios WHERE aluno_id = ? AND nivel < 9',
-      [req.params.id]
-    );
-
-    let nextNivel = 1;
-    if (nivelRows.length > 0 && nivelRows[0].max_nivel !== null) {
+      // Get maximum nivel for this student
+      const nivelRows = await conn.query(
+        'SELECT MAX(nivel) as max_nivel FROM estagiarios WHERE aluno_id = ? AND nivel < 9',
+        [req.params.id]
+      );
       const maxNivel = nivelRows[0].max_nivel;
-      const maxAllowed = (ajuste2020 == 0) ? 4 : 3;
 
-      if (maxNivel < maxAllowed) {
-        nextNivel = maxNivel + 1;
-      } else {
-        nextNivel = maxAllowed;
+      let nextNivel = 1;
+      if (nivel !== null) {
+        // It is a number
+        const maxNivel = Number(nivel);
+        const maxAllowed = (ajuste2020 == 0) ? 4 : 3;
+
+        if (maxNivel < maxAllowed) {
+          nextNivel = Number(maxNivel) + 1;
+        } else {
+          nextNivel = 9; // Maximum nivel
+        }
       }
+      return res.json({ next_nivel: nextNivel, ajuste2020: ajuste2020, instituicao_id: instituicao_id, professor_id: professor_id, supervisor_id: supervisor_id, turmaestagio_id: turmaestagio_id, periodo: periodo });
     }
-
-    return res.json({ next_nivel: nextNivel, ajuste2020: ajuste2020 });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   } finally {

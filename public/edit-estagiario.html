@@ -37,6 +37,7 @@
                                 <option value="4">4</option>
                                 <option value="9">9 - Continuação (própria conta)</option>
                             </select>
+                            <div id="menssagem_nivel"></div>
                         </div>
                     </div>
 
@@ -57,8 +58,8 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="professor_id" class="form-label">Professor *</label>
-                            <select class="form-select" id="professor_id" name="professor_id" required>
+                            <label for="professor_id" class="form-label">Professor</label>
+                            <select class="form-select" id="professor_id" name="professor_id">
                                 <option value="">Selecione um professor</option>
                             </select>
                         </div>
@@ -73,9 +74,10 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="periodo" class="form-label">Período *</label>
-                            <input type="text" class="form-control" id="periodo" name="periodo" 
-                                   placeholder="ex: 2024-1" pattern="\d{4}-[12]" required>
+                            <input type="text" class="form-control" id="periodo" name="periodo" placeholder="ex: 2024-1"
+                                pattern="\d{4}-[12]" required>
                             <small class="text-muted">Formato: AAAA-S (ex: 2024-1)</small>
+                            <div id="menssagem_periodo"></div>
                         </div>
                     </div>
 
@@ -85,7 +87,8 @@
                     </div>
 
                     <div class="mt-4">
-                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="window.history.back()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar</button>
                     </div>
 

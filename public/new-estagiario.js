@@ -1,4 +1,4 @@
-$(document).ready(async function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const form = document.getElementById('newEstagioForm');
 
     // Load default periodo from configuracoes
@@ -29,85 +29,124 @@ $(document).ready(async function () {
         alert('Erro ao carregar lista de alunos');
     }
 
-    // Load instituicoes
-    try {
-        const response = await fetch('/estagio');
-        const instituicoes = await response.json();
-        const select = document.getElementById('instituicao_id');
-
-        instituicoes.forEach(inst => {
-            const option = document.createElement('option');
-            option.value = inst.id;
-            option.textContent = inst.instituicao;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading instituicoes:', error);
-        alert('Erro ao carregar lista de instituições');
-    }
-
-    // Load supervisores
-    try {
-        const response = await fetch('/supervisores');
-        const supervisores = await response.json();
-        const select = document.getElementById('supervisor_id');
-
-        supervisores.forEach(sup => {
-            const option = document.createElement('option');
-            option.value = sup.id;
-            option.textContent = sup.nome;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading supervisores:', error);
-    }
-
-    // Load professores (docentes)
-    try {
-        const response = await fetch('/docentes');
-        const docentes = await response.json();
-        const select = document.getElementById('professor_id');
-
-        docentes.forEach(doc => {
-            const option = document.createElement('option');
-            option.value = doc.id;
-            option.textContent = doc.nome;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading docentes:', error);
-        alert('Erro ao carregar lista de professores');
-    }
-
-    // Load turmas de estagio (if the table exists)
-    try {
-        const response = await fetch('/turma_estagio');
-        if (response.ok) {
-            const turmas = await response.json();
-            const select = document.getElementById('turmaestagio_id');
-
-            turmas.forEach(turma => {
-                const option = document.createElement('option');
-                option.value = turma.id;
-                option.textContent = turma.turma;
-                select.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading turmas:', error);
-        // Not critical, turma might be optional
-    }
-
-    // Auto-calculate nivel when aluno is selected
+    // Auto-calculate nivel when aluno is selected and load professor and supervisor if exists and put the selected value of professor_id, supervisor_id and intituicao_id
     document.getElementById('aluno_id').addEventListener('change', async function () {
         const alunoId = this.value;
         if (!alunoId) return;
-
         try {
-            const response = await fetch(`/alunos/${alunoId}/next-nivel`);
+            const response = await fetch(`/estagiarios/${alunoId}/next-nivel`);
             if (response.ok) {
                 const data = await response.json();
                 document.getElementById('nivel').value = data.next_nivel;
+                document.getElementById('ajuste2020').value = data.ajuste2020;
+
+                // Load instituicoes
+                try {
+                    const response = await fetch('/estagio');
+                    const instituicoes = await response.json();
+                    const select = document.getElementById('instituicao_id');
+
+                    instituicoes.forEach(inst => {
+                        const option = document.createElement('option');
+                        option.value = inst.id;
+                        option.textContent = inst.instituicao;
+                        option.selected = data.instituicao_id ? inst.id === data.instituicao_id : false;
+                        select.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error loading instituicoes:', error);
+                    alert('Erro ao carregar lista de instituições');
+                }
+
+                // Load professores (docentes)
+                try {
+                    const response = await fetch('/docentes');
+                    if (response.ok) {
+                        const docentes = await response.json();
+                        const select = document.getElementById('professor_id');
+
+                        docentes.forEach(doc => {
+                            const option = document.createElement('option');
+                            option.value = doc.id;
+                            option.textContent = doc.nome;
+                            option.selected = data.professor_id ? doc.id === data.professor_id : false;
+                            select.appendChild(option);
+                        });
+                    }
+                }
+                catch (error) {
+                    console.error('Error loading docentes:', error);
+                }
+
+                // Load supervisores of the default institution or when a instituicao is selected
+                const instituicaoId = data.instituicao_id;
+                if (instituicaoId) {
+                    try {
+                        const select = document.getElementById('supervisor_id');
+                        select.innerHTML = '<option value="">Selecione um supervisor</option>';
+                        const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
+                        console.log('instituicaoId', instituicaoId);
+                        console.log(response);
+                        if (response.ok) {
+                            const supervisores = await response.json();
+                            console.log(supervisores);
+                            supervisores.forEach(sup => {
+                                const option = document.createElement('option');
+                                option.value = sup.id;
+                                option.textContent = sup.nome;
+                                option.selected = data.supervisor_id ? sup.id === data.supervisor_id : false;
+                                select.appendChild(option);
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading supervisores:', error);
+                    }
+                }
+                document.getElementById('instituicao_id').addEventListener('change', async function () {
+                    const instituicaoId = this.value;
+                    if (!instituicaoId) {
+                        instituicaoId = data.instituicao_id;
+                    }
+                    try {
+                        const select = document.getElementById('supervisor_id');
+                        select.innerHTML = '<option value="">Selecione um supervisor</option>';
+                        const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
+                        console.log('instituicaoId', instituicaoId);
+                        console.log(response);
+                        if (response.ok) {
+                            const supervisores = await response.json();
+                            console.log(supervisores);
+                            supervisores.forEach(sup => {
+                                const option = document.createElement('option');
+                                option.value = sup.id;
+                                option.textContent = sup.nome;
+                                option.selected = data.supervisor_id ? sup.id === data.supervisor_id : false;
+                                select.appendChild(option);
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading supervisores:', error);
+                    }
+                });
+
+                // Load turmas de estagio (if the table exists)
+                try {
+                    const response = await fetch('/turma_estagios');
+                    if (response.ok) {
+                        const turmas = await response.json();
+                        const select = document.getElementById('turmaestagio_id');
+
+                        turmas.forEach(turma => {
+                            const option = document.createElement('option');
+                            option.value = turma.id;
+                            option.textContent = turma.area;
+                            option.selected = data.turmaestagio_id ? turma.id === data.turmaestagio_id : false;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading turmas:', error);
+                }
             }
         } catch (error) {
             console.error('Error calculating next nivel:', error);
@@ -126,8 +165,7 @@ $(document).ready(async function () {
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
             nivel: document.getElementById('nivel').value,
-            data_inicio: document.getElementById('data_inicio').value || null,
-            data_fim: document.getElementById('data_fim').value || null,
+            ajuste2020: document.getElementById('ajuste2020').value,
             observacoes: document.getElementById('observacoes').value || null
         };
 
