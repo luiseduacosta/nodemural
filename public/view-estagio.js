@@ -33,6 +33,9 @@ $(document).ready(async function () {
         // Load mural items
         await fetchMural(id);
 
+        // Load supervisores
+        await fetchSupervisores(id);
+
     } catch (error) {
         console.error('Error loading estagio:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -104,5 +107,40 @@ async function fetchMural(id) {
         }
     } catch (error) {
         console.error('Error fetching mural:', error);
+    }
+}
+
+async function fetchSupervisores(id) {
+    try {
+        const response = await fetch(`/estagio/${id}/supervisores`);
+        if (response.ok) {
+            const supervisores = await response.json();
+            const tbody = document.querySelector('#table-supervisores tbody');
+            tbody.innerHTML = '';
+
+            if (supervisores.length === 0) {
+                document.getElementById('no-supervisores-msg').classList.remove('d-none');
+                document.getElementById('table-supervisores').classList.add('d-none');
+            } else {
+                document.getElementById('no-supervisores-msg').classList.add('d-none');
+                document.getElementById('table-supervisores').classList.remove('d-none');
+
+                supervisores.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${s.id}</td>
+                        <td>${s.nome}</td>
+                        <td>${s.email || 'N/A'}</td>
+                        <td>${s.telefone || 'N/A'}</td>
+                        <td>
+                            <a href="view-supervisor.html?id=${s.id}" class="btn btn-sm btn-info">Visualizar</a>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching supervisores:', error);
     }
 }

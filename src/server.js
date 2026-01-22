@@ -247,7 +247,7 @@ app.get('/estagio', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM estagio');
+    const rows = await conn.query('SELECT * FROM estagio ORDER BY instituicao ASC');
     return res.json(rows);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -925,7 +925,6 @@ app.get('/estagiarios', async (req, res) => {
     }
 
     query += ' ORDER BY e.periodo DESC, a.nome ASC';
-
     // console.log(query);
 
     const rows = await conn.query(query, params);
@@ -985,6 +984,58 @@ app.get('/alunos/:id/estagiarios', async (req, res) => {
       LEFT JOIN supervisores s ON e.supervisor_id = s.id
       WHERE e.aluno_id = ?
       ORDER BY e.periodo DESC, e.nivel ASC`;
+    const rows = await conn.query(query, [req.params.id]);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET ESTAGIARIOS BY SUPERVISOR_ID
+app.get('/supervisores/:id/estagiarios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT e.id as estagiario_id, 
+      a.id as aluno_id,
+      a.registro as aluno_registro,
+      a.nome as aluno_nome,
+      e.nivel as estagiario_nivel,
+      e.periodo as estagiario_periodo
+      FROM estagiarios e
+      LEFT JOIN alunos a ON e.aluno_id = a.id
+      WHERE e.supervisor_id = ?
+      ORDER BY e.periodo DESC, a.nome ASC`;
+    const rows = await conn.query(query, [req.params.id]);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// GET ESTAGIARIOS BY PROFESSOR_ID (DOCENTE_ID)
+app.get('/docentes/:id/estagiarios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT e.id as estagiario_id, 
+      a.id as aluno_id,
+      a.registro as aluno_registro,
+      a.nome as aluno_nome,
+      e.supervisor_id as estagiario_supervisor_id,
+      s.nome as estagiario_supervisor_nome,
+      e.professor_id as estagiario_professor_id,
+      e.nivel as estagiario_nivel,
+      e.periodo as estagiario_periodo
+      FROM estagiarios e
+      LEFT JOIN alunos a ON e.aluno_id = a.id
+      LEFT JOIN supervisores s ON e.supervisor_id = s.id
+      WHERE e.professor_id = ?
+      ORDER BY e.periodo DESC, a.nome ASC`;
     const rows = await conn.query(query, [req.params.id]);
     return res.json(rows);
   } catch (err) {
@@ -1118,6 +1169,71 @@ app.get('/turma_estagios', async (req, res) => {
   }
 });
 
+// READ ONE TURMA_ESTAGIO
+app.get('/turma_estagios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query('SELECT * FROM turma_estagios WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Turma de estágio not found' });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// CREATE TURMA_ESTAGIO
+app.post('/turma_estagios', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query(
+      'INSERT INTO turma_estagios (area) VALUES (?)',
+      [req.body.area]
+    );
+    res.status(201).json({ id: Number(result.insertId) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// UPDATE TURMA_ESTAGIO
+app.put('/turma_estagios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query(
+      'UPDATE turma_estagios SET area = ? WHERE id = ?',
+      [req.body.area, req.params.id]
+    );
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// DELETE TURMA_ESTAGIO
+app.delete('/turma_estagios/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query('DELETE FROM turma_estagios WHERE id = ?', [req.params.id]);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
 // --- CONFIGURACOES ENDPOINTS ---
 
 // READ CONFIGURATION (Singleton)
@@ -1207,5 +1323,111 @@ app.put('/configuracoes', async (req, res) => {
     if (conn) conn.end();
   }
 });
+// --- FOLHA DE ATIVIDADES ENDPOINTS ---
 
+// READ ALL ATIVIDADES WITH JOIN ESTAGIARIOS AND ALUNOS
+app.get('/atividades', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    let query = `SELECT f.*, a.nome as aluno_nome, a.registro as aluno_registro 
+                 FROM folhadeatividades f 
+                 LEFT JOIN estagiarios e ON f.estagiario_id = e.id 
+                 LEFT JOIN alunos a ON e.aluno_id = a.id`;
+
+    // Optional: filter by estagiario_id if needed in future
+    if (req.query.estagiario_id) {
+      query += ' WHERE f.estagiario_id = ?';
+    }
+
+    query += ' ORDER BY f.dia DESC, f.inicio ASC';
+
+    const params = req.query.estagiario_id ? [req.query.estagiario_id] : [];
+    // console.log(params);
+    const rows = await conn.query(query, params);
+    // console.log(rows);
+    return res.json(rows);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// READ ONE ATIVIDADE WITH JOIN ESTAGIARIOS AND ALUNOS
+app.get('/atividades/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `SELECT f.*, a.nome as aluno_nome, a.registro as aluno_registro 
+                 FROM folhadeatividades f 
+                 LEFT JOIN estagiarios e ON f.estagiario_id = e.id 
+                 LEFT JOIN alunos a ON e.aluno_id = a.id
+                 WHERE f.id = ?`;
+    const rows = await conn.query(query, [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Atividade not found' });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// CREATE ATIVIDADE
+// Supports both POST /atividades and POST /atividades/:estagiario_id
+app.post(['/atividades', '/atividades/:estagiario_id'], async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+
+    // estagiario_id can be in body or params. Body takes precedence if present (though usually should match)
+    // Or we prioritize params if we are calling that specific endpoint. 
+    // The user JS uses URL param.
+    const estagiario_id = req.params.estagiario_id || req.body.estagiario_id;
+
+    const result = await conn.query(
+      'INSERT INTO folhadeatividades (estagiario_id, dia, inicio, final, atividade) VALUES (?, ?, ?, ?, ?)',
+      [estagiario_id, req.body.dia, req.body.inicio, req.body.final, req.body.atividade]
+    );
+    res.status(201).json({ id: Number(result.insertId) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// UPDATE ATIVIDADE
+app.put('/atividades/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query(
+      'UPDATE folhadeatividades SET estagiario_id = ?, dia = ?, inicio = ?, final = ?, atividade = ? WHERE id = ?',
+      [req.body.estagiario_id, req.body.dia, req.body.inicio, req.body.final, req.body.atividade, req.params.id]
+    );
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
+// DELETE ATIVIDADE
+app.delete('/atividades/:id', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.query('DELETE FROM folhadeatividades WHERE id = ?', [req.params.id]);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.end();
+  }
+});
 app.listen(3333, () => console.log('Server running on port 3333'));

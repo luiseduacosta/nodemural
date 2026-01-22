@@ -33,6 +33,9 @@ $(document).ready(async function () {
         
         // Load all instituições for the dropdown
         loadAllInstituicoes();
+        
+        // Load estagiários for this supervisor
+        loadEstagiarios(id);
     } catch (error) {
         console.error('Error loading supervisor:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -147,3 +150,41 @@ window.removeInstituicao = async function(instituicaoId) {
 window.editRecord = function() {
     window.location.href = `edit-supervisor.html?id=${window.currentSupervisorId}`;
 };
+
+async function loadEstagiarios(supervisorId) {
+    try {
+        const response = await fetch(`/supervisores/${supervisorId}/estagiarios`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch estagiários');
+        }
+
+        const estagiarios = await response.json();
+        const tbody = document.querySelector('#table-estagiarios tbody');
+        tbody.innerHTML = '';
+
+        if (estagiarios.length === 0) {
+            document.getElementById('no-estagiarios-msg').classList.remove('d-none');
+            document.getElementById('table-estagiarios').classList.add('d-none');
+        } else {
+            document.getElementById('no-estagiarios-msg').classList.add('d-none');
+            document.getElementById('table-estagiarios').classList.remove('d-none');
+
+            estagiarios.forEach(est => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${est.estagiario_id}</td>
+                    <td>${est.aluno_registro || 'N/A'}</td>
+                    <td><a href="view-estagiario.html?id=${est.estagiario_id}">${est.aluno_nome}</a></td>
+                    <td>${est.estagiario_nivel || 'N/A'}</td>
+                    <td>${est.estagiario_periodo || 'N/A'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading estagiários:', error);
+        document.getElementById('no-estagiarios-msg').classList.remove('d-none');
+        document.getElementById('no-estagiarios-msg').textContent = 'Erro ao carregar estagiários.';
+        document.getElementById('table-estagiarios').classList.add('d-none');
+    }
+}

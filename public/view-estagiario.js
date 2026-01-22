@@ -15,7 +15,7 @@ $(document).ready(async function () {
         }
 
         const estagiario = await response.json();
-
+        console.log(estagiario);
         // Nivel display
         let nivelDisplay = estagiario.nivel;
         if (estagiario.nivel == 9) {
@@ -26,6 +26,7 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = estagiario.id;
         document.getElementById('view-nivel').textContent = nivelDisplay;
         document.getElementById('view-aluno').textContent = estagiario.aluno_nome || '-';
+        document.getElementById('view-aluno-link').href = `view-alunos.html?id=${estagiario.aluno_id}`;
         document.getElementById('view-registro').textContent = estagiario.aluno_registro || '-';
         document.getElementById('view-instituicao').textContent = estagiario.instituicao_nome || '-';
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';
@@ -36,6 +37,34 @@ $(document).ready(async function () {
 
         window.currentEstagioId = id;
 
+        // Load atividades
+        try {
+            const atividadesResponse = await fetch(`/atividades?estagiario_id=${id}`);
+            if (atividadesResponse.ok) {
+                const atividades = await atividadesResponse.json();
+                const tbody = document.getElementById('table-atividades');
+                tbody.innerHTML = '';
+                if (atividades.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhuma atividade registrada</td></tr>';
+                } else {
+                    atividades.forEach(atividade => {
+                        console.log(atividade);
+                        const row = tbody.insertRow();
+                        row.insertCell(0).innerText = atividade.id || '-';
+                        row.insertCell(1).innerText = atividade.dia ? new Date(atividade.dia).toLocaleDateString('pt-BR') : '-';
+                        row.insertCell(2).innerText = atividade.atividade || '-';
+                        row.insertCell(3).innerText = atividade.inicio || '-';
+                        row.insertCell(4).innerText = atividade.final || '-';
+                        row.insertCell(5).innerText = atividade.horario || '-';
+                        
+                        const actionsCell = row.insertCell(6);
+                        actionsCell.innerHTML = `<button class="btn btn-sm btn-primary" onclick="viewAtividade(${atividade.id})">Ver</button>`;
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading atividades:', error);
+        }
     } catch (error) {
         console.error('Error loading estagiario:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -43,11 +72,15 @@ $(document).ready(async function () {
     }
 });
 
-window.editRecord = function () {
-    window.location.href = `edit-estagiario.html?id=${window.currentEstagioId}`;
+window.viewAtividade = function (atividadeId) {
+    window.location.href = `view-atividade.html?id=${atividadeId}`;
 };
 
-window.deleteRecord = async function () {
+window.newAtividade = function () {
+    window.location.href = `new-atividade.html?estagiario_id=${window.currentEstagioId}`;
+};
+
+window.deleteRecord = async function (atividadeId) {
     if (confirm('Tem certeza que deseja excluir este registro de estagiário?')) {
         try {
             const response = await fetch(`/estagiarios/${window.currentEstagioId}`, { method: 'DELETE' });
@@ -60,4 +93,8 @@ window.deleteRecord = async function () {
             alert('Erro ao excluir estagiário');
         }
     }
+};
+
+window.editAtividade = function (atividadeId) {
+    window.location.href = `edit-atividade.html?id=${atividadeId}`;
 };

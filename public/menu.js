@@ -14,10 +14,16 @@ topMenu = `
             <a class="nav-link" href="alunos.html">Alunos(as)</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="estagiarios.html">Estagiários</a>
+            <a class="nav-link" href="estagiarios.html">Estagiários(as)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="turmas.html">Turmas</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="docentes.html">Docentes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="atividades.html">Atividades</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="estagio.html">Instituições</a>

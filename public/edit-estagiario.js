@@ -20,7 +20,7 @@ $(document).ready(async function () {
         alunos.forEach(aluno => {
             const option = document.createElement('option');
             option.value = aluno.id;
-            option.textContent = `${aluno.registro || aluno.id} - ${aluno.nome}`;
+            option.textContent = `${aluno.registro} - ${aluno.nome}`;
             select.appendChild(option);
         });
     } catch (error) {
@@ -41,22 +41,6 @@ $(document).ready(async function () {
         });
     } catch (error) {
         console.error('Error loading instituicoes:', error);
-    }
-
-    // Load supervisores
-    try {
-        const response = await fetch('/supervisores');
-        const supervisores = await response.json();
-        const select = document.getElementById('supervisor_id');
-
-        supervisores.forEach(sup => {
-            const option = document.createElement('option');
-            option.value = sup.id;
-            option.textContent = sup.nome;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading supervisores:', error);
     }
 
     // Load professores (docentes)
@@ -93,6 +77,28 @@ $(document).ready(async function () {
         console.error('Error loading turmas:', error);
     }
 
+    // Load supervisores when instituicao_id changes
+    document.getElementById('instituicao_id').addEventListener('change', async function () {
+        const instituicaoId = this.value;
+        try {
+            const select = document.getElementById('supervisor_id');
+            select.innerHTML = '<option value="">Selecione um supervisor</option>';
+            const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
+            if (response.ok) {
+                const supervisores = await response.json();
+                console.log(supervisores);
+                supervisores.forEach(sup => {
+                    const option = document.createElement('option');
+                    option.value = sup.id;
+                    option.textContent = sup.nome;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading supervisores:', error);
+        }
+    });
+
     // Load estagiario data
     try {
         const response = await fetch(`/estagiarios/${id}`);
@@ -127,6 +133,24 @@ $(document).ready(async function () {
             console.error('Error loading configuracoes:', error);
         }
 
+        const instituicaoId = estagiario.instituicao_id;
+        try {
+            const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
+            if (response.ok) {
+                const supervisores = await response.json();
+                const select = document.getElementById('supervisor_id');
+                supervisores.forEach(sup => {
+                    const option = document.createElement('option');
+                    option.value = sup.id;
+                    option.textContent = sup.nome;
+                    option.selected = sup.id === estagiario.supervisor_id;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading supervisores:', error);
+        }
+
         // Format dates for input type="date" (YYYY-MM-DD)
         const formatDateForInput = (dateStr) => {
             if (!dateStr) return '';
@@ -135,14 +159,14 @@ $(document).ready(async function () {
         };
 
         // Populate form fields
-        document.getElementById('aluno_id').value = estagiario.aluno_id || '';
-        document.getElementById('professor_id').value = estagiario.professor_id || '';
-        document.getElementById('supervisor_id').value = estagiario.supervisor_id || '';
-        document.getElementById('instituicao_id').value = estagiario.instituicao_id || '';
-        document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || '';
-        document.getElementById('periodo').value = estagiario.periodo || '';
-        document.getElementById('nivel').value = estagiario.nivel || '1';
-        document.getElementById('observacoes').value = estagiario.observacoes || '';
+        document.getElementById('aluno_id').value = estagiario.aluno_id;
+        document.getElementById('professor_id').value = estagiario.professor_id || null;
+        document.getElementById('supervisor_id').value = estagiario.supervisor_id || null;
+        document.getElementById('instituicao_id').value = estagiario.instituicao_id;
+        document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || null;
+        document.getElementById('periodo').value = estagiario.periodo;
+        document.getElementById('nivel').value = estagiario.nivel;
+        document.getElementById('observacoes').value = estagiario.observacoes || null;
 
     } catch (error) {
         console.error('Error loading estagiario:', error);

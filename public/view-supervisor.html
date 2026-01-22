@@ -14,41 +14,84 @@
 
         <h1 class="mb-4">Detalhes do(a) Supervisor(a)</h1>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">ID</label>
-                    <p class="form-control-plaintext" id="view-id"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nome</label>
-                    <p class="form-control-plaintext" id="view-nome"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Email</label>
-                    <p class="form-control-plaintext" id="view-email"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Celular</label>
-                    <p class="form-control-plaintext" id="view-celular"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">CRESS</label>
-                    <p class="form-control-plaintext" id="view-cress"></p>
-                </div>
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados"
+                    type="button" role="tab" aria-controls="dados" aria-selected="true">Dados do Supervisor</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="estagiarios-tab" data-bs-toggle="tab" data-bs-target="#estagiarios" type="button"
+                    role="tab" aria-controls="estagiarios" aria-selected="false">Estagiários</button>
+            </li>
+        </ul>
 
-                <hr class="my-4">
+        <div class="tab-content" id="myTabContent">
+            <!-- DADOS TAB -->
+            <div class="tab-pane fade show active" id="dados" role="tabpanel" aria-labelledby="dados-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ID</label>
+                            <p class="form-control-plaintext" id="view-id"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nome</label>
+                            <p class="form-control-plaintext" id="view-nome"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <p class="form-control-plaintext" id="view-email"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Celular</label>
+                            <p class="form-control-plaintext" id="view-celular"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">CRESS</label>
+                            <p class="form-control-plaintext" id="view-cress"></p>
+                        </div>
 
-                <h4 class="mb-3">Instituições</h4>
-                <div id="instituicoes-list" class="mb-3">
-                    <p class="text-muted">Carregando...</p>
+                        <hr class="my-4">
+
+                        <h4 class="mb-3">Instituições</h4>
+                        <div id="instituicoes-list" class="mb-3">
+                            <p class="text-muted">Carregando...</p>
+                        </div>
+                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addInstituicaoModal">+ Adicionar Instituição</button>
+
+                        <div class="mt-4">
+                            <a href="supervisores.html" class="btn btn-secondary">Voltar</a>
+                            <button onclick="editRecord()" class="btn btn-warning">Editar</button>
+                            <a href="new-supervisor.html" class="btn btn-success">+ Novo(a)</a>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addInstituicaoModal">+ Adicionar Instituição</button>
+            </div>
 
-                <div class="mt-4">
-                    <a href="supervisores.html" class="btn btn-secondary">Voltar</a>
-                    <button onclick="editRecord()" class="btn btn-warning">Editar</button>
-                    <a href="new-supervisor.html" class="btn btn-success">+ Novo(a)</a>
+            <!-- ESTAGIARIOS TAB -->
+            <div class="tab-pane fade" id="estagiarios" role="tabpanel" aria-labelledby="estagiarios-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="table-estagiarios">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Registro</th>
+                                        <th>Nome</th>
+                                        <th>Nível</th>
+                                        <th>Período</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                            <div id="no-estagiarios-msg" class="alert alert-info d-none">
+                                Nenhum estagiário encontrado para este supervisor.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -99,6 +99,8 @@ $(document).ready(async function () {
                             <td>${est.periodo || '-'}</td>
                             <td>${nivelDisplay}</td>
                             <td>${est.professor_nome || '-'}</td>
+                            <td>${est.supervisor_nome || '-'}</td>
+                            
                             <td>
                                 <a href="view-estagiario.html?id=${est.id}" class="btn btn-sm btn-primary">Ver</a>
                             </td>
