@@ -22,11 +22,11 @@ $(document).ready(async function () {
             const atividade = await responseatividade.json();
             if (atividade.length > 0) {
                 const table = document.getElementById('atividadeTableContainer');
-                    table.innerHTML = '';  // Clear previous content
-                    // Put here a table with the atividade of the estagiario
-                    const tableElement = document.createElement('table');
-                    tableElement.className = 'table table-striped';
-                    tableElement.innerHTML = `
+                table.innerHTML = '';  // Clear previous content
+                // Put here a table with the atividade of the estagiario
+                const tableElement = document.createElement('table');
+                tableElement.className = 'table table-striped';
+                tableElement.innerHTML = `
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -56,13 +56,13 @@ $(document).ready(async function () {
                         `).join('')}
                     </tbody>
                 `;
-                    const append = document.getElementById('atividadeTableContainer');
-                    append.appendChild(tableElement);
-                    // Continua ...;
-                }
-            } catch (error) {
-                console.error('Erro ao buscar dados da atividade:', error);
+                const append = document.getElementById('atividadeTableContainer');
+                append.appendChild(tableElement);
+                // Continua ...;
             }
+        } catch (error) {
+            console.error('Erro ao buscar dados da atividade:', error);
+        }
     } catch (err) {
         console.error('Erro ao carregar dados iniciais:', err);
         alert('Erro ao carregar dados iniciais: ' + err.message);
@@ -75,7 +75,7 @@ $(document).ready(async function () {
         const data = await response.json();
 
         $('#id').val(data.id);
-        $('#estagiario_nome').val(data.aluno_nome ? `${data.aluno_nome} (${data.aluno_registro})` : `Estagiário ID: ${data.estagiario_id}`);
+        $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-alunos.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
 
         const dateObj = new Date(data.dia);
         $('#dia').val(dateObj.toLocaleDateString('pt-BR'));

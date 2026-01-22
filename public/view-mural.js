@@ -57,6 +57,7 @@ $(document).ready(async function () {
         document.getElementById('view-outras').textContent = mural.outras || 'N/A';
 
         window.currentMuralId = id;
+        loadInscricoes(id);
     } catch (error) {
         console.error('Error loading mural:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -70,4 +71,44 @@ window.editRecord = function () {
 
 window.inscrever = function () {
     window.location.href = `new-inscricao.html?muralestagio_id=${window.currentMuralId}`;
+};
+
+async function loadInscricoes(muralId) {
+    try {
+        const response = await fetch(`/mural/${muralId}/inscricoes`);
+        if (!response.ok) throw new Error('Failed to fetch inscricoes');
+        const inscricoes = await response.json();
+
+        const tbody = document.querySelector('#inscricoes-table tbody');
+        tbody.innerHTML = '';
+
+        if (inscricoes.length === 0) {
+            document.getElementById('no-inscricoes-msg').classList.remove('d-none');
+            document.getElementById('inscricoes-table').classList.add('d-none');
+            return;
+        }
+
+        document.getElementById('no-inscricoes-msg').classList.add('d-none');
+        document.getElementById('inscricoes-table').classList.remove('d-none');
+
+        inscricoes.forEach(inscricao => {
+            const tr = document.createElement('tr');
+            const data = inscricao.data ? new Date(inscricao.data).toLocaleDateString('pt-BR') : 'N/A';
+            tr.innerHTML = `
+                <td>${data}</td>
+                <td>${inscricao.aluno_nome || 'N/A'}</td>
+                <td>${inscricao.aluno_email || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="viewInscricao(${inscricao.id})">Ver</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error('Error loading inscricoes:', error);
+    }
+}
+
+window.viewInscricao = function (id) {
+    window.location.href = `view-inscricao.html?id=${id}`;
 };

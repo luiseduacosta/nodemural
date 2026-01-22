@@ -11,70 +11,97 @@
     <div class="container mt-5">
         <div id="menu-container"></div>
 
-        <div id="atividadeTableContainer"></div>
+        <div class="accordion" id="acordionAtividade">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#atividadeTableContainer" aria-expanded="true"
+                        aria-controls="atividadeTableContainer">
+                        Atividades
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                    data-bs-parent="#accordionAtividade">
+                    <div class="accordion-body">
+                        <div id="atividadeTableContainer"></div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h2>Detalhes da Atividade</h2>
-            </div>
-            <div class="card-body">
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">ID:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="id">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#atividadeCardContainer" aria-expanded="false"
+                        aria-controls="atividadeCardContainer">
+                        Detalhes da Atividade
+                    </button>
+                </h2>
+                <div id="atividadeCardContainer" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                    data-bs-parent="#accordionAtividade">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Detalhes da Atividade</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">ID:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="id">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Estagiário:</label>
+                                <div class="col-sm-10">
+                                    <span type="text" readonly class="form-control-plaintext"
+                                        id="estagiario_nome"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Data:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="dia">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Início:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="inicio">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Final:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="final">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Horário (Duração):</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="horario">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label fw-bold">Atividade:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="atividade">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="atividades.html" class="btn btn-secondary">Voltar</a>
+                        <a id="newBtn" class="btn btn-success">+ Nova</a>
+                        <button onclick="deleteRecord()" class="btn btn-danger">Excluir</button>
+                        <a id="editBtn" class="btn btn-warning">Editar</a>
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Estagiário:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="estagiario_nome">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Data:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="dia">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Início:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="inicio">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Final:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="final">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Horário (Duração):</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="horario">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label fw-bold">Atividade:</label>
-                    <div class="col-sm-10">
-                        <input type="text" readonly class="form-control-plaintext" id="atividade">
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <a href="atividades.html" class="btn btn-secondary">Voltar</a>
-                <a id="newBtn" class="btn btn-success">+ Nova</a>
-                <button onclick="deleteRecord()" class="btn btn-danger">Excluir</button>
-                <a id="editBtn" class="btn btn-warning">Editar</a>
             </div>
         </div>
 
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="menu.js"></script>
-    <script src="view-atividade.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="menu.js"></script>
+        <script src="view-atividade.js"></script>
 
 </body>
 

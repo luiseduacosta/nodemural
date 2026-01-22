@@ -14,118 +14,159 @@
 
         <h1 class="mb-4">Detalhes do Mural de Estágio</h1>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">ID</label>
-                        <p class="form-control-plaintext" id="view-id"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Período</label>
-                        <p class="form-control-plaintext" id="view-periodo"></p>
+        <ul class="nav nav-tabs mb-3" id="muralTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details"
+                    type="button" role="tab" aria-controls="details" aria-selected="true">Detalhes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="inscricoes-tab" data-bs-toggle="tab" data-bs-target="#inscricoes"
+                    type="button" role="tab" aria-controls="inscricoes" aria-selected="false">Inscrições</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="muralTabContent">
+            <!-- Details Tab -->
+            <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">ID</label>
+                                <p class="form-control-plaintext" id="view-id"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Período</label>
+                                <p class="form-control-plaintext" id="view-periodo"></p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Instituição</label>
+                            <p class="form-control-plaintext">
+                                <a id="view-link-estagio">
+                                    <span id="view-instituicao"></span>
+                                </a>
+                            </p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Vagas</label>
+                                <p class="form-control-plaintext" id="view-vagas"></p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Convênio</label>
+                                <p class="form-control-plaintext" id="view-convenio"></p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Carga Horária</label>
+                                <p class="form-control-plaintext" id="view-cargaHoraria"></p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Final de Semana</label>
+                                <p class="form-control-plaintext" id="view-final_de_semana"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Horário</label>
+                                <p class="form-control-plaintext" id="view-horario"></p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Benefícios</label>
+                            <p class="form-control-plaintext" id="view-beneficios"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Requisitos</label>
+                            <p class="form-control-plaintext" id="view-requisitos"></p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Data de Inscrição</label>
+                                <p class="form-control-plaintext" id="view-dataInscricao"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Data de Seleção</label>
+                                <p class="form-control-plaintext" id="view-dataSelecao"></p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Horário da Seleção</label>
+                                <p class="form-control-plaintext" id="view-horarioSelecao"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Local da Seleção</label>
+                                <p class="form-control-plaintext" id="view-localSelecao"></p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Forma de Seleção</label>
+                                <p class="form-control-plaintext" id="view-formaSelecao"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Local de Inscrição</label>
+                                <p class="form-control-plaintext" id="view-localInscricao"></p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Contato</label>
+                                <p class="form-control-plaintext" id="view-contato"></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Email</label>
+                                <p class="form-control-plaintext" id="view-email"></p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Outras Informações</label>
+                            <p class="form-control-plaintext" id="view-outras"></p>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="mural.html" class="btn btn-secondary">Voltar</a>
+                            <button onclick="editRecord()" class="btn btn-warning">Editar</button>
+                            <a href="new-mural.html" class="btn btn-success">+ Novo</a>
+                            <button onclick="inscrever()" class="btn btn-primary">Inscrição</button>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Instituição</label>
-                    <p class="form-control-plaintext">
-                        <a id="view-link-estagio">
-                            <span id="view-instituicao"></span>
-                        </a>
-                    </p>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-bold">Vagas</label>
-                        <p class="form-control-plaintext" id="view-vagas"></p>
+            <!-- Inscrições Tab -->
+            <div class="tab-pane fade" id="inscricoes" role="tabpanel" aria-labelledby="inscricoes-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Inscrições Realizadas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="inscricoes-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Aluno</th>
+                                        <th>Email</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                            <p id="no-inscricoes-msg" class="text-muted d-none">Nenhuma inscrição encontrada.</p>
+                        </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-bold">Convênio</label>
-                        <p class="form-control-plaintext" id="view-convenio"></p>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-bold">Carga Horária</label>
-                        <p class="form-control-plaintext" id="view-cargaHoraria"></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Final de Semana</label>
-                        <p class="form-control-plaintext" id="view-final_de_semana"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Horário</label>
-                        <p class="form-control-plaintext" id="view-horario"></p>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Benefícios</label>
-                    <p class="form-control-plaintext" id="view-beneficios"></p>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Requisitos</label>
-                    <p class="form-control-plaintext" id="view-requisitos"></p>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Data de Inscrição</label>
-                        <p class="form-control-plaintext" id="view-dataInscricao"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Data de Seleção</label>
-                        <p class="form-control-plaintext" id="view-dataSelecao"></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Horário da Seleção</label>
-                        <p class="form-control-plaintext" id="view-horarioSelecao"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Local da Seleção</label>
-                        <p class="form-control-plaintext" id="view-localSelecao"></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Forma de Seleção</label>
-                        <p class="form-control-plaintext" id="view-formaSelecao"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Local de Inscrição</label>
-                        <p class="form-control-plaintext" id="view-localInscricao"></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Contato</label>
-                        <p class="form-control-plaintext" id="view-contato"></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Email</label>
-                        <p class="form-control-plaintext" id="view-email"></p>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Outras Informações</label>
-                    <p class="form-control-plaintext" id="view-outras"></p>
-                </div>
-
-                <div class="mt-4">
-                    <a href="mural.html" class="btn btn-secondary">Voltar</a>
-                    <button onclick="editRecord()" class="btn btn-warning">Editar</button>
-                    <a href="new-mural.html" class="btn btn-success">+ Novo</a>
-                    <button onclick="inscrever()" class="btn btn-primary">Inscrição</button>
                 </div>
             </div>
         </div>

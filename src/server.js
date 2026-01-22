@@ -715,6 +715,28 @@ app.get('/inscricoes/:aluno_id/:muralestagio_id', async (req, res) => {
   }
 });
 
+// GET INSCRICOES FOR A SPECIFIC MURAL
+app.get('/mural/:id/inscricoes', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const query = `
+      SELECT i.*, a.nome as aluno_nome, a.email as aluno_email, a.registro as aluno_registro
+      FROM inscricoes i
+      LEFT JOIN alunos a ON i.aluno_id = a.id
+      WHERE i.muralestagio_id = ?
+      ORDER BY i.data DESC
+    `;
+    const rows = await conn.query(query, [req.params.id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  } finally {
+    if (conn) conn.end();
+  }
+});
+
 // CREATE INSCRICAO
 app.post('/inscricoes', async (req, res) => {
   let conn;
@@ -1323,6 +1345,7 @@ app.put('/configuracoes', async (req, res) => {
     if (conn) conn.end();
   }
 });
+
 // --- FOLHA DE ATIVIDADES ENDPOINTS ---
 
 // READ ALL ATIVIDADES WITH JOIN ESTAGIARIOS AND ALUNOS
@@ -1359,7 +1382,7 @@ app.get('/atividades/:id', async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const query = `SELECT f.*, a.nome as aluno_nome, a.registro as aluno_registro 
+    const query = `SELECT f.*, a.nome as aluno_nome, a.id as alunoId, a.registro as aluno_registro 
                  FROM folhadeatividades f 
                  LEFT JOIN estagiarios e ON f.estagiario_id = e.id 
                  LEFT JOIN alunos a ON e.aluno_id = a.id
