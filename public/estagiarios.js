@@ -1,10 +1,30 @@
 $(document).ready(function () {
 
-    let table;
+    // Setup - add a text input to each footer cell
+    $('#estagiariosTable thead tr').clone(true).appendTo('#estagiariosTable thead');
+    $('#estagiariosTable thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        if (title === 'Ações') {
+            $(this).html('');
+            return;
+        }
+        $(this).html('<input type="text" placeholder="Pesquisar ' + title + '" />');
 
-    // Initialize DataTable but defer loading until we set the filter
+        $('input', this).on('keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table
+                    .column(i)
+                    .search(this.value)
+                    .draw();
+            }
+        });
+    });
+
+    let table;
+    // Initialize DataTable
     table = $('#estagiariosTable').DataTable({
         order: [[3, 'desc'], [1, 'asc']],
+        orderCellsTop: true,
         ajax: {
             url: '/estagiarios',
             data: function (d) {
@@ -14,19 +34,20 @@ $(document).ready(function () {
                 }
             },
             dataSrc: ''
-            },
+        },
         columns: [
-            { data: 'id' },
-            { 
-                data: 'aluno_nome', 
-                render: function (data, type, row) { 
-                    return `<a href="view-estagiario.html?id=${row.id}">${row.aluno_nome || '-'}</a>` 
-                } 
+            { data: 'aluno_registro' },
+            {
+                data: 'aluno_nome',
+                render: function (data, type, row) {
+                    return `<a href="view-estagiario.html?id=${row.id}">${row.aluno_nome || '-'}</a>`
+                }
             },
+            { data: 'professor_nome', defaultContent: '-' },
             { data: 'instituicao_nome', defaultContent: '-' },
+            { data: 'supervisor_nome', defaultContent: '-' },
             { data: 'periodo', defaultContent: '-' },
             { data: 'nivel', defaultContent: '-' },
-            { data: 'professor_nome', defaultContent: '-' },
             {
                 data: null,
                 render: function (data, type, row) {
@@ -42,15 +63,12 @@ $(document).ready(function () {
         }
     });
 
-    // Load Periodos and Config
-    loadFilters();
 
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
             const periodosRes = await fetch('/estagiarios/periodos');
             const periodos = await periodosRes.json();
-            console.log(periodos);
             const select = $('#periodoFilter');
             select.empty();
 
@@ -64,8 +82,6 @@ $(document).ready(function () {
             if (configRes.ok) {
                 const config = await configRes.json();
                 if (config.termo_compromisso_periodo) {
-                    // Check if the config period is in our list, if not add it (though it should be if data is consistent)
-                    // If the list has it, select it.
                     select.val(config.termo_compromisso_periodo);
                 }
             }
@@ -78,6 +94,9 @@ $(document).ready(function () {
             $('#periodoFilter').html('<option value="">Erro ao carregar</option>');
         }
     }
+
+    // Load Periodos and Config
+    loadFilters();
 
     // Handle Change
     $('#periodoFilter').on('change', function () {

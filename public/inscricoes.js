@@ -80,6 +80,7 @@ $(document).ready(function () {
         table.ajax.reload();
     });
 
+    // Delete Inscricao
     window.deleteInscricao = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
             await fetch(`/inscricoes/${id}`, { method: 'DELETE' });

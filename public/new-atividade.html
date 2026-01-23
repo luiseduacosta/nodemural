@@ -9,27 +9,46 @@
 <body>
 
     <div class="container mt-5">
+
         <div id="menu-container"></div>
 
         <h2>Nova Atividade</h2>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                Informações do Estágio
-            </div>
-            <div class="card-body">
-                <h5 class="card-title"><span id="nome"></span></h5>
-                <p class="card-text">
-                    <strong>ID:</strong> <span id="id"></span> |
-                    <strong>Registro:</strong> <span id="registro"></span> |
-                    <strong>Período:</strong> <span id="periodo"></span> |
-                    <strong>Nível:</strong> <span id="nivel"></span>
-                </p>
-                <p class="card-text"><strong>Instituição:</strong> <span id="instituicao_nome"></span></p>
-            </div>
-        </div>
+        <div class="accordion" id="accordionAtividade">
 
-        <div id="atividadeTableContainer"></div>
+            <div class="accordion-item" id="accordionAtividadeInfo">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#atividadeInfo" aria-expanded="true" aria-controls="atividadeInfo">
+                        Informações do Estágio
+                    </button>
+                </h2>
+                <div class="card mb-4" id="atividadeInfo">
+                    <div class="card-body">
+                        <h5 class="card-title"><span id="nome"></span></h5>
+                        <p class="card-text">
+                            <strong>ID:</strong> <span id="id"></span> |
+                            <strong>Registro:</strong> <span id="registro"></span> |
+                            <strong>Período:</strong> <span id="periodo"></span> |
+                            <strong>Nível:</strong> <span id="nivel"></span>
+                        </p>
+                        <p class="card-text"><strong>Instituição:</strong> <span id="instituicao_nome"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item" id="accordionAtividadeTable">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#atividadeTableContainer" aria-controls="atividadeTableContainer"
+                        aria-expanded="true">
+                        Tabela de Atividades
+                    </button>
+                </h2>
+                <div id="atividadeTableContainer" class="card mb-4"></div>
+            </div>
+
+        </div>
 
         <form id="newAtividadeForm">
             <div class="mb-3">
