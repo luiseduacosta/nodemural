@@ -8,7 +8,7 @@ $(document).ready(function () {
             url: '/mural',
             data: function (d) {
                 const periodo = $('#periodoFilter').val();
-                if (periodo) {
+                if (periodo && periodo !== 'Todos') {
                     d.periodo = periodo;
                 }
             },
@@ -60,21 +60,39 @@ $(document).ready(function () {
             const select = $('#periodoFilter');
             select.empty();
 
-            // Add periods from DB
-            periodos.forEach(p => {
-                select.append(new Option(p.periodo, p.periodo));
-            });
+            // Add 'Todos' option
+            const option = document.createElement("option");
+            option.value = 'Todos';
+            option.text = 'Todos';
+            select.append(option);
 
-            // 2. Get Default Config
+            // 2. Get mural_periodo_atual (periodo) from Configuracoes and select it
             const configRes = await fetch('/configuracoes');
             if (configRes.ok) {
                 const config = await configRes.json();
                 if (config.mural_periodo_atual) {
-                    // Check if the config period is in our list, if not add it (though it should be if data is consistent)
                     // If the list has it, select it.
-                    select.val(config.mural_periodo_atual);
+                    let found = false;
+                    periodos.forEach(p => {
+                        if (p.periodo === config.mural_periodo_atual) {
+                            found = true;
+                            const option = document.createElement("option");
+                            option.value = p.periodo;
+                            option.text = p.periodo;
+                            option.selected = true;
+                            select.append(option);
+                        }
+                    });
                 }
             }
+
+            // 3. Add periods from DB with default selected
+            periodos.forEach(p => {
+                const option = document.createElement("option");
+                option.value = p.periodo;
+                option.text = p.periodo;
+                select.append(option);
+            });
 
             // Reload table with the new default filter
             table.ajax.reload();
