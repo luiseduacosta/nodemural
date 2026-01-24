@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questões de Avaliação</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Questões de Avaliação</h1>
+            <a href="new-questao.html" class="btn btn-success">+ Nova Questão</a>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="questionarioFilter" class="form-label fw-bold">Questionário:</label>
+                <select id="questionarioFilter" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </div>
+
+        <table id="questoesTable" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Questionário</th>
+                    <th>Ordem</th>
+                    <th>Texto</th>
+                    <th>Tipo</th>
+                    <th>Opções (JSON)</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="questoes.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Questão</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Editar Questão</h1>
+
+        <form id="editQuestaoForm">
+            <input type="hidden" id="questaoId">
+            <div class="mb-3">
+                <label for="questionario_id" class="form-label">Questionário</label>
+                <select class="form-select" id="questionario_id" required>
+                    <option value="">Selecione...</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="text" class="form-label">Texto da Questão</label>
+                <input type="text" class="form-control" id="text" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="ordem" class="form-label">Ordem</label>
+                <input type="number" class="form-control" id="ordem" value="0">
+            </div>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Tipo</label>
+                <select class="form-select" id="type">
+                    <option value="text">Texto (Resposta Curta)</option>
+                    <option value="paragraph">Parágrafo (Resposta Longa)</option>
+                    <option value="radio">Múltipla Escolha (Radio)</option>
+                    <option value="checkbox">Caixa de Seleção (Checkbox)</option>
+                    <option value="select">Lista Suspensa (Select)</option>
+                </select>
+            </div>
+
+            <!-- Dynamic Options Section -->
+            <div class="mb-3" id="optionsContainer" style="display: none;">
+                <label class="form-label">Opções</label>
+                <div id="optionsList">
+                    <!-- Options will be added here -->
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary mt-2" id="addOptionBtn">+ Adicionar Opção</button>
+            </div>
+
+            <div class="mb-3">
+                <label for="modified" class="form-label">Data de Modificação</label>
+                <input type="timestamp" class="form-control" id="modified">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="questoes.html" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="edit-questao.js"></script>
+</body>
+
+</html>
