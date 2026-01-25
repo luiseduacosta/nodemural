@@ -1,20 +1,57 @@
+// src/controllers/questaoController.js
 $(document).ready(function () {
+    // Setup
+    const urlParams = new URLSearchParams(window.location.search);
+    const questionario_id = urlParams.get("questionario_id");
+
+    // Verify if there is a questionario_id in the url
+    // If there is, load the questionario data
+    // If there is not, load all questionarios data
+    async function loadData() {
+        try {
+            if (questionario_id) {
+                $.ajax({
+                    url: `/questoes?questionario_id=${questionario_id}`,
+                    type: "GET",
+                    success: function (data) {
+                        table.clear().rows.add(data).draw();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading questionario:", error);
+                        alert("Erro ao carregar questionario");
+                    },
+                });
+            } else {
+                $.ajax({
+                    url: `/questoes`,
+                    type: "GET",
+                    success: function (data) {
+                        table.clear().rows.add(data).draw();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading questionario:", error);
+                        alert("Erro ao carregar questionario");
+                    },
+                });
+            }
+        } catch (error) {
+            console.error("Error loading data:", error);
+            alert("Erro ao carregar dados");
+        }
+    }
+
+    loadData();
+
+    // Setup - add a text input to each footer cell
     let table;
 
     // Initialize DataTable
     table = $("#questoesTable").DataTable({
         order: [
-            [1, "asc"], // Questionario
             [2, "asc"], // Ordem
         ],
         ajax: {
             url: "/questoes",
-            data: function (d) {
-                const questionario_id = $("#questionarioFilter").val();
-                if (questionario_id) {
-                    d.questionario_id = questionario_id;
-                }
-            },
             dataSrc: "",
         },
         columns: [
@@ -46,46 +83,31 @@ $(document).ready(function () {
         },
     });
 
-    // Load Questionarios for Filter
-    async function loadFilters() {
-        try {
-            const res = await fetch("/questionarios");
-            const questionarios = await res.json();
-            const select = $("#questionarioFilter");
-
-            questionarios.forEach((q) => {
-                const option = document.createElement("option");
-                option.value = q.id;
-                option.text = q.title;
-                select.append(option);
-            });
-
-        } catch (error) {
-            console.error("Error loading filters:", error);
-        }
-    }
-
-    loadFilters();
-
-    // Handle Filter Change
-    $("#questionarioFilter").on("change", function () {
-        table.ajax.reload();
-    });
-
+    // Delete Questao
     window.deleteQuestao = async (id) => {
         if (confirm("Tem certeza que deseja excluir esta questão?")) {
             try {
-                const response = await fetch(`/questoes/${id}`, {
-                    method: "DELETE",
+                $.ajax({
+                    url: `/questoes/${id}`,
+                    type: "DELETE",
+                    success: function (data) {
+                        console.log("Questão excluida");
+                        table.ajax.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error deleting questao:", error);
+                        alert("Erro ao excluir questão");
+                    },
                 });
-                if (!response.ok) {
-                    throw new Error("Erro ao excluir");
-                }
-                table.ajax.reload();
             } catch (error) {
                 console.error("Error deleting questao:", error);
                 alert("Erro ao excluir questão");
             }
         }
+    };
+
+    // Add Questao
+    window.addQuestao = async () => {
+        window.location.href = "add-questao.html";
     };
 });

@@ -1,16 +1,22 @@
+// src/public/new-questao.js
 $(document).ready(function () {
     // Load Questionarios
     async function loadQuestionarios() {
-        try {
-            const res = await fetch("/questionarios");
-            const questionarios = await res.json();
-            const select = $("#questionario_id");
-            questionarios.forEach((q) => {
-                select.append(new Option(q.title, q.id));
-            });
-        } catch (error) {
-            console.error("Error loading questionarios:", error);
-        }
+        $.ajax({
+            url: "/questionarios",
+            type: "GET",
+            success: function (data) {
+                console.log("Questionário encontrado");
+                const select = $("#questionario_id");
+                data.forEach((q) => {
+                    select.append(new Option(q.title, q.id));
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading questionario:", error);
+                alert("Erro ao carregar questionario");
+            },
+        });
     }
     loadQuestionarios();
 
@@ -77,23 +83,24 @@ $(document).ready(function () {
         };
 
         try {
-            const response = await fetch("/questoes", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            console.log(data);
+            $.ajax({
+                url: "/questoes",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    console.log("Questão salva com sucesso!");
+                    window.location.href = "view-questao.html?id=" + data.id;
                 },
-                body: JSON.stringify(data),
+                error: function (xhr, status, error) {
+                    console.error("Error saving questao:", error);
+                    alert("Erro ao salvar questão");
+                },
             });
-
-            if (!response.ok) {
-                throw new Error("Erro ao salvar");
-            }
-
-            // alert("Questão salva com sucesso!");
-            window.location.href = "view-questao.html?id=" + row.id;
         } catch (error) {
             console.error("Error saving questao:", error);
-            // alert("Erro ao salvar questão");
+            alert("Erro ao salvar questão");
         }
     });
 });

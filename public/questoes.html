@@ -20,15 +20,6 @@
             <a href="new-questao.html" class="btn btn-success">+ Nova Questão</a>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="questionarioFilter" class="form-label fw-bold">Questionário:</label>
-                <select id="questionarioFilter" class="form-select">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-        </div>
-
         <table id="questoesTable" class="table table-striped" style="width:100%">
             <thead>
                 <tr>
@@ -50,8 +41,101 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="menu.js"></script>
-    <script src="questoes.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            // Função para carregar o menu
+            async function loadMenu() {
+                try {
+                    const response = await fetch('menu.html');
+                    const html = await response.text();
+                    document.getElementById('menu-container').innerHTML = html;
+                } catch (error) {
+                    console.error('Erro ao carregar o menu:', error);
+                }
+            }
+
+            // Carregar o menu ao iniciar a página
+            loadMenu();
+
+            // Setup
+            const urlParams = new URLSearchParams(window.location.search);
+            const questionario_id = urlParams.get("questionario_id");
+
+            console.log("Questionario ID: " + questionario_id);
+
+            // Setup DataTable
+            let table;
+
+            // Initialize DataTable
+            table = $("#questoesTable").DataTable({
+                order: [
+                    [1, "asc"], // Questionario
+                    [2, "asc"], // Ordem
+                ],
+                ajax: {
+                    url: "/questao",
+                    data: function (d) {
+                        if (questionario_id) {
+                            d.questionario_id = questionario_id;
+                        }
+                    },
+                    dataSrc: "",
+                },
+                columns: [
+                    { data: "id" },
+                    { data: "questionario_title", defaultContent: "-" },
+                    { data: "ordem", defaultContent: "0" },
+                    { data: "text" },
+                    { data: "type" },
+                    {
+                        data: "options",
+                        render: function (data) {
+                            if (!data) return "-";
+                            return data.length > 50 ? data.substr(0, 50) + "..." : data;
+                        },
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                        <button onclick="window.location.href='view-questao.html?id=${row.id}'" class="btn btn-sm btn-info">Visualizar</button>
+                        <button onclick="deleteQuestao(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
+                    `;
+                        },
+                    },
+                ],
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json",
+                },
+            });
+
+            // Delete Questao            
+            window.deleteQuestao = async (id) => {
+                if (confirm("Tem certeza que deseja excluir esta questão? " + id)) {
+                    try {
+                        $.ajax({
+                            url: `/questao/${id}`,
+                            type: "DELETE",
+                            success: function () {
+                                alert("Questão excluída com sucesso");
+                                table.ajax.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error 1 deleting questao: " + id, error);
+                                alert("Erro 1 ao excluir questão");
+                            },
+                        });
+                    } catch (error) {
+                        console.error("Error 2 deleting questao: " + id, error);
+                        alert("Erro 2 ao excluir questão");
+                    }
+                }
+            };
+        });
+    </script>
 
 </body>
 

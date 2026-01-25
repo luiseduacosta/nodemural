@@ -16,7 +16,15 @@ async function createTable() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         instituicao VARCHAR(255) NOT NULL,
         cnpj VARCHAR(20) NOT NULL,
-        beneficio VARCHAR(255)
+        beneficio VARCHAR(255) NULL,
+        email VARCHAR(90) NULL,
+        telefone VARCHAR(15) NULL,
+        celular VARCHAR(15) NULL,
+        cep VARCHAR(8) NULL,
+        endereco VARCHAR(255) NULL,
+        bairro VARCHAR(30) NULL,
+        municipio VARCHAR(30) NULL,
+        observacao VARCHAR(255) NULL
       )
     `);
         console.log('Table estagio created successfully or already exists.');

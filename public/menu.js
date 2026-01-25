@@ -7,7 +7,7 @@ topMenu = `
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item active">
+          <li class="nav-item">
             <a class="nav-link" href="mural.html">Mural</a>
           </li>          
           <li class="nav-item">
@@ -24,6 +24,10 @@ topMenu = `
           </li>
           <li class="nav-item">
             <a class="nav-link" href="atividades.html">Atividades</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="questionario.html">Questionários</a>
+          Avaliação</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="estagio.html">Instituições</a>

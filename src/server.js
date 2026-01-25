@@ -2,11 +2,17 @@ import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import mariadb, { SqlError } from "mariadb";
+import questionarioRoutes from "./routers/questionarioRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+const router = express.Router();
+router.use(questionarioRoutes);
+
+app.use("/questionarios", router);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
@@ -1677,7 +1683,7 @@ app.get("/questionarios", async (req, res) => {
 // --- QUESTOES ENDPOINTS ---
 
 // READ ALL QUESTOES
-app.get("/questoes", async (req, res) => {
+app.get("/questao", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
@@ -1688,6 +1694,7 @@ app.get("/questoes", async (req, res) => {
     `;
     let params = [];
 
+    // Optional: filter by questionario_id if needed in future
     if (req.query.questionario_id) {
       query += " WHERE q.questionario_id = ?";
       params.push(req.query.questionario_id);
@@ -1705,7 +1712,7 @@ app.get("/questoes", async (req, res) => {
 });
 
 // READ ONE QUESTAO
-app.get("/questoes/:id", async (req, res) => {
+app.get("/questao/:id", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
@@ -1724,7 +1731,7 @@ app.get("/questoes/:id", async (req, res) => {
 });
 
 // CREATE QUESTAO
-app.post("/questoes", async (req, res) => {
+app.post("/questao", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
@@ -1749,7 +1756,7 @@ app.post("/questoes", async (req, res) => {
 });
 
 // UPDATE QUESTAO
-app.put("/questoes/:id", async (req, res) => {
+app.put("/questao/:id", async (req, res) => {
   const questaoId = req.params.id;
   const newData = req.body;
   let conn;
@@ -1776,7 +1783,7 @@ app.put("/questoes/:id", async (req, res) => {
 });
 
 // DELETE QUESTAO
-app.delete("/questoes/:id", async (req, res) => {
+app.delete("/questao/:id", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();

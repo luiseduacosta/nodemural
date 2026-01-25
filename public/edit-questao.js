@@ -1,4 +1,19 @@
+// src/controllers/questaoController.js
 $(document).ready(function () {
+
+    // Load Menu
+    async function loadMenu() {
+        try {
+            const response = await fetch('menu.html');
+            const html = await response.text();
+            document.getElementById('menu-container').innerHTML = html;
+        } catch (error) {
+            console.error('Erro ao carregar o menu:', error);
+        }
+    }
+    loadMenu();
+
+    // Setup
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
 
@@ -14,45 +29,58 @@ $(document).ready(function () {
     async function loadData() {
         try {
             // 1. Load Questionarios
-            const qRes = await fetch("/questionarios");
-            const questionarios = await qRes.json();
-            const select = $("#questionario_id");
-            questionarios.forEach((q) => {
-                select.append(new Option(q.title, q.id));
+            $.ajax({
+                url: "/questionarios",
+                type: "GET",
+                success: function (questionarios) {
+                    const select = $("#questionario_id");
+                    questionarios.forEach((q) => {
+                        select.append(new Option(q.title, q.id));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Erro ao carregar questionarios:", error);
+                    alert("Erro ao carregar questionarios");
+                }
             });
 
             // 2. Load Questao Data
-            const res = await fetch(`/questoes/${id}`);
-            if (!res.ok) throw new Error("Questao not found");
-            const questao = await res.json();
+            $.ajax({
+                url: `/questao/${id}`,
+                type: "GET",
+                success: function (questao) {
+                    console.log("Questao loaded: ", questao);
 
-            console.log("Questao loaded: ", questao);
-
-            // Populate Form
-            $("#questionario_id").val(questao.questionario_id);
-            $("#text").val(questao.text);
-            $("#ordem").val(questao.ordem);
-            $("#type").val(questao.type).trigger("change");
-            // Populate Options if they exist and are needed
-            if (
-                ["radio", "checkbox", "select"].includes(questao.type) &&
-                questao.options
-            ) {
-                try {
-                    const optionsArray = JSON.parse(questao.options);
-                    if (Array.isArray(optionsArray)) {
-                        optionsArray.forEach((opt) => addOptionInput(opt));
+                    // Populate Form
+                    $("#questionario_id").val(questao.questionario_id);
+                    $("#text").val(questao.text);
+                    $("#ordem").val(questao.ordem);
+                    $("#type").val(questao.type).trigger("change");
+                    // Populate Options if they exist and are needed
+                    if (
+                        ["radio", "checkbox", "select"].includes(questao.type) &&
+                        questao.options
+                    ) {
+                        try {
+                            const optionsArray = JSON.parse(questao.options);
+                            if (Array.isArray(optionsArray)) {
+                                optionsArray.forEach((opt) => addOptionInput(opt));
+                            }
+                        } catch (e) {
+                            console.error("Error parsing options JSON:", e);
+                            // Fallback if not valid JSON array, maybe add single input
+                            addOptionInput(questao.options);
+                        }
                     }
-                } catch (e) {
-                    console.error("Error parsing options JSON:", e);
-                    // Fallback if not valid JSON array, maybe add single input
-                    addOptionInput(questao.options);
+                    const today = new Date().toISOString().split("T")[0].split("-").reverse().join("-");
+                    $("#modified").val(today);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Erro ao carregar questao:", error);
+                    alert("Erro ao carregar questao");
                 }
-            }
-            const today = new Date().toISOString().split("T")[0].split("-").reverse().join("-");
-            $("#modified").val(today);
-
-        } catch (error) { 
+            });
+        } catch (error) {
             console.error("Error loading data:", error);
             alert("Erro ao carregar dados");
         }
@@ -110,7 +138,7 @@ $(document).ready(function () {
             });
             options = JSON.stringify(optionsArray);
         }
-        
+
         const data = {
             questionario_id: $("#questionario_id").val(),
             text: $("#text").val(),
@@ -135,7 +163,7 @@ $(document).ready(function () {
                 },
                 body: JSON.stringify(data),
             });
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Erro ao salvar: ${errorData.message || response.statusText}`);

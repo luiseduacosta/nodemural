@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Questionário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Sistema de Gestão de Estágio</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="questionario.html">Questionários</a></li>
+                    <li class="nav-item"><a class="nav-link" href="new-questionario.html">Novo Questionário</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4">Novo Questionário</h1>
+
+        <form id="newQuestionarioForm">
+            <div class="mb-3">
+                <label for="title" class="form-label">Título</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="category" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="category" name="category">
+                </div>
+                <div class="col-md-6">
+                    <label for="target_user_type" class="form-label">Tipo de Usuário Alvo</label>
+                    <input type="text" class="form-control" id="target_user_type" name="target_user_type">
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                <label class="form-check-label" for="is_active">
+                    Ativo
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="questionario.html" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script>
+        $('#newQuestionarioForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                title: $('#title').val(),
+                description: $('#description').val(),
+                category: $('#category').val(),
+                target_user_type: $('#target_user_type').val(),
+                is_active: $('#is_active').is(':checked'),
+                created: new Date().toISOString().split("T")[0],
+                modified: new Date().toISOString().split("T")[0]
+            };
+
+            $.ajax({
+                url: '/questionarios',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function () {
+                    alert('Questionário criado com sucesso!');
+                    window.location.href = 'questionario.html';
+                },
+                error: function (xhr) {
+                    alert('Erro ao criar questionário: ' + xhr.responseText);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
