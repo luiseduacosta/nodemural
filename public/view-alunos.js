@@ -55,11 +55,11 @@ $(document).ready(async function () {
                     inscricoes.forEach(ins => {
                         const tr = document.createElement('tr');
 
-                        const dateLocal = ins.data ? new Date(ins.data).toLocaleDateString('pt-BR') : '';
+                        const dateLocal = ins.data_inscricao ? new Date(ins.data_inscricao).toLocaleDateString('pt-BR') : '';
 
                         tr.innerHTML = `
                             <td>${ins.id}</td>
-                            <td>${ins.instituicao || '-'}</td>
+                            <td>${ins.mural_instituicao || '-'}</td>
                             <td>${ins.periodo || '-'}</td>
                             <td>${dateLocal}</td>
                             <td>

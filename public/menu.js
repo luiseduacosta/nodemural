@@ -1,52 +1,15 @@
-topMenu = `
- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Mural de estágios</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="mural.html">Mural</a>
-          </li>          
-          <li class="nav-item">
-            <a class="nav-link" href="alunos.html">Alunos(as)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="estagiarios.html">Estagiários(as)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="turmas.html">Turmas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="docentes.html">Docentes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="atividades.html">Atividades</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="questionario.html">Questionários</a>
-          Avaliação</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="estagio.html">Instituições</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="supervisores.html">Supervisores(as)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="view-configuracoes.html">Configurações</a>
-          </li>
-        </ul>
-    </div>
-</nav>
-`;
-
-const container = document.getElementById('menu-container');
-
-if (container) {
-  container.innerHTML = topMenu;
-} else {
-  console.error('Elemento de menu não encontrado.');
-}
+// Top Menu
+$(document).ready(function () {
+  // Função para carregar o menu
+  async function loadMenu() {
+    try {
+      const response = await fetch('menu.html');
+      const html = await response.text();
+      document.getElementById('menu-container').innerHTML = html;
+    } catch (error) {
+      console.error('Erro ao carregar o menu:', error);
+    }
+  }
+  // Carregar o menu ao iniciar a página
+  loadMenu();
+});

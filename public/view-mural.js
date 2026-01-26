@@ -86,7 +86,7 @@ async function loadInscricoes(currentMuralId) {
             { data: 'registro' },
             { data: 'aluno_nome' },
             {
-                data: 'data', render: function (data) {
+                data: 'data_inscricao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
                     return date.toLocaleDateString('pt-BR');
@@ -95,7 +95,7 @@ async function loadInscricoes(currentMuralId) {
             {
                 data: 'acoes', render: function (data, type, row) {
                     return `
-                    <button onclick="window.location.href='view-inscricao.html?id=${row.id}'" class="btn btn-sm btn-warning">Visualizar</button>
+                    <button onclick="window.location.href='view-inscricao.html?id=${row.inscricao_id}'" class="btn btn-sm btn-warning">Visualizar</button>
                     <button onclick="deleteInscricao(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
                 `;
                 }

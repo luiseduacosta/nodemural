@@ -40,7 +40,6 @@ async function verify() {
                 throw err;
             }
         }
-
         console.log('\nVerification Passed!');
     } catch (err) {
         console.error('Verification Failed:', err.message);

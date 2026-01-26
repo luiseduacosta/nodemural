@@ -11,8 +11,8 @@ $(document).ready(async function () {
 
             const supervisor = await response.json();
             document.getElementById('nome').value = supervisor.nome;
-            document.getElementById('email').value = supervisor.email;
-            document.getElementById('celular').value = supervisor.celular;
+            document.getElementById('email').value = supervisor.email || '';
+            document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
             document.getElementById('supervisorId').value = supervisor.id;
             
@@ -42,8 +42,8 @@ $(document).ready(async function () {
         e.preventDefault();
         const supervisor = {
             nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value,
-            celular: document.getElementById('celular').value,
+            email: document.getElementById('email').value || '',
+            celular: document.getElementById('celular').value || null,
             cress: document.getElementById('cress').value
         };
 

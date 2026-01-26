@@ -8,7 +8,12 @@ $(document).ready(function () {
             nome: document.getElementById('nome').value,
             siape: document.getElementById('siape').value,
             email: document.getElementById('email').value,
-            celular: document.getElementById('celular').value
+            celular: document.getElementById('celular').value,
+            curriculolattes: document.getElementById('curriculolattes').value,
+            departamento: document.getElementById('departamentoId').value,
+            dataegresso: document.getElementById('dataegresso').value,
+            motivoegresso: document.getElementById('motivoegresso').value,
+            observacoes: document.getElementById('observacoes').value
         };
 
         try {
@@ -23,8 +28,9 @@ $(document).ready(function () {
                 throw new Error(error.error || 'Failed to create docente');
             }
 
+            const result = await response.json();
             // Redirect to view page
-            window.location.href = 'view-docentes.html/' + await response.json().id;
+            window.location.href = 'view-docente.html?id=' + result.id;
         } catch (error) {
             console.error('Error creating docente:', error);
             alert(`Erro ao criar docente: ${error.message}`);

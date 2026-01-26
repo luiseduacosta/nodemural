@@ -1,12 +1,13 @@
 $(document).ready(function () {
   const table = $('#alunosTable').DataTable({
-    order: [[1, 'asc']],
+    order: [[3, 'asc']],
     ajax: {
       url: '/alunos',
       dataSrc: ''
     },
     columns: [
       { data: 'id' },
+      { data: 'registro' },
       { data: 'nome', render: function (data, type, row) { return `<a href="view-alunos.html?id=${row.id}">${row.nome}</a>` } },
       { data: 'email' },
       { data: 'ingresso' },
@@ -27,8 +28,16 @@ $(document).ready(function () {
 
   window.deleteAluno = async (id) => {
     if (confirm('Tem certeza?')) {
-      await fetch(`/alunos/${id}`, { method: 'DELETE' });
-      table.ajax.reload();
+      $.ajax({
+        url: `/alunos/${id}`,
+        type: 'DELETE',
+        success: function (result) {
+          table.ajax.reload();
+        },
+        error: function (xhr, status, error) {
+          console.error('Error deleting aluno:', error);
+        }
+      });
     }
   };
 })

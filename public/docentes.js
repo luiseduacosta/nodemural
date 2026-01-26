@@ -11,6 +11,7 @@ $(document).ready(function () {
             { data: 'siape' },
             { data: 'email' },
             { data: 'celular', defaultContent: '' },
+            { data: 'departamento', defaultContent: 'Outras áreas' },
             {
                 data: null,
                 render: function (data, type, row) {

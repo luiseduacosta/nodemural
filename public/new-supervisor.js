@@ -6,8 +6,8 @@ $(document).ready(function () {
         
         const supervisor = {
             nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value,
-            celular: document.getElementById('celular').value,
+            email: document.getElementById('email').value || null,
+            celular: document.getElementById('celular').value || '',
             cress: document.getElementById('cress').value
         };
 

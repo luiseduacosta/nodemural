@@ -29,6 +29,10 @@
                         <input type="text" class="form-control" id="siape" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" required>
                     </div>
@@ -36,8 +40,36 @@
                         <label class="form-label">Celular</label>
                         <input type="text" class="form-control" id="celular">
                     </div>
+                    <div class="mb-3">
+                        <!-- Options: Fundamentos, Métodos e técnicas, Política social, Outras áreas -->
+                        <label class="form-label">Departamento</label>
+                        <select class="form-select" id="departamentoID" required>
+                            <option value="Sem dados">Selecione o departamento</option>
+                            <option value="Fundamentos">Fundamentos</option>
+                            <option value="Métodos e técnicas">Métodos e técnicas</option>
+                            <option value="Política social">Política social</option>
+                            <option value="Outras áreas">Outras áreas</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Currículo Lattes</label>
+                        <input type="text" class="form-control" id="curriculolattes">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Egresso</label>
+                        <input type="text" class="form-control" id="dataegresso">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Motivo Egresso</label>
+                        <input type="text" class="form-control" id="motivoegresso">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <input type="text" class="form-control" id="observacoes">
+                    </div>
+
                     <div class="mt-4">
-                        <a href="view-docentes.html" class="btn btn-secondary">Cancelar</a>
+                        <a href="docentes.html" class="btn btn-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                     </div>
                 </form>

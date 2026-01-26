@@ -10,7 +10,7 @@ $(document).ready(async function () {
 
     // Load turma data
     try {
-        const response = await fetch(`/turma_estagios/${id}`);
+        const response = await fetch(`/turmas/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch turma');
         }
@@ -36,7 +36,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch(`/turma_estagios/${id}`, {
+            const response = await fetch(`/turmas/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

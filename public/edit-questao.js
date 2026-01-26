@@ -46,7 +46,7 @@ $(document).ready(function () {
 
             // 2. Load Questao Data
             $.ajax({
-                url: `/questao/${id}`,
+                url: `/questoes/${id}`,
                 type: "GET",
                 success: function (questao) {
                     console.log("Questao loaded: ", questao);

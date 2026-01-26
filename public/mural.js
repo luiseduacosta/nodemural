@@ -7,6 +7,7 @@ $(document).ready(function () {
         ajax: {
             url: '/mural',
             data: function (d) {
+                // Add periodo filter if selected
                 const periodo = $('#periodoFilter').val();
                 if (periodo && periodo !== 'Todos') {
                     d.periodo = periodo;
@@ -70,22 +71,33 @@ $(document).ready(function () {
             const configRes = await fetch('/configuracoes');
             if (configRes.ok) {
                 const config = await configRes.json();
-                if (config.mural_periodo_atual) {
+                if (config[0].mural_periodo_atual) {
                     // If the list has it, select it.
                     let found = false;
                     periodos.forEach(p => {
-                        if (p.periodo === config.mural_periodo_atual) {
+                        if (p.periodo === config[0].mural_periodo_atual) {
                             found = true;
                             const option = document.createElement("option");
-                            option.value = p.periodo;
-                            option.text = p.periodo;
-                            option.selected = true;
-                            select.append(option);
+                            // If not found, select the first one
+                            if (!found) {
+                                const firstPeriod = periodos[0];
+                                const option = document.createElement("option");
+                                option.value = firstPeriod.periodo;
+                                option.text = firstPeriod.periodo;
+                                option.selected = true;
+                                select.append(option);
+                            }
                         }
                     });
+                    if (found) {
+                        const option = document.createElement("option");
+                        option.value = config[0].mural_periodo_atual;
+                        option.text = config[0].mural_periodo_atual;
+                        option.selected = true;
+                        select.append(option);
+                    }
                 }
             }
-
             // 3. Add periods from DB with default selected
             periodos.forEach(p => {
                 const option = document.createElement("option");

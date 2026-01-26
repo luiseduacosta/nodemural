@@ -76,7 +76,7 @@
                     [2, "asc"], // Ordem
                 ],
                 ajax: {
-                    url: "/questao",
+                    url: "/questoes",
                     data: function (d) {
                         if (questionario_id) {
                             d.questionario_id = questionario_id;
@@ -117,7 +117,7 @@
                 if (confirm("Tem certeza que deseja excluir esta questão? " + id)) {
                     try {
                         $.ajax({
-                            url: `/questao/${id}`,
+                            url: `/questoes/${id}`,
                             type: "DELETE",
                             success: function () {
                                 alert("Questão excluída com sucesso");

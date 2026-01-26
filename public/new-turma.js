@@ -9,7 +9,7 @@ $(document).ready(function () {
         };
 
         try {
-            const response = await fetch('/turma_estagios', {
+            const response = await fetch('/turmas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

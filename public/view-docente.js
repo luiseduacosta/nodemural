@@ -9,6 +9,7 @@ $(document).ready(async function () {
     }
 
     try {
+        $.ajaxSetup({ headers: { 'Content-Type': 'application/json' } });
         const response = await fetch(`/docentes/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch docente');
@@ -21,7 +22,11 @@ $(document).ready(async function () {
         $('#view-nome').text(docente.nome);
         $('#view-email').text(docente.email);
         $('#view-celular').text(docente.celular || '-');
-
+        $('#view-departamento').text(docente.departamento || 'Sem dados');
+        $('#view-curriculolattes').html(docente.curriculolattes ? `<a href="http://lattes.cnpq.br/${docente.curriculolattes}" target="_blank">${docente.curriculolattes}</a>` : '-');
+        $('#view-dataegresso').text(docente.dataegresso ? new Date(docente.dataegresso).toLocaleDateString() : '-');
+        $('#view-motivoegresso').text(docente.motivoegresso || '-');
+        $('#view-observacoes').text(docente.observacoes || '-');
         window.currentDocenteId = id;
 
         // Load estagiários for this docente

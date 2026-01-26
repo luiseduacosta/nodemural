@@ -32,14 +32,19 @@
             <div class="tab-pane fade show active" id="dados" role="tabpanel" aria-labelledby="dados-tab">
                 <div class="card">
                     <div class="card-body">
+
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">ID</label>
                                 <p class="form-control-plaintext" id="view-id"></p>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Siape</label>
                                 <p class="form-control-plaintext" id="view-siape"></p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">CPF</label>
+                                <p class="form-control-plaintext" id="view-cpf"></p>
                             </div>
                         </div>
 
@@ -48,16 +53,46 @@
                             <p class="form-control-plaintext" id="view-nome"></p>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Email</label>
-                            <p class="form-control-plaintext" id="view-email"></p>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Email</label>
+                                <p class="form-control-plaintext" id="view-email"></p>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Celular</label>
+                                <p class="form-control-plaintext" id="view-celular"></p>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Celular</label>
-                            <p class="form-control-plaintext" id="view-celular"></p>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Departamento</label>
+                                <p class="form-control-plaintext" id="view-departamento"></p>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Currículo</label>
+                                <p class="form-control-plaintext" id="view-curriculolattes"></p>
+                            </div>
                         </div>
 
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Egresso</label>
+                                <p class="form-control-plaintext" id="view-dataegresso"></p>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label fw-bold">Motivo de Egresso</label>
+                                <p class="form-control-plaintext" id="view-motivoegresso"></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Observações</label>
+                            <p class="form-control-plaintext" id="view-observacoes"></p>
+                        </div>
+                        
                         <div class="mt-4">
                             <a href="docentes.html" class="btn btn-secondary">Voltar</a>
                             <button onclick="editRecord()" class="btn btn-warning">Editar</button>
