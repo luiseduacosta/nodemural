@@ -1,3 +1,4 @@
+// src/server.js
 import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -16,6 +17,7 @@ import atividadesRoutes from "./routers/atividadesRoutes.js";
 import visitaRoutes from "./routers/visitaRoutes.js";
 import turmaRoutes from "./routers/turmaRoutes.js";
 import configuracaoRoutes from "./routers/configuracaoRoutes.js";
+import respostaRoutes from "./routers/respostaRoutes.js";
 import * as estagiarioController from "./controllers/estagiarioController.js";
 import * as inscricaoController from "./controllers/inscricaoController.js";
 import * as alunoController from "./controllers/alunoController.js";
@@ -25,6 +27,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Middleware - MUST be before routes!
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "../public")));
+
+// --- ROUTES ---
 app.use("/alunos", alunoRoutes);
 app.use("/docentes", docenteRoutes);
 app.use("/estagio", estagioRoutes);
@@ -38,20 +45,18 @@ app.use("/atividades", atividadesRoutes);
 app.use("/visitas", visitaRoutes);
 app.use("/turmas", turmaRoutes);
 app.use("/configuracoes", configuracaoRoutes);
+app.use("/respostas", respostaRoutes);
 
 // --- NESTED ROUTES ---
 // Nested estagiarios routes
 app.get("/alunos/:id/estagiarios", estagiarioController.getEstagiariosByAlunoId);
 app.get("/supervisores/:id/estagiarios", estagiarioController.getEstagiariosBySupervisorId);
 app.get("/docentes/:id/estagiarios", estagiarioController.getEstagiariosByProfessorId);
-
 // Nested inscricoes route
 app.get("/mural/:id/inscricoes", inscricaoController.getInscricoesByMuralId);
 app.get("/alunos/:id/inscricoes", alunoController.getInscricoesByAlunoId);
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
-
+// --- DATABASE ---
 const pool = mariadb.createPool({
   host: "localhost",
   user: "root",

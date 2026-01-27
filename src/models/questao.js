@@ -14,7 +14,6 @@ const Questao = {
         let query = 'SELECT questoes.*, questionarios.title as questionario_title FROM questoes join questionarios on questoes.questionario_id = questionarios.id';
         let params = [];
 
-        // Optional: filter by questionario_id if needed in future
         if (questionario_id) {
             query += ' WHERE questoes.questionario_id = ?';
             params.push(questionario_id);

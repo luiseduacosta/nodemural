@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova avaliação do Estagiário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Nova avaliação do Estagiário</h1>
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Estagiário</label>
+                    <select class="form-select" id="estagiario_id" required>
+                        <option value="">Selecione o(a) estagiário(a)...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Questionário</label>
+                    <select class="form-select" id="questionario_id" required>
+                        <option value="">Selecione o questionário...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Data da Avaliação</label>
+                    <input type="date" class="form-control" id="data" value="" required>
+                    <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o
+                        questionário</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Período</label>
+                    <input type="text" class="form-control" id="periodo" value="" readonly>
+                    <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o
+                        questionário</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Registro</label>
+                    <input type="number" class="form-control" id="registro" value="" readonly>
+                    <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o
+                        estagiário</small>
+                </div>
+
+                <div class="mb-3">
+                    <form id="newRespostaForm">
+                        <div class="mb-3">
+                            <label class="form-label">Questões</label>
+                            <div id="questionsContainer">
+                                <p class="text-muted">Carregando questões...</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Salvar Avaliação</button>
+                            <a href="respostas.html" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js"></script>
+    <script src="new-resposta.js"></script>
+
+</body>
+
+</html>

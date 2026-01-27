@@ -16,7 +16,8 @@ export const createQuestao = async (req, res) => {
 // Get all questoes
 export const getAllQuestoes = async (req, res) => {
     try {
-        const questoes = await Questao.findAll();
+        const { questionario_id } = req.query;
+        const questoes = await Questao.findAll(questionario_id);
         res.status(200).json(questoes);
     } catch (error) {
         console.error('Error fetching questoes:', error);
@@ -29,7 +30,6 @@ export const getQuestaoById = async (req, res) => {
     try {
         const { id } = req.params;
         const questao = await Questao.findById(id);
-        console.log(questao);
         if (!questao) {
             return res.status(404).json({ error: 'Questao not found' });
         }
