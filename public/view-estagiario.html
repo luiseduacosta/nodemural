@@ -39,8 +39,8 @@
                                 <p class="form-control-plaintext" id="view-id"></p>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Nível</label>
-                                <p class="form-control-plaintext" id="view-nivel"></p>
+                                <label class="form-label fw-bold">Registro</label>
+                                <p class="form-control-plaintext" id="view-registro"></p>
                             </div>
                         </div>
 
@@ -52,10 +52,6 @@
                                 <span id="view-aluno"></span>
                                 </a>
                                 </p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Registro</label>
-                                <p class="form-control-plaintext" id="view-registro"></p>
                             </div>
                         </div>
 
@@ -78,11 +74,15 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Nível</label>
+                                <p class="form-control-plaintext" id="view-nivel"></p>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Período</label>
                                 <p class="form-control-plaintext" id="view-periodo"></p>
                             </div>
-                                <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Turma de Estágio</label>
                                 <p class="form-control-plaintext" id="view-turma"></p>
                             </div>
@@ -99,10 +99,10 @@
 
                         <div class="mt-4">
                             <a href="estagiarios.html" class="btn btn-secondary">Voltar</a>
-                            <button onclick="newAtividade()" class="btn btn-success" style="margin-left: 10px;">Nova
+                            <button onclick="newAtividade()" class="btn btn-success">Nova
                                     Atividade</button>
-                            <button onclick="editRecord()" class="btn btn-warning">Editar</button>
-                            <button onclick="deleteRecord()" class="btn btn-danger">Excluir</button>
+                            <button onclick="editEstagiario()" class="btn btn-warning">Editar</button>
+                            <button onclick="deleteEstagiario()" class="btn btn-danger">Excluir</button>
                         </div>
                     </div>
                 </div>

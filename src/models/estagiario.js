@@ -11,7 +11,7 @@ const Estagiario = {
 
     async findAll(periodo = null) {
         let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
-                    a.nome as aluno_nome, a.registro as aluno_registro,
+                    a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                     d.nome as professor_nome,
                     s.nome as supervisor_nome,
                     i.instituicao as instituicao_nome,
@@ -37,7 +37,7 @@ const Estagiario = {
     async findById(id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
-                      a.nome as aluno_nome, a.registro as aluno_registro,
+                      a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome,
                       i.instituicao as instituicao_nome,
@@ -53,14 +53,14 @@ const Estagiario = {
         return rows[0];
     },
 
-    async create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes) {
+    async create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes) {
         const result = await pool.query(
             `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id,
-             turmaestagio_id, periodo, nivel, observacoes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes]
+             turmaestagio_id, periodo, turno, nivel, observacoes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes]
         );
-        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes };
+        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes };
     },
 
     async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes) {

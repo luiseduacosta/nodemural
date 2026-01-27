@@ -80,7 +80,7 @@ window.newAtividade = function () {
     window.location.href = `new-atividade.html?estagiario_id=${window.currentEstagioId}`;
 };
 
-window.deleteRecord = async function (atividadeId) {
+window.deleteEstagiario = async function (estagiarioId) {
     if (confirm('Tem certeza que deseja excluir este registro de estagiário?')) {
         try {
             const response = await fetch(`/estagiarios/${window.currentEstagioId}`, { method: 'DELETE' });
@@ -95,6 +95,6 @@ window.deleteRecord = async function (atividadeId) {
     }
 };
 
-window.editAtividade = function (atividadeId) {
-    window.location.href = `edit-atividade.html?id=${atividadeId}`;
+window.editEstagiario = function (estagiarioId) {
+    window.location.href = `edit-estagiario.html?id=${window.currentEstagioId}`;
 };

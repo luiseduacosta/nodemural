@@ -83,8 +83,22 @@ $(document).ready(async function () {
             dia: $('#dia').val(),
             inicio: $('#inicio').val(),
             final: $('#final').val(),
-            atividade: $('#atividade').val()
+            atividade: $('#atividade').val(),
+            // final - inicio = horario in hours and minutes
+            horario: function () {
+                const inicio = $('#inicio').val();
+                const final = $('#final').val();
+                const inicioDate = new Date('1970-01-01T' + inicio + 'Z');
+                const finalDate = new Date('1970-01-01T' + final + 'Z');
+                const diffTime = finalDate - inicioDate;
+                const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+                const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+                return `${diffHours}h ${diffMinutes}m`;
+            }()
         };
+
+        // Put the horario value in the readonly input and display it before submitting the form?
+        $('#horario').val(atividadeData.horario);
 
         try {
             const response = await fetch('/atividades/' + estagiarioId, {

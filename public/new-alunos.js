@@ -1,19 +1,12 @@
 $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
     $('#nascimento').inputmask('99-99-9999');
     $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
 
-    if (id) {
-        loadAluno(id);
-    }
-
     // Form Submission
-    $('#editAlunoForm').on('submit', async function (e) {
+    $('#newAlunoForm').on('submit', async function (e) {
         e.preventDefault();
         if (!validateForm()) { 
             console.log('Form validation failed'); 
@@ -26,11 +19,8 @@ $(document).ready(function () {
         });
 
         try {
-            const url = id ? `/alunos/${id}` : '/alunos';
-            const method = id ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method: method,
+            const response = await fetch('/alunos', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -39,7 +29,8 @@ $(document).ready(function () {
 
             if (response.ok) {
                 // Redirect to view page after successful save
-                window.location.href = 'view-alunos.html?id=' + id;
+                const data = await response.json();
+                window.location.href = 'alunos.html';
             } else {
                 const text = await response.text();
                 throw new Error(text || 'Erro ao salvar aluno');
@@ -49,37 +40,6 @@ $(document).ready(function () {
             alert('Erro ao salvar aluno: ' + error.message);
         }
     });
-
-    // Load Aluno
-    async function loadAluno(id) {
-        try {
-            const response = await fetch(`/alunos/${id}`);
-            if (!response.ok) throw new Error('Failed to fetch aluno');
-            const data = await response.json();
-            // console.log(data);
-
-            // Populate form
-            Object.keys(data).forEach(key => {
-                const input = $(`#${key}`);
-                if (input.length) {
-                    // Handle date format if needed
-                    if (input.attr('type') === 'date' && data[key]) {
-                        // Format date for date input if needed (YYYY-MM-DD)
-                        // Assuming data[key] comes as ISO string or similar, but simplified here
-                        const dataFormatada = new Date(data[key]);
-                        // console.log(dataFormatada.toISOString().split('T')[0]);
-                        input.val(dataFormatada.toISOString().split('T')[0]);
-                    } else {
-                        input.val(data[key]);
-                    }
-                }
-            });
-            $('#id').val(data.id); // Ensure ID is set
-        } catch (error) {
-            console.error('Error loading aluno:', error);
-            alert('Erro ao carregar dados do aluno.');
-        }
-    }
 
     // Custom Validation
     function validateForm() {

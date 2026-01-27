@@ -42,8 +42,8 @@ export const getEstagiarioById = async (req, res) => {
 // Create a new estagiario
 export const createEstagiario = async (req, res) => {
     try {
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes } = req.body;
-        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes);
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes } = req.body;
+        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes);
         res.status(201).json(estagiario);
     } catch (error) {
         console.error('Error creating estagiario:', error);

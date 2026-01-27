@@ -1,7 +1,7 @@
 $(document).ready(function () {
     const tableConfig = {
         responsive: true,
-        order: [[2, 'desc'], [3, 'asc']], // Order by Date DESC, then Start Time ASC
+        order: [[1, 'asc'], [2, 'asc']], // Order by Date DESC, then Start Time ASC
         ajax: {
             url: '/atividades',
             dataSrc: ''

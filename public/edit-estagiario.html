@@ -28,6 +28,7 @@
                                 <option value="">Selecione um aluno</option>
                             </select>
                         </div>
+
                         <div class="col-md-4">
                             <label for="nivel" class="form-label">Nível *</label>
                             <select class="form-select" id="nivel" name="nivel" required>
@@ -63,21 +64,39 @@
                                 <option value="">Selecione um professor</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-3">
                             <label for="turmaestagio_id" class="form-label">Turma de Estágio</label>
                             <select class="form-select" id="turmaestagio_id" name="turmaestagio_id">
                                 <option value="">Selecione uma turma</option>
                             </select>
                         </div>
+
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
                             <label for="periodo" class="form-label">Período *</label>
                             <input type="text" class="form-control" id="periodo" name="periodo" placeholder="ex: 2024-1"
                                 pattern="\d{4}-[12]" required>
                             <small class="text-muted">Formato: AAAA-S (ex: 2024-1)</small>
                             <div id="menssagem_periodo"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="turno" class="form-label">Turno</label>
+                            <select class="form-select" id="turno" name="turno">
+                                <option value="">Selecione um turno</option>
+                                <option value="D">Diurno</option>
+                                <option value="N">Noturno</option>
+                                <option value="A">Diurno/Noturno</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="ajuste2020" class="form-label">Ajuste 2020</label>
+                            <input type="number" class="form-control" id="ajuste2020" name="ajuste2020">
                         </div>
                     </div>
 

@@ -61,7 +61,7 @@ $(document).ready(async function () {
 
     // Load turmas de estagio
     try {
-        const response = await fetch('/turma_estagios');
+        const response = await fetch('/turmas');
         if (response.ok) {
             const turmas = await response.json();
             const select = document.getElementById('turmaestagio_id');
@@ -115,13 +115,13 @@ $(document).ready(async function () {
                 const configuracoes = await configResponse.json();
                 const containerperiodo = document.getElementById('menssagem_periodo');
                 const containernivel = document.getElementById('menssagem_nivel');
-                if (configuracoes.termo_compromisso_periodo !== estagiario.periodo) {
+                if (configuracoes[0].termo_compromisso_periodo !== estagiario.periodo) {
                     containerperiodo.innerHTML = `<div id="menssagem_periodo_alert" class="alert alert-warning">
-                            O período do estagiário (${estagiario.periodo}) não corresponde ao período atual do termo de compromisso ${configuracoes.termo_compromisso_periodo}.
+                            O período do estagiário (${estagiario.periodo}) não corresponde ao período atual do termo de compromisso ${configuracoes[0].termo_compromisso_periodo}.
                         </div>`;
                     containerperiodo.style.display = 'block';
                     containernivel.innerHTML = `<div id="menssagem_nivel_alert" class="alert alert-warning">
-                            O nível do estagiário (${estagiario.nivel}) corresponde ao período ${estagiario.periodo}. O período atual do termo de compromisso é ${configuracoes.termo_compromisso_periodo}.
+                            O nível do estagiário (${estagiario.nivel}) corresponde ao período ${estagiario.periodo}. O período atual do termo de compromisso é ${configuracoes[0].termo_compromisso_periodo}.
                         </div>`;
                     containernivel.style.display = 'block';
                 } else {
@@ -166,6 +166,7 @@ $(document).ready(async function () {
         document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || null;
         document.getElementById('periodo').value = estagiario.periodo;
         document.getElementById('nivel').value = estagiario.nivel;
+        document.getElementById('turno').value = estagiario.turno || 'A';
         document.getElementById('observacoes').value = estagiario.observacoes || null;
 
     } catch (error) {
@@ -185,6 +186,7 @@ $(document).ready(async function () {
             instituicao_id: document.getElementById('instituicao_id').value,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
+            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             observacoes: document.getElementById('observacoes').value || null
         };

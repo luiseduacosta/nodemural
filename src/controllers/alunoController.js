@@ -24,15 +24,30 @@ export const getAllAlunos = async (req, res) => {
     }
 };
 
-// Get a single aluno by ID
+// Get a single aluno by ID independent of estagiarios
 export const getAlunoById = async (req, res) => {
     try {
         const { id } = req.params;
-        const aluno = await Aluno.findById(id);
+        const aluno = await Aluno.findAlunoById(id);
         console.log(aluno);
         if (!aluno) {
             return res.status(404).json({ error: 'Aluno not found' });
         }
+        res.status(200).json(aluno);
+    } catch (error) {
+        console.error('Error fetching aluno:', error);
+        res.status(500).json({ error: 'Error fetching aluno' });
+    }
+};
+
+// Get a single aluno by ID, including estagiario info if exists
+export const getAlunoWithEstagiarioById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const aluno = await Aluno.findById(id);
+        if (!aluno) {
+            return res.status(404).json({ error: 'Aluno not found' });
+        }   
         res.status(200).json(aluno);
     } catch (error) {
         console.error('Error fetching aluno:', error);

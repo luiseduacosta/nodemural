@@ -11,6 +11,7 @@ router.use(express.json());
 router.post('/', alunoController.createAluno);
 router.get('/', alunoController.getAllAlunos);
 router.get('/:id', alunoController.getAlunoById);
+router.get('/with-estagiario/:id', alunoController.getAlunoWithEstagiarioById);
 router.get('/:id/inscricoes', alunoController.getInscricoesByAlunoId);
 router.put('/:id', alunoController.updateAluno);
 router.delete('/:id', alunoController.deleteAluno);

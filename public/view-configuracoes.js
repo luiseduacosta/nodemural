@@ -15,7 +15,6 @@ function loadConfig() {
             if (!dateStr) return '';
             return new Date(dateStr).toISOString().split('T')[0];
         }
-        console.log(data[0].mural_periodo_atual);
         $('#mural_periodo_atual').val(data[0].mural_periodo_atual);
 
         $('#termo_compromisso_periodo').val(data[0].termo_compromisso_periodo);

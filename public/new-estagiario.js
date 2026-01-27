@@ -1,12 +1,15 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const form = document.getElementById('newEstagioForm');
 
+    // Clean all the fields
+    form.reset();
+
     // Load default periodo from configuracoes
     try {
         const response = await fetch('/configuracoes');
         if (response.ok) {
             const configuracoes = await response.json();
-            document.getElementById('periodo').value = configuracoes.termo_compromisso_periodo || '';
+            document.getElementById('periodo').value = configuracoes[0].termo_compromisso_periodo || '';
         }
     } catch (error) {
         console.error('Error loading default periodo:', error);
@@ -33,6 +36,25 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('aluno_id').addEventListener('change', async function () {
         const alunoId = this.value;
         if (!alunoId) return;
+
+        // Load alunos to get the turno of the selected aluno
+        try {
+            const response = await fetch(`/alunos/${alunoId}`);
+            if (response.ok) {
+                const aluno = await response.json();
+                // Get the first letter of the turno and uppercase it. If turno is empty, default to 'A'.
+                // Put the value in the default option of the select turno
+                if (aluno[0].turno) {
+                    document.getElementById('turno').value = aluno[0].turno.charAt(0).toUpperCase();
+                } else {
+                    document.getElementById('turno').value = 'A';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading aluno:', error);
+            alert('Erro ao carregar aluno');
+        }
+
         try {
             const response = await fetch(`/estagiarios/${alunoId}/next-nivel`);
             if (response.ok) {
@@ -85,11 +107,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                         const select = document.getElementById('supervisor_id');
                         select.innerHTML = '<option value="">Selecione um supervisor</option>';
                         const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
-                        console.log('instituicaoId', instituicaoId);
-                        console.log(response);
                         if (response.ok) {
                             const supervisores = await response.json();
-                            console.log(supervisores);
                             supervisores.forEach(sup => {
                                 const option = document.createElement('option');
                                 option.value = sup.id;
@@ -111,11 +130,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                         const select = document.getElementById('supervisor_id');
                         select.innerHTML = '<option value="">Selecione um supervisor</option>';
                         const response = await fetch(`/estagio/${instituicaoId}/supervisores`);
-                        console.log('instituicaoId', instituicaoId);
-                        console.log(response);
                         if (response.ok) {
                             const supervisores = await response.json();
-                            console.log(supervisores);
                             supervisores.forEach(sup => {
                                 const option = document.createElement('option');
                                 option.value = sup.id;
@@ -131,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 // Load turmas de estagio (if the table exists)
                 try {
-                    const response = await fetch('/turma_estagios');
+                    const response = await fetch('/turmas');
                     if (response.ok) {
                         const turmas = await response.json();
                         const select = document.getElementById('turmaestagio_id');
@@ -164,6 +180,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             instituicao_id: document.getElementById('instituicao_id').value,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
+            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value,
             observacoes: document.getElementById('observacoes').value || null

@@ -2,7 +2,6 @@ $(document).ready(async function () {
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'alunos.html';
@@ -15,28 +14,29 @@ $(document).ready(async function () {
         if (!response.ok) {
             throw new Error('Failed to fetch aluno');
         }
-
         const aluno = await response.json();
-
-        const datanascimento = new Date(aluno.nascimento);
+        console.log(aluno);
+    
+        // Format the date
+        const datanascimento = new Date(aluno[0].nascimento);
         const datanascimentoFormatada = datanascimento.toLocaleDateString('pt-BR');
 
         // Populate the view fields
-        document.getElementById('view-id').textContent = aluno.id;
-        document.getElementById('view-nome').textContent = aluno.nome;
-        document.getElementById('view-email').textContent = aluno.email;
-        document.getElementById('view-ingresso').textContent = aluno.ingresso;
-        document.getElementById('view-telefone').textContent = aluno.telefone;
-        document.getElementById('view-celular').textContent = aluno.celular;
-        document.getElementById('view-cpf').textContent = aluno.cpf;
-        document.getElementById('view-identidade').textContent = aluno.identidade;
-        document.getElementById('view-orgao').textContent = aluno.orgao;
+        document.getElementById('view-id').textContent = aluno[0].id;
+        document.getElementById('view-nome').textContent = aluno[0].nome;
+        document.getElementById('view-email').textContent = aluno[0].email;
+        document.getElementById('view-ingresso').textContent = aluno[0].ingresso;
+        document.getElementById('view-telefone').textContent = aluno[0].telefone;
+        document.getElementById('view-celular').textContent = aluno[0].celular;
+        document.getElementById('view-cpf').textContent = aluno[0].cpf;
+        document.getElementById('view-identidade').textContent = aluno[0].identidade;
+        document.getElementById('view-orgao').textContent = aluno[0].orgao;
         document.getElementById('view-nascimento').textContent = datanascimentoFormatada;
-        document.getElementById('view-cep').textContent = aluno.cep;
-        document.getElementById('view-endereco').textContent = aluno.endereco;
-        document.getElementById('view-municipio').textContent = aluno.municipio;
-        document.getElementById('view-bairro').textContent = aluno.bairro;
-        document.getElementById('view-observacoes').textContent = aluno.observacoes;
+        document.getElementById('view-cep').textContent = aluno[0].cep;
+        document.getElementById('view-endereco').textContent = aluno[0].endereco;
+        document.getElementById('view-municipio').textContent = aluno[0].municipio;
+        document.getElementById('view-bairro').textContent = aluno[0].bairro;
+        document.getElementById('view-observacoes').textContent = aluno[0].observacoes;
 
         // Store the ID for edit function
         window.currentAlunoId = id;

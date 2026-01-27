@@ -35,6 +35,16 @@ const Aluno = {
         return rows;
     },
 
+    // Select one aluno by id independent of estagiarios
+    async findAlunoById(id) {
+        const query = `SELECT * FROM alunos 
+                       WHERE id = ?
+                       ORDER BY nome ASC`;
+        const rows = await pool.query(query, [id]);
+        return rows;
+    },
+
+    // Find aluno by id, including estagiario info if exists
     async findById(id) {
         // Fix: Removed trailing comma before FROM and fixed join logic
         let query = `
