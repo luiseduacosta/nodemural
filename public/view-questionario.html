@@ -9,21 +9,11 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">Sistema de Gestão de Estágio</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="questionario.html">Questionários</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-menu">
-    </div>
 
     <div class="container mt-5">
+
+    <nav id="menu-container"></nav>
+
         <h1 class="mb-4">Detalhes do Questionário</h1>
 
         <div class="card">
@@ -62,12 +52,11 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="menu.js"></script>
+    <script src="../src/respostas.css"></script>
     <script>
 
         $(document).ready(function () {
-
-            // load menu.html
-            $('.container-menu').load('menu.html');
 
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
@@ -98,6 +87,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>
