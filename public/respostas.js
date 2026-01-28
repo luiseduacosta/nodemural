@@ -1,18 +1,6 @@
 // src/controllers/questaoController.js
 $(document).ready(function () {
 
-    // Load menu
-    async function loadMenu() {
-        try {
-            const response = await fetch('menu.html');
-            const html = await response.text();
-            document.getElementById('menu-container').innerHTML = html;
-        } catch (error) {
-            console.error('Erro ao carregar o menu:', error);
-        }
-    }
-    loadMenu();
-
     // Load supervisores for filter
     $.ajax({
         url: '/supervisores',
@@ -28,22 +16,26 @@ $(document).ready(function () {
     // Get questionario_id from URL
     const urlParams = new URLSearchParams(window.location.search);
     const questionario_id = urlParams.get('questionario_id');
+    // console.log(questionario_id);
     // Initialize DataTable
     let table = $("#respostasTable").DataTable({
         order: [[5, "desc"]], // Modified date
         ajax: {
-            url: "/respostas/questionario/" + questionario_id,
+            url: `/respostas/questionario/${questionario_id}`,
             data: function (d) {
                 const supervisor_id = $('#supervisorFilter').val();
                 if (supervisor_id) {
                     d.supervisor_id = supervisor_id;
+                }
+                if (questionario_id) {
+                    d.questionario_id = questionario_id;
                 }
             },
             dataSrc: "",
         },
         columns: [
             { data: "id" },
-            { data: "aluno_nome", defaultContent: "-" },
+            { data: "aluno_nome", render: function (data, type, row) { return `<a href=view-resposta.html?estagiario_id=${row.estagiario_id}&questionario_id=${row.questionario_id}>${data || "-"}</a>`; } },
             { data: "questionario_title", defaultContent: "-" },
             { data: "supervisor_nome", defaultContent: "-" },
             {
@@ -71,7 +63,7 @@ $(document).ready(function () {
                 data: null,
                 render: function (data, type, row) {
                     return `
-                        <button onclick="window.location.href='fill-questionario.html?estagiario_id=${row.estagiario_id}&questionario_id=${row.question_id}'" class="btn btn-sm btn-primary">Editar</button>
+                        <button onclick="window.location.href='edit-resposta.html?estagiario_id=${row.estagiario_id}&questionario_id=${row.questionario_id}'" class="btn btn-sm btn-primary">Editar</button>
                         <button onclick="deleteResposta(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
                     `;
                 }

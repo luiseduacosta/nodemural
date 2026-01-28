@@ -86,7 +86,7 @@
                         "data": null,
                         "render": function (data, type, row) {
                             return `
-                                <a href="respostas.html/?questionario_id=${row.id}" class="btn btn-sm btn-info">Respostas</a>
+                                <a href="respostas.html?questionario_id=${row.id}" class="btn btn-sm btn-info">Respostas</a>
                                 <a href="view-questionario.html?id=${row.id}" class="btn btn-sm btn-info text-white">Ver</a>
                                 <a href="edit-questionario.html?id=${row.id}" class="btn btn-sm btn-warning">Editar</a>
                                 <button class="btn btn-sm btn-danger delete-btn" data-id="${row.id}">Excluir</button>

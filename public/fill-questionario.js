@@ -251,6 +251,7 @@ $(document).ready(function () {
             }
         }
 
+        // Create payload
         const payload = {
             question_id: questionario_id,
             estagiario_id: estagiario_id,

@@ -159,6 +159,7 @@ async function loadEstagiarios(supervisorId) {
         }
 
         const estagiarios = await response.json();
+
         const tbody = document.querySelector('#table-estagiarios tbody');
         tbody.innerHTML = '';
 
@@ -169,22 +170,47 @@ async function loadEstagiarios(supervisorId) {
             document.getElementById('no-estagiarios-msg').classList.add('d-none');
             document.getElementById('table-estagiarios').classList.remove('d-none');
 
-            estagiarios.forEach(est => {
+            // Use for...of loop to properly await async calls
+            for (const est of estagiarios) {
+                // Add estagiario to table
+                const questionario = await checkRespostas(est.estagiario_id);
+                console.log(questionario);
+                const questionario_id = questionario ? questionario.questionario_id : null;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${est.estagiario_id}</td>
                     <td>${est.aluno_registro || 'N/A'}</td>
                     <td><a href="view-estagiario.html?id=${est.estagiario_id}">${est.aluno_nome}</a></td>
                     <td>${est.estagiario_nivel || 'N/A'}</td>
-                    <td>${est.estagiario_periodo || 'N/A'}</td>
+                    <td>${est.estagiario_periodo || 'N/A'}</td>        
+                    ${questionario_id ? `<td><a class="btn btn-sm btn-primary" href="view-resposta.html?estagiario_id=${est.estagiario_id}&questionario_id=${questionario_id}">Avaliação</a></td>` : `<td><a class="btn btn-sm btn-secondary" href="new-resposta.html?estagiario_id=${est.estagiario_id}">Avaliar</a></td>`}
                 `;
                 tbody.appendChild(tr);
-            });
+            }
         }
     } catch (error) {
         console.error('Error loading estagiários:', error);
         document.getElementById('no-estagiarios-msg').classList.remove('d-none');
         document.getElementById('no-estagiarios-msg').textContent = 'Erro ao carregar estagiários.';
         document.getElementById('table-estagiarios').classList.add('d-none');
+    };
+}
+
+async function checkRespostas(estagiario_id) {
+    try {
+        const responseRespostas = await fetch(`/respostas/estagiario/${estagiario_id}`);
+        if (!responseRespostas.ok) {
+            throw new Error('Failed to fetch respostas');
+        }
+        const respostas = await responseRespostas.json();
+        // Check if there is respostas to estagiarios
+        if (respostas.length > 0) {
+            // Catch the questionario_id
+            return respostas[0];
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading respostas:', error);
     }
 }

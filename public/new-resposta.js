@@ -5,46 +5,23 @@ $(document).ready(async function () {
     const estagiario_id = urlParams.get('estagiario_id');
     const questionario_id = urlParams.get('questionario_id');
 
-    if (!estagiario_id || !questionario_id) {
-        alert('Parâmetros inválidos. estagiario_id e questionario_id são obrigatórios.');
-        return;
-    }
-
-    // Load estagiario info
-    try {
-        const response = await fetch(`/estagiarios/${estagiario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch estagiario');
-        }
-        const estagiarios = await response.json();
-        console.log(estagiarios);
-        // Make the estagiarios selectable
-        const estagiarioSelect = document.getElementById('estagiario_id');
-        estagiarios.forEach(estagiario => {
-            const option = document.createElement('option');
-            option.value = estagiario.id;
-            option.textContent = estagiario.aluno_nome;
-            estagiarioSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading estagiario:', error);
-        alert(`Erro ao carregar dados: ${error.message}`);
-    }
-
     // Load questionario info
     try {
-        const response = await fetch(`/questionarios/${questionario_id})`);
+        const response = await fetch(`/questionarios/`);
         if (!response.ok) {
             throw new Error('Failed to fetch questionario');
         }
         const questionarios = await response.json();
-        console.log(questionarios);
+//        console.log(questionarios);
         // Make the questionarios selectable
         const questionarioSelect = document.getElementById('questionario_id');
         questionarios.forEach(questionario => {
             const option = document.createElement('option');
             option.value = questionario.id;
             option.textContent = questionario.title;
+            if (questionario.id == questionario_id) {
+                option.selected = true;
+            }
             questionarioSelect.appendChild(option);
         });
     } catch (error) {
@@ -52,10 +29,34 @@ $(document).ready(async function () {
         alert(`Erro ao carregar dados: ${error.message}`);
     }
 
+    // Load estagiario info
+    try {
+        const response = await fetch(`/estagiarios/`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch estagiario');
+        }
+        const estagiarios = await response.json();
+//        console.log(estagiarios);
+        // Set estagiario info. It is not a select, but a view 
+        const estagiarioSelect = document.getElementById('estagiario_id');
+        estagiarios.forEach(estagiario => {
+            const option = document.createElement('option');
+            option.value = estagiario.id;
+            option.textContent = estagiario.aluno_nome;
+            if (estagiario.id == estagiario_id) {
+                option.selected = true;
+            }
+            estagiarioSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading estagiario:', error);
+        alert(`Erro ao carregar dados: ${error.message}`);
+    }
+
     // Put today data
     $('#data').val(new Date().toISOString().split('T')[0]);
 
-    // Get questionario_id from URLPut periodo value from estagiario_id on select estagiario_id
+    // Put periodo value from estagiario_id on select estagiario_id
     $('#estagiario_id').on('change', function () {
         const estagiario_id = $(this).val();
         $.ajax({
@@ -72,6 +73,23 @@ $(document).ready(async function () {
         });
     });
 
+    // Verifica se o estagario_id já foi avaliado para o questionario_id
+    try {
+        const response = await fetch(`/respostas?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to check respostas');
+        }
+        const data = await response.json();
+        if (data.exists) {
+            alert('Este estagiário já foi avaliado para este questionário.');
+            window.location.href = `view-respostas.html?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
+            return;
+        }
+    } catch (error) {
+        console.error('Error checking respostas:', error);
+        alert(`Erro ao verificar respostas: ${error.message}`);
+    }
+
     // Load questions
     $('#questionario_id').on('change', function () {
         const questionario_id = $(this).val();
@@ -83,6 +101,8 @@ $(document).ready(async function () {
             },
             error: function () {
                 $('#questionsContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
+                // Oculta o formulario se houver erro
+                $(`newRespostaForm`).css('display', 'none');
             }
         });
     });
@@ -94,6 +114,8 @@ $(document).ready(async function () {
 
         if (questions.length === 0) {
             container.html('<p class="text-muted">Nenhuma questão encontrada para este questionário.</p>');
+            // Não mostra o formulario se não houver questões
+            $(`newRespostaForm`).css('display', 'none');
             return;
         }
 

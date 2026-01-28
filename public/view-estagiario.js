@@ -1,4 +1,4 @@
-// src/controllers/questaoController.js
+// src/controllers/estagiarioController.js
 $(document).ready(async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -72,11 +72,14 @@ $(document).ready(async function () {
         alert(`Erro ao carregar dados: ${error.message}`);
         window.location.href = 'estagiarios.html';
     }
+});
 
-    // Load respostas to TAB respostas
+$(document).ready(function () {
+
+    const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('id');
     let questionario_id = urlParams.get('questionario_id');
-    // If questionario_id is empty set to 1
+
     if (!questionario_id) {
         questionario_id = 1;
     }
@@ -125,9 +128,10 @@ $(document).ready(async function () {
             loadQuestions();
         },
         error: function () {
-            $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Novo');
-            // Go to new-resposta.html
-            window.location.href = `new-resposta.html?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
+            $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Sem avaliação');
+            $('#respostasContainer').empty();
+            // window.location.href = 'new-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
+            return;
         }
     });
 
@@ -140,14 +144,14 @@ $(document).ready(async function () {
                 renderQuestions(questions);
             },
             error: function () {
-                $('#questionsContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
+                $('#respostasContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
             }
         });
     }
 
     // Render questions based on type
     function renderQuestions(questions) {
-        const container = $('#questionsContainer');
+        const container = $('#respostasContainer');
         container.empty();
 
         if (questions.length === 0) {
@@ -156,7 +160,6 @@ $(document).ready(async function () {
         }
 
         questions.forEach((question, index) => {
-            // Use avaliacao + ordem to match legacy data format
             const questionKey = `avaliacao${question.ordem || question.id}`;
             const existingValue = existingResponses[questionKey] || '';
 
@@ -283,102 +286,29 @@ $(document).ready(async function () {
         return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 
-    // Form submission
-    $('#questionarioForm').on('submit', function (e) {
-        e.preventDefault();
+    // Expose edit and delete functions to global scope
+    window.editResposta = function () {
+        window.location.href = 'edit-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
+    };
 
-        const formData = {};
-        const form = this;
+    window.deleteResposta = async function () {
+        if (confirm('Tem certeza que deseja excluir esta resposta?')) {
+            try {
+                // First get the resposta ID
+                const resposta = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
+                const data = await resposta.json();
 
-        // Collect all form data
-        $(form).find('input, textarea, select').each(function () {
-            const name = $(this).attr('name');
-            if (!name) return;
-
-            if ($(this).attr('type') === 'radio') {
-                if ($(this).is(':checked')) {
-                    formData[name] = $(this).val();
+                const response = await fetch(`/respostas/${data.id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('Resposta excluída com sucesso!');
+                    window.location.href = 'respostas.html';
+                } else {
+                    throw new Error('Failed to delete resposta');
                 }
-            } else if ($(this).attr('type') === 'checkbox') {
-                if (!formData[name]) formData[name] = [];
-                if ($(this).is(':checked')) {
-                    formData[name].push($(this).val());
-                }
-            } else {
-                formData[name] = $(this).val();
-            }
-        });
-
-        // Convert checkbox arrays to JSON strings
-        for (const key in formData) {
-            if (Array.isArray(formData[key])) {
-                formData[key] = JSON.stringify(formData[key]);
+            } catch (error) {
+                console.error('Error deleting resposta:', error);
+                alert(`Erro ao excluir resposta: ${error.message}`);
             }
         }
-
-        const payload = {
-            question_id: questionario_id,
-            estagiario_id: estagiario_id,
-            response: formData
-        };
-
-        if (existingResposta) {
-            // Update existing
-            $.ajax({
-                url: `/respostas/${existingResposta.id}`,
-                type: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify({ response: formData }),
-                success: function () {
-                    alert('Respostas atualizadas com sucesso!');
-                    window.location.href = 'respostas.html';
-                },
-                error: function () {
-                    alert('Erro ao atualizar respostas.');
-                }
-            });
-        } else {
-            // Create new
-            $.ajax({
-                url: '/respostas',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function () {
-                    alert('Respostas salvas com sucesso!');
-                    window.location.href = 'respostas.html';
-                },
-                error: function () {
-                    alert('Erro ao salvar respostas.');
-                }
-            });
-        }
-    });
+    };
 });
-
-window.viewAtividade = function (atividadeId) {
-    window.location.href = `view-atividade.html?id=${atividadeId}`;
-};
-
-window.newAtividade = function () {
-    window.location.href = `new-atividade.html?estagiario_id=${window.currentEstagioId}`;
-};
-
-window.deleteEstagiario = async function (estagiarioId) {
-    if (confirm('Tem certeza que deseja excluir este registro de estagiário?')) {
-        try {
-            const response = await fetch(`/estagiarios/${window.currentEstagioId}`, { method: 'DELETE' });
-            if (!response.ok) {
-                throw new Error('Failed to delete estagiario');
-            }
-            window.location.href = 'estagiarios.html';
-        } catch (error) {
-            console.error('Error deleting estagiario:', error);
-            alert('Erro ao excluir estagiário');
-        }
-    }
-};
-
-window.editEstagiario = function (estagiarioId) {
-    window.location.href = `edit-estagiario.html?id=${window.currentEstagioId}`;
-};
