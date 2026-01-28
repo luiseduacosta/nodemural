@@ -106,10 +106,13 @@ $(document).ready(function () {
             }
 
             const questionCard = `
-                <div class="question-card">
-                    <div class="question-number">Questão ${index + 1}</div>
-                    <div class="question-text">${escapeHtml(question.text)}</div>
+                <div class="card mt-3">
+                    <div class="card-header bg-secondary text-white">Questão ${index + 1}</div>
+                    <div class="card-body">${escapeHtml(question.text)}</div>
+                    <div class="form-check-inline ms-3">
                     ${inputHtml}
+                    </div>
+                    <div class="card-footer mt-2 text-muted"></div>
                 </div>
             `;
             container.append(questionCard);
@@ -124,8 +127,8 @@ $(document).ready(function () {
         for (const [value, label] of Object.entries(options)) {
             const checked = existingValue === value ? 'checked' : '';
             html += `
-                <label class="radio-option">
-                    <input type="radio" name="${questionId}" value="${value}" ${checked}>
+                 <label class="form-check-label ms-3">
+                    <input type="radio" class="form-check-input ms-1" name="${questionId}" value="${value}" ${checked}>
                     ${escapeHtml(label || value)}
                 </label>
             `;
@@ -146,7 +149,7 @@ $(document).ready(function () {
             const checked = selectedValues.includes(value) ? 'checked' : '';
             html += `
                 <label class="checkbox-option">
-                    <input type="checkbox" name="${questionId}" value="${value}" ${checked}>
+                    <input type="checkbox" class="form-check-input me-1" name="${questionId}" value="${value}" ${checked}>
                     ${escapeHtml(label || value)}
                 </label>
             `;
