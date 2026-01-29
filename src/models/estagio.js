@@ -3,31 +3,30 @@ import pool from '../database/db.js';
 const Estagio = {
     async findAll() {
         const rows = await pool.query(
-            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.area_instituicoes_id = ai.id ORDER BY e.instituicao ASC'
+            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.areainstituicoes_id = ai.id ORDER BY e.instituicao ASC'
         );
         return rows;
     },
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.area_instituicoes_id = ai.id WHERE e.id = ?',
+            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.areainstituicoes_id = ai.id WHERE e.id = ?',
             [id]
         );
         return rows[0];
     },
 
-    async create(instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
+    async create(instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
         const result = await pool.query(
-            'INSERT INTO estagio (instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes]
+            'INSERT INTO estagio (instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes]
         );
-        return { id: Number(result.insertId), instituicao, cnpj, beneficio, area_instituicoes_id };
+        return { id: Number(result.insertId), instituicao, cnpj, beneficio, areainstituicoes_id };
     },
-
-    async update(id, instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
+    async update(id, instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
         const result = await pool.query(
-            'UPDATE estagio SET instituicao = ?, cnpj = ?, beneficio = ?, area_instituicoes_id = ?, url = ?, endereco = ?, bairro = ?, municipio = ?, cep = ?, telefone = ?, fim_de_semana = ?, convenio = ?, expira = ?, seguro = ?, avaliacao = ?, observacoes = ? WHERE id = ?',
-            [instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes, id]
+            'UPDATE estagio SET instituicao = ?, cnpj = ?, beneficio = ?, areainstituicoes_id = ?, url = ?, endereco = ?, bairro = ?, municipio = ?, cep = ?, telefone = ?, fim_de_semana = ?, convenio = ?, expira = ?, seguro = ?, avaliacao = ?, observacoes = ? WHERE id = ?',
+            [instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes, id]
         );
         return result.affectedRows > 0;
     },
