@@ -9,6 +9,7 @@ $(document).ready(function () {
         columns: [
             { data: 'id' },
             { data: 'instituicao', render: function (data, type, row) { return `<a href="view-estagio.html?id=${row.id}">${row.instituicao}</a>` } },
+            { data: 'area_nome', defaultContent: '<em>Não definida</em>' },
             { data: 'cnpj' },
             { data: 'beneficio', defaultContent: '' },
             {

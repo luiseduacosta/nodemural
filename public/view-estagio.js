@@ -21,6 +21,7 @@ $(document).ready(async function () {
         // Populate the view fields
         document.getElementById('view-id').textContent = estagio.id;
         document.getElementById('view-instituicao').textContent = estagio.instituicao;
+        document.getElementById('view-area').textContent = estagio.area_nome || 'Não definida';
         document.getElementById('view-cnpj').textContent = estagio.cnpj;
         document.getElementById('view-beneficio').textContent = estagio.beneficio || 'Sem dados';
 
@@ -98,7 +99,7 @@ async function fetchMural(id) {
                         <td>${m.periodo}</td>
                         <td>${m.vagas}</td>
                         <td>
-                            <a href="view-mural.html?id=${m.id}" class="btn btn-sm btn-info">Visualizar</a>
+                            <a href="#" class="btn btn-sm btn-info">Ver</a>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -130,15 +131,15 @@ async function fetchSupervisores(id) {
                     tr.innerHTML = `
                         <td>${s.id}</td>
                         <td>${s.nome}</td>
-                        <td>${s.email || 'N/A'}</td>
-                        <td>${s.telefone || 'N/A'}</td>
-                        <td>
-                            <a href="view-supervisor.html?id=${s.id}" class="btn btn-sm btn-info">Visualizar</a>
-                        </td>
+                        <td>${s.email}</td>
+                        <td>${s.telefone}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
+        } else {
+            document.getElementById('no-supervisores-msg').classList.remove('d-none');
+            document.getElementById('table-supervisores').classList.add('d-none');
         }
     } catch (error) {
         console.error('Error fetching supervisores:', error);

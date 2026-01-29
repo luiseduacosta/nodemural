@@ -1,7 +1,31 @@
 $(document).ready(async function () {
     const form = document.getElementById('estagioForm');
 
-    // Define editEstagio function first
+    // Input Masks
+    $('#cnpj').inputmask('99.999.999/9999-99');
+
+    // Load areas first
+    await loadAreas();
+
+    async function loadAreas() {
+        try {
+            const response = await fetch('/areainstituicoes');
+            if (response.ok) {
+                const areas = await response.json();
+                const select = document.getElementById('area_instituicoes_id');
+                areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.id;
+                    option.textContent = area.area;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading areas:', error);
+        }
+    }
+
+    // Define editEstagio function
     const editEstagio = async (id) => {
         try {
             const response = await fetch(`/estagio/${id}`);
@@ -12,9 +36,12 @@ $(document).ready(async function () {
             const estagio = await response.json();
             document.getElementById('instituicao').value = estagio.instituicao;
             document.getElementById('cnpj').value = estagio.cnpj;
-            document.getElementById('area_id').value = estagio.area_id || '';
             document.getElementById('beneficio').value = estagio.beneficio || '';
             document.getElementById('estagioId').value = estagio.id;
+            
+            if (estagio.area_instituicoes_id) {
+                document.getElementById('area_instituicoes_id').value = estagio.area_instituicoes_id;
+            }
 
             // Store the ID for view function
             window.currentEstagioId = id;
@@ -28,14 +55,12 @@ $(document).ready(async function () {
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
-    console.log('urlParams', urlParams);
 
     if (editId) {
         await editEstagio(editId);
     } else {
         alert('ID não fornecido');
         window.location.href = 'estagio.html';
-        console.log('Edit ID:', editId);
     }
 
     form.addEventListener('submit', async (e) => {
@@ -44,7 +69,7 @@ $(document).ready(async function () {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,
             beneficio: document.getElementById('beneficio').value,
-            area_id: document.getElementById('area_id').value || null
+            area_instituicoes_id: document.getElementById('area_instituicoes_id').value || null
         };
 
         const id = document.getElementById('estagioId').value;

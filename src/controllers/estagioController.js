@@ -1,4 +1,3 @@
-// src/controllers/estagioController.js
 import Estagio from '../models/estagio.js';
 
 // Get all estagios (institutions)
@@ -30,8 +29,8 @@ export const getEstagioById = async (req, res) => {
 // Create a new estagio
 export const createEstagio = async (req, res) => {
     try {
-        const { instituicao, cnpj, beneficio, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const estagio = await Estagio.create(instituicao, cnpj, beneficio, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const { instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
+        const estagio = await Estagio.create(instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
         res.status(201).json(estagio);
     } catch (error) {
         console.error('Error creating estagio:', error);
@@ -43,8 +42,8 @@ export const createEstagio = async (req, res) => {
 export const updateEstagio = async (req, res) => {
     try {
         const { id } = req.params;
-        const { instituicao, cnpj, beneficio, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const success = await Estagio.update(id, instituicao, cnpj, beneficio, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const { instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
+        const success = await Estagio.update(id, instituicao, cnpj, beneficio, area_instituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Estagio not found' });
         }

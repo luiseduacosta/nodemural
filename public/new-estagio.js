@@ -3,15 +3,37 @@ $(document).ready(function () {
 
     // Input Masks
     $('#cnpj').inputmask('99.999.999/9999-99');
-    $('#cep').inputmask('99999-999');
+    
+    // Load areas
+    loadAreas();
+
+    async function loadAreas() {
+        try {
+            const response = await fetch('/areainstituicoes');
+            if (response.ok) {
+                const areas = await response.json();
+                const select = document.getElementById('area_instituicoes_id');
+                areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.id;
+                    option.textContent = area.area;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading areas:', error);
+        }
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        // Add area_instituicoes_id to the estagio object
         const estagio = {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,
-            beneficio: document.getElementById('beneficio').value
+            beneficio: document.getElementById('beneficio').value,
+            area_instituicoes_id: document.getElementById('area_instituicoes_id').value
         };
 
         try {
