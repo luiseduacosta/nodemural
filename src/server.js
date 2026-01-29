@@ -16,6 +16,7 @@ import questaoRoutes from "./routers/questaoRoutes.js";
 import atividadesRoutes from "./routers/atividadesRoutes.js";
 import visitaRoutes from "./routers/visitaRoutes.js";
 import turmaRoutes from "./routers/turmaRoutes.js";
+import areaInstituicaoRoutes from "./routers/areaInstituicaoRoutes.js";
 import configuracaoRoutes from "./routers/configuracaoRoutes.js";
 import respostaRoutes from "./routers/respostaRoutes.js";
 import * as estagiarioController from "./controllers/estagiarioController.js";
@@ -46,6 +47,7 @@ app.use("/visitas", visitaRoutes);
 app.use("/turmas", turmaRoutes);
 app.use("/configuracoes", configuracaoRoutes);
 app.use("/respostas", respostaRoutes);
+app.use("/areainstituicoes", areaInstituicaoRoutes);
 
 // --- NESTED ROUTES ---
 // Nested estagiarios routes

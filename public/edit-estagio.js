@@ -12,6 +12,7 @@ $(document).ready(async function () {
             const estagio = await response.json();
             document.getElementById('instituicao').value = estagio.instituicao;
             document.getElementById('cnpj').value = estagio.cnpj;
+            document.getElementById('area_id').value = estagio.area_id || '';
             document.getElementById('beneficio').value = estagio.beneficio || '';
             document.getElementById('estagioId').value = estagio.id;
 
@@ -42,7 +43,8 @@ $(document).ready(async function () {
         const estagio = {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,
-            beneficio: document.getElementById('beneficio').value
+            beneficio: document.getElementById('beneficio').value,
+            area_id: document.getElementById('area_id').value || null
         };
 
         const id = document.getElementById('estagioId').value;
