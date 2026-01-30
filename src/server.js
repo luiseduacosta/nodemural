@@ -3,7 +3,9 @@ import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import mariadb, { SqlError } from "mariadb";
+import 'dotenv/config.js';
 
+import authRoutes from "./routers/authRoutes.js";
 import alunoRoutes from "./routers/alunoRoutes.js";
 import docenteRoutes from "./routers/docenteRoutes.js";
 import estagioRoutes from "./routers/estagioRoutes.js";
@@ -33,6 +35,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
 // --- ROUTES ---
+app.use("/auth", authRoutes);
 app.use("/alunos", alunoRoutes);
 app.use("/docentes", docenteRoutes);
 app.use("/estagio", estagioRoutes);
@@ -60,10 +63,10 @@ app.get("/alunos/:id/inscricoes", alunoController.getInscricoesByAlunoId);
 
 // --- DATABASE ---
 const pool = mariadb.createPool({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "tccess",
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root',
+  database: process.env.DB_NAME || 'tccess',
 });
 
 // --- INDEX ENDPOINTS ---
@@ -85,4 +88,5 @@ app.get("/", (req, res) => {
 
 // --- CONFIGURACOES ENDPOINTS ---
 
-app.listen(3333, () => console.log("Server running on port 3333"));
+const PORT = process.env.PORT || 3333;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

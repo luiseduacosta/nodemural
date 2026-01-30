@@ -17,11 +17,23 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const questionario_id = urlParams.get('questionario_id');
     // console.log(questionario_id);
+
+    // Define the url depending on questionario_id
+    let url;
+    if (!questionario_id) {
+        // Load all respostas if no questionario_id
+        url = `/respostas`;
+    } else {
+        // Load respostas for a specific questionario_id
+        url = `/respostas/questionario/${questionario_id}`;
+    }
+
     // Initialize DataTable
     let table = $("#respostasTable").DataTable({
         order: [[5, "desc"]], // Modified date
         ajax: {
-            url: `/respostas/questionario/${questionario_id}`,
+            url: url,
+            type: "GET",
             data: function (d) {
                 const supervisor_id = $('#supervisorFilter').val();
                 if (supervisor_id) {

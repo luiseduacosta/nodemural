@@ -1,9 +1,19 @@
+// src/routes/alunoRoutes.js
+import { getToken } from './auth-utils.js';
+
 $(document).ready(function () {
+  const token = getToken();
+
   const table = $('#alunosTable').DataTable({
     order: [[3, 'asc']],
     ajax: {
       url: '/alunos',
-      dataSrc: ''
+      dataSrc: '',
+      beforeSend: function (xhr) {
+        if (token) {
+          xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        }
+      }
     },
     columns: [
       { data: 'id' },
@@ -31,6 +41,9 @@ $(document).ready(function () {
       $.ajax({
         url: `/alunos/${id}`,
         type: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         success: function (result) {
           table.ajax.reload();
         },

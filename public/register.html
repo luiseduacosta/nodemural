@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Registrar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    
+    <div class="container mt-2">
+
+        <div id="menu-container"></div>
+
+        <h1>Registrar</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="registerForm">
+                    <label class="form-label">Nome: <input type="text" id="nome" class="form-control" required></label><br>
+                    <label class="form-label">Email: <input type="email" id="email" class="form-control" required></label><br>
+                    <label class="form-label">Senha: <input type="password" id="password" class="form-control" required></label><br>
+                    <label class="form-label">Confirmar senha: <input type="password" id="passwordConfirm" class="form-control" required></label><br>
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </form>
+                <p id="message" class="text-danger"></p>
+                <p>Já tem conta? <a href="/login.html">Entrar</a></p>
+            </div>
+        </div>
+    </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script> 
+  <script src="/menu.js"></script>  
+  <script src="/register.js"></script>
+
+</body>
+</html>

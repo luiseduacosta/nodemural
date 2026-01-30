@@ -17,6 +17,11 @@ export const getAllMural = async (req, res) => {
 export const getDistinctPeriods = async (req, res) => {
     try {
         const periods = await Mural.findDistinctPeriods();
+        if (!periods) {
+            return res.status(404).json({ error: 'No periods found' });
+        } else {
+            console.log(periods);
+        }
         res.status(200).json(periods);
     } catch (error) {
         console.error('Error fetching periods:', error);
@@ -30,7 +35,7 @@ export const getMuralById = async (req, res) => {
         const { id } = req.params;
         const muralEntry = await Mural.findById(id);
         if (!muralEntry) {
-            return res.status(404).json({ error: 'Mural not found' });
+            return res.status(404).json({ error: 'Mural not found with ID: ' + id });
         }
         res.status(200).json(muralEntry);
     } catch (error) {

@@ -1,0 +1,73 @@
+// src/middleware/auth.js
+import jwt from 'jsonwebtoken';
+
+// Verify JWT token middleware
+export const verifyToken = (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Token não fornecido' });
+        }
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production'
+        );
+
+        req.user = decoded;
+        next();
+
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expirado' });
+        }
+        console.error('Token verification error:', error);
+        res.status(401).json({ error: 'Token inválido' });
+    }
+};
+
+// Check user role middleware
+export const checkRole = (allowedRoles) => {
+    return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ error: 'Não autenticado' });
+        }
+
+        if (!allowedRoles.includes(req.user.role)) {
+            return res.status(403).json({ 
+                error: 'Acesso negado. Permissão insuficiente.',
+                requiredRoles: allowedRoles,
+                userRole: req.user.role
+            });
+        }
+
+        next();
+    };
+};
+
+// Get current user info from token
+export const getCurrentUser = (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ error: 'Token não fornecido' });
+        }
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production'
+        );
+
+        res.status(200).json({
+            user: decoded
+        });
+
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expirado' });
+        }
+        res.status(401).json({ error: 'Token inválido' });
+    }
+};

@@ -49,19 +49,17 @@ $(document).ready(function () {
         }
     });
 
-    // Load Periodos and Config
-    loadFilters();
-
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
-            const periodosRes = await fetch('/mural/periodos');
+            const periodosRes = await fetch('/mural/periodoestagio', {
+                method: 'GET',
+            });
             const periodos = await periodosRes.json();
-
             const select = $('#periodoFilter');
             select.empty();
 
-            // Add 'Todos' option
+            // Add 'Todos' option first
             const option = document.createElement("option");
             option.value = 'Todos';
             option.text = 'Todos';
@@ -69,43 +67,35 @@ $(document).ready(function () {
 
             // 2. Get mural_periodo_atual (periodo) from Configuracoes and select it
             const configRes = await fetch('/configuracoes');
+            let defaultPeriod = null;
             if (configRes.ok) {
+                // If the list has it, select it.
                 const config = await configRes.json();
-                if (config[0].mural_periodo_atual) {
+                if (config[0] && config[0].mural_periodo_atual) {
                     // If the list has it, select it.
-                    let found = false;
-                    periodos.forEach(p => {
-                        if (p.periodo === config[0].mural_periodo_atual) {
-                            found = true;
-                            const option = document.createElement("option");
-                            // If not found, select the first one
-                            if (!found) {
-                                const firstPeriod = periodos[0];
-                                const option = document.createElement("option");
-                                option.value = firstPeriod.periodo;
-                                option.text = firstPeriod.periodo;
-                                option.selected = true;
-                                select.append(option);
-                            }
-                        }
-                    });
-                    if (found) {
-                        const option = document.createElement("option");
-                        option.value = config[0].mural_periodo_atual;
-                        option.text = config[0].mural_periodo_atual;
-                        option.selected = true;
-                        select.append(option);
-                    }
+                    defaultPeriod = config[0].mural_periodo_atual;
                 }
             }
-            // 3. Add periods from DB with default selected
+
+            // 3. Add periodos from DB with default value
             periodos.forEach(p => {
                 const option = document.createElement("option");
                 option.value = p.periodo;
                 option.text = p.periodo;
+                if (defaultPeriod && defaultPeriod == p.periodo) {
+                    option.selected = true;
+                }
                 select.append(option);
             });
 
+            // If there is not a default period, select the first one
+            if (periodos.length > 0 && !select.val()) {
+                const option = document.createElement("option");
+                option.value = periodos[0].periodo;
+                option.text = periodos[0].periodo;
+                option.selected = true;
+                select.append(option);
+            }
             // Reload table with the new default filter
             table.ajax.reload();
 
@@ -114,6 +104,9 @@ $(document).ready(function () {
             $('#periodoFilter').html('<option value="">Erro ao carregar</option>');
         }
     }
+
+    // Load Periodos and Config
+    loadFilters();
 
     // Handle Change
     $('#periodoFilter').on('change', function () {
