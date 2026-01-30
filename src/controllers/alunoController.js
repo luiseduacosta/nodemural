@@ -13,6 +13,21 @@ export const createAluno = async (req, res) => {
     }
 };
 
+// Get a single aluno by DRE
+export const getAlunoByRegistro = async (req, res) => {
+    try {
+        const { registro } = req.params;
+        const aluno = await Aluno.findByRegistro(registro);
+        if (!aluno) {
+            return res.status(404).json({ error: 'Aluno not found' });
+        }
+        res.status(200).json(aluno);
+    } catch (error) {
+        console.error('Error fetching aluno:', error);
+        res.status(500).json({ error: 'Error fetching aluno' });
+    }
+};
+
 // Get all alunos
 export const getAllAlunos = async (req, res) => {
     try {
@@ -47,7 +62,7 @@ export const getAlunoWithEstagiarioById = async (req, res) => {
         const aluno = await Aluno.findById(id);
         if (!aluno) {
             return res.status(404).json({ error: 'Aluno not found' });
-        }   
+        }
         res.status(200).json(aluno);
     } catch (error) {
         console.error('Error fetching aluno:', error);

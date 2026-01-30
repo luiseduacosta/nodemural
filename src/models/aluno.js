@@ -19,6 +19,12 @@ const Aluno = {
         return { id: Number(result.insertId), nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes };
     },
 
+    // Find aluno by registro
+    async findByRegistro(registro) {
+        const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
+        return rows[0];
+    },
+
     async findAll(req) {
         let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos';
         let params = [];
@@ -65,7 +71,7 @@ const Aluno = {
         return rows[0];
     },
 
-// Get all inscricoes for aluno_id from inscricoes table
+    // Get all inscricoes for aluno_id from inscricoes table
     async findInscricoesByAlunoId(id) {
         const rows = await pool.query(
             `SELECT 

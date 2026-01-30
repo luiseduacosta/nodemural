@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 const User = {
     // Create a new user with hashed password
-    async create(email, password, nome, role = 'aluno') {
+    async create(email, password, nome, identificacao, role = 'aluno', entidade_id = null) {
         try {
             // Check if user already exists
             const existing = await this.findByEmail(email);
@@ -16,15 +16,17 @@ const User = {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             const result = await pool.query(
-                'INSERT INTO auth_users (email, password, nome, role) VALUES (?, ?, ?, ?)',
-                [email, hashedPassword, nome, role]
+                'INSERT INTO auth_users (email, password, nome, identificacao, role, entidade_id) VALUES (?, ?, ?, ?, ?, ?)',
+                [email, hashedPassword, nome, identificacao, role, entidade_id]
             );
 
             return {
                 id: Number(result.insertId),
                 email,
                 nome,
-                role
+                identificacao,
+                role,
+                entidade_id
             };
         } catch (error) {
             throw error;
@@ -48,7 +50,7 @@ const User = {
     async findById(id) {
         try {
             const rows = await pool.query(
-                'SELECT id, email, nome, role, ativo, criado_em FROM auth_users WHERE id = ? AND ativo = TRUE',
+                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM auth_users WHERE id = ? AND ativo = TRUE',
                 [id]
             );
             return rows[0] || null;
@@ -66,7 +68,7 @@ const User = {
     async findAll() {
         try {
             const rows = await pool.query(
-                'SELECT id, email, nome, role, ativo, criado_em FROM auth_users WHERE ativo = TRUE ORDER BY nome ASC'
+                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM auth_users WHERE ativo = TRUE ORDER BY nome ASC'
             );
             return rows;
         } catch (error) {

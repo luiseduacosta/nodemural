@@ -35,7 +35,7 @@ export const checkRole = (allowedRoles) => {
         }
 
         if (!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({ 
+            return res.status(403).json({
                 error: 'Acesso negado. Permissão insuficiente.',
                 requiredRoles: allowedRoles,
                 userRole: req.user.role
@@ -71,3 +71,28 @@ export const getCurrentUser = (req, res, next) => {
         res.status(401).json({ error: 'Token inválido' });
     }
 };
+
+// Check if user owns the record they are trying to access/modify
+export const checkOwnership = (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Não autenticado' });
+    }
+
+    // Admin can access everything
+    if (req.user.role === 'admin') {
+        return next();
+    }
+
+    // Get the ID from params
+    const id = parseInt(req.params.id);
+
+    // Compare with user's entidade_id
+    if (req.user.entidade_id && req.user.entidade_id === id) {
+        return next();
+    }
+
+    return res.status(403).json({
+        error: 'Acesso negado. Você só pode acessar ou editar seus próprios dados.'
+    });
+};
+

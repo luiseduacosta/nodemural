@@ -5,7 +5,7 @@ import User from '../models/user.js';
 // Register a new user
 export const register = async (req, res) => {
     try {
-        const { email, password, passwordConfirm, nome, role } = req.body;
+        const { email, password, passwordConfirm, nome, identificacao, role, entidade_id } = req.body;
 
         // Validation
         if (!email || !password || !passwordConfirm || !nome) {
@@ -27,11 +27,41 @@ export const register = async (req, res) => {
         }
 
         // Create user (role defaults to 'aluno' if not specified, or only admin can set other roles)
-        const newUser = await User.create(email, password, nome, role || 'aluno');
+        const newUser = await User.create(email, password, nome, identificacao, role || 'aluno', entidade_id);
+
+        // Determine the redirect URL based on the user's role
+        let redirectTo = '/login.html';
+        switch (role) {
+            case 'aluno':
+                if (entidade_id) {
+                    redirectTo = '/view-aluno.html?entidade_id=' + entidade_id;
+                } else {
+                    redirectTo = '/new-aluno.html?registro=' + identificacao + '&nome=' + nome + '&email=' + email;
+                }
+                break;
+            case 'docente':
+                if (entidade_id) {
+                    redirectTo = '/view-docente.html?entidade_id=' + entidade_id;
+                } else {
+                    redirectTo = '/new-docente.html?siape=' + identificacao + '&nome=' + nome + '&email=' + email;
+                }
+                break;
+            case 'supervisor':
+                if (entidade_id) {
+                    redirectTo = '/view-supervisor.html?entidade_id=' + entidade_id;
+                } else {
+                    redirectTo = '/new-supervisor.html?cress=' + identificacao + '&nome=' + nome + '&email=' + email;
+                }
+                break;
+            case 'admin':
+                redirectTo = '/mural.html';
+                break;
+        }
 
         res.status(201).json({
             message: 'Usuário registrado com sucesso',
-            user: newUser
+            user: newUser,
+            redirectTo
         });
 
     } catch (error) {
@@ -67,11 +97,12 @@ export const login = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign(
-            { 
-                id: user.id, 
+            {
+                id: user.id,
                 email: user.email,
                 nome: user.nome,
-                role: user.role 
+                role: user.role,
+                entidade_id: user.entidade_id
             },
             process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production',
             { expiresIn: process.env.JWT_EXPIRY || '7d' }
@@ -84,7 +115,8 @@ export const login = async (req, res) => {
                 id: user.id,
                 email: user.email,
                 nome: user.nome,
-                role: user.role
+                role: user.role,
+                entidade_id: user.entidade_id
             }
         });
 
