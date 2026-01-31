@@ -1,6 +1,7 @@
 // src/routers/inscricaoRoutes.js
 import express from 'express';
 import * as inscricaoController from '../controllers/inscricaoController.js';
+import { verifyToken, checkRole, checkOwnership } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -9,11 +10,12 @@ router.use(express.json());
 
 // Routes
 router.get('/periodos', inscricaoController.getDistinctPeriods);
-router.post('/', inscricaoController.createInscricao);
-router.get('/', inscricaoController.getAllInscricoes);
-router.get('/:aluno_id/:muralestagio_id', inscricaoController.getInscricoesByAlunoAndMural);
-router.get('/:id', inscricaoController.getInscricaoById);
-router.put('/:id', inscricaoController.updateInscricao);
-router.delete('/:id', inscricaoController.deleteInscricao);
+// router.post('/', verifyToken, checkRole('admin'), inscricaoController.createInscricao);
+router.post('/', verifyToken, checkRole('admin'), inscricaoController.createInscricao);
+router.get('/', verifyToken, checkRole('admin'), inscricaoController.getAllInscricoes);
+router.get('/:aluno_id/:muralestagio_id', verifyToken, checkRole('admin'), inscricaoController.getInscricoesByAlunoAndMural);
+router.get('/:id', verifyToken, checkRole('admin'), inscricaoController.getInscricaoById);
+router.put('/:id', verifyToken, checkRole('admin'), inscricaoController.updateInscricao);
+router.delete('/:id', verifyToken, checkRole('admin'), inscricaoController.deleteInscricao);
 
 export default router;

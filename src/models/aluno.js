@@ -71,20 +71,44 @@ const Aluno = {
         return rows[0];
     },
 
+    // Get all estagiarios for aluno_id from estagiarios table
+    async findEstagiariosByAlunoId(id) {
+        const rows = await pool.query(
+            `SELECT 
+                e.id as id, 
+                e.aluno_id as aluno_id, 
+                e.nivel as nivel, 
+                e.periodo as periodo, 
+                d.nome as professor_nome, 
+                s.nome as supervisor_nome, 
+                i.instituicao as instituicao_nome
+            FROM estagiarios as e 
+            JOIN alunos as a ON e.aluno_id = a.id 
+            LEFT JOIN docentes as d ON e.professor_id = d.id
+            LEFT JOIN supervisores as s ON e.supervisor_id = s.id
+            LEFT JOIN estagio as i ON e.instituicao_id = i.id
+            WHERE e.aluno_id = ?
+            ORDER BY e.periodo ASC`,
+            [id]
+        );
+        return rows;
+    },
+
     // Get all inscricoes for aluno_id from inscricoes table
     async findInscricoesByAlunoId(id) {
         const rows = await pool.query(
             `SELECT 
-            i.id as id, 
-            i.aluno_id as aluno_id, 
-            i.muralestagio_id as muralestagio_id, 
-            i.data as data_inscricao, 
-            i.periodo as periodo, 
-            m.instituicao as mural_instituicao
+                i.id as id, 
+                i.aluno_id as aluno_id, 
+                i.muralestagio_id as muralestagio_id, 
+                i.data as data_inscricao, 
+                i.periodo as periodo, 
+                m.instituicao as mural_instituicao
             FROM inscricoes as i 
             JOIN mural_estagio as m ON i.muralestagio_id = m.id 
-            JOIN alunos as a ON i.aluno_id = a.id 
-            WHERE i.aluno_id = ?`,
+            LEFT JOIN alunos as a ON i.aluno_id = a.id 
+            WHERE i.aluno_id = ?
+            ORDER by periodo`,
             [id]
         );
         return rows;

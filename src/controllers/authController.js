@@ -34,21 +34,21 @@ export const register = async (req, res) => {
         switch (role) {
             case 'aluno':
                 if (entidade_id) {
-                    redirectTo = '/view-aluno.html?entidade_id=' + entidade_id;
+                    redirectTo = '/view-alunos.html?id=' + entidade_id;
                 } else {
                     redirectTo = '/new-aluno.html?registro=' + identificacao + '&nome=' + nome + '&email=' + email;
                 }
                 break;
             case 'docente':
                 if (entidade_id) {
-                    redirectTo = '/view-docente.html?entidade_id=' + entidade_id;
+                    redirectTo = '/view-docente.html?id=' + entidade_id;
                 } else {
                     redirectTo = '/new-docente.html?siape=' + identificacao + '&nome=' + nome + '&email=' + email;
                 }
                 break;
             case 'supervisor':
                 if (entidade_id) {
-                    redirectTo = '/view-supervisor.html?entidade_id=' + entidade_id;
+                    redirectTo = '/view-supervisor.html?id=' + entidade_id;
                 } else {
                     redirectTo = '/new-supervisor.html?cress=' + identificacao + '&nome=' + nome + '&email=' + email;
                 }

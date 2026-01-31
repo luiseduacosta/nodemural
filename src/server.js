@@ -54,9 +54,11 @@ app.use("/areainstituicoes", areaInstituicaoRoutes);
 
 // --- NESTED ROUTES ---
 // Nested estagiarios routes
-app.get("/alunos/:id/estagiarios", estagiarioController.getEstagiariosByAlunoId);
 app.get("/supervisores/:id/estagiarios", estagiarioController.getEstagiariosBySupervisorId);
 app.get("/docentes/:id/estagiarios", estagiarioController.getEstagiariosByProfessorId);
+app.get("/estagios/:id/estagiarios", estagiarioController.getEstagiariosByAlunoId);
+app.get("/alunos/:id/estagiarios", alunoController.getEstagiariosByAlunoId);
+
 // Nested inscricoes route
 app.get("/mural/:id/inscricoes", inscricaoController.getInscricoesByMuralId);
 app.get("/alunos/:id/inscricoes", alunoController.getInscricoesByAlunoId);

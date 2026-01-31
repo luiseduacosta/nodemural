@@ -1,3 +1,9 @@
+// View Aluno Details
+import { getToken, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+
+const user = getCurrentUser();
+// console.log(user);
+
 $(document).ready(async function () {
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
@@ -5,6 +11,10 @@ $(document).ready(async function () {
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'alunos.html';
+        return;
+    } else if (user.role == 'aluno' && user.entidade_id != id) {
+        alert('Você não tem permissão para visualizar este aluno');
+        window.location.href = 'mural.html';
         return;
     }
 
@@ -15,7 +25,6 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch aluno');
         }
         const aluno = await response.json();
-        console.log(aluno);
     
         // Format the date
         const datanascimento = new Date(aluno[0].nascimento);
@@ -43,7 +52,7 @@ $(document).ready(async function () {
 
         // Fetch Inscricoes
         try {
-            const inscResponse = await fetch(`/alunos/${id}/inscricoes`);
+            const inscResponse = await authenticatedFetch(`/alunos/${id}/inscricoes`);
             if (inscResponse.ok) {
                 const inscricoes = await inscResponse.json();
                 const tbody = document.querySelector('#table-inscricoes tbody');
@@ -76,16 +85,21 @@ $(document).ready(async function () {
 
         // Fetch Estagiarios
         try {
-            const estagiosResponse = await fetch(`/alunos/${id}/estagiarios`);
-            if (estagiosResponse.ok) {
-                const estagios = await estagiosResponse.json();
+            const estagiariosResponse = await authenticatedFetch(`/alunos/${id}/estagiarios`);
+            if (estagiariosResponse.ok) {
+                const estagiarios = await estagiariosResponse.json();
+                if (Array.isArray(estagiarios) && estagiarios.length > 0) {
+                    // console.log(estagiarios);
+                } else {
+                    console.log("Sem estagiários");
+                }
                 const tbody = document.querySelector('#table-estagios tbody');
 
-                if (estagios.length === 0) {
+                if (estagiarios.length === 0) {
                     document.getElementById('table-estagios').classList.add('d-none');
                     document.getElementById('no-estagios-msg').classList.remove('d-none');
                 } else {
-                    estagios.forEach(est => {
+                    estagiarios.forEach(est => {
                         const tr = document.createElement('tr');
 
                         let nivelDisplay = est.nivel;
@@ -129,9 +143,21 @@ window.editRecord = function () {
 window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir este aluno?')) {
         try {
-            const response = await fetch(`/alunos/${window.currentAlunoId}`, { method: 'DELETE' });
+            const token = getToken();
+            if (!token) {
+                alert('Você precisa estar logado para excluir um aluno.');
+                return;
+            }
+            const response = await authenticatedFetch(`/alunos/${window.currentAlunoId}`, { method: 'DELETE' });
             if (!response.ok) {
-                throw new Error('Failed to delete aluno');
+                if (response.status === 401) {
+                    alert('Não autorizado. Faça login novamente.');
+                } else if (response.status === 403) {
+                    alert('Acesso negado. Permissão insuficiente.');
+                } else {
+                    throw new Error('Failed to delete aluno');
+                }
+                return;
             }
             window.location.href = 'alunos.html';
         } catch (error) {

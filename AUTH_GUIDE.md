@@ -19,6 +19,9 @@ Your application now has JWT-based authentication and role-based access control 
   - Email (unique)
   - Hashed password (using bcryptjs)
   - Roles: admin, supervisor, docente, aluno
+  - Nome
+  - Identificacao (a numer: registro from aluno, siape from docente ou cress from supervisor)
+  - entidade_id (id from aluno, docente ou supervisor)
   - Soft delete (ativo field)
 
 **Setup file:** [src/database/setupAuthUsers.js](src/database/setupAuthUsers.js)
