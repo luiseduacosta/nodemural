@@ -49,62 +49,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script>
-        $(document).ready(function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-
-            if (id) {
-                // Fetch existing data
-                $.ajax({
-                    url: `/questionarios/${id}`,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#id').val(data.id);
-                        $('#title').val(data.title);
-                        $('#description').val(data.description);
-                        $('#category').val(data.category);
-                        $('#target_user_type').val(data.target_user_type);
-                        $('#is_active').prop('checked', data.is_active);
-                    },
-                    error: function () {
-                        alert('Erro ao carregar dados do questionário.');
-                    }
-                });
-            } else {
-                alert('ID não fornecido.');
-                window.location.href = 'questionario.html';
-            }
-
-            $('#editQuestionarioForm').on('submit', function (e) {
-                e.preventDefault();
-
-                const formData = {
-                    title: $('#title').val(),
-                    description: $('#description').val(),
-                    category: $('#category').val(),
-                    target_user_type: $('#target_user_type').val(),
-                    is_active: $('#is_active').is(':checked'),
-                    modified: new Date().toISOString().split("T")[0]
-                };
-
-                $.ajax({
-                    url: `/questionarios/${id}`,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function () {
-                        alert('Questionário atualizado com sucesso!');
-                        window.location.href = 'view-questionario.html?id=' + id;
-                    },
-                    error: function (xhr) {
-                        alert('Erro ao atualizar questionário: ' + xhr.responseText);
-                    }
-                });
-            });
-        });
-    </script>
-
+    <script src="edit-questionario.js" type="module"></script>
     <script src="menu.js" type="module"></script>
 
 </body>

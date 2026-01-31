@@ -63,32 +63,10 @@ app.get("/alunos/:id/estagiarios", alunoController.getEstagiariosByAlunoId);
 app.get("/mural/:id/inscricoes", inscricaoController.getInscricoesByMuralId);
 app.get("/alunos/:id/inscricoes", alunoController.getInscricoesByAlunoId);
 
-// --- DATABASE ---
-const pool = mariadb.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'tccess',
-});
-
 // --- INDEX ENDPOINTS ---
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
-
-// --- ESTAGIO ENDPOINTS ---
-
-// --- SUPERVISORES ENDPOINTS ---
-
-// --- MURAL ENDPOINTS ---
-
-// --- INSCRICOES ENDPOINTS ---
-
-// --- ESTAGIARIOS ENDPOINTS ---
-
-// --- TURMA_ESTAGIO ENDPOINTS ---
-
-// --- CONFIGURACOES ENDPOINTS ---
 
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
