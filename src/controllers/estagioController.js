@@ -69,7 +69,7 @@ export const deleteEstagio = async (req, res) => {
     }
 };
 
-// Get supervisores by estagio ID
+// Get supervisores by estagio ID (the job of the supervisor is the estagio)
 export const getSupervisoresById = async (req, res) => {
     try {
         const { id } = req.params;

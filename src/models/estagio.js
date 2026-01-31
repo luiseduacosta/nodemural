@@ -1,3 +1,4 @@
+// src/models/estagio.js
 import pool from '../database/db.js';
 
 const Estagio = {

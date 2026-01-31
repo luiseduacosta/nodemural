@@ -1,17 +1,5 @@
 $(document).ready(function () {
 
-    // Load menu
-    async function loadMenu() {
-        try {
-            const response = await fetch('menu.html');
-            const html = await response.text();
-            document.getElementById('menu-container').innerHTML = html;
-        } catch (error) {
-            console.error('Erro ao carregar o menu:', error);
-        }
-    }
-    loadMenu();
-
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('estagiario_id');

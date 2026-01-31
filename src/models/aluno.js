@@ -126,12 +126,6 @@ const Aluno = {
         // if aluno has estagiarios: not possible to delete
         const estagiarios = await pool.query('SELECT * FROM estagiarios WHERE aluno_id = ?', [id]);
         if (estagiarios.length > 0) { // Fix: removed [0] invalid access locally if pool returns array directly
-            // Note: assuming mariadb connector returns array of rows. 
-            // If estagiarios is empty, .length is 0. 
-            // If the pool response structure is different, this might need adjustment, 
-            // but previously it was estagiarios[0].length which implies estagiarios is [rows, meta].
-            // Standard mariadb pool.query returns rows array (if not using specific options).
-            // However, keeping consistent with simple check:
             console.log('Aluno possui estagiários: não é possível excluir');
             throw new Error('Aluno possui estagiários: não é possível excluir');
         }

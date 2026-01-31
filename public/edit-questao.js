@@ -1,18 +1,6 @@
 // src/controllers/questaoController.js
 $(document).ready(function () {
 
-    // Load Menu
-    async function loadMenu() {
-        try {
-            const response = await fetch('menu.html');
-            const html = await response.text();
-            document.getElementById('menu-container').innerHTML = html;
-        } catch (error) {
-            console.error('Erro ao carregar o menu:', error);
-        }
-    }
-    loadMenu();
-
     // Setup
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");

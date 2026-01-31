@@ -23,5 +23,4 @@ router.delete('/:id/instituicoes/:instituicaoId', verifyToken, checkRole(['admin
 router.post('/', verifyToken, checkRole(['admin']), supervisorController.createSupervisor);
 router.delete('/:id', verifyToken, checkRole(['admin']), supervisorController.deleteSupervisor);
 
-
 export default router;

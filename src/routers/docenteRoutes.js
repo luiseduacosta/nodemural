@@ -17,5 +17,4 @@ router.post('/', verifyToken, checkRole(['admin']), docenteController.createDoce
 router.put('/:id', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.updateDocente);
 router.delete('/:id', verifyToken, checkRole(['admin']), docenteController.deleteDocente);
 
-
 export default router;
