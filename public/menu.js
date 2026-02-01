@@ -1,7 +1,7 @@
 // Top Menu
 import { isLoggedIn, getCurrentUser, logout } from './auth-utils.js';
 
-$(document).ready(function () {
+$(document).ready(async function () {
   // Função para carregar o menu
   async function loadMenu() {
     try {

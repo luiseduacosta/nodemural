@@ -1,7 +1,7 @@
 // src/public/atividades.js
 import { getToken, hasRole } from './auth-utils.js';
 
-$(document).ready(function () {
+$(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';

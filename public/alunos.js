@@ -1,7 +1,7 @@
 // src/routes/alunoRoutes.js
 import { getToken, getCurrentUser, isAdmin } from './auth-utils.js';
 
-$(document).ready(function () {
+$(document).ready(async function () {
 
   const token = getToken();
   const currentUser = getCurrentUser();

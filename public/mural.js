@@ -1,7 +1,9 @@
 // src/routes/muralRoutes.js
-import { getToken, authenticatedFetch, getCurrentUser, isAdmin } from './auth-utils.js';
+import { getToken, authenticatedFetch, getCurrentUser, isAdmin, hasRole } from './auth-utils.js';
 
-$(document).ready(function () {
+// Everybody can access to the display of this page for the current periodo stored in the config
+$(document).ready(async function () {
+
     let table;
 
     table = $('#muralTable').DataTable({
@@ -17,7 +19,7 @@ $(document).ready(function () {
                     }
                 } else if (window.defaultPeriod) {
                     d.periodo = window.defaultPeriod;
-                    document.getElementById('periodoFilter').replaceWith(`${window.defaultPeriod}`);
+                    $('#periodoFilter').replaceWith(`${window.defaultPeriod}`);
                 }
             },
             beforeSend: function (xhr) {
@@ -67,7 +69,6 @@ $(document).ready(function () {
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
-            // Add the token to the headers
             const periodosRes = await fetch('/mural/periodoestagio', {
                 method: 'GET',
             });
@@ -85,10 +86,8 @@ $(document).ready(function () {
             // 2. Get mural_periodo_atual (periodo) from Configuracoes and select it
             const configRes = await fetch('/configuracoes');
             if (configRes.ok) {
-                // If the list has it, select it.
                 const config = await configRes.json();
                 if (config[0] && config[0].mural_periodo_atual) {
-                    // If the list has it, select it.
                     window.defaultPeriod = config[0].mural_periodo_atual;
                 }
             }

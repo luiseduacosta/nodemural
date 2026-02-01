@@ -2,6 +2,7 @@
 import { getToken, hasRole } from './auth-utils.js';
 
 $(document).ready(async function () {
+
     if (!getToken() || !hasRole(['admin', 'supervisor'])) {
         window.location.href = 'login.html';
         return;

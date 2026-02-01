@@ -1,7 +1,7 @@
 // src/public/edit-areainstituicao.js
 import { getToken, hasRole } from './auth-utils.js';
 
-$(document).ready(function () {
+$(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
