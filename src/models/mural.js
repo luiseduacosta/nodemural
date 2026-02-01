@@ -24,6 +24,21 @@ const Mural = {
         return rows;
     },
 
+    async findByInstituicao(instituicao_id, periodo = null) {
+        let query = 'SELECT * FROM mural_estagio WHERE instituicao_id = ?';
+        const params = [instituicao_id];
+
+        if (periodo) {
+            query += ' AND periodo = ?';
+            params.push(periodo);
+        }
+
+        query += ' ORDER BY periodo DESC, dataInscricao ASC';
+
+        const rows = await pool.query(query, params);
+        return rows;
+    },
+
     async findById(id) {
         const rows = await pool.query(
             'SELECT * FROM mural_estagio WHERE id = ?',

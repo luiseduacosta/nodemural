@@ -1,3 +1,5 @@
+import { authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
     const form = document.getElementById('newInscricaoForm');
 
@@ -34,7 +36,18 @@ $(document).ready(async function () {
 
     // Load muralestagios for the dropdown
     try {
-        const response = await fetch('/mural');
+        const response = await authenticatedFetch('/mural');
+        if (response.status === 401) {
+            // allow anonymous behavior if necessary or redirect
+            // in this case redirect to login
+            alert('Faça login para ver os murais.');
+            window.location.href = '/login.html';
+            return;
+        }
+        if (response.status === 403) {
+            alert('Acesso negado ao listar murais.');
+            return;
+        }
         const muralestagios = await response.json();
         const select = document.getElementById('muralestagio_id');
 
@@ -72,7 +85,7 @@ $(document).ready(async function () {
     document.getElementById('muralestagio_id').addEventListener('change', async function () {
         const selectedOption = this.options[this.selectedIndex];
         if (selectedOption.value) {
-            const response = await fetch(`/mural/${selectedOption.value}`);
+            const response = await authenticatedFetch(`/mural/${selectedOption.value}`);
             if (!response.ok) {
                 console.error('Error loading muralestagio:', response);
                 return;

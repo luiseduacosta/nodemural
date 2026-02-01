@@ -1,19 +1,32 @@
+// src/routes/muralRoutes.js
+import { getToken, authenticatedFetch, getCurrentUser, isAdmin } from './auth-utils.js';
+
 $(document).ready(function () {
     let table;
 
-    // Initialize DataTable but defer loading until we set the filter
     table = $('#muralTable').DataTable({
         order: [[2, 'desc'], [1, 'asc']],
         ajax: {
             url: '/mural',
             data: function (d) {
-                // Add periodo filter if selected
-                const periodo = $('#periodoFilter').val();
-                if (periodo && periodo !== 'Todos') {
-                    d.periodo = periodo;
+                const token = getToken();
+                if (token) {
+                    const periodo = $('#periodoFilter').val();
+                    if (periodo && periodo != 'Todos') {
+                        d.periodo = periodo;
+                    }
+                } else if (window.defaultPeriod) {
+                    d.periodo = window.defaultPeriod;
+                    document.getElementById('periodoFilter').replaceWith(`${window.defaultPeriod}`);
                 }
             },
-            dataSrc: ''
+            beforeSend: function (xhr) {
+                const token = getToken();
+                if (token) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                }
+            },
+            dataSrc: '',
         },
         columns: [
             { data: 'id' },
@@ -38,8 +51,8 @@ $(document).ready(function () {
                 data: null,
                 render: function (data, type, row) {
                     return `
-    <button onclick="window.location.href='edit-mural.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
-    <button onclick="deleteMural(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
+<button onclick="window.location.href='edit-mural.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
+<button onclick="deleteMural(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
 `;
                 }
             }
@@ -52,9 +65,11 @@ $(document).ready(function () {
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
+            // Add the token to the headers
             const periodosRes = await fetch('/mural/periodoestagio', {
                 method: 'GET',
             });
+
             const periodos = await periodosRes.json();
             const select = $('#periodoFilter');
             select.empty();
@@ -67,13 +82,12 @@ $(document).ready(function () {
 
             // 2. Get mural_periodo_atual (periodo) from Configuracoes and select it
             const configRes = await fetch('/configuracoes');
-            let defaultPeriod = null;
             if (configRes.ok) {
                 // If the list has it, select it.
                 const config = await configRes.json();
                 if (config[0] && config[0].mural_periodo_atual) {
                     // If the list has it, select it.
-                    defaultPeriod = config[0].mural_periodo_atual;
+                    window.defaultPeriod = config[0].mural_periodo_atual;
                 }
             }
 
@@ -82,7 +96,7 @@ $(document).ready(function () {
                 const option = document.createElement("option");
                 option.value = p.periodo;
                 option.text = p.periodo;
-                if (defaultPeriod && defaultPeriod == p.periodo) {
+                if (window.defaultPeriod && window.defaultPeriod == p.periodo) {
                     option.selected = true;
                 }
                 select.append(option);
@@ -96,6 +110,7 @@ $(document).ready(function () {
                 option.selected = true;
                 select.append(option);
             }
+
             // Reload table with the new default filter
             table.ajax.reload();
 
@@ -115,8 +130,16 @@ $(document).ready(function () {
 
     window.deleteMural = async (id) => {
         if (confirm('Tem certeza que deseja excluir este mural?')) {
-            await fetch(`/mural/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            try {
+                const response = await fetch(`/mural/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Failed to delete mural');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting mural:', error);
+                alert('Erro ao excluir mural');
+            }
         }
     };
 });

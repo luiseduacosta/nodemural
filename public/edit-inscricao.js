@@ -1,3 +1,5 @@
+import { authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
     const form = document.getElementById('editInscricaoForm');
     
@@ -28,7 +30,16 @@ $(document).ready(async function () {
 
     // Load mural estagios for the dropdown
     try {
-        const response = await fetch('/mural');
+        const response = await authenticatedFetch('/mural');
+        if (response.status === 401) {
+            alert('Faça login para ver os murais.');
+            window.location.href = '/login.html';
+            return;
+        }
+        if (response.status === 403) {
+            alert('Acesso negado ao listar murais.');
+            return;
+        }
         const murais = await response.json();
         const select = document.getElementById('muralestagio_id');
         

@@ -20,7 +20,7 @@ $(document).ready(async function () {
 
     // Fetch the aluno data
     try {
-        const response = await fetch(`/alunos/${id}`);
+        const response = await authenticatedFetch(`/alunos/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch aluno');
         }

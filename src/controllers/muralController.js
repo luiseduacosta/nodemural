@@ -4,9 +4,9 @@ import Mural from '../models/mural.js';
 // Get all mural entries
 export const getAllMural = async (req, res) => {
     try {
-        const periodo = req.query.periodo || null;
+        const { periodo } = req.query;
         const mural = await Mural.findAll(periodo);
-        res.status(200).json(mural);
+        return res.status(200).json(mural);
     } catch (error) {
         console.error('Error fetching mural:', error);
         res.status(500).json({ error: 'Error fetching mural' });

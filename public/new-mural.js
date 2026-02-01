@@ -66,13 +66,22 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/mural', {
+            const response = await authenticatedFetch('/mural', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(mural)
             });
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Faça login para criar um mural.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                if (response.status === 403) {
+                    alert('Acesso negado. Permissão insuficiente.');
+                    return;
+                }
                 throw new Error('Failed to create mural');
             }
 

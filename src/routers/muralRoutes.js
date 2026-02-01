@@ -1,4 +1,4 @@
-// src/routers/muralRoutes.js
+// src/routers/muralRoutes.js 
 import express from 'express';
 import * as muralController from '../controllers/muralController.js';
 import { verifyToken, checkRole } from '../middleware/auth.js';
@@ -8,7 +8,7 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
-// Routes. Without authentication
+// Routes. Require authentication for listing (admins see all; others filtered)
 router.get('/', muralController.getAllMural);
 router.get('/periodoestagio', muralController.getDistinctPeriods);
 router.get('/:id/inscricoes', muralController.getInscricoesByMuralId);

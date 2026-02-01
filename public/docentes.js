@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     const table = $('#docentesTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
