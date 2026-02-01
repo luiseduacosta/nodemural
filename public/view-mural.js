@@ -1,3 +1,5 @@
+import { getToken, authenticatedFetch, getCurrentUser, isAdmin } from './auth-utils.js';
+
 $(document).ready(async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -8,6 +10,8 @@ $(document).ready(async function () {
         return;
     }
 
+    const token = getToken();
+    console.log(token);
     try {
         const response = await fetch(`/mural/${id}`);
         if (!response.ok) {
@@ -38,7 +42,7 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = mural.id;
         document.getElementById('view-periodo').textContent = mural.periodo || 'N/A';
         document.getElementById('view-instituicao').textContent = mural.instituicao;
-        document.getElementById('view-link-estagio').href = `/view-estagio.html?id=${mural.instituicao_id}`;
+        document.getElementById('view-link-estagio').href = (token == null) ? '#' : `/view-estagio.html?id=${mural.instituicao_id}`;
         document.getElementById('view-vagas').textContent = mural.vagas;
         document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
         document.getElementById('view-cargaHoraria').textContent = mural.cargaHoraria || 'N/A';
@@ -65,6 +69,17 @@ $(document).ready(async function () {
         window.location.href = 'mural.html';
     }
 });
+
+// Hide buttons if not admin
+if (!isAdmin()) {
+    document.getElementById('editRecordBtn').style.display = 'none';
+    document.getElementById('newMuralBtn').style.display = 'none';
+    document.getElementById('inscricoes-tab').style.display = 'none';
+}
+// Hide inscrever button if not logged in
+if (!getToken()) {
+    document.getElementById('inscreverBtn').style.display = 'none';
+}
 
 window.editRecord = function () {
     window.location.href = `edit-mural.html?id=${window.currentMuralId}`;

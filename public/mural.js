@@ -49,11 +49,13 @@ $(document).ready(function () {
             },
             {
                 data: null,
-                render: function (data, type, row) {
+                render: isAdmin() ? function (data, type, row) {
                     return `
-<button onclick="window.location.href='edit-mural.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
-<button onclick="deleteMural(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
-`;
+                    < button onclick = "window.location.href='edit-mural.html?id=${row.id}'" class= "btn btn-sm btn-warning" > Editar</button >
+                    <button onclick="deleteMural(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
+                    `;
+                } : function (data, type, row) {
+                    return '';
                 }
             }
         ],
@@ -123,6 +125,16 @@ $(document).ready(function () {
     // Load Periodos and Config
     loadFilters();
 
+    // Hide new mural button if not admin
+    if (!isAdmin()) {
+        $('#newMuralBtn').hide();
+    }
+
+    // Hide edit and delete buttons if not admin
+    if (!isAdmin()) {
+        $('#muralTable').DataTable().column(6).visible(false);
+    }
+
     // Handle Change
     $('#periodoFilter').on('change', function () {
         table.ajax.reload();
@@ -131,7 +143,7 @@ $(document).ready(function () {
     window.deleteMural = async (id) => {
         if (confirm('Tem certeza que deseja excluir este mural?')) {
             try {
-                const response = await fetch(`/mural/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/ mural / ${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete mural');
                 }

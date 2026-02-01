@@ -49,6 +49,10 @@ $(document).ready(function () {
         e.preventDefault();
         logout('/login.html');
       });
+    } else {
+      // Only show login/register links if not logged in
+      const loginLinks = navbarNav.querySelectorAll('a[href="#"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionario.html"], a[href="estagio.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"], a[href="register.html"]');
+      loginLinks.forEach(link => link.parentElement.remove());
     }
   }
 
