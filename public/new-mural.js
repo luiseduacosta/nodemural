@@ -1,4 +1,13 @@
+// src/controllers/muralController.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('newMuralForm');
 
     // Load instituições for the dropdown

@@ -1,7 +1,17 @@
+// src/public/view-estagio.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
+
 
     if (!id) {
         alert('ID não fornecido');

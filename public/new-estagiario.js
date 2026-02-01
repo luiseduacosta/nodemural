@@ -1,4 +1,12 @@
-document.addEventListener('DOMContentLoaded', async function () {
+// src/controllers/estagiarioController.js
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
     const form = document.getElementById('newEstagioForm');
 
     // Clean all the fields

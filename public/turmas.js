@@ -1,4 +1,13 @@
+// src/controllers/turmaController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const table = $('#turmasTable').DataTable({
         order: [[1, 'asc']],
         ajax: {

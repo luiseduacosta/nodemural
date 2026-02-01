@@ -1,4 +1,13 @@
+// src/public/docentes.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    // Only users with token and role 'admin' or 'docente' can access this page
+    if (!getToken() || !hasRole(['admin', 'docente'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const table = $('#docentesTable').DataTable({
         order: [[1, 'asc']],

@@ -1,8 +1,17 @@
+// src/public/estagios.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
-    const table = $('#estagioTable').DataTable({
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const table = $('#estagiosTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
-            url: '/estagio',
+            url: '/estagios',
             dataSrc: ''
         },
 

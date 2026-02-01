@@ -1,5 +1,12 @@
 // src/controllers/respostaController.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('estagiario_id');
@@ -12,7 +19,7 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch questionario');
         }
         const questionarios = await response.json();
-//        console.log(questionarios);
+        //        console.log(questionarios);
         // Make the questionarios selectable
         const questionarioSelect = document.getElementById('questionario_id');
         questionarios.forEach(questionario => {
@@ -36,7 +43,7 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch estagiario');
         }
         const estagiarios = await response.json();
-//        console.log(estagiarios);
+        //        console.log(estagiarios);
         // Set estagiario info. It is not a select, but a view 
         const estagiarioSelect = document.getElementById('estagiario_id');
         estagiarios.forEach(estagiario => {

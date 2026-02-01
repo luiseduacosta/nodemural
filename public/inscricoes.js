@@ -1,4 +1,13 @@
+// src/controllers/inscricaoController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     let table;
 
     table = $('#inscricoesTable').DataTable({

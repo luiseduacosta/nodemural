@@ -1,6 +1,13 @@
-import { authenticatedFetch } from './auth-utils.js';
+// src/controllers/inscricaoController.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('newInscricaoForm');
 
     // Get muralestagio_id from URL

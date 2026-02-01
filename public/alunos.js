@@ -1,8 +1,16 @@
 // src/routes/alunoRoutes.js
-import { getToken } from './auth-utils.js';
+import { getToken, getCurrentUser, isAdmin } from './auth-utils.js';
 
 $(document).ready(function () {
+
   const token = getToken();
+  const currentUser = getCurrentUser();
+
+  // If not logged in, redirect to login
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
 
   const table = $('#alunosTable').DataTable({
     order: [[3, 'asc']],

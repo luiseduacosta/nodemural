@@ -1,10 +1,18 @@
 // src/controllers/questaoController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     // Load supervisores for filter
     $.ajax({
         url: '/supervisores',
         type: 'GET',
+        headers: { 'Authorization': `Bearer ${getToken()}` },
         success: function (data) {
             const select = $('#supervisorFilter');
             data.forEach(supervisor => {
@@ -34,6 +42,7 @@ $(document).ready(function () {
         ajax: {
             url: url,
             type: "GET",
+            headers: { 'Authorization': `Bearer ${getToken()}` },
             data: function (d) {
                 const supervisor_id = $('#supervisorFilter').val();
                 if (supervisor_id) {
@@ -97,6 +106,7 @@ $(document).ready(function () {
             $.ajax({
                 url: `/respostas/${id}`,
                 type: "DELETE",
+                headers: { 'Authorization': `Bearer ${getToken()}` },
                 success: function () {
                     alert("Resposta excluída com sucesso");
                     table.ajax.reload();

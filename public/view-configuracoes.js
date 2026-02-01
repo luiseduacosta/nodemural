@@ -1,4 +1,12 @@
+// src/public/view-configuracoes.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    // Only users with token and role 'admin' can access this page
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+    }
 
     loadConfig();
 

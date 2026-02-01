@@ -1,6 +1,14 @@
+// src/controllers/supervisorController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+    if (!getToken() || !hasRole(['admin', 'supervisor'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('editSupervisorForm');
-    
+
     // Define editSupervisor function first
     const editSupervisor = async (id) => {
         try {
@@ -15,7 +23,7 @@ $(document).ready(async function () {
             document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
             document.getElementById('supervisorId').value = supervisor.id;
-            
+
             // Store the ID for view function
             window.currentSupervisorId = id;
         } catch (error) {
@@ -24,7 +32,7 @@ $(document).ready(async function () {
             window.location.href = 'supervisores.html';
         }
     };
-    
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
@@ -63,6 +71,6 @@ $(document).ready(async function () {
 });
 
 // Function to redirect to view mode
-window.viewRecord = function() {
+window.viewRecord = function () {
     window.location.href = `view-supervisor.html?id=${window.currentSupervisorId}`;
 };

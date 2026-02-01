@@ -1,8 +1,14 @@
-import { getToken, authenticatedFetch, getCurrentUser, isAdmin } from './auth-utils.js';
+import { getToken } from './auth-utils.js';
 
 $(document).ready(async function () {
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
+
+    if (!getToken()) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     if (!id) {
         alert('ID não fornecido');

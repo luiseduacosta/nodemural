@@ -1,4 +1,12 @@
-$(document).ready(function () {
+// src/controllers/respostaController.js
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'docente'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('estagiario_id');

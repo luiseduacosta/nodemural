@@ -1,5 +1,12 @@
 // src/controllers/respostaController.js
-$(document).ready(function () {
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'supervisor'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);

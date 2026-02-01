@@ -1,4 +1,13 @@
+// View Docente Details
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'docente'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 

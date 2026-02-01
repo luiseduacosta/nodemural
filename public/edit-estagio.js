@@ -1,4 +1,13 @@
+// src/public/edit-estagio.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('estagioForm');
 
     // Input Masks
@@ -38,7 +47,7 @@ $(document).ready(async function () {
             document.getElementById('cnpj').value = estagio.cnpj;
             document.getElementById('beneficio').value = estagio.beneficio || '';
             document.getElementById('estagioId').value = estagio.id;
-            
+
             if (estagio.area_instituicoes_id) {
                 document.getElementById('area_instituicoes_id').value = estagio.area_instituicoes_id;
             }

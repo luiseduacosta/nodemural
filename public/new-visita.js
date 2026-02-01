@@ -1,4 +1,13 @@
+// src/public/new-visita.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('newVisitaForm');
 
     // Get instituicao_id from URL if present
@@ -14,7 +23,7 @@ $(document).ready(async function () {
         const response = await fetch('/estagio');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
-        
+
         instituicoes.forEach(inst => {
             const option = document.createElement('option');
             option.value = inst.id;
@@ -30,7 +39,7 @@ $(document).ready(async function () {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const visita = {
             instituicao_id: document.getElementById('instituicao_id').value,
             data: document.getElementById('data').value,

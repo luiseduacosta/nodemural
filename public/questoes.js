@@ -1,5 +1,13 @@
 // src/controllers/questaoController.js
-$(document).ready(function () {
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Setup
     const urlParams = new URLSearchParams(window.location.search);
     const questionario_id = urlParams.get("questionario_id");

@@ -1,10 +1,16 @@
 // View Aluno Details
-import { getToken, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+import { getToken, authenticatedFetch, getCurrentUser, hasRole } from './auth-utils.js';
 
 const user = getCurrentUser();
 // console.log(user);
 
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -25,7 +31,7 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch aluno');
         }
         const aluno = await response.json();
-    
+
         // Format the date
         const datanascimento = new Date(aluno[0].nascimento);
         const datanascimentoFormatada = datanascimento.toLocaleDateString('pt-BR');

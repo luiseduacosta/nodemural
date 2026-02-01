@@ -1,4 +1,12 @@
+// src/public/new-questionario.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     $('#newQuestionarioForm').on('submit', function (e) {
         e.preventDefault();

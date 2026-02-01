@@ -1,4 +1,13 @@
+// src/public/view-supervisor.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'supervisor'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -17,23 +26,23 @@ $(document).ready(async function () {
         }
 
         const supervisor = await response.json();
-        
+
         // Populate the view fields
         document.getElementById('view-id').textContent = supervisor.id;
         document.getElementById('view-nome').textContent = supervisor.nome;
         document.getElementById('view-email').textContent = supervisor.email;
         document.getElementById('view-celular').textContent = supervisor.celular;
         document.getElementById('view-cress').textContent = supervisor.cress;
-        
+
         // Store the ID for edit function
         window.currentSupervisorId = id;
-        
+
         // Load instituições for this supervisor
         loadInstituicoes(id);
-        
+
         // Load all instituições for the dropdown
         loadAllInstituicoes();
-        
+
         // Load estagiários for this supervisor
         loadEstagiarios(id);
     } catch (error) {
@@ -52,7 +61,7 @@ async function loadInstituicoes(supervisorId) {
 
         const instituicoes = await response.json();
         const listDiv = document.getElementById('instituicoes-list');
-        
+
         if (instituicoes.length === 0) {
             listDiv.innerHTML = '<p class="text-muted">Nenhuma instituição associada.</p>';
         } else {
@@ -78,7 +87,7 @@ async function loadAllInstituicoes() {
 
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao-select');
-        
+
         instituicoes.forEach(inst => {
             const option = document.createElement('option');
             option.value = inst.id;
@@ -90,9 +99,9 @@ async function loadAllInstituicoes() {
     }
 }
 
-window.addInstituicao = async function() {
+window.addInstituicao = async function () {
     const instituicaoId = document.getElementById('instituicao-select').value;
-    
+
     if (!instituicaoId) {
         alert('Por favor, selecione uma instituição');
         return;
@@ -112,10 +121,10 @@ window.addInstituicao = async function() {
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('addInstituicaoModal'));
         modal.hide();
-        
+
         // Reset form
         document.getElementById('addInstituicaoForm').reset();
-        
+
         // Reload instituições list
         loadInstituicoes(window.currentSupervisorId);
     } catch (error) {
@@ -124,7 +133,7 @@ window.addInstituicao = async function() {
     }
 };
 
-window.removeInstituicao = async function(instituicaoId) {
+window.removeInstituicao = async function (instituicaoId) {
     if (!confirm('Tem certeza que deseja remover esta instituição?')) {
         return;
     }
@@ -147,7 +156,7 @@ window.removeInstituicao = async function(instituicaoId) {
 };
 
 // Function to redirect to edit mode
-window.editRecord = function() {
+window.editRecord = function () {
     window.location.href = `edit-supervisor.html?id=${window.currentSupervisorId}`;
 };
 

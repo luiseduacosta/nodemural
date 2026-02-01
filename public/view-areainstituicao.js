@@ -1,4 +1,13 @@
+// View Area Instituicao Details
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -15,7 +24,7 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch area');
         }
         const area = await response.json();
-        
+
         // Populate the view fields
         document.getElementById('view-id').textContent = area.id;
         document.getElementById('view-area').textContent = area.area;

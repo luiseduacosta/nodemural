@@ -1,9 +1,18 @@
-$(document).ready(function () {
+// src/controllers/estagioController.js
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('newEstagioForm');
 
     // Input Masks
     $('#cnpj').inputmask('99.999.999/9999-99');
-    
+
     // Load areas
     loadAreas();
 
@@ -27,7 +36,7 @@ $(document).ready(function () {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         // Add area_instituicoes_id to the estagio object
         const estagio = {
             instituicao: document.getElementById('instituicao').value,

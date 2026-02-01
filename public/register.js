@@ -1,3 +1,11 @@
+// src/public/register.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
+if (!getToken() || !hasRole(['admin'])) {
+  window.location.href = 'login.html';
+  return;
+}
+
 // public/register.js
 const form = document.getElementById('registerForm');
 const msg = document.getElementById('message');

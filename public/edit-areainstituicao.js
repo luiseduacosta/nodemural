@@ -1,4 +1,13 @@
+// src/public/edit-areainstituicao.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 

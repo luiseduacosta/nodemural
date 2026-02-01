@@ -1,4 +1,12 @@
+// src/controllers/questionarioController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);

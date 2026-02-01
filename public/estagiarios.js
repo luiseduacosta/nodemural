@@ -1,4 +1,13 @@
+// src/controllers/estagiarioController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+  if (!getToken() || !hasRole(['admin'])) {
+    window.location.href = 'login.html';
+    return;
+  }
+
   // Setup - add a text input to each footer cell
   $("#estagiariosTable thead tr")
     .clone(true)

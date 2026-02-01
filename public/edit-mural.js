@@ -1,22 +1,31 @@
+// src/public/edit-mural.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('editMuralForm');
-    
+
     // Load instituições for the dropdown
     try {
-        const response = await fetch('/estagio');
-        const instituicoes = await response.json();
+        const response = await fetch('/estagios');
+        const estagios = await response.json();
         const select = document.getElementById('instituicao_id');
-        
-        instituicoes.forEach(inst => {
+
+        estagios.forEach(estagio => {
             const option = document.createElement('option');
-            option.value = inst.id;
-            option.textContent = inst.instituicao;
+            option.value = estagio.id;
+            option.textContent = estagio.instituicao;
             select.appendChild(option);
         });
     } catch (error) {
-        console.error('Error loading instituições:', error);
+        console.error('Error loading estagios:', error);
     }
-    
+
     // Define editMural function first
     const editMural = async (id) => {
         try {
@@ -26,13 +35,13 @@ $(document).ready(async function () {
             }
 
             const mural = await response.json();
-            
+
             // Helper to format date for input
             const formatDateForInput = (date) => {
                 if (!date) return '';
                 return new Date(date).toISOString().split('T')[0];
             };
-            
+
             document.getElementById('instituicao_id').value = mural.instituicao_id || '';
             document.getElementById('periodo').value = mural.periodo || '';
             document.getElementById('vagas').value = mural.vagas;
@@ -55,7 +64,7 @@ $(document).ready(async function () {
             document.getElementById('datafax').value = formatDateForInput(mural.datafax);
             document.getElementById('outras').value = mural.outras || '';
             document.getElementById('muralId').value = mural.id;
-            
+
             window.currentMuralId = id;
         } catch (error) {
             console.error('Edit error:', error);
@@ -63,7 +72,7 @@ $(document).ready(async function () {
             window.location.href = 'mural.html';
         }
     };
-    
+
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
@@ -77,7 +86,7 @@ $(document).ready(async function () {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const mural = {
             instituicao_id: document.getElementById('instituicao_id').value || null,
             instituicao: document.getElementById('instituicao_id').selectedOptions[0].text,
@@ -115,6 +124,6 @@ $(document).ready(async function () {
     });
 });
 
-window.viewRecord = function() {
+window.viewRecord = function () {
     window.location.href = `view-mural.html?id=${window.currentMuralId}`;
 };

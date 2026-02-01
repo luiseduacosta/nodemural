@@ -1,4 +1,13 @@
-$(document).ready(function () {
+// src/public/visitas.js
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Get instituicao_id from URL if present
     const urlParams = new URLSearchParams(window.location.search);
     const instituicaoId = urlParams.get('instituicao_id');

@@ -1,4 +1,12 @@
+// src/controllers/visitaController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
     const form = document.getElementById('editVisitaForm');
 
     // Load instituições for the dropdown
@@ -6,7 +14,7 @@ $(document).ready(async function () {
         const response = await fetch('/estagio');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
-        
+
         instituicoes.forEach(inst => {
             const option = document.createElement('option');
             option.value = inst.id;
@@ -16,7 +24,7 @@ $(document).ready(async function () {
     } catch (error) {
         console.error('Error loading instituições:', error);
     }
-    
+
     // Load existing visita data
     const editVisita = async (id) => {
         try {
@@ -26,12 +34,12 @@ $(document).ready(async function () {
             }
 
             const visita = await response.json();
-            
+
             const formatDateForInput = (date) => {
                 if (!date) return '';
                 return new Date(date).toISOString().split('T')[0];
             };
-            
+
             document.getElementById('instituicao_id').value = visita.instituicao_id;
             document.getElementById('data').value = formatDateForInput(visita.data);
             document.getElementById('responsavel').value = visita.responsavel;
@@ -39,7 +47,7 @@ $(document).ready(async function () {
             document.getElementById('avaliacao').value = visita.avaliacao;
             document.getElementById('descricao').value = visita.descricao || '';
             document.getElementById('visitaId').value = visita.id;
-            
+
             window.currentVisitaId = id;
         } catch (error) {
             console.error('Edit error:', error);
@@ -47,7 +55,7 @@ $(document).ready(async function () {
             window.location.href = 'visitas.html';
         }
     };
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
 
@@ -60,7 +68,7 @@ $(document).ready(async function () {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const visita = {
             instituicao_id: document.getElementById('instituicao_id').value,
             data: document.getElementById('data').value,
@@ -82,6 +90,6 @@ $(document).ready(async function () {
     });
 });
 
-window.viewRecord = function() {
+window.viewRecord = function () {
     window.location.href = `view-visita.html?id=${window.currentVisitaId}`;
 };

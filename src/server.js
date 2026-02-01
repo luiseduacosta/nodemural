@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/auth", authRoutes);
 app.use("/alunos", alunoRoutes);
 app.use("/docentes", docenteRoutes);
-app.use("/estagio", estagioRoutes);
+app.use("/estagios", estagioRoutes);
 app.use("/estagiarios", estagiarioRoutes);
 app.use("/mural", muralRoutes);
 app.use("/inscricoes", inscricaoRoutes);

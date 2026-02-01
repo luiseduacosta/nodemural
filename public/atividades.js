@@ -1,4 +1,12 @@
+// src/public/atividades.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
     const tableConfig = {
         responsive: true,
         order: [[1, 'asc'], [2, 'asc']], // Order by Date DESC, then Start Time ASC

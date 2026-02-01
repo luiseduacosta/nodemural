@@ -1,4 +1,13 @@
+// src/controllers/atividadeController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const estagiarioId = new URLSearchParams(window.location.search).get('estagiario_id');
     console.log(estagiarioId);
     if (!estagiarioId) {
@@ -122,7 +131,7 @@ $(document).ready(async function () {
         }
     });
 
-deleteAtividade = async function (atividadeId) {
+    deleteAtividade = async function (atividadeId) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
                 const response = await fetch(`/atividades/${atividadeId}`, {

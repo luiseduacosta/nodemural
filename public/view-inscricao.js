@@ -1,4 +1,13 @@
+// src/public/view-inscricao.js 
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
@@ -15,7 +24,7 @@ $(document).ready(async function () {
         }
 
         const inscricao = await response.json();
-        
+
         // Helper function to format dates
         const formatDate = (date) => {
             if (!date) return 'N/A';
@@ -36,7 +45,7 @@ $(document).ready(async function () {
         document.getElementById('view-periodo').textContent = inscricao.periodo;
         document.getElementById('view-data').textContent = formatDate(inscricao.data);
         document.getElementById('view-timestamp').textContent = formatDateTime(inscricao.timestamp);
-        
+
         window.currentInscricaoId = id;
     } catch (error) {
         console.error('Error loading inscricao:', error);
@@ -45,11 +54,11 @@ $(document).ready(async function () {
     }
 });
 
-window.editRecord = function() {
+window.editRecord = function () {
     window.location.href = `edit-inscricao.html?id=${window.currentInscricaoId}`;
 };
 
-window.deleteRecord = async function() {
+window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
         try {
             const response = await fetch(`/inscricoes/${window.currentInscricaoId}`, { method: 'DELETE' });

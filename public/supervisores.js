@@ -1,4 +1,12 @@
+// src/controllers/supervisorController.js
+import { getToken, hasRole } from './auth-utils.js';
+
 $(document).ready(function () {
+    if (!getToken() || !hasRole(['admin'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const table = $('#supervisoresTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
@@ -28,7 +36,10 @@ $(document).ready(function () {
 
     window.deleteSupervisor = async (id) => {
         if (confirm('Tem certeza que deseja excluir este supervisor?')) {
-            await fetch(`/supervisores/${id}`, { method: 'DELETE' });
+            await fetch(`/supervisores/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
             table.ajax.reload();
         }
     };

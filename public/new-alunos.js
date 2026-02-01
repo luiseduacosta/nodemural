@@ -1,4 +1,13 @@
-$(document).ready(function () {
+// src/controllers/alunoController.js
+import { getToken, hasRole } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
@@ -8,8 +17,8 @@ $(document).ready(function () {
     // Form Submission
     $('#newAlunoForm').on('submit', async function (e) {
         e.preventDefault();
-        if (!validateForm()) { 
-            console.log('Form validation failed'); 
+        if (!validateForm()) {
+            console.log('Form validation failed');
             return;
         }
 
@@ -97,7 +106,7 @@ $(document).ready(function () {
                 $('#ingresso').removeClass('is-invalid');
                 isValid = true;
             }
-        // If registro is 8 digits the year of the ingresso is equal to '19' + positions 0 and 1
+            // If registro is 8 digits the year of the ingresso is equal to '19' + positions 0 and 1
         } else if (registro.length === 8) {
             const anoRegistro = parseInt('19' + registro.substring(0, 2));
             const anoIngresso = parseInt(ingresso.substring(0, 4));
@@ -110,7 +119,8 @@ $(document).ready(function () {
             }
         } else {
             $('#ingresso').addClass('is-invalid');
-            isValid = false;}
+            isValid = false;
+        }
 
         if (!ingressoRegex.test(ingresso)) {
             $('#ingresso').addClass('is-invalid');

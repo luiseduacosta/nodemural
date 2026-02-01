@@ -1,9 +1,18 @@
-$(document).ready(function () {
+// src/public/new-supervisor.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+
+$(document).ready(async function () {
+
+    if (!getToken() || !hasRole(['admin', 'supervisor'])) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const form = document.getElementById('newSupervisorForm');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const supervisor = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || null,
