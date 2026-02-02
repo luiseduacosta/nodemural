@@ -1,12 +1,19 @@
 // src/public/atividades.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
+    const user = getCurrentUser();
 
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
+    } else {
+        if (hasRole(['aluno'])) {
+            window.location.href = 'view-alunos.html?id=' + user.entidade_id;
+            return;
+        }
     }
+
     const tableConfig = {
         responsive: true,
         order: [[1, 'asc'], [2, 'asc']], // Order by Date DESC, then Start Time ASC

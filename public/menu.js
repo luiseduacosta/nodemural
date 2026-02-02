@@ -26,8 +26,24 @@ $(document).ready(async function () {
 
     if (isLogged && user) {
       // Remove login/register links if already logged in
-      const loginLinks = navbarNav.querySelectorAll('a[href="login.html"], a[href="register.html"]');
-      loginLinks.forEach(link => link.parentElement.remove());
+      switch (user.role) {
+        case 'admin':
+          break;
+        case 'aluno':
+          const loginLinksAluno = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionario.html"], a[href="estagio.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
+          loginLinksAluno.forEach(link => link.parentElement.remove());
+          break;
+        case 'docente':
+          const loginLinksDocente = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="atividades.html"], a[href="questionario.html"], a[href="estagio.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
+          loginLinksDocente.forEach(link => link.parentElement.remove());
+          break;
+        case 'supervisor':
+          const loginLinksSupervisor = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionario.html"], a[href="estagio.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="view-configuracoes.html"]');
+          loginLinksSupervisor.forEach(link => link.parentElement.remove());
+          break;
+        default:
+          break;
+      }
 
       // Add user info and logout
       const li = document.createElement('li');

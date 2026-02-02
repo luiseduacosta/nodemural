@@ -1,9 +1,28 @@
 // public/login.js
-import { isLoggedIn } from './auth-utils.js';
+import { isLoggedIn, getCurrentUser } from './auth-utils.js';
 
-// If already logged in, redirect to home
+// Redirect helper function
+function redirectUser(user, params) {
+  let redirect = '';
+  if (user.role === 'admin') {
+    redirect = params.get('redirect') || '/mural.html';
+  } else if (user.role === 'aluno') {
+    redirect = params.get('redirect') || `/view-alunos.html?id=${user.entidade_id}`;
+  } else if (user.role === 'docente') {
+    redirect = params.get('redirect') || `/view-docente.html?id=${user.entidade_id}`;
+  } else if (user.role === 'supervisor') {
+    redirect = params.get('redirect') || `/view-supervisor.html?id=${user.entidade_id}`;
+  } else {
+    redirect = params.get('redirect') || '/login.html';
+  }
+  window.location.href = redirect;
+}
+
+// If already logged in, redirect to appropriate page
 if (isLoggedIn()) {
-  window.location.href = '/';
+  const user = getCurrentUser();
+  const params = new URLSearchParams(window.location.search);
+  redirectUser(user, params);
 }
 
 const form = document.getElementById('loginForm');
@@ -14,7 +33,7 @@ form.addEventListener('submit', async (e) => {
   msg.textContent = '';
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  
+
   try {
     const res = await fetch('/auth/login', {
       method: 'POST',
@@ -22,20 +41,20 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ email, password })
     });
     const data = await res.json();
+    console.log(data);
     if (!res.ok) throw new Error(data.error || 'Erro no login');
-    
+
     // store token and user
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    
+
     msg.style.color = 'green';
     msg.textContent = 'Login realizado. Redirecionando...';
-    
+
     // Check for redirect parameter
     const params = new URLSearchParams(window.location.search);
-    const redirect = params.get('redirect') || '/';
-    
-    setTimeout(() => window.location.href = redirect, 800);
+
+    setTimeout(() => redirectUser(data.user, params), 800);
   } catch (err) {
     msg.style.color = 'red';
     msg.textContent = err.message;

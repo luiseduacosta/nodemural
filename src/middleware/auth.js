@@ -1,5 +1,6 @@
 // src/middleware/auth.js
 import jwt from 'jsonwebtoken';
+import Inscricao from '../models/inscricao.js';
 
 // Verify JWT token middleware
 export const verifyToken = (req, res, next) => {
@@ -96,3 +97,40 @@ export const checkOwnership = (req, res, next) => {
     });
 };
 
+// Check if user owns the registration (inscricao)
+export const checkInscricaoOwnership = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Não autenticado' });
+    }
+
+    // Admin can access everything
+    if (req.user.role === 'admin') {
+        return next();
+    }
+
+    // Aluno role check
+    if (req.user.role !== 'aluno') {
+        return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    const id = req.params.id;
+
+    try {
+        const inscricao = await Inscricao.findById(id);
+        if (!inscricao) {
+            return res.status(404).json({ error: 'Inscrição não encontrada' });
+        }
+
+        // Compare inscricao's aluno_id with user's entidade_id
+        if (req.user.entidade_id && req.user.entidade_id == inscricao.aluno_id) {
+            return next();
+        }
+
+        return res.status(403).json({
+            error: 'Acesso negado. Você só pode acessar ou editar suas próprias inscrições.'
+        });
+    } catch (error) {
+        console.error('Error in checkInscricaoOwnership:', error);
+        res.status(500).json({ error: 'Erro interno ao verificar permissão' });
+    }
+};

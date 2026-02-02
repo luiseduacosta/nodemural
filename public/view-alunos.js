@@ -6,6 +6,7 @@ const user = getCurrentUser();
 
 $(document).ready(async function () {
 
+    // Se não estiver logado ou não for admin ou aluno, redireciona para o login
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
@@ -16,12 +17,20 @@ $(document).ready(async function () {
     const id = urlParams.get('id');
     if (!id) {
         alert('ID não fornecido');
-        window.location.href = 'alunos.html';
+        window.location.href = 'mural.html';
         return;
-    } else if (user.role == 'aluno' && user.entidade_id != id) {
+    }
+
+    // Se for aluno e o id não for o dele, redireciona para o mural
+    if (user.role == 'aluno' && user.entidade_id != id) {
         alert('Você não tem permissão para visualizar este aluno');
         window.location.href = 'mural.html';
         return;
+    } else {
+        // Se não for admin, esconde o botão de excluir
+        if (user.role !== 'admin') {
+            document.getElementById('btnAluno-excluir').classList.add('d-none');
+        }
     }
 
     // Fetch the aluno data
@@ -142,18 +151,26 @@ $(document).ready(async function () {
 
 // Function to redirect to edit mode
 window.editRecord = function () {
+    const user = getCurrentUser();
+    const isAdmin = user && user.role === 'admin';
+    const isOwner = user && user.role === 'aluno' && user.entidade_id == window.currentAlunoId;
+
+    if (!isAdmin && !isOwner) {
+        alert('Você não tem permissão para editar este aluno.');
+        return;
+    }
     window.location.href = `edit-alunos.html?id=${window.currentAlunoId}`;
 };
 
 // Function to delete aluno
 window.deleteRecord = async function () {
+    // Se não for admin, não pode excluir
+    if (!getToken() || !hasRole(['admin'])) {
+        alert('Você precisa estar logado e ser admin para excluir um aluno.');
+        return;
+    }
     if (confirm('Tem certeza que deseja excluir este aluno?')) {
         try {
-            const token = getToken();
-            if (!token) {
-                alert('Você precisa estar logado para excluir um aluno.');
-                return;
-            }
             const response = await authenticatedFetch(`/alunos/${window.currentAlunoId}`, { method: 'DELETE' });
             if (!response.ok) {
                 if (response.status === 401) {

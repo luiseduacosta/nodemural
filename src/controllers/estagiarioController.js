@@ -16,7 +16,8 @@ export const getDistinctPeriods = async (req, res) => {
 export const getAllEstagiarios = async (req, res) => {
     try {
         const periodo = req.query.periodo || null;
-        const estagiarios = await Estagiario.findAll(periodo);
+        const aluno_id = req.query.aluno_id || null;
+        const estagiarios = await Estagiario.findAll(periodo, aluno_id);
         res.status(200).json(estagiarios);
     } catch (error) {
         console.error('Error fetching estagiarios:', error);

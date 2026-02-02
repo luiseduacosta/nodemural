@@ -24,7 +24,6 @@ $(document).ready(async function () {
 
         const data = await response.json();
         const estagiarioId = data.estagiario_id;
-
         try {
             // Read all atividades of the estagiario
             const responseatividade = await fetch('/atividades?estagiario_id=' + estagiarioId);
@@ -82,7 +81,6 @@ $(document).ready(async function () {
         if (!response.ok) throw new Error('Atividade não encontrada');
 
         const data = await response.json();
-
         $('#id').val(data.id);
         $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-alunos.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
 
@@ -105,14 +103,19 @@ $(document).ready(async function () {
     }
 
     // Need to store current estagiario ID for new atividade operation
+    const response = await fetch(`/atividades/${atividadeId}`);
+    if (!response.ok) throw new Error('Atividade não encontrada');
+    const data = await response.json();
+    const estagiarioId = data.estagiario_id;
     window.currentEstagiarioId = estagiarioId;
     // Store current atividade ID for delete operation
     window.currentAtividadeId = atividadeId;
+
     // Delete atividade function
-    window.deleteRecord = async function (atividadeId) {
+    window.deleteRecord = async function (id) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
-                const response = await fetch(`/atividades/${atividadeId}`, {
+                const response = await fetch(`/atividades/${id}`, {
                     method: 'DELETE'
                 });
                 if (!response.ok) throw new Error('Erro ao excluir atividade');
@@ -124,4 +127,4 @@ $(document).ready(async function () {
             }
         }
     };
-}); 
+});

@@ -10,6 +10,11 @@ $(document).ready(async function () {
   if (!token) {
     window.location.href = 'login.html';
     return;
+  } else {
+    if (currentUser.role == 'aluno') {
+      window.location.href = 'view-alunos.html?id=' + currentUser.entidade_id;
+      return;
+    }
   }
 
   const table = $('#alunosTable').DataTable({

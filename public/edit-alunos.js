@@ -1,15 +1,22 @@
 // src/public/edit-alunos.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
 
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const user = getCurrentUser();
+    // If user is aluno, they can only edit their own record
+    if (user.role === 'aluno' && user.entidade_id != id) {
+        window.location.href = 'mural.html';
+        return;
+    }
 
     // Input Masks
     $('#cep').inputmask('99999-999');
@@ -32,20 +39,20 @@ $(document).ready(async function () {
         const formData = {};
         $(this).serializeArray().forEach(item => {
             formData[item.name] = item.value;
+            // console.log(item.name, item.value);
         });
 
         try {
             const url = id ? `/alunos/${id}` : '/alunos';
             const method = id ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await authenticatedFetch(url, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(formData)
             });
-
             if (response.ok) {
                 // Redirect to view page after successful save
                 window.location.href = 'view-alunos.html?id=' + id;
@@ -59,25 +66,36 @@ $(document).ready(async function () {
         }
     });
 
+    // List of date fields to handle specific formatting
+    const dateFields = ['nascimento'];
+
     // Load Aluno
     async function loadAluno(id) {
         try {
-            const response = await fetch(`/alunos/${id}`);
+            const response = await authenticatedFetch(`/alunos/${id}`);
             if (!response.ok) throw new Error('Failed to fetch aluno');
-            const data = await response.json();
-            // console.log(data);
+
+            const result = await response.json();
+            // API returns an array of results
+            const data = Array.isArray(result) ? result[0] : result;
+
+            if (!data) {
+                throw new Error('Aluno não encontrado');
+            }
+
+            console.log('Loading aluno data:', data);
 
             // Populate form
             Object.keys(data).forEach(key => {
                 const input = $(`#${key}`);
                 if (input.length) {
-                    // Handle date format if needed
-                    if (input.attr('type') === 'date' && data[key]) {
-                        // Format date for date input if needed (YYYY-MM-DD)
-                        // Assuming data[key] comes as ISO string or similar, but simplified here
-                        const dataFormatada = new Date(data[key]);
-                        // console.log(dataFormatada.toISOString().split('T')[0]);
-                        input.val(dataFormatada.toISOString().split('T')[0]);
+                    if (dateFields.includes(key) && data[key]) {
+                        // Format date for date input (YYYY-MM-DD)
+                        const dateObj = new Date(data[key]);
+                        if (!isNaN(dateObj.getTime())) {
+                            const formattedDate = dateObj.toISOString().split('T')[0];
+                            input.val(formattedDate);
+                        }
                     } else {
                         input.val(data[key]);
                     }
@@ -86,7 +104,7 @@ $(document).ready(async function () {
             $('#id').val(data.id); // Ensure ID is set
         } catch (error) {
             console.error('Error loading aluno:', error);
-            alert('Erro ao carregar dados do aluno.');
+            alert('Erro ao carregar dados do aluno: ' + error.message);
         }
     }
 

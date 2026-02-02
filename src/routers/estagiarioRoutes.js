@@ -11,6 +11,7 @@ router.use(express.json());
 router.get('/periodos', estagiarioController.getDistinctPeriods);
 router.post('/', estagiarioController.createEstagiario);
 router.get('/', estagiarioController.getAllEstagiarios);
+router.get('/aluno/:id', estagiarioController.getEstagiariosByAlunoId);
 router.get('/:id/next-nivel', estagiarioController.getNextNivel);
 router.get('/:id', estagiarioController.getEstagiarioById);
 router.put('/:id', estagiarioController.updateEstagiario);

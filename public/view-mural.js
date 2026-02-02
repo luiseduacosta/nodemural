@@ -1,4 +1,4 @@
-import { getToken } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -8,6 +8,13 @@ $(document).ready(async function () {
     if (!getToken()) {
         window.location.href = 'login.html';
         return;
+    } else {
+        // Se for aluno, não pode adicionar, editar e não pode ver as inscrições
+        if (hasRole(['aluno'])) {
+            document.getElementById('editRecordBtn').style.display = 'none';
+            document.getElementById('newMuralBtn').style.display = 'none';
+            document.getElementById('inscricoes-tab').style.display = 'none';
+        }
     }
 
     if (!id) {
@@ -17,7 +24,6 @@ $(document).ready(async function () {
     }
 
     const token = getToken();
-    console.log(token);
     try {
         const response = await fetch(`/mural/${id}`);
         if (!response.ok) {

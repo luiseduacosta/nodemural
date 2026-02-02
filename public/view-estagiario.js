@@ -6,6 +6,11 @@ $(document).ready(async function () {
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
+    } else {
+        if (hasRole(['aluno'])) {
+            document.getElementById('edit-estagiario').style.display = 'none';
+            document.getElementById('delete-estagiario').style.display = 'none';
+        }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -15,6 +20,8 @@ $(document).ready(async function () {
         alert('ID não fornecido');
         window.location.href = 'estagiarios.html';
         return;
+    } else {
+        document.getElementById('new-atividade').href = `new-atividade.html?estagiario_id=${id}`;
     }
 
     try {
@@ -24,7 +31,7 @@ $(document).ready(async function () {
         }
 
         const estagiario = await response.json();
-        console.log(estagiario);
+
         // Nivel display
         let nivelDisplay = estagiario.nivel;
         if (estagiario.nivel == 9) {
@@ -54,10 +61,9 @@ $(document).ready(async function () {
                 const tbody = document.getElementById('table-atividades');
                 tbody.innerHTML = '';
                 if (atividades.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhuma atividade registrada</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
                 } else {
                     atividades.forEach(atividade => {
-                        console.log(atividade);
                         const row = tbody.insertRow();
                         row.insertCell(0).innerText = atividade.id || '-';
                         row.insertCell(1).innerText = atividade.dia ? new Date(atividade.dia).toLocaleDateString('pt-BR') : '-';
@@ -67,7 +73,7 @@ $(document).ready(async function () {
                         row.insertCell(5).innerText = atividade.horario || '-';
 
                         const actionsCell = row.insertCell(6);
-                        actionsCell.innerHTML = `<button class="btn btn-sm btn-primary" onclick="viewAtividade(${atividade.id})">Ver</button>`;
+                        actionsCell.innerHTML = `<button class="btn btn-sm btn-primary" onclick="window.location.href='view-atividade.html?id=${atividade.id}'">Ver</button>`;
                     });
                 }
             }
@@ -81,7 +87,7 @@ $(document).ready(async function () {
     }
 });
 
-$(document).ready(function () {
+$(document).ready(async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('id');
@@ -101,63 +107,87 @@ $(document).ready(function () {
     let existingResponses = {};
 
     // Load questionario info
-    $.ajax({
-        url: `/questionarios/${questionario_id}`,
-        type: 'GET',
-        success: function (data) {
-            $('#questionarioTitle').text(data.title);
-        },
-        error: function () {
-            $('#questionarioTitle').text('Questionário não encontrado');
+    try {
+        const response = await fetch(`/questionarios/${questionario_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch questionario');
         }
-    });
+        const questionario = await response.json();
+        $('#questionarioTitle').text(questionario.title);
+    } catch (error) {
+        console.error('Error loading questionario:', error);
+        $('#questionarioTitle').text('Questionário não encontrado');
+    }
 
     // Load estagiario info
-    $.ajax({
-        url: `/estagiarios/${estagiario_id}`,
-        type: 'GET',
-        success: function (data) {
-            $('#alunoNome').text(data.aluno_nome || 'Não informado');
-            $('#supervisorNome').text(data.supervisor_nome || 'Não informado');
+    try {
+        const response = await fetch(`/estagiarios/${estagiario_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch estagiario');
         }
-    });
+        const estagiario = await response.json();
+        $('#alunoNome').text(estagiario.aluno_nome || 'Não informado');
+        $('#supervisorNome').text(estagiario.supervisor_nome || 'Não informado');
+    } catch (error) {
+        console.error('Error loading estagiario:', error);
+        $('#alunoNome').text('Não informado');
+        $('#supervisorNome').text('Não informado');
+    }
 
     // Load existing resposta (if any)
-    $.ajax({
-        url: `/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`,
-        type: 'GET',
-        success: function (data) {
-            existingResposta = data;
-            existingResponses = typeof data.response === 'string'
-                ? JSON.parse(data.response)
-                : data.response;
-            $('#statusBadge').removeClass('bg-secondary').addClass('bg-success').text('Já respondido');
-            loadQuestions();
-        },
-        error: function () {
-            $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Sem avaliação');
-            $('#respostasContainer').empty();
-            // window.location.href = 'new-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
-            return;
+    try {
+        const response = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch resposta');
         }
-    });
+        const resposta = await response.json();
+        existingResposta = resposta;
+        existingResponses = typeof resposta.response === 'string'
+            ? JSON.parse(resposta.response)
+            : resposta.response;
+        $('#statusBadge').removeClass('bg-secondary').addClass('bg-success').text('Já respondido');
+        loadQuestions();
+    } catch (error) {
+        console.error('Error loading resposta:', error);
+        $('#statusBadge').removeClass('bg-secondary').addClass('bg-secondary').text('Não respondido');
+    }
+
+    // Load existing resposta (if any)
+    try {
+        const response = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch resposta');
+        }
+        const resposta = await response.json();
+        existingResposta = resposta;
+        existingResponses = typeof resposta.response === 'string'
+            ? JSON.parse(resposta.response)
+            : resposta.response;
+        $('#statusBadge').removeClass('bg-secondary').addClass('bg-success').text('Já respondido');
+        loadQuestions();
+    } catch (error) {
+        console.error('Error loading resposta:', error);
+        $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Sem avaliação');
+        $('#respostasContainer').empty();
+    }
 
     // Load questions
-    function loadQuestions() {
-        $.ajax({
-            url: `/questoes?questionario_id=${questionario_id}`,
-            type: 'GET',
-            success: function (questions) {
-                renderQuestions(questions);
-            },
-            error: function () {
-                $('#respostasContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
+    async function loadQuestions() {
+        try {
+            const response = await fetch(`/questoes?questionario_id=${questionario_id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch questions');
             }
-        });
+            const questions = await response.json();
+            renderQuestions(questions);
+        } catch (error) {
+            console.error('Error loading questions:', error);
+            $('#respostasContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
+        }
     }
 
     // Render questions based on type
-    function renderQuestions(questions) {
+    async function renderQuestions(questions) {
         const container = $('#respostasContainer');
         container.empty();
 
@@ -206,7 +236,7 @@ $(document).ready(function () {
     }
 
     // Render radio options
-    function renderRadioOptions(question, questionId, existingValue) {
+    async function renderRadioOptions(question, questionId, existingValue) {
         let options = parseOptions(question.options);
         let html = '';
 
@@ -223,7 +253,7 @@ $(document).ready(function () {
     }
 
     // Render checkbox options
-    function renderCheckboxOptions(question, questionId, existingValue) {
+    async function renderCheckboxOptions(question, questionId, existingValue) {
         let options = parseOptions(question.options);
         let selectedValues = [];
         try {
@@ -244,7 +274,7 @@ $(document).ready(function () {
     }
 
     // Render select options
-    function renderSelectOptions(question, questionId, existingValue) {
+    async function renderSelectOptions(question, questionId, existingValue) {
         let options = parseOptions(question.options);
         let html = `<select class="form-select" name="${questionId}"><option value="">Selecione...</option>`;
 
@@ -257,7 +287,7 @@ $(document).ready(function () {
     }
 
     // Parse options (can be array or object)
-    function parseOptions(optionsStr) {
+    async function parseOptions(optionsStr) {
         if (!optionsStr) return {};
         try {
             const parsed = JSON.parse(optionsStr);
@@ -281,7 +311,7 @@ $(document).ready(function () {
     }
 
     // Escape HTML
-    function escapeHtml(text) {
+    async function escapeHtml(text) {
         if (!text) return '';
         const map = {
             '&': '&amp;',

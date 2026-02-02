@@ -1,5 +1,5 @@
 // src/public/view-inscricao.js 
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -10,7 +10,6 @@ $(document).ready(async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'inscricoes.html';
@@ -18,9 +17,13 @@ $(document).ready(async function () {
     }
 
     try {
-        const response = await fetch(`/inscricoes/${id}`);
+        const response = await authenticatedFetch(`/inscricoes/${id}`);
+
         if (!response.ok) {
-            throw new Error('Failed to fetch inscricao');
+            if (response.status === 403) {
+                throw new Error('Você não tem permissão para visualizar esta inscrição.');
+            }
+            throw new Error('Falha ao carregar inscrição.');
         }
 
         const inscricao = await response.json();
@@ -50,7 +53,7 @@ $(document).ready(async function () {
     } catch (error) {
         console.error('Error loading inscricao:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
-        window.location.href = 'inscricoes.html';
+        window.location.href = 'mural.html';
     }
 });
 
@@ -61,11 +64,12 @@ window.editRecord = function () {
 window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
         try {
-            const response = await fetch(`/inscricoes/${window.currentInscricaoId}`, { method: 'DELETE' });
+            const response = await authenticatedFetch(`/inscricoes/${window.currentInscricaoId}`, { method: 'DELETE' });
             if (response.ok) {
                 window.location.href = 'inscricoes.html';
             } else {
-                throw new Error('Failed to delete inscricao');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to delete inscricao');
             }
         } catch (error) {
             console.error('Error deleting inscricao:', error);
