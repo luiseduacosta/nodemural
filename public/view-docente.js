@@ -49,7 +49,7 @@ $(document).ready(async function () {
 });
 
 window.editRecord = function () {
-    window.location.href = `edit-docentes.html?id=${window.currentDocenteId}`;
+    window.location.href = `edit-docente.html?id=${window.currentDocenteId}`;
 };
 
 window.deleteRecord = async function () {
@@ -90,7 +90,7 @@ async function loadEstagiarios(docenteId) {
                 tr.innerHTML = `
                     <td>${est.estagiario_id}</td>
                     <td>${est.aluno_registro}</td>
-                    <td><a href="view-alunos.html?id=${est.aluno_id}">${est.aluno_nome}</a></td>
+                    <td><a href="view-aluno.html?id=${est.aluno_id}">${est.aluno_nome}</a></td>
                     <td>${est.estagiario_supervisor_nome || 'N/A'}</td>
                     <td>${est.estagiario_nivel}</td>
                     <td>${est.estagiario_periodo}</td>

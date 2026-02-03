@@ -12,7 +12,7 @@ $(document).ready(async function () {
     return;
   } else {
     if (currentUser.role == 'aluno') {
-      window.location.href = 'view-alunos.html?id=' + currentUser.entidade_id;
+      window.location.href = 'view-aluno.html?id=' + currentUser.entidade_id;
       return;
     }
   }
@@ -31,14 +31,14 @@ $(document).ready(async function () {
     columns: [
       { data: 'id' },
       { data: 'registro' },
-      { data: 'nome', render: function (data, type, row) { return `<a href="view-alunos.html?id=${row.id}">${row.nome}</a>` } },
+      { data: 'nome', render: function (data, type, row) { return `<a href="view-aluno.html?id=${row.id}">${row.nome}</a>` } },
       { data: 'email' },
       { data: 'ingresso' },
       {
         data: null,
         render: function (data, type, row) {
           return `
-            <button onclick="window.location.href='edit-alunos.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
+            <button onclick="window.location.href='edit-aluno.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
             <button onclick="deleteAluno(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
           `;
         }

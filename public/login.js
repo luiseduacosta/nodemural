@@ -7,7 +7,7 @@ function redirectUser(user, params) {
   if (user.role === 'admin') {
     redirect = params.get('redirect') || '/mural.html';
   } else if (user.role === 'aluno') {
-    redirect = params.get('redirect') || `/view-alunos.html?id=${user.entidade_id}`;
+    redirect = params.get('redirect') || `/view-aluno.html?id=${user.entidade_id}`;
   } else if (user.role === 'docente') {
     redirect = params.get('redirect') || `/view-docente.html?id=${user.entidade_id}`;
   } else if (user.role === 'supervisor') {

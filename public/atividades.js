@@ -9,7 +9,7 @@ $(document).ready(async function () {
         return;
     } else {
         if (hasRole(['aluno'])) {
-            window.location.href = 'view-alunos.html?id=' + user.entidade_id;
+            window.location.href = 'view-aluno.html?id=' + user.entidade_id;
             return;
         }
     }

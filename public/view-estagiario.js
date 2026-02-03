@@ -42,7 +42,7 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = estagiario.id;
         document.getElementById('view-nivel').textContent = nivelDisplay;
         document.getElementById('view-aluno').textContent = estagiario.aluno_nome || '-';
-        document.getElementById('view-aluno-link').href = `view-alunos.html?id=${estagiario.aluno_id}`;
+        document.getElementById('view-aluno-link').href = `view-aluno.html?id=${estagiario.aluno_id}`;
         document.getElementById('view-registro').textContent = estagiario.aluno_registro || '-';
         document.getElementById('view-instituicao').textContent = estagiario.instituicao_nome || '-';
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';

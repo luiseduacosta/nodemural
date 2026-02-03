@@ -38,7 +38,7 @@ $(document).ready(async function () {
     });
 
     window.editDocente = function (id) {
-        window.location.href = `edit-docentes.html?id=${id}`;
+        window.location.href = `edit-docente.html?id=${id}`;
     };
 
     window.deleteDocente = async (id) => {

@@ -82,7 +82,7 @@ $(document).ready(async function () {
 
         const data = await response.json();
         $('#id').val(data.id);
-        $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-alunos.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
+        $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-aluno.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
 
         const dateObj = new Date(data.dia);
         $('#dia').val(dateObj.toLocaleDateString('pt-BR'));
