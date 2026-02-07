@@ -57,6 +57,15 @@ $(document).ready(async function () {
     }
 });
 
+if (hasRole('admin')) {
+    document.getElementById('edit-button').style.display = 'inline';
+    document.getElementById('delete-button').style.display = 'inline';
+} else if (hasRole('aluno')) {
+    // Only show delete button for aluno
+    document.getElementById('edit-button').style.display = 'none';
+    document.getElementById('delete-button').style.display = 'inline';
+}
+
 window.editRecord = function () {
     window.location.href = `edit-inscricao.html?id=${window.currentInscricaoId}`;
 };

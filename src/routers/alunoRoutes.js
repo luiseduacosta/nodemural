@@ -8,14 +8,14 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
-// Public routes (no auth required)
-router.get('/:id', alunoController.getAlunoById);
-router.get('/registro/:registro', alunoController.getAlunoByRegistro);
-
 // Protected routes - require authentication
 router.get('/', verifyToken, alunoController.getAllAlunos);
 router.get('/:id/estagiarios', verifyToken, alunoController.getEstagiariosByAlunoId);
 router.get('/:id/inscricoes', verifyToken, alunoController.getInscricoesByAlunoId);
+
+// Public routes (no auth required)
+router.get('/registro/:registro', alunoController.getAlunoByRegistro);
+router.get('/:id', alunoController.getAlunoById);
 
 // Routes with ownership check
 router.post('/', verifyToken, checkRole(['admin', 'aluno']), alunoController.createAluno);

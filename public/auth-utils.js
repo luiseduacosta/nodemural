@@ -44,12 +44,12 @@ export function logout(redirectTo = '/login.html') {
  */
 export async function authenticatedFetch(url, options = {}) {
   const token = getToken();
-  const headers = options.headers || {};
-  
+  const headers = { ...(options.headers || {}) };
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   return fetch(url, { ...options, headers });
 }
 
@@ -61,7 +61,7 @@ export async function authenticatedFetch(url, options = {}) {
 export function hasRole(requiredRole) {
   const user = getCurrentUser();
   if (!user) return false;
-  
+
   if (Array.isArray(requiredRole)) {
     return requiredRole.includes(user.role);
   }

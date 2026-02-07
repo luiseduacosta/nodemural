@@ -9,10 +9,10 @@ const router = express.Router();
 router.use(express.json());
 
 // Routes
-router.get('/', verifyToken, checkRole(['admin', 'docente']), docenteController.getAllDocentes);
+router.get('/', verifyToken, checkRole(['admin', 'aluno', 'docente']), docenteController.getAllDocentes);
 router.get('/:id/estagiarios', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.getEstagiariosByDocenteId);
 router.get('/:id', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.getDocenteById);
-router.post('/', verifyToken, checkRole(['admin']), docenteController.createDocente);
+router.post('/', verifyToken, checkRole(['admin', 'docente']), docenteController.createDocente);
 router.put('/:id', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.updateDocente);
 router.delete('/:id', verifyToken, checkRole(['admin']), docenteController.deleteDocente);
 

@@ -47,21 +47,10 @@ app.use("/questionarios", questionarioRoutes);
 app.use("/questoes", questaoRoutes);
 app.use("/atividades", atividadesRoutes);
 app.use("/visitas", visitaRoutes);
-app.use("/turmas", turmaRoutes);
+app.use("/turmaestagios", turmaRoutes);
 app.use("/configuracoes", configuracaoRoutes);
 app.use("/respostas", respostaRoutes);
 app.use("/areainstituicoes", areaInstituicaoRoutes);
-
-// --- NESTED ROUTES ---
-// Nested estagiarios routes
-app.get("/supervisores/:id/estagiarios", estagiarioController.getEstagiariosBySupervisorId);
-app.get("/docentes/:id/estagiarios", estagiarioController.getEstagiariosByProfessorId);
-app.get("/estagios/:id/estagiarios", estagiarioController.getEstagiariosByAlunoId);
-app.get("/alunos/:id/estagiarios", alunoController.getEstagiariosByAlunoId);
-
-// Nested inscricoes route
-app.get("/mural/:id/inscricoes", inscricaoController.getInscricoesByMuralId);
-app.get("/alunos/:id/inscricoes", alunoController.getInscricoesByAlunoId);
 
 // --- INDEX ENDPOINTS ---
 app.get("/", (req, res) => {

@@ -1,5 +1,5 @@
 // src/controllers/atividadeController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { authenticatedFetch, getToken, hasRole } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -18,7 +18,7 @@ $(document).ready(async function () {
     if (estagiarioId) {
         try {
             // Read all atividades of the estagiario
-            const responseatividade = await fetch('/atividades?estagiario_id=' + estagiarioId);
+            const responseatividade = await authenticatedFetch('/atividades?estagiario_id=' + estagiarioId);
             const atividade = await responseatividade.json();
             if (atividade.length > 0) {
                 const table = document.getElementById('atividadeTableContainer');
@@ -131,7 +131,7 @@ $(document).ready(async function () {
         }
     });
 
-    deleteAtividade = async function (atividadeId) {
+    window.deleteAtividade = async function (atividadeId) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
                 const response = await fetch(`/atividades/${atividadeId}`, {

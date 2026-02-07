@@ -40,6 +40,18 @@ export const getEstagiarioById = async (req, res) => {
     }
 };
 
+// Get atividades do estagiario by Id
+export const getAtividadesByEstagiarioId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const atividades = await Estagiario.findAtividadesByEstagiarioId(id);
+        res.status(200).json(atividades);
+    } catch (error) {
+        console.error('Error fetching atividades:', error);
+        res.status(500).json({ error: 'Error fetching atividades' });
+    }
+};
+
 // Create a new estagiario
 export const createEstagiario = async (req, res) => {
     try {

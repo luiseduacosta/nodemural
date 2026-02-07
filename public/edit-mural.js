@@ -1,5 +1,5 @@
 // src/public/edit-mural.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -10,9 +10,14 @@ $(document).ready(async function () {
 
     const form = document.getElementById('editMuralForm');
 
+    // Initialize EasyMDE
+    const requisitosMDE = new EasyMDE({ element: document.getElementById('requisitos') });
+    const outrasMDE = new EasyMDE({ element: document.getElementById('outras') });
+
+
     // Load instituições for the dropdown
     try {
-        const response = await fetch('/estagios');
+        const response = await authenticatedFetch('/estagios');
         const estagios = await response.json();
         const select = document.getElementById('instituicao_id');
 
@@ -24,6 +29,22 @@ $(document).ready(async function () {
         });
     } catch (error) {
         console.error('Error loading estagios:', error);
+    }
+
+    // Load turmas for the dropdown
+    try {
+        const response = await authenticatedFetch('/turmas');
+        const turmas = await response.json();
+        const select = document.getElementById('turmaestagio_id');
+
+        turmas.forEach(turma => {
+            const option = document.createElement('option');
+            option.value = turma.id;
+            option.textContent = turma.turma;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading turmas:', error);
     }
 
     // Define editMural function first
@@ -50,7 +71,13 @@ $(document).ready(async function () {
             document.getElementById('final_de_semana').value = mural.final_de_semana || '';
             document.getElementById('horario').value = mural.horario || '';
             document.getElementById('beneficios').value = mural.beneficios || '';
-            document.getElementById('requisitos').value = mural.requisitos || '';
+            document.getElementById('professor_id').value = mural.professor_id || '';
+            document.getElementById('turmaestagio_id').value = mural.turmaestagio_id || '';
+
+            // Set EasyMDE values
+            requisitosMDE.value(mural.requisitos || '');
+
+
             document.getElementById('dataInscricao').value = formatDateForInput(mural.dataInscricao);
             document.getElementById('dataSelecao').value = formatDateForInput(mural.dataSelecao);
             document.getElementById('horarioSelecao').value = mural.horarioSelecao || '';
@@ -59,10 +86,11 @@ $(document).ready(async function () {
             document.getElementById('localInscricao').value = mural.localInscricao;
             document.getElementById('contato').value = mural.contato || '';
             document.getElementById('email').value = mural.email || '';
-            document.getElementById('professor_id').value = mural.professor_id || '';
-            document.getElementById('turmaestagio_id').value = mural.turmaestagio_id || '';
             document.getElementById('datafax').value = formatDateForInput(mural.datafax);
-            document.getElementById('outras').value = mural.outras || '';
+
+            // Set EasyMDE value for outras
+            outrasMDE.value(mural.outras || '');
+
             document.getElementById('muralId').value = mural.id;
 
             window.currentMuralId = id;
@@ -97,7 +125,8 @@ $(document).ready(async function () {
             final_de_semana: document.getElementById('final_de_semana').value || null,
             horario: document.getElementById('horario').value || null,
             beneficios: document.getElementById('beneficios').value || null,
-            requisitos: document.getElementById('requisitos').value || null,
+            requisitos: requisitosMDE.value() || null,
+
             dataInscricao: document.getElementById('dataInscricao').value || null,
             dataSelecao: document.getElementById('dataSelecao').value || null,
             horarioSelecao: document.getElementById('horarioSelecao').value || null,
@@ -109,12 +138,13 @@ $(document).ready(async function () {
             professor_id: document.getElementById('professor_id').value || null,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             datafax: document.getElementById('datafax').value || null,
-            outras: document.getElementById('outras').value || null
+            outras: outrasMDE.value() || null
+
         };
 
         const id = document.getElementById('muralId').value;
 
-        await fetch(`/mural/${id}`, {
+        await authenticatedFetch(`/mural/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(mural)

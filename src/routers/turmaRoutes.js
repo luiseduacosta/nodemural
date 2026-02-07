@@ -1,6 +1,7 @@
 // src/routers/turmaRoutes.js
 import express from 'express';
 import * as turmaController from '../controllers/turmaController.js';
+import { verifyToken, checkRole, checkOwnership } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -8,10 +9,10 @@ const router = express.Router();
 router.use(express.json());
 
 // Routes
-router.get('/', turmaController.getAllTurmas);
-router.get('/:id', turmaController.getTurmaById);
-router.post('/', turmaController.createTurma);
-router.put('/:id', turmaController.updateTurma);
-router.delete('/:id', turmaController.deleteTurma);
+router.get('/', verifyToken, turmaController.getAllTurmas);
+router.get('/:id', verifyToken, turmaController.getTurmaById);
+router.post('/', verifyToken, checkRole(['admin']), turmaController.createTurma);
+router.put('/:id', verifyToken, checkRole(['admin']), turmaController.updateTurma);
+router.delete('/:id', verifyToken, checkRole(['admin']),turmaController.deleteTurma);
 
 export default router;

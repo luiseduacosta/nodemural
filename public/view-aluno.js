@@ -2,7 +2,6 @@
 import { getToken, authenticatedFetch, getCurrentUser, hasRole } from './auth-utils.js';
 
 const user = getCurrentUser();
-// console.log(user);
 
 $(document).ready(async function () {
 
@@ -12,7 +11,7 @@ $(document).ready(async function () {
         return;
     }
 
-    // Get the ID from the URL query parameter
+    // Get the ID from the URL query parameter with the id of the aluno
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     if (!id) {
@@ -21,13 +20,13 @@ $(document).ready(async function () {
         return;
     }
 
-    // Se for aluno e o id não for o dele, redireciona para o mural
+    // If the user is an aluno and the id is not his, redirect to the mural
     if (user.role == 'aluno' && user.entidade_id != id) {
         alert('Você não tem permissão para visualizar este aluno');
         window.location.href = 'mural.html';
         return;
     } else {
-        // Se não for admin, esconde o botão de excluir
+        // If the user is not an admin, hide the delete button
         if (user.role !== 'admin') {
             document.getElementById('btnAluno-excluir').classList.add('d-none');
         }
@@ -40,27 +39,26 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch aluno');
         }
         const aluno = await response.json();
-
         // Format the date
-        const datanascimento = new Date(aluno[0].nascimento);
+        const datanascimento = new Date(aluno.nascimento);
         const datanascimentoFormatada = datanascimento.toLocaleDateString('pt-BR');
 
         // Populate the view fields
-        document.getElementById('view-id').textContent = aluno[0].id;
-        document.getElementById('view-nome').textContent = aluno[0].nome;
-        document.getElementById('view-email').textContent = aluno[0].email;
-        document.getElementById('view-ingresso').textContent = aluno[0].ingresso;
-        document.getElementById('view-telefone').textContent = aluno[0].telefone;
-        document.getElementById('view-celular').textContent = aluno[0].celular;
-        document.getElementById('view-cpf').textContent = aluno[0].cpf;
-        document.getElementById('view-identidade').textContent = aluno[0].identidade;
-        document.getElementById('view-orgao').textContent = aluno[0].orgao;
+        document.getElementById('view-id').textContent = aluno.id;
+        document.getElementById('view-nome').textContent = aluno.nome;
+        document.getElementById('view-email').textContent = aluno.email;
+        document.getElementById('view-ingresso').textContent = aluno.ingresso;
+        document.getElementById('view-telefone').textContent = aluno.telefone;
+        document.getElementById('view-celular').textContent = aluno.celular;
+        document.getElementById('view-cpf').textContent = aluno.cpf;
+        document.getElementById('view-identidade').textContent = aluno.identidade;
+        document.getElementById('view-orgao').textContent = aluno.orgao;
         document.getElementById('view-nascimento').textContent = datanascimentoFormatada;
-        document.getElementById('view-cep').textContent = aluno[0].cep;
-        document.getElementById('view-endereco').textContent = aluno[0].endereco;
-        document.getElementById('view-municipio').textContent = aluno[0].municipio;
-        document.getElementById('view-bairro').textContent = aluno[0].bairro;
-        document.getElementById('view-observacoes').textContent = aluno[0].observacoes;
+        document.getElementById('view-cep').textContent = aluno.cep;
+        document.getElementById('view-endereco').textContent = aluno.endereco;
+        document.getElementById('view-municipio').textContent = aluno.municipio;
+        document.getElementById('view-bairro').textContent = aluno.bairro;
+        document.getElementById('view-observacoes').textContent = aluno.observacoes;
 
         // Store the ID for edit function
         window.currentAlunoId = id;
@@ -101,10 +99,13 @@ $(document).ready(async function () {
         // Fetch Estagiarios
         try {
             const estagiariosResponse = await authenticatedFetch(`/alunos/${id}/estagiarios`);
+            if (estagiariosResponse.status === 401) {
+                console.error("Token error (401) fetching estagiarios");
+            }
             if (estagiariosResponse.ok) {
                 const estagiarios = await estagiariosResponse.json();
                 if (Array.isArray(estagiarios) && estagiarios.length > 0) {
-                    // console.log(estagiarios);
+                    console.log("Com estagiários");
                 } else {
                     console.log("Sem estagiários");
                 }

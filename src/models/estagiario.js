@@ -22,13 +22,13 @@ const Estagiario = {
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
                     LEFT JOIN estagio i ON e.instituicao_id = i.id
                     LEFT JOIN turma_estagios t ON e.turmaestagio_id = t.id`;
-        
+
         let params = [];
         if (periodo) {
             query += ' WHERE e.periodo = ?';
             params.push(periodo);
         }
-        
+
         query += ' ORDER BY e.periodo DESC, a.nome ASC';
         const rows = await pool.query(query, params);
         return rows;
@@ -124,6 +124,19 @@ const Estagiario = {
                       WHERE e.professor_id = ?
                       ORDER BY e.periodo DESC, a.nome ASC`;
         const rows = await pool.query(query, [professor_id]);
+        return rows;
+    },
+
+    async findAtividadesByEstagiarioId(estagiario_id) {
+        const query = `SELECT a.*,
+                          e.ajuste2020 as estagiario_ajuste2020,
+                          e.nivel as estagiario_nivel,
+                          e.periodo as estagiario_periodo
+                          FROM folhadeatividades a
+                          LEFT JOIN estagiarios e ON a.estagiario_id = e.id
+                          WHERE a.estagiario_id = ?
+                          ORDER BY a.dia DESC, a.inicio ASC`;
+        const rows = await pool.query(query, [estagiario_id]);
         return rows;
     },
 

@@ -1,44 +1,46 @@
-// src/controllers/estagiarioController.js
-import { getToken, hasRole } from './auth-utils.js';
+// public/view-estagiario.js
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
-
+    // Only admin and aluno can access this page
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
-    } else {
-        if (hasRole(['aluno'])) {
-            document.getElementById('edit-estagiario').style.display = 'none';
-            document.getElementById('delete-estagiario').style.display = 'none';
-        }
     }
 
+    // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
+    let questionario_id = urlParams.get('questionario_id') || 1;
 
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'estagiarios.html';
         return;
-    } else {
-        document.getElementById('new-atividade').href = `new-atividade.html?estagiario_id=${id}`;
     }
 
-    try {
-        const response = await fetch(`/estagiarios/${id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch estagiario');
-        }
+    // Set link for new activity
+    document.getElementById('new-atividade').href = `new-atividade.html?estagiario_id=${id}`;
 
-        const estagiario = await response.json();
+    // Initialization state
+    let existingResposta = null;
+    let existingResponses = {};
+
+    try {
+        // 1. Load Estagiario Details
+        let estagiarioResponse = await authenticatedFetch(`/estagiarios/${id}`);
+        if (!estagiarioResponse.ok) {
+            throw new Error('Failed to fetch estagiario details');
+        }
+        const estagiario = await estagiarioResponse.json();
 
         // Nivel display
         let nivelDisplay = estagiario.nivel;
         if (estagiario.nivel == 9) {
-            nivelDisplay = '9 - Continuação (própria conta)';
+            nivelDisplay = '9 - Não obrigatório';
         }
 
-        // Populate fields
+        // Populate header/info fields
         document.getElementById('view-id').textContent = estagiario.id;
         document.getElementById('view-nivel').textContent = nivelDisplay;
         document.getElementById('view-aluno').textContent = estagiario.aluno_nome || '-';
@@ -51,17 +53,29 @@ $(document).ready(async function () {
         document.getElementById('view-turma').textContent = estagiario.turma_nome || '-';
         document.getElementById('view-observacoes').textContent = estagiario.observacoes || '-';
 
-        window.currentEstagioId = id;
+        // Update evaluation session labels
+        $('#alunoNome').text(estagiario.aluno_nome || 'Não informado');
+        $('#supervisorNome').text(estagiario.supervisor_nome || 'Não informado');
 
-        // Load atividades
+        window.currentEstagioId = id;
+        window.currentAlunoId = estagiario.aluno_id;
+
+        // Hide edit/delete buttons if user is Aluno
+        if (hasRole('aluno')) {
+            document.getElementById('edit-estagiario').style.display = 'none';
+            document.getElementById('delete-estagiario').style.display = 'none';
+        }
+
+        // 2. Load Atividades
         try {
-            const atividadesResponse = await fetch(`/atividades?estagiario_id=${id}`);
+            const atividadesResponse = await authenticatedFetch(`/estagiarios/${id}/atividades`);
             if (atividadesResponse.ok) {
                 const atividades = await atividadesResponse.json();
                 const tbody = document.getElementById('table-atividades');
                 tbody.innerHTML = '';
-                if (atividades.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
+
+                if (!atividades || atividades.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
                 } else {
                     atividades.forEach(atividade => {
                         const row = tbody.insertRow();
@@ -80,238 +94,95 @@ $(document).ready(async function () {
         } catch (error) {
             console.error('Error loading atividades:', error);
         }
-    } catch (error) {
-        console.error('Error loading estagiario:', error);
-        alert(`Erro ao carregar dados: ${error.message}`);
-        window.location.href = 'estagiarios.html';
-    }
-});
 
-$(document).ready(async function () {
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const estagiario_id = urlParams.get('id');
-    let questionario_id = urlParams.get('questionario_id');
-
-    if (!questionario_id) {
-        questionario_id = 1;
-    }
-
-    if (!estagiario_id || !questionario_id) {
-        alert('Parâmetros inválidos. estagiario_id e questionario_id são obrigatórios.');
-        window.location.href = 'respostas.html';
-        return;
-    }
-
-    let existingResposta = null;
-    let existingResponses = {};
-
-    // Load questionario info
-    try {
-        const response = await fetch(`/questionarios/${questionario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch questionario');
-        }
-        const questionario = await response.json();
-        $('#questionarioTitle').text(questionario.title);
-    } catch (error) {
-        console.error('Error loading questionario:', error);
-        $('#questionarioTitle').text('Questionário não encontrado');
-    }
-
-    // Load estagiario info
-    try {
-        const response = await fetch(`/estagiarios/${estagiario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch estagiario');
-        }
-        const estagiario = await response.json();
-        $('#alunoNome').text(estagiario.aluno_nome || 'Não informado');
-        $('#supervisorNome').text(estagiario.supervisor_nome || 'Não informado');
-    } catch (error) {
-        console.error('Error loading estagiario:', error);
-        $('#alunoNome').text('Não informado');
-        $('#supervisorNome').text('Não informado');
-    }
-
-    // Load existing resposta (if any)
-    try {
-        const response = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch resposta');
-        }
-        const resposta = await response.json();
-        existingResposta = resposta;
-        existingResponses = typeof resposta.response === 'string'
-            ? JSON.parse(resposta.response)
-            : resposta.response;
-        $('#statusBadge').removeClass('bg-secondary').addClass('bg-success').text('Já respondido');
-        loadQuestions();
-    } catch (error) {
-        console.error('Error loading resposta:', error);
-        $('#statusBadge').removeClass('bg-secondary').addClass('bg-secondary').text('Não respondido');
-    }
-
-    // Load existing resposta (if any)
-    try {
-        const response = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch resposta');
-        }
-        const resposta = await response.json();
-        existingResposta = resposta;
-        existingResponses = typeof resposta.response === 'string'
-            ? JSON.parse(resposta.response)
-            : resposta.response;
-        $('#statusBadge').removeClass('bg-secondary').addClass('bg-success').text('Já respondido');
-        loadQuestions();
-    } catch (error) {
-        console.error('Error loading resposta:', error);
-        $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Sem avaliação');
-        $('#respostasContainer').empty();
-    }
-
-    // Load questions
-    async function loadQuestions() {
+        // 3. Load Questionario Title
         try {
-            const response = await fetch(`/questoes?questionario_id=${questionario_id}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch questions');
+            const qResponse = await authenticatedFetch(`/questionarios/${questionario_id}`);
+            if (qResponse.ok) {
+                const questionario = await qResponse.json();
+                $('#questionarioTitle').text(questionario.title);
             }
-            const questions = await response.json();
-            renderQuestions(questions);
+        } catch (error) {
+            console.error('Error loading questionario:', error);
+            $('#questionarioTitle').text('Questionário');
+        }
+
+        // 4. Load Existing Resposta (Evaluation)
+        try {
+            const respostaResponse = await authenticatedFetch(`/respostas/estagiario/${id}/questionario/${questionario_id}`);
+
+            if (respostaResponse.ok) {
+                const resposta = await respostaResponse.json();
+                existingResposta = resposta;
+                existingResponses = typeof resposta.response === 'string'
+                    ? JSON.parse(resposta.response)
+                    : resposta.response;
+
+                $('#statusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Já respondido');
+                loadQuestions();
+            } else if (respostaResponse.status === 404) {
+                // Not a real error, just no evaluation yet
+                $('#statusBadge').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação');
+                $('#respostasContainer').empty();
+            } else {
+                throw new Error(`Server returned ${respostaResponse.status}`);
+            }
+        } catch (error) {
+            console.error('Error loading evaluation status:', error);
+            $('#statusBadge').removeClass('bg-success bg-warning').addClass('bg-secondary').text('Erro ao verificar');
+        }
+
+    } catch (error) {
+        console.error('Core data load error:', error);
+        alert(`Erro ao carregar dados do estágio: ${error.message}`);
+        // window.location.href = 'estagiarios.html';
+    }
+
+    // Helper: Load questions for display
+    async function loadQuestions() {
+        if (!existingResposta) return;
+
+        try {
+            const questionsResponse = await authenticatedFetch(`/questoes?questionario_id=${questionario_id}`);
+            if (questionsResponse.ok) {
+                const questions = await questionsResponse.json();
+                renderQuestions(questions);
+            }
         } catch (error) {
             console.error('Error loading questions:', error);
             $('#respostasContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
         }
     }
 
-    // Render questions based on type
-    async function renderQuestions(questions) {
+    // Render questions (read-only style for view page)
+    function renderQuestions(questions) {
         const container = $('#respostasContainer');
         container.empty();
 
-        if (questions.length === 0) {
-            container.html('<p class="text-muted">Nenhuma questão encontrada para este questionário.</p>');
+        if (!questions || questions.length === 0) {
+            container.html('<p class="text-muted">Nenhuma questão encontrada.</p>');
             return;
         }
 
         questions.forEach((question, index) => {
             const questionKey = `avaliacao${question.ordem || question.id}`;
-            const existingValue = existingResponses[questionKey] || '';
-
-            let inputHtml = '';
-
-            switch (question.type) {
-                case 'radio':
-                    inputHtml = renderRadioOptions(question, questionKey, existingValue);
-                    break;
-                case 'checkbox':
-                    inputHtml = renderCheckboxOptions(question, questionKey, existingValue);
-                    break;
-                case 'select':
-                    inputHtml = renderSelectOptions(question, questionKey, existingValue);
-                    break;
-                case 'short_text':
-                case 'short text':
-                    inputHtml = `<input type="text" class="form-control" name="${questionKey}" value="${escapeHtml(existingValue)}">`;
-                    break;
-                case 'long_text':
-                case 'long text':
-                    inputHtml = `<textarea class="form-control" name="${questionKey}" rows="4">${escapeHtml(existingValue)}</textarea>`;
-                    break;
-                default:
-                    inputHtml = `<input type="text" class="form-control" name="${questionKey}" value="${escapeHtml(existingValue)}">`;
-            }
+            const value = existingResponses[questionKey] || 'Não respondido';
 
             const questionCard = `
-                <div class="question-card">
-                    <div class="question-number">Questão ${index + 1}</div>
-                    <div class="question-text">${escapeHtml(question.text)}</div>
-                    ${inputHtml}
+                <div class="question-card mb-3 p-3 border rounded">
+                    <div class="fw-bold mb-1 text-primary">Questão ${index + 1}</div>
+                    <div class="mb-2">${escapeHtml(question.text)}</div>
+                    <div class="p-2 bg-light rounded shadow-sm">
+                        <strong>Resposta:</strong> ${escapeHtml(value)}
+                    </div>
                 </div>
             `;
             container.append(questionCard);
         });
     }
 
-    // Render radio options
-    async function renderRadioOptions(question, questionId, existingValue) {
-        let options = parseOptions(question.options);
-        let html = '';
-
-        for (const [value, label] of Object.entries(options)) {
-            const checked = existingValue === value ? 'checked' : '';
-            html += `
-                <label class="radio-option">
-                    <input type="radio" name="${questionId}" value="${value}" ${checked}>
-                    ${escapeHtml(label || value)}
-                </label>
-            `;
-        }
-        return html;
-    }
-
-    // Render checkbox options
-    async function renderCheckboxOptions(question, questionId, existingValue) {
-        let options = parseOptions(question.options);
-        let selectedValues = [];
-        try {
-            selectedValues = Array.isArray(existingValue) ? existingValue : JSON.parse(existingValue || '[]');
-        } catch { selectedValues = []; }
-
-        let html = '';
-        for (const [value, label] of Object.entries(options)) {
-            const checked = selectedValues.includes(value) ? 'checked' : '';
-            html += `
-                <label class="checkbox-option">
-                    <input type="checkbox" name="${questionId}" value="${value}" ${checked}>
-                    ${escapeHtml(label || value)}
-                </label>
-            `;
-        }
-        return html;
-    }
-
-    // Render select options
-    async function renderSelectOptions(question, questionId, existingValue) {
-        let options = parseOptions(question.options);
-        let html = `<select class="form-select" name="${questionId}"><option value="">Selecione...</option>`;
-
-        for (const [value, label] of Object.entries(options)) {
-            const selected = existingValue === value ? 'selected' : '';
-            html += `<option value="${value}" ${selected}>${escapeHtml(label || value)}</option>`;
-        }
-        html += '</select>';
-        return html;
-    }
-
-    // Parse options (can be array or object)
-    async function parseOptions(optionsStr) {
-        if (!optionsStr) return {};
-        try {
-            const parsed = JSON.parse(optionsStr);
-            if (Array.isArray(parsed)) {
-                // Convert array to object
-                const obj = {};
-                parsed.forEach((item, index) => {
-                    if (typeof item === 'string' && item.includes(':')) {
-                        const [key, ...valueParts] = item.split(':');
-                        obj[key.trim()] = valueParts.join(':').trim();
-                    } else {
-                        obj[index] = item;
-                    }
-                });
-                return obj;
-            }
-            return parsed;
-        } catch {
-            return {};
-        }
-    }
-
-    // Escape HTML
-    async function escapeHtml(text) {
+    // Utilities
+    function escapeHtml(text) {
         if (!text) return '';
         const map = {
             '&': '&amp;',
@@ -323,28 +194,27 @@ $(document).ready(async function () {
         return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 
-    // Expose edit and delete functions to global scope
+    // Global exposed functions
     window.editResposta = function () {
-        window.location.href = 'edit-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
+        window.location.href = `edit-resposta.html?estagiario_id=${id}&questionario_id=${questionario_id}`;
     };
 
     window.deleteResposta = async function () {
-        if (confirm('Tem certeza que deseja excluir esta resposta?')) {
-            try {
-                // First get the resposta ID
-                const resposta = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
-                const data = await resposta.json();
+        if (!existingResposta) return;
 
-                const response = await fetch(`/respostas/${data.id}`, { method: 'DELETE' });
+        if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
+            try {
+                const response = await authenticatedFetch(`/respostas/${existingResposta.id}`, { method: 'DELETE' });
                 if (response.ok) {
-                    alert('Resposta excluída com sucesso!');
-                    window.location.href = 'respostas.html';
+                    alert('Avaliação excluída com sucesso!');
+                    window.location.reload();
                 } else {
-                    throw new Error('Failed to delete resposta');
+                    const err = await response.json();
+                    throw new Error(err.error || 'Failed to delete');
                 }
             } catch (error) {
                 console.error('Error deleting resposta:', error);
-                alert(`Erro ao excluir resposta: ${error.message}`);
+                alert(`Erro ao excluir: ${error.message}`);
             }
         }
     };

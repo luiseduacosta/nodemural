@@ -10,9 +10,14 @@ $(document).ready(async function () {
 
     const form = document.getElementById('newMuralForm');
 
+    // Initialize EasyMDE
+    const requisitosMDE = new EasyMDE({ element: document.getElementById('requisitos') });
+    const outrasMDE = new EasyMDE({ element: document.getElementById('outras') });
+
+
     // Load instituições for the dropdown
     try {
-        const response = await fetch('/estagio');
+        const response = await authenticatedFetch('/estagios');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
 
@@ -35,12 +40,28 @@ $(document).ready(async function () {
         console.error('Error loading instituições:', error);
     }
 
+    // Load turmas for the dropdown
+    try {
+        const response = await authenticatedFetch('/turmas');
+        const turmas = await response.json();
+        const select = document.getElementById('turmaestagio_id');
+
+        turmas.forEach(turma => {
+            const option = document.createElement('option');
+            option.value = turma.id;
+            option.textContent = turma.turma;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading turmas:', error);
+    }
+
     // Load default mural_periodo_atual from the configuration table and put de value in the periodo input. It has only one row.
     try {
-        const response = await fetch('/configuracoes');
+        const response = await authenticatedFetch('/configuracoes');
         const configuracoes = await response.json();
         // Put the value in the periodo input
-        document.getElementById('periodo').value = configuracoes.mural_periodo_atual;
+        document.getElementById('periodo').value = configuracoes[0].mural_periodo_atual;
 
     } catch (error) {
         console.error('Error loading periodo:', error);
@@ -59,7 +80,8 @@ $(document).ready(async function () {
             final_de_semana: document.getElementById('final_de_semana').value || null,
             horario: document.getElementById('horario').value || null,
             beneficios: document.getElementById('beneficios').value || null,
-            requisitos: document.getElementById('requisitos').value || null,
+            requisitos: requisitosMDE.value() || null,
+
             dataInscricao: document.getElementById('dataInscricao').value || null,
             dataSelecao: document.getElementById('dataSelecao').value || null,
             horarioSelecao: document.getElementById('horarioSelecao').value || null,
@@ -71,7 +93,8 @@ $(document).ready(async function () {
             professor_id: document.getElementById('professor_id').value || null,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             datafax: document.getElementById('datafax').value || null,
-            outras: document.getElementById('outras').value || null
+            outras: outrasMDE.value() || null
+
         };
 
         try {

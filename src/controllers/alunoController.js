@@ -44,7 +44,6 @@ export const getAlunoById = async (req, res) => {
     try {
         const { id } = req.params;
         const aluno = await Aluno.findAlunoById(id);
-        console.log(aluno);
         if (!aluno) {
             return res.status(404).json({ error: 'Aluno not found' });
         }

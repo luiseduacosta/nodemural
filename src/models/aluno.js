@@ -22,13 +22,12 @@ const Aluno = {
     // Find aluno by registro
     async findByRegistro(registro) {
         const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
-        return rows[0];
+        return rows;
     },
 
     async findAll(req) {
         let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos';
         let params = [];
-
         if (req && req.query && req.query.search) {
             query += " WHERE nome LIKE ? OR nomesocial LIKE ? OR registro LIKE ? OR email LIKE ?";
             const searchTerm = `%${req.query.search}%`;
@@ -47,28 +46,7 @@ const Aluno = {
                        WHERE id = ?
                        ORDER BY nome ASC`;
         const rows = await pool.query(query, [id]);
-        return rows;
-    },
-
-    // Find aluno by id, including estagiario info if exists
-    async findById(id) {
-        // Fix: Removed trailing comma before FROM and fixed join logic
-        let query = `
-            SELECT alunos.*, 
-                   estagiarios.id as estagiario_id, 
-                   estagiarios.nivel as estagiario_nivel, 
-                   estagiarios.periodo as estagiario_periodo, 
-                   estagiarios.professor_id as estagiario_professorID, 
-                   estagiarios.supervisor_id as estagiario_superivisorID, 
-                   estagiarios.instituicao_id as estagiario_instituicaoID
-            FROM alunos 
-            LEFT JOIN estagiarios ON estagiarios.aluno_id = alunos.id
-            WHERE alunos.id = ?
-            ORDER BY alunos.nome ASC
-        `;
-
-        const rows = await pool.query(query, [id]);
-        return rows[0];
+        return rows[0] || null;
     },
 
     // Get all estagiarios for aluno_id from estagiarios table
@@ -77,8 +55,14 @@ const Aluno = {
             `SELECT 
                 e.id as id, 
                 e.aluno_id as aluno_id, 
+                e.ajuste2020 as ajuste2020,
                 e.nivel as nivel, 
                 e.periodo as periodo, 
+                e.turno as turno,
+                e.turmaestagio_id as turmaestagio_id,
+                e.instituicao_id as instituicao_id,
+                e.professor_id as professor_id,
+                e.supervisor_id as supervisor_id,
                 d.nome as professor_nome, 
                 s.nome as supervisor_nome, 
                 i.instituicao as instituicao_nome

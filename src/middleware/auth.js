@@ -8,6 +8,8 @@ export const verifyToken = (req, res, next) => {
         const token = req.headers.authorization?.split(' ')[1];
 
         if (!token) {
+            console.warn(`[Auth] Token missing for: ${req.method} ${req.originalUrl}`);
+            console.warn(`[Auth] Headers:`, JSON.stringify(req.headers));
             return res.status(401).json({ error: 'Token não fornecido' });
         }
 

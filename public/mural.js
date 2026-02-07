@@ -1,5 +1,5 @@
 // src/routes/muralRoutes.js
-import { getToken, authenticatedFetch, getCurrentUser, isAdmin, hasRole } from './auth-utils.js';
+import { getToken, isAdmin, hasRole, authenticatedFetch } from './auth-utils.js';
 
 // Everybody can access to the display of this page for the current periodo stored in the config
 $(document).ready(async function () {
@@ -12,7 +12,7 @@ $(document).ready(async function () {
             url: '/mural',
             data: function (d) {
                 const token = getToken();
-                if (token) {
+                if (token && hasRole('admin', 'docente', 'supervisor')) {
                     const periodo = $('#periodoFilter').val();
                     if (periodo && periodo != 'Todos') {
                         d.periodo = periodo;
@@ -53,7 +53,7 @@ $(document).ready(async function () {
                 data: null,
                 render: isAdmin() ? function (data, type, row) {
                     return `
-                    < button onclick = "window.location.href='edit-mural.html?id=${row.id}'" class= "btn btn-sm btn-warning" > Editar</button >
+                    <button onclick = "window.location.href='edit-mural.html?id=${row.id}'" class= "btn btn-sm btn-warning"> Editar</button>
                     <button onclick="deleteMural(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
                     `;
                 } : function (data, type, row) {
@@ -84,7 +84,7 @@ $(document).ready(async function () {
             select.append(option);
 
             // 2. Get mural_periodo_atual (periodo) from Configuracoes and select it
-            const configRes = await fetch('/configuracoes');
+            const configRes = await authenticatedFetch('/configuracoes');
             if (configRes.ok) {
                 const config = await configRes.json();
                 if (config[0] && config[0].mural_periodo_atual) {

@@ -1,8 +1,10 @@
 // src/controllers/inscricaoController.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+const user = getCurrentUser();
 
 $(document).ready(async function () {
 
+    // Redirect if not logged in or not aluno or admin
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
@@ -13,17 +15,14 @@ $(document).ready(async function () {
     // Get muralestagio_id from URL
     const urlParams = new URLSearchParams(window.location.search);
     const muralEstagioId = urlParams.get('muralestagio_id');
-    const alunoId = urlParams.get('aluno_id');
-    // console.log('muralestagio_id:', muralEstagioId);
 
     // Set today's date as default
     const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-    console.log('today:', today);
     document.getElementById('data').value = today;
-
+    
     // Load alunos for the dropdown
     try {
-        const response = await fetch('/alunos');
+        const response = await authenticatedFetch('/alunos');
         const alunos = await response.json();
         const select = document.getElementById('aluno_id');
 
@@ -31,9 +30,11 @@ $(document).ready(async function () {
             const option = document.createElement('option');
             option.value = aluno.id;
             option.textContent = `${aluno.registro} - ${aluno.nome}`;
-            if (aluno.id == alunoId) {
+            if (user.role == 'aluno' && aluno.id == user.entidade_id) {
                 option.selected = true;
                 document.getElementById('registro').value = aluno.registro;
+                // Disable the select element
+                document.getElementById('aluno_id').disabled = true;
             }
             select.appendChild(option);
         });
@@ -109,23 +110,35 @@ $(document).ready(async function () {
         e.preventDefault();
 
         const inscricao = {
-            aluno_id: document.getElementById('aluno_id').value,
+            // aluno_id: user.entidade_id,
+            aluno_id: user.entidade_id ? user.entidade_id : document.getElementById('aluno_id').value,
             muralestagio_id: document.getElementById('muralestagio_id').value,
             periodo: document.getElementById('periodo').value,
             data: document.getElementById('data').value,
             registro: document.getElementById('registro').value
         };
 
-        // Check if aluno_id has already make an inscricao for this muralestagio_id
+        // Check if aluno_id has already make an inscricao for this muralestagio_id. Verify token.
         try {
-            const response = await fetch(`/inscricoes/${inscricao.aluno_id}/${inscricao.muralestagio_id}`);
+            const token = getToken();
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
+            const response = await authenticatedFetch(`/inscricoes/${inscricao.aluno_id}/${inscricao.muralestagio_id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log('Response:', response);
             if (!response.ok) {
                 throw new Error('Erro ao verificar inscricao');
             }
-            const inscricoes = await response.json();
-            if (inscricoes.length > 0) {
+            const existingInscricao = await response.json();
+            console.log('Inscricao:', existingInscricao);
+            if (existingInscricao.length > 0) {
                 alert('Aluno já inscrito nesta vaga para este período');
-                window.location.href = `view-inscricao.html?id=${inscricoes.id}`;
+                window.location.href = `view-inscricao.html?id=${existingInscricao.id}`;
                 return;
             }
         } catch (error) {
@@ -137,8 +150,11 @@ $(document).ready(async function () {
         try {
             const response = await fetch('/inscricoes', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(inscricao)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(inscricao),
             });
 
             if (!response.ok) {

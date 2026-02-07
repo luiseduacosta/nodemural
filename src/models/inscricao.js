@@ -56,19 +56,19 @@ const Inscricao = {
     },
 
     async create(registro, aluno_id, muralestagio_id, data, periodo) {
-        // Check if student already registered for this mural in this period
+        // Check if student already registered for this mural
         const existing = await pool.query(
-            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND periodo = ?',
-            [aluno_id, muralestagio_id, periodo]
+            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
+            [aluno_id, muralestagio_id]
         );
 
         if (existing.length > 0) {
-            throw new Error('Aluno já inscrito nesta vaga para este período');
+            throw new Error('Aluno já inscrito nesta vaga.');
         }
 
         const result = await pool.query(
             'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo) VALUES (?, ?, ?, ?, ?)',
-            [registro || 0, aluno_id, muralestagio_id, data, periodo]
+            [registro, aluno_id, muralestagio_id, data, periodo]
         );
         return { id: Number(result.insertId), registro, aluno_id, muralestagio_id, data, periodo };
     },
@@ -76,17 +76,17 @@ const Inscricao = {
     async update(id, registro, aluno_id, muralestagio_id, data, periodo) {
         // Check if another student already registered for this mural in this period
         const existing = await pool.query(
-            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND periodo = ? AND id != ?',
-            [aluno_id, muralestagio_id, periodo, id]
+            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
+            [aluno_id, muralestagio_id]
         );
 
         if (existing.length > 0) {
-            throw new Error('Aluno já inscrito nesta vaga para este período');
+            throw new Error('Aluno já inscrito nesta vaga.');
         }
 
         const result = await pool.query(
             'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ? WHERE id = ?',
-            [registro || 0, aluno_id, muralestagio_id, data, periodo, id]
+            [registro, aluno_id, muralestagio_id, data, periodo, id]
         );
         return result.affectedRows > 0;
     },

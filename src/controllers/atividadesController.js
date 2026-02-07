@@ -50,23 +50,9 @@ export const updateAtividade = async (req, res) => {
 
         const updated = await Atividades.update(id, estagiario_id, dia, inicio, final, atividade);
         if (!updated) {
-            // Note: In strict REST, if update works but nothing changed, we might still 204 or 200. 
-            // The model returns affectedRows > 0 only if a row matched. 
-            // If the ID doesn't exist, it returns false.
-            // If the ID exists but data is identical, mysql/mariadb may return affectedRows = 0 depending on flags.
-            // Assuming affectedRows check implies "record found and processed".
-            // Since we use ID to find it, if it returns 0 affectedRows often means ID not found.
-            // However, let's stick to the server.js behavior which always sent 204 regardless of affected rows (it didn't check).
-            // But we should try to be better. If we want to strictly mimic server.js:
-            // server.js: await conn.query(...); res.status(204).end();
-            // It didn't check if row existed.
-            // I'll stick to strict 204.
-            // But checking if it exists is better for DX. I'll behave like the other controllers (alunoController).
-            // But wait, if affectedRows is 0 because no changes were made (but id exists), returning 404 is wrong.
-            // Let's assume the user wants standard behavior.
-            // I'll just return 204 if successful, catch error otherwise.
+            return res.status(404).json({ error: 'Atividade not found' });
         }
-        res.status(204).end();
+        res.status(200).json(updated);
     } catch (error) {
         console.error('Error updating atividade:', error);
         res.status(500).json({ error: error.message });

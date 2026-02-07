@@ -1,4 +1,4 @@
-import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
+import { getToken, hasRole, isAdmin, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -23,9 +23,8 @@ $(document).ready(async function () {
         return;
     }
 
-    const token = getToken();
     try {
-        const response = await fetch(`/mural/${id}`);
+        const response = await authenticatedFetch(`/mural/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch mural');
         }
@@ -40,13 +39,21 @@ $(document).ready(async function () {
 
         // Helper function to format selection method
         const formatFormaSelecao = (value) => {
-            const map = { 'E': 'Entrevista', 'P': 'Prova', 'A': 'Análise de Currículo' };
+            const map = { '0': 'Entrevista', '1': 'Análise de currículo', '2': 'Prova', '3': 'Outras' };
             return map[value] || 'N/A';
         };
 
         // Helper function to format shift
         const formatHorario = (value) => {
-            const map = { 'M': 'Manhã', 'T': 'Tarde', 'N': 'Noite' };
+            const map = { 'D': 'Diurno', 'N': 'Noturno', 'I': 'Indeterminado' };
+            return map[value] || 'N/A';
+        };
+
+        const formatLocalInscricao = (value) => {
+            const map = {
+                '0': 'Somente no mural da Coordenação de Estágio',
+                '1': 'Diretamente na instituição e no mural da Coordenação de Estágio'
+            };
             return map[value] || 'N/A';
         };
 
@@ -54,26 +61,48 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = mural.id;
         document.getElementById('view-periodo').textContent = mural.periodo || 'N/A';
         document.getElementById('view-instituicao').textContent = mural.instituicao;
-        document.getElementById('view-link-estagio').href = (token == null) ? '#' : `/view-estagio.html?id=${mural.instituicao_id}`;
+        // Se não estiver logado, não pode ver o link do estágio
+        document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-estagio.html?id=${mural.instituicao_id}`;
         document.getElementById('view-vagas').textContent = mural.vagas;
         document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
         document.getElementById('view-cargaHoraria').textContent = mural.cargaHoraria || 'N/A';
         document.getElementById('view-final_de_semana').textContent = mural.final_de_semana === 'S' ? 'Sim' : (mural.final_de_semana === 'N' ? 'Não' : 'N/A');
         document.getElementById('view-horario').textContent = formatHorario(mural.horario);
         document.getElementById('view-beneficios').textContent = mural.beneficios || 'N/A';
-        document.getElementById('view-requisitos').textContent = mural.requisitos || 'N/A';
+        document.getElementById('view-requisitos').innerHTML = mural.requisitos ? marked.parse(mural.requisitos) : 'N/A';
         document.getElementById('view-dataInscricao').textContent = formatDate(mural.dataInscricao);
         document.getElementById('view-dataSelecao').textContent = formatDate(mural.dataSelecao);
         document.getElementById('view-horarioSelecao').textContent = mural.horarioSelecao || 'N/A';
         document.getElementById('view-localSelecao').textContent = mural.localSelecao || 'N/A';
         document.getElementById('view-formaSelecao').textContent = formatFormaSelecao(mural.formaSelecao);
-        document.getElementById('view-localInscricao').textContent = mural.localInscricao === '1' ? 'Sim' : 'Não';
+        document.getElementById('view-localInscricao').textContent = formatLocalInscricao(mural.localInscricao);
         document.getElementById('view-contato').textContent = mural.contato || 'N/A';
         document.getElementById('view-email').textContent = mural.email || 'N/A';
-        document.getElementById('view-outras').textContent = mural.outras || 'N/A';
+        document.getElementById('view-outras').innerHTML = mural.outras ? marked.parse(mural.outras) : 'N/A';
 
         window.currentMuralId = id;
         await loadInscricoes(window.currentMuralId);
+
+        // Hide buttons if not admin
+        if (!isAdmin()) {
+            document.getElementById('editRecordBtn').style.display = 'none';
+            document.getElementById('newMuralBtn').style.display = 'none';
+            document.getElementById('inscricoes-tab').style.display = 'none';
+        }
+        // Hide inscrever button if not logged in
+        if (!getToken()) {
+            document.getElementById('inscreverBtn').style.display = 'none';
+        }
+
+        // Hide button if today is after dataInscricao
+        const dataInscricaoText = document.getElementById('view-dataInscricao').textContent;
+        const dataInscricao = new Date(dataInscricaoText.split('/').reverse().join('-')); // Convert DD/MM/YYYY to YYYY-MM-DD
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+
+        if (today > dataInscricao) {
+            document.getElementById('inscreverBtn').style.display = 'none';
+        }
 
     } catch (error) {
         console.error('Error loading mural:', error);
@@ -81,17 +110,6 @@ $(document).ready(async function () {
         window.location.href = 'mural.html';
     }
 });
-
-// Hide buttons if not admin
-if (!isAdmin()) {
-    document.getElementById('editRecordBtn').style.display = 'none';
-    document.getElementById('newMuralBtn').style.display = 'none';
-    document.getElementById('inscricoes-tab').style.display = 'none';
-}
-// Hide inscrever button if not logged in
-if (!getToken()) {
-    document.getElementById('inscreverBtn').style.display = 'none';
-}
 
 window.editRecord = function () {
     window.location.href = `edit-mural.html?id=${window.currentMuralId}`;
