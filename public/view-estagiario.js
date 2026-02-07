@@ -71,7 +71,7 @@ $(document).ready(async function () {
             const atividadesResponse = await authenticatedFetch(`/estagiarios/${id}/atividades`);
             if (atividadesResponse.ok) {
                 const atividades = await atividadesResponse.json();
-                const tbody = document.getElementById('table-atividades');
+                const tbody = document.getElementById('atividades-table-body');
                 tbody.innerHTML = '';
 
                 if (!atividades || atividades.length === 0) {
@@ -80,8 +80,8 @@ $(document).ready(async function () {
                     atividades.forEach(atividade => {
                         const row = tbody.insertRow();
                         row.insertCell(0).innerText = atividade.id || '-';
-                        row.insertCell(1).innerText = atividade.dia ? new Date(atividade.dia).toLocaleDateString('pt-BR') : '-';
-                        row.insertCell(2).innerText = atividade.atividade || '-';
+                        row.insertCell(1).innerText = atividade.atividade || '-';
+                        row.insertCell(2).innerText = atividade.dia ? new Date(atividade.dia).toLocaleDateString('pt-BR') : '-';
                         row.insertCell(3).innerText = atividade.inicio || '-';
                         row.insertCell(4).innerText = atividade.final || '-';
                         row.insertCell(5).innerText = atividade.horario || '-';
