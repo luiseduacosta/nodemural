@@ -53,22 +53,22 @@ const Estagiario = {
         return rows[0];
     },
 
-    async create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes) {
+    async create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
             `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id,
-             turmaestagio_id, periodo, turno, nivel, observacoes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes]
+             turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes]
         );
-        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes };
+        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes };
     },
 
-    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes) {
+    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
             `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
-             instituicao_id = ?, turmaestagio_id = ?, periodo = ?, nivel = ?,
+             instituicao_id = ?, turmaestagio_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes, id]
+            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, id]
         );
         return result.affectedRows > 0;
     },

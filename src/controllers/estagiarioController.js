@@ -55,8 +55,8 @@ export const getAtividadesByEstagiarioId = async (req, res) => {
 // Create a new estagiario
 export const createEstagiario = async (req, res) => {
     try {
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes } = req.body;
-        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes);
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
+        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes);
         res.status(201).json(estagiario);
     } catch (error) {
         console.error('Error creating estagiario:', error);
@@ -68,8 +68,8 @@ export const createEstagiario = async (req, res) => {
 export const updateEstagiario = async (req, res) => {
     try {
         const { id } = req.params;
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes } = req.body;
-        const success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, nivel, observacoes);
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
+        const success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Estagiario not found' });
         }
