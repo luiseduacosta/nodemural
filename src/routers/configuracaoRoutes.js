@@ -12,7 +12,7 @@ router.use(express.json());
 router.put('/:id', verifyToken, checkRole(['admin']), configuracaoController.updateConfiguracao);
 
 // Authenticate users only routes - can view and update configuracao
-router.get('/', verifyToken, configuracaoController.getAllConfiguracoes);
-router.get('/:id', verifyToken, configuracaoController.getConfiguracaoById);
+router.get('/', configuracaoController.getAllConfiguracoes);
+router.get('/:id', configuracaoController.getConfiguracaoById);
 
 export default router;
