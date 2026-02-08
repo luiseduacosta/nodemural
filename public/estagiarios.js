@@ -1,5 +1,5 @@
 // src/controllers/estagiarioController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { authenticatedFetch, getToken, hasRole } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -18,7 +18,7 @@ $(document).ready(async function () {
       $(this).html("");
       return;
     }
-    $(this).html('<input type="text" placeholder="Pesquisar ' + title + '" />');
+    $(this).html('<input type="text" class="form-control" placeholder="Pesquisar ' + title + '" />');
 
     $("input", this).on("keyup change", function () {
       if (table.column(i).search() !== this.value) {
@@ -36,7 +36,12 @@ $(document).ready(async function () {
     ],
     orderCellsTop: true,
     ajax: {
-      url: "/estagiarios",
+      url: "/estagiarios", 
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
       data: function (d) {
         const periodo = $("#periodoFilter").val();
         if (periodo && periodo !== 'Todos') {
@@ -76,7 +81,7 @@ $(document).ready(async function () {
   async function loadFilters() {
     try {
       // 1. Get Distinct Periods
-      const periodosRes = await fetch("/estagiarios/periodos");
+      const periodosRes = await authenticatedFetch("/estagiarios/periodos");
       const periodos = await periodosRes.json();
       const select = $("#periodoFilter");
       select.empty();
@@ -96,12 +101,16 @@ $(document).ready(async function () {
       });
 
       // 2. Get Default Config
-      const configRes = await fetch("/configuracoes");
+      const configRes = await authenticatedFetch("/configuracoes");
       if (configRes.ok) {
         const config = await configRes.json();
         if (config.termo_compromisso_periodo) {
           select.val(config.termo_compromisso_periodo);
         }
+        option.value = config.termo_compromisso_periodo;
+        option.text = config.termo_compromisso_periodo;
+        option.selected = true;
+        select.append(option); // Append option selected to the select
       }
 
       // Reload table with the new default filter
@@ -125,7 +134,7 @@ $(document).ready(async function () {
       confirm("Tem certeza que deseja excluir este registro de estagiário?")
     ) {
       try {
-        const response = await fetch(`/estagiarios/${id}`, {
+        const response = await authenticatedFetch(`/estagiarios/${id}`, {
           method: "DELETE",
         });
         if (!response.ok) {

@@ -59,6 +59,9 @@ $(document).ready(async function () {
         document.getElementById('view-municipio').textContent = aluno.municipio;
         document.getElementById('view-bairro').textContent = aluno.bairro;
         document.getElementById('view-observacoes').textContent = aluno.observacoes;
+        
+        // Replace the href value to be used in new-estagiario.js
+        document.getElementById("btnAluno-estagios").href = `new-estagiario.html?id=${id}`;
 
         // Store the ID for edit function
         window.currentAlunoId = id;

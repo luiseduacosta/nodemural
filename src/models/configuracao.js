@@ -5,7 +5,7 @@ const Configuracao = {
     async findAll(req) {
         let query = `SELECT * FROM configuracoes limit 1`;
         const rows = await pool.query(query);
-        return rows;
+        return rows[0];
     },
 
     async findById(id) {

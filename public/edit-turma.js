@@ -1,5 +1,5 @@
 //
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -19,7 +19,7 @@ $(document).ready(async function () {
 
     // Load turma data
     try {
-        const response = await fetch(`/turmas/${id}`);
+        const response = await authenticatedFetch(`/turmas/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch turma');
         }
@@ -45,7 +45,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch(`/turmas/${id}`, {
+            const response = await authenticatedFetch(`/turmas/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

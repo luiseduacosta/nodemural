@@ -195,10 +195,55 @@ $(document).ready(async function () {
     }
 
     // Global exposed functions
-    window.editResposta = function () {
+
+    // Change the return button href to view-aluno.html
+    try {
+        // Load Estagiario to catch the aluno ID
+        const estagiarioResponse = await authenticatedFetch(`/estagiarios/${id}`);
+        if (!estagiarioResponse.ok) {
+            throw new Error('Failed to fetch estagiario details');
+        }
+        const estagiario = await estagiarioResponse.json();
+        document.getElementById('back-button').href = `view-aluno.html?id=${estagiario.aluno_id}`;
+    } catch (error) {
+        console.error('Error loading estagiario details:', error);
+        alert(`Erro ao carregar detalhes do estagiario: ${error.message}`);
+    }
+
+    // Go to edit-estagiario.html
+    window.editEstagiario = function () {
+        window.location.href = `edit-estagiario.html?id=${id}`;
+    };
+
+    // Delete! (with confirmation)
+    window.deleteEstagiario = async function () {
+        if (confirm('Tem certeza que deseja excluir este estagiário?')) {
+            try {
+                const response = await authenticatedFetch(`/estagiarios/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('Estagiário excluído com sucesso!');
+                    window.location.href = 'estagiarios.html';
+                } else {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Failed to delete');
+                }
+            } catch (error) {
+                console.error('Error deleting estagiario:', error);
+                alert(`Erro ao excluir: ${error.message}`);
+            }
+        }
+    };
+
+    // Edit or create resposta
+    window.editResposta = async function () {
+        if (!existingResposta) {
+            alert('Nenhuma avaliação encontrada para editar.');
+            return;
+        }
         window.location.href = `edit-resposta.html?estagiario_id=${id}&questionario_id=${questionario_id}`;
     };
 
+    // Delete resposta
     window.deleteResposta = async function () {
         if (!existingResposta) return;
 

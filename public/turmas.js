@@ -12,6 +12,10 @@ $(document).ready(function () {
         order: [[1, 'asc']],
         ajax: {
             url: '/turmas',
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + getToken()
+            },
             dataSrc: ''
         },
 

@@ -8,10 +8,13 @@ $(document).ready(async function () {
         return;
     }
 
+    // Admin and others gets the id from query params, aluno gets their own id
+    const urlParams = new URLSearchParams(window.location.search);
     const form = document.getElementById('newEstagioForm');
     const roleIsAluno = hasRole('aluno');
-    const currentUserId = getCurrentUser().entidade_id;
-
+    const currentAlunoId = getCurrentUser().entidade_id;
+    const currentUserId = roleIsAluno ? currentAlunoId : urlParams.get('id');
+ 
     // 2. Initial Data Load (Dropdowns)
     async function loadInitialData() {
         try {
@@ -30,7 +33,7 @@ $(document).ready(async function () {
                 const select = document.getElementById('aluno_id');
                 alunos.forEach(aluno => {
                     const option = new Option(`${aluno.registro} - ${aluno.nome}`, aluno.id);
-                    if (roleIsAluno && aluno.id === currentUserId) option.selected = true;
+                    if (aluno.id == currentUserId) option.selected = true;
                     select.add(option);
                 });
             }
@@ -59,13 +62,11 @@ $(document).ready(async function () {
             // Default Period
             if (configRes.ok) {
                 const configs = await configRes.json();
-                if (configs.length > 0) {
-                    document.getElementById('periodo').value = configs[0].termo_compromisso_periodo || '';
-                }
+                document.getElementById('periodo').value = configs.termo_compromisso_periodo;
             }
 
             // If user is Aluno, trigger their history load immediately
-            if (roleIsAluno) {
+            if (currentUserId) {
                 triggerStudentHistory(currentUserId);
             }
 

@@ -18,7 +18,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/turmas', {
+            const response = await authenticatedFetch('/turmas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

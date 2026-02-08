@@ -23,16 +23,16 @@ function loadConfig() {
             if (!dateStr) return '';
             return new Date(dateStr).toISOString().split('T')[0];
         }
-        $('#mural_periodo_atual').val(data[0].mural_periodo_atual);
+        $('#mural_periodo_atual').val(data.mural_periodo_atual);
 
-        $('#termo_compromisso_periodo').val(data[0].termo_compromisso_periodo);
-        $('#termo_compromisso_inicio').val(formatDate(data[0].termo_compromisso_inicio));
-        $('#termo_compromisso_final').val(formatDate(data[0].termo_compromisso_final));
+        $('#termo_compromisso_periodo').val(data.termo_compromisso_periodo);
+        $('#termo_compromisso_inicio').val(formatDate(data.termo_compromisso_inicio));
+        $('#termo_compromisso_final').val(formatDate(data.termo_compromisso_final));
 
-        $('#periodo_calendario_academico').val(data[0].periodo_calendario_academico);
-        $('#curso_turma_atual').val(data[0].curso_turma_atual);
-        $('#curso_abertura_inscricoes').val(formatDate(data[0].curso_abertura_inscricoes));
-        $('#curso_encerramento_inscricoes').val(formatDate(data[0].curso_encerramento_inscricoes));
+        $('#periodo_calendario_academico').val(data.periodo_calendario_academico);
+        $('#curso_turma_atual').val(data.curso_turma_atual);
+        $('#curso_abertura_inscricoes').val(formatDate(data.curso_abertura_inscricoes));
+        $('#curso_encerramento_inscricoes').val(formatDate(data.curso_encerramento_inscricoes));
     })
         .fail(function (jqXHR) {
             if (jqXHR.status === 404) {
@@ -63,6 +63,9 @@ function saveConfig() {
         dataType: 'json',
         data: JSON.stringify(formData),
         contentType: 'application/json',
+        headers: {
+            'Authorization': 'Bearer ' + getToken()
+        },
         success: function () {
             showToast('Configurações salvas com sucesso!');
         },

@@ -14,7 +14,6 @@ $(document).ready(async function () {
     const requisitosMDE = new EasyMDE({ element: document.getElementById('requisitos') });
     const outrasMDE = new EasyMDE({ element: document.getElementById('outras') });
 
-
     // Load instituições for the dropdown
     try {
         const response = await authenticatedFetch('/estagios');
@@ -33,7 +32,7 @@ $(document).ready(async function () {
 
     // Load turmas for the dropdown
     try {
-        const response = await authenticatedFetch('/turmas');
+        const response = await authenticatedFetch('/turmaestagios');
         const turmas = await response.json();
         const select = document.getElementById('turmaestagio_id');
 
@@ -50,7 +49,7 @@ $(document).ready(async function () {
     // Define editMural function first
     const editMural = async (id) => {
         try {
-            const response = await fetch(`/mural/${id}`);
+            const response = await authenticatedFetch(`/mural/${id}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch mural');
             }
@@ -76,7 +75,6 @@ $(document).ready(async function () {
 
             // Set EasyMDE values
             requisitosMDE.value(mural.requisitos || '');
-
 
             document.getElementById('dataInscricao').value = formatDateForInput(mural.dataInscricao);
             document.getElementById('dataSelecao').value = formatDateForInput(mural.dataSelecao);
