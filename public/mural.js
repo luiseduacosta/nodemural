@@ -19,7 +19,6 @@ $(document).ready(async function () {
                     }
                 } else if (window.defaultPeriod) {
                     d.periodo = window.defaultPeriod;
-                    $('#periodoFilter').replaceWith(`${window.defaultPeriod}`);
                 }
             },
             beforeSend: function (xhr) {
@@ -127,8 +126,9 @@ $(document).ready(async function () {
     // Hide new mural button if not admin
     if (!isAdmin()) {
         $('#newMuralBtn').hide();
+        $('#filter-container').hide();
     }
-
+    
     // Hide edit and delete buttons if not admin
     if (!isAdmin()) {
         $('#muralTable').DataTable().column(6).visible(false);

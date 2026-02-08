@@ -153,6 +153,50 @@ $(document).ready(async function () {
     }
 });
 
+// if role is aluno then verify if it is estagiario, then check estagiario periodo with configuracoes termo_compromisso_periodo and render accordingly 
+(async () => {
+    try {
+        const user = getCurrentUser();
+        if (user && user.role === 'aluno') {
+            const alunoId = user.entidade_id;
+            const response = await authenticatedFetch(`/alunos/${alunoId}/estagiarios`);
+            if (response.ok) {
+                const estagiarios = await response.json();
+                if (estagiarios.length > 0) {
+                    // Pick last estagiario
+                    const currentPeriodo = estagiarios[estagiarios.length - 1].periodo;
+                    // Get termo_compromisso_periodo from table configuracoes
+                    const configuracoesResponse = await authenticatedFetch('/configuracoes');
+                    const configuracoes = await configuracoesResponse.json();
+                    const termoCompromissoPeriodo = configuracoes.termo_compromisso_periodo;
+                    // Verify if currentPeriodo is less than termoCompromissoPeriodo
+                    if (currentPeriodo < termoCompromissoPeriodo) {
+                        console.log("Periodo de estagiário atual " + currentPeriodo + " menor que termo de compromisso " + termoCompromissoPeriodo);
+                        // Button btnAluno-estagios redirect to new-estagiario.html
+                        document.getElementById('btnAluno-estagios').href = `new-estagiario.html?id=${alunoId}`;
+                        document.getElementById('btnAluno-estagios').innerHTML = 'Novo Estagiário';
+                        document.getElementById('btnAluno-estagios').classList.add('btn-success');
+                    } else if (currentPeriodo == termoCompromissoPeriodo) {
+                        console.log("Periodo de estagiário atual " + currentPeriodo + " igual ao termo de compromisso " + termoCompromissoPeriodo);
+                        // Button btnAluno-estagios redirect to edit-estagiario.html
+                        document.getElementById('btnAluno-estagios').href = `edit-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
+                        document.getElementById('btnAluno-estagios').innerHTML = 'Editar Estagiário';
+                        document.getElementById('btnAluno-estagios').classList.add('btn-warning');
+                    } else {
+                        console.log("Periodo de estagiário atual " + currentPeriodo + " maior que termo de compromisso " + termoCompromissoPeriodo);
+                        // Button btnAluno-estagios redirect to view-estagiario.html
+                        document.getElementById('btnAluno-estagios').href = `view-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
+                        document.getElementById('btnAluno-estagios').innerHTML = 'Ver Estagiário';
+                        document.getElementById('btnAluno-estagios').classList.add('btn-info');
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching estagiarios:', error);
+    }
+})();
+
 // Function to redirect to edit mode
 window.editRecord = function () {
     const user = getCurrentUser();
