@@ -9,7 +9,6 @@ $(document).ready(async function () {
     }
 
     const estagiarioId = new URLSearchParams(window.location.search).get('estagiario_id');
-    console.log(estagiarioId);
     if (!estagiarioId) {
         alert('ID do estagiário não fornecido.');
         window.location.href = 'estagiarios.html';
@@ -21,6 +20,17 @@ $(document).ready(async function () {
             const responseatividade = await authenticatedFetch('/atividades?estagiario_id=' + estagiarioId);
             const atividade = await responseatividade.json();
             if (atividade.length > 0) {
+                let totalMinutes = 0;
+                // Calculate total horario with minutes
+                atividade.forEach(item => {
+                    const horarioParts = item.horario.split(':');
+                    const hours = parseInt(horarioParts[0]) || 0;
+                    const minutes = parseInt(horarioParts[1]?.replace('m', '')) || 0;
+                    totalMinutes += (hours * 60) + minutes;
+                });
+                const totalHours = Math.floor(totalMinutes / 60);
+                const remainingMinutes = totalMinutes % 60;
+                const totalFormatted = `${totalHours}h ${remainingMinutes}m`;
                 const table = document.getElementById('atividadeTableContainer');
                 table.innerHTML = '';  // Clear previous content
                 // Put here a table with the atividade of the estagiario
@@ -54,6 +64,7 @@ $(document).ready(async function () {
                             </td>
                         </tr>
                     `).join('')}
+                    <tr><td colspan="5" class="text-end"><strong>Total:</strong></td><td colspan="2"><strong>${totalFormatted}</strong></td></tr>
                 </tbody>
             `;
                 const append = document.getElementById('atividadeTableContainer');
@@ -66,10 +77,9 @@ $(document).ready(async function () {
 
         // Read one estagiario
         try {
-            const response = await fetch('/estagiarios/' + estagiarioId);
+            const response = await authenticatedFetch('/estagiarios/' + estagiarioId);
             const estagiario = await response.json();
-            // console.log(estagiario);
-            document.getElementById('id').innerHTML = estagiario.id;
+            document.getElementById('id').innerHTML = estagiario.aluno_id;
             document.getElementById('registro').innerHTML = estagiario.aluno_registro;
             document.getElementById('nome').innerHTML = estagiario.aluno_nome;
             document.getElementById('periodo').innerHTML = estagiario.periodo;
@@ -84,6 +94,23 @@ $(document).ready(async function () {
         return;
     }
 
+    // Calculate and display horario when inicio or final changes
+    function calculateHorario() {
+        const inicio = $('#inicio').val();
+        const final = $('#final').val();
+        
+        if (inicio && final) {
+            const inicioDate = new Date('1970-01-01T' + inicio + 'Z');
+            const finalDate = new Date('1970-01-01T' + final + 'Z');
+            const diffTime = finalDate - inicioDate;
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+            $('#horario').val(`${diffHours}h ${diffMinutes}m`);
+        }
+    }
+
+    $('#inicio, #final').on('change', calculateHorario);
+
     $('#newAtividadeForm').on('submit', async function (e) {
         e.preventDefault();
 
@@ -93,31 +120,17 @@ $(document).ready(async function () {
             inicio: $('#inicio').val(),
             final: $('#final').val(),
             atividade: $('#atividade').val(),
-            // final - inicio = horario in hours and minutes
-            horario: function () {
-                const inicio = $('#inicio').val();
-                const final = $('#final').val();
-                const inicioDate = new Date('1970-01-01T' + inicio + 'Z');
-                const finalDate = new Date('1970-01-01T' + final + 'Z');
-                const diffTime = finalDate - inicioDate;
-                const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
-                const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
-                return `${diffHours}h ${diffMinutes}m`;
-            }()
+            horario: $('#horario').val()
         };
 
-        // Put the horario value in the readonly input and display it before submitting the form?
-        $('#horario').val(atividadeData.horario);
-
         try {
-            const response = await fetch('/atividades/' + estagiarioId, {
+            const response = await authenticatedFetch('/atividades', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(atividadeData)
             });
-
             if (response.ok) {
                 // alert('Atividade criada com sucesso!');
                 window.location.href = 'new-atividade.html?estagiario_id=' + estagiarioId;
@@ -134,12 +147,12 @@ $(document).ready(async function () {
     window.deleteAtividade = async function (atividadeId) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
-                const response = await fetch(`/atividades/${atividadeId}`, {
+                const response = await authenticatedFetch(`/atividades/${atividadeId}`, {
                     method: 'DELETE'
                 });
                 if (!response.ok) throw new Error('Erro ao excluir atividade');
                 alert('Atividade excluída com sucesso!');
-                window.location.href = 'new-atividade.html?estagiario_id=' + estagiarioId;
+                window.location.href = 'atividades.html?estagiario_id=' + estagiarioId;
             }
             catch (err) {
                 console.error('Erro ao excluir atividade:', err);

@@ -1,5 +1,5 @@
 // View Atividade Details
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -19,18 +19,27 @@ $(document).ready(async function () {
 
     // Populate initial data for the atividade details
     try {
-        const response = await fetch(`/atividades/${atividadeId}`);
+        const response = await authenticatedFetch(`/atividades/${atividadeId}`);
         if (!response.ok) throw new Error('Atividade não encontrada');
 
         const data = await response.json();
         const estagiarioId = data.estagiario_id;
         try {
             // Read all atividades of the estagiario
-            const responseatividade = await fetch('/atividades?estagiario_id=' + estagiarioId);
+            const responseatividade = await authenticatedFetch('/atividades?estagiario_id=' + estagiarioId);
             const atividade = await responseatividade.json();
             if (atividade.length > 0) {
-                const table = document.getElementById('atividadeTableContainer');
-                table.innerHTML = '';  // Clear previous content
+                // Sum the total hours and minutes
+                let totalMinutes = 0;
+                atividade.forEach(item => {
+                    const horarioParts = item.horario.split(':');
+                    const hours = parseInt(horarioParts[0]) || 0;
+                    const minutes = parseInt(horarioParts[1]?.replace('m', '')) || 0;
+                    totalMinutes += (hours * 60) + minutes;
+                });
+                const totalHours = Math.floor(totalMinutes / 60);
+                const remainingMinutes = totalMinutes % 60;
+                const totalFormatted = `${totalHours}h ${remainingMinutes}m`;
                 // Put here a table with the atividade of the estagiario
                 const tableElement = document.createElement('table');
                 tableElement.className = 'table table-striped';
@@ -62,6 +71,10 @@ $(document).ready(async function () {
                                 </td>
                             </tr>
                         `).join('')}
+                        <tr>
+                            <td colspan="5">Total Horas</td>
+                            <td>${totalFormatted}</td>
+                        </tr>
                     </tbody>
                 `;
                 const append = document.getElementById('atividadeTableContainer');
@@ -77,7 +90,7 @@ $(document).ready(async function () {
     }
 
     try {
-        const response = await fetch(`/atividades/${atividadeId}`);
+        const response = await authenticatedFetch(`/atividades/${atividadeId}`);
         if (!response.ok) throw new Error('Atividade não encontrada');
 
         const data = await response.json();
@@ -103,7 +116,7 @@ $(document).ready(async function () {
     }
 
     // Need to store current estagiario ID for new atividade operation
-    const response = await fetch(`/atividades/${atividadeId}`);
+    const response = await authenticatedFetch(`/atividades/${atividadeId}`);
     if (!response.ok) throw new Error('Atividade não encontrada');
     const data = await response.json();
     const estagiarioId = data.estagiario_id;
@@ -115,7 +128,7 @@ $(document).ready(async function () {
     window.deleteRecord = async function (id) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
-                const response = await fetch(`/atividades/${id}`, {
+                const response = await authenticatedFetch(`/atividades/${id}`, {
                     method: 'DELETE'
                 });
                 if (!response.ok) throw new Error('Erro ao excluir atividade');

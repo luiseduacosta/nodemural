@@ -77,6 +77,17 @@ $(document).ready(async function () {
                 if (!atividades || atividades.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
                 } else {
+                    let totalMinutes = 0;
+                    atividades.forEach(atividade => {
+                        const horarioParts = atividade.horario.split(':');
+                        const hours = parseInt(horarioParts[0]) || 0;
+                        const minutes = parseInt(horarioParts[1]?.replace('m', '')) || 0;
+                        totalMinutes += (hours * 60) + minutes;
+                    });
+                    const totalHours = Math.floor(totalMinutes / 60);
+                    const remainingMinutes = totalMinutes % 60;
+                    const totalFormatted = `${totalHours}h ${remainingMinutes}m`;
+
                     atividades.forEach(atividade => {
                         const row = tbody.insertRow();
                         row.insertCell(0).innerText = atividade.id || '-';
@@ -89,6 +100,7 @@ $(document).ready(async function () {
                         const actionsCell = row.insertCell(6);
                         actionsCell.innerHTML = `<button class="btn btn-sm btn-primary" onclick="window.location.href='view-atividade.html?id=${atividade.id}'">Ver</button>`;
                     });
+                    tbody.insertRow().innerHTML = `<tr><td colspan="5">Total Horas</td><td>${totalFormatted}</td></tr>`;
                 }
             }
         } catch (error) {
