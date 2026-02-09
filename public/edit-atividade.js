@@ -1,4 +1,4 @@
-// src/public/edit-atividade.js
+// public/edit-atividade.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -57,11 +57,15 @@ $(document).ready(async function () {
     function calculateHorario() {
         const inicio = $('#inicio').val();
         const final = $('#final').val();
-        
+
         if (inicio && final) {
             const inicioDate = new Date('1970-01-01T' + inicio + 'Z');
             const finalDate = new Date('1970-01-01T' + final + 'Z');
             const diffTime = finalDate - inicioDate;
+            if (diffTime < 0) {
+                $('#horario').val(`Inválido`);
+                return;
+            }
             const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
             const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
             $('#horario').val(`${diffHours}h ${diffMinutes}m`);
@@ -78,8 +82,7 @@ $(document).ready(async function () {
             dia: $('#dia').val(),
             inicio: $('#inicio').val(),
             final: $('#final').val(),
-            atividade: $('#atividade').val(),
-            horario: $('#horario').val()
+            atividade: $('#atividade').val()
         };
 
         try {

@@ -1,5 +1,5 @@
 // src/public/edit-docente.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -20,24 +20,22 @@ $(document).ready(async function () {
 
     // Load docente data
     try {
-        $.ajax({
-            url: `/docentes/${id}`,
-            method: 'GET',
-            dataType: 'json',
-            success: function (docente) {
-                document.getElementById('docenteId').value = docente.id;
-                document.getElementById('nome').value = docente.nome;
-                document.getElementById('siape').value = docente.siape;
-                document.getElementById('cpf').value = docente.cpf || '';
-                document.getElementById('email').value = docente.email;
-                document.getElementById('celular').value = docente.celular || '';
-                document.getElementById('curriculolattes').value = docente.curriculolattes || '';
-                document.getElementById('departamentoID').value = docente.departamento || 'Sem dados';
-                document.getElementById('dataegresso').value = docente.dataegresso || '';
-                document.getElementById('motivoegresso').value = docente.motivoegresso || '';
-                document.getElementById('observacoes').value = docente.observacoes || '';
-            }
-        });
+        const response = await authenticatedFetch(`/docentes/${id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch docente');
+        }
+        const docente = await response.json();
+        document.getElementById('docenteId').value = docente.id;
+        document.getElementById('nome').value = docente.nome;
+        document.getElementById('siape').value = docente.siape;
+        document.getElementById('cpf').value = docente.cpf || '';
+        document.getElementById('email').value = docente.email;
+        document.getElementById('celular').value = docente.celular || '';
+        document.getElementById('curriculolattes').value = docente.curriculolattes || '';
+        document.getElementById('departamentoID').value = docente.departamento || 'Sem dados';
+        document.getElementById('dataegresso').value = docente.dataegresso || '';
+        document.getElementById('motivoegresso').value = docente.motivoegresso || '';
+        document.getElementById('observacoes').value = docente.observacoes || '';
     } catch (error) {
         console.error('Error loading docente:', error);
         alert(`Erro ao carregar dados do docente: ${error.message}`);
@@ -62,7 +60,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch(`/docentes/${id}`, {
+            const response = await authenticatedFetch(`/docentes/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(docente)

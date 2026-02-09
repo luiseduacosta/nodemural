@@ -1,5 +1,5 @@
 // src/public/view-estagio.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -12,7 +12,6 @@ $(document).ready(async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
-
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'estagio.html';
@@ -21,7 +20,7 @@ $(document).ready(async function () {
 
     // Fetch the estagio data
     try {
-        const response = await fetch(`/estagio/${id}`);
+        const response = await authenticatedFetch(`/estagios/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch estagio');
         }
@@ -63,7 +62,7 @@ async function checkVisitas() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     try {
-        const response = await fetch(`/visitas?instituicao_id=${id}`);
+        const response = await authenticatedFetch(`/visitas?instituicao_id=${id}`);
         if (response.ok) {
             const visitas = await response.json();
             if (visitas.length > 0) {
@@ -89,7 +88,7 @@ async function checkVisitas() {
 
 async function fetchMural(id) {
     try {
-        const response = await fetch(`/estagio/${id}/mural`);
+        const response = await authenticatedFetch(`/estagios/${id}/mural`);
         if (response.ok) {
             const murals = await response.json();
             const tbody = document.querySelector('#table-mural tbody');
@@ -123,7 +122,7 @@ async function fetchMural(id) {
 
 async function fetchSupervisores(id) {
     try {
-        const response = await fetch(`/estagio/${id}/supervisores`);
+        const response = await authenticatedFetch(`/estagios/${id}/supervisores`);
         if (response.ok) {
             const supervisores = await response.json();
             const tbody = document.querySelector('#table-supervisores tbody');

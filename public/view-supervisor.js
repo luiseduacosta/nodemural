@@ -1,5 +1,5 @@
 // src/public/view-supervisor.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -20,7 +20,7 @@ $(document).ready(async function () {
 
     // Fetch the supervisor data
     try {
-        const response = await fetch(`/supervisores/${id}`);
+        const response = await authenticatedFetch(`/supervisores/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch supervisor');
         }
@@ -54,7 +54,7 @@ $(document).ready(async function () {
 
 async function loadInstituicoes(supervisorId) {
     try {
-        const response = await fetch(`/supervisores/${supervisorId}/instituicoes`);
+        const response = await authenticatedFetch(`/supervisores/${supervisorId}/instituicoes`);
         if (!response.ok) {
             throw new Error('Failed to fetch instituições');
         }
@@ -80,7 +80,7 @@ async function loadInstituicoes(supervisorId) {
 
 async function loadAllInstituicoes() {
     try {
-        const response = await fetch('/estagio');
+        const response = await authenticatedFetch('/estagio');
         if (!response.ok) {
             throw new Error('Failed to fetch all instituições');
         }
@@ -108,7 +108,7 @@ window.addInstituicao = async function () {
     }
 
     try {
-        const response = await fetch(`/supervisores/${window.currentSupervisorId}/instituicoes`, {
+        const response = await authenticatedFetch(`/supervisores/${window.currentSupervisorId}/instituicoes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ instituicao_id: instituicaoId })
@@ -139,7 +139,7 @@ window.removeInstituicao = async function (instituicaoId) {
     }
 
     try {
-        const response = await fetch(`/supervisores/${window.currentSupervisorId}/instituicoes/${instituicaoId}`, {
+        const response = await authenticatedFetch(`/supervisores/${window.currentSupervisorId}/instituicoes/${instituicaoId}`, {
             method: 'DELETE'
         });
 
@@ -162,7 +162,7 @@ window.editRecord = function () {
 
 async function loadEstagiarios(supervisorId) {
     try {
-        const response = await fetch(`/supervisores/${supervisorId}/estagiarios`);
+        const response = await authenticatedFetch(`/supervisores/${supervisorId}/estagiarios`);
         if (!response.ok) {
             throw new Error('Failed to fetch estagiários');
         }
@@ -207,7 +207,7 @@ async function loadEstagiarios(supervisorId) {
 
 async function checkRespostas(estagiario_id) {
     try {
-        const responseRespostas = await fetch(`/respostas/estagiario/${estagiario_id}`);
+        const responseRespostas = await authenticatedFetch(`/respostas/estagiario/${estagiario_id}`);
         if (!responseRespostas.ok) {
             throw new Error('Failed to fetch respostas');
         }

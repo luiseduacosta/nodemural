@@ -86,8 +86,8 @@ $(document).ready(async function () {
             const configRes = await authenticatedFetch('/configuracoes');
             if (configRes.ok) {
                 const config = await configRes.json();
-                if (config[0] && config[0].mural_periodo_atual) {
-                    window.defaultPeriod = config[0].mural_periodo_atual;
+                if (config && config.mural_periodo_atual) {
+                    window.defaultPeriod = config.mural_periodo_atual;
                 }
             }
 
@@ -128,7 +128,7 @@ $(document).ready(async function () {
         $('#newMuralBtn').hide();
         $('#filter-container').hide();
     }
-    
+
     // Hide edit and delete buttons if not admin
     if (!isAdmin()) {
         $('#muralTable').DataTable().column(6).visible(false);

@@ -1,5 +1,5 @@
 // View Docente Details
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -19,7 +19,7 @@ $(document).ready(async function () {
 
     try {
         $.ajaxSetup({ headers: { 'Content-Type': 'application/json' } });
-        const response = await fetch(`/docentes/${id}`);
+        const response = await authenticatedFetch(`/docentes/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch docente');
         }
@@ -55,7 +55,7 @@ window.editRecord = function () {
 window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir este docente?')) {
         try {
-            const response = await fetch(`/docentes/${window.currentDocenteId}`, { method: 'DELETE' });
+            const response = await authenticatedFetch(`/docentes/${window.currentDocenteId}`, { method: 'DELETE' });
             if (!response.ok) {
                 throw new Error('Failed to delete docente');
             }
@@ -69,7 +69,7 @@ window.deleteRecord = async function () {
 
 async function loadEstagiarios(docenteId) {
     try {
-        const response = await fetch(`/docentes/${docenteId}/estagiarios`);
+        const response = await authenticatedFetch(`/docentes/${docenteId}/estagiarios`);
         if (!response.ok) {
             throw new Error('Failed to fetch estagiários');
         }

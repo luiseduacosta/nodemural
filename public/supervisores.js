@@ -1,5 +1,5 @@
 // src/controllers/supervisorController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {
     if (!getToken() || !hasRole(['admin'])) {
@@ -11,6 +11,9 @@ $(document).ready(function () {
         order: [[1, 'asc']],
         ajax: {
             url: '/supervisores',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+            },
             dataSrc: ''
         },
         columns: [
@@ -36,10 +39,7 @@ $(document).ready(function () {
 
     window.deleteSupervisor = async (id) => {
         if (confirm('Tem certeza que deseja excluir este supervisor?')) {
-            await fetch(`/supervisores/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${getToken()}` }
-            });
+            await authenticatedFetch(`/supervisores/${id}`, { method: 'DELETE' });
             table.ajax.reload();
         }
     };

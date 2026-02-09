@@ -1,5 +1,5 @@
 // src/public/estagios.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -12,7 +12,10 @@ $(document).ready(async function () {
         order: [[1, 'asc']],
         ajax: {
             url: '/estagios',
-            dataSrc: ''
+            dataSrc: '',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+            }
         },
 
         columns: [
@@ -38,7 +41,7 @@ $(document).ready(async function () {
 
     window.deleteEstagio = async (id) => {
         if (confirm('Tem certeza que deseja excluir este estagio?')) {
-            await fetch(`/estagio/${id}`, { method: 'DELETE' });
+            await authenticatedFetch(`/estagio/${id}`, { method: 'DELETE' });
             table.ajax.reload();
         }
     };

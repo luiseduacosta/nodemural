@@ -18,7 +18,7 @@ $(document).ready(async function () {
     }
 
     try {
-        const response = await authenticatedFetch(`/turmas/${id}`);
+        const response = await authenticatedFetch(`/turmaestagios/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch turma');
         }
@@ -44,7 +44,7 @@ window.editRecord = function () {
 window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir esta turma de estágio?')) {
         try {
-            const response = await authenticatedFetch(`/turmas/${window.currentTurmaId}`, { method: 'DELETE' });
+            const response = await authenticatedFetch(`/turmaestagios/${window.currentTurmaId}`, { method: 'DELETE' });
             if (!response.ok) {
                 throw new Error('Failed to delete turma');
             }

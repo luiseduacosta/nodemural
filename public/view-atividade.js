@@ -1,4 +1,4 @@
-// View Atividade Details
+// public/view-atividade.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -17,30 +17,62 @@ $(document).ready(async function () {
         return;
     }
 
-    // Populate initial data for the atividade details
-    try {
-        const response = await authenticatedFetch(`/atividades/${atividadeId}`);
-        if (!response.ok) throw new Error('Atividade não encontrada');
-
-        const data = await response.json();
-        const estagiarioId = data.estagiario_id;
+    async function loadData() {
         try {
-            // Read all atividades of the estagiario
-            const responseatividade = await authenticatedFetch('/atividades?estagiario_id=' + estagiarioId);
-            const atividade = await responseatividade.json();
-            if (atividade.length > 0) {
-                // Sum the total hours and minutes
+            const response = await authenticatedFetch(`/atividades/${atividadeId}`);
+            if (!response.ok) throw new Error('Atividade não encontrada');
+
+            const data = await response.json();
+            const estagiarioId = data.estagiario_id;
+
+            // Update UI with activity details
+            $('#id').val(data.id);
+            $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-aluno.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
+            $('#dia').val(new Date(data.dia).toLocaleDateString('pt-BR'));
+            $('#inicio').val(data.inicio);
+            $('#final').val(data.final);
+            $('#horario').val(data.horario);
+            $('#atividade').val(data.atividade);
+
+            $('#editBtn').attr('href', `edit-atividade.html?id=${data.id}`);
+            $('#newBtn').attr('href', `new-atividade.html?estagiario_id=${data.estagiario_id}`);
+
+            // Set up delete function with correct redirection
+            window.deleteRecord = async function () {
+                if (confirm('Tem certeza que deseja excluir esta atividade?')) {
+                    try {
+                        const delResponse = await authenticatedFetch(`/atividades/${data.id}`, {
+                            method: 'DELETE'
+                        });
+                        if (!delResponse.ok) throw new Error('Erro ao excluir atividade');
+                        alert('Atividade excluída com sucesso!');
+                        window.location.href = 'new-atividade.html?estagiario_id=' + estagiarioId;
+                    } catch (err) {
+                        console.error('Erro ao excluir atividade:', err);
+                        alert('Erro ao excluir atividade: ' + err.message);
+                    }
+                }
+            };
+
+            // Load other activities for this estagiario
+            const listResponse = await authenticatedFetch('/atividades?estagiario_id=' + estagiarioId);
+            const atividades = await listResponse.json();
+
+            const tableContainer = document.getElementById('atividadeTableContainer');
+            tableContainer.innerHTML = '';
+
+            if (atividades.length > 0) {
                 let totalMinutes = 0;
-                atividade.forEach(item => {
-                    const horarioParts = item.horario.split(':');
+                atividades.forEach(item => {
+                    const horarioParts = (item.horario || "00:00:00").split(':');
                     const hours = parseInt(horarioParts[0]) || 0;
-                    const minutes = parseInt(horarioParts[1]?.replace('m', '')) || 0;
+                    const minutes = parseInt(horarioParts[1]) || 0;
                     totalMinutes += (hours * 60) + minutes;
                 });
                 const totalHours = Math.floor(totalMinutes / 60);
                 const remainingMinutes = totalMinutes % 60;
                 const totalFormatted = `${totalHours}h ${remainingMinutes}m`;
-                // Put here a table with the atividade of the estagiario
+
                 const tableElement = document.createElement('table');
                 tableElement.className = 'table table-striped';
                 tableElement.innerHTML = `
@@ -56,76 +88,35 @@ $(document).ready(async function () {
                         </tr>
                     </thead>
                     <tbody>
-                        ${atividade.map(atividade => `
-                            <tr>
-                                <td>${atividade.id}</td>
-                                <td>${atividade.atividade}</td>
-                                <!-- Format date from YYYY-MM-DD to DD/MM/YYYY -->
-                                <td>${new Date(atividade.dia).toLocaleDateString('pt-BR')}</td>
-                                <td>${atividade.inicio}</td>
-                                <td>${atividade.final}</td>
-                                <td>${atividade.horario}</td>
+                        ${atividades.map(item => `
+                            <tr class="${item.id == atividadeId ? 'table-primary' : ''}">
+                                <td>${item.id}</td>
+                                <td>${item.atividade}</td>
+                                <td>${new Date(item.dia).toLocaleDateString('pt-BR')}</td>
+                                <td>${item.inicio}</td>
+                                <td>${item.final}</td>
+                                <td>${item.horario}</td>
                                 <td>
-                                    <button onclick="window.location.href='view-atividade.html?id=${atividade.id}'" class="btn btn-sm btn-info">Ver</button>
-                                    <button onclick="deleteAtividade(${atividade.id})" class="btn btn-sm btn-danger">Excluir</button>
+                                    <button onclick="window.location.href='view-atividade.html?id=${item.id}'" class="btn btn-sm btn-info">Ver</button>
+                                    <button onclick="deleteAtividade(${item.id}, ${estagiarioId})" class="btn btn-sm btn-danger">Excluir</button>
                                 </td>
                             </tr>
                         `).join('')}
                         <tr>
-                            <td colspan="5">Total Horas</td>
-                            <td>${totalFormatted}</td>
+                            <td colspan="5" class="text-end"><strong>Total:</strong></td>
+                            <td colspan="2"><strong>${totalFormatted}</strong></td>
                         </tr>
                     </tbody>
                 `;
-                const append = document.getElementById('atividadeTableContainer');
-                append.appendChild(tableElement);
-                // Continua ...;
+                tableContainer.appendChild(tableElement);
             }
-        } catch (error) {
-            console.error('Erro ao buscar dados da atividade:', error);
+        } catch (err) {
+            console.error('Erro ao carregar dados:', err);
+            alert('Erro ao carregar dados: ' + err.message);
         }
-    } catch (err) {
-        console.error('Erro ao carregar dados iniciais:', err);
-        alert('Erro ao carregar dados iniciais: ' + err.message);
     }
 
-    try {
-        const response = await authenticatedFetch(`/atividades/${atividadeId}`);
-        if (!response.ok) throw new Error('Atividade não encontrada');
-
-        const data = await response.json();
-        $('#id').val(data.id);
-        $('#estagiario_nome').html(data.aluno_nome ? `<a href="view-aluno.html?id=${data.alunoId}">${data.aluno_nome} (${data.aluno_registro})</a>` : `Estagiário ID: ${data.estagiario_id}`);
-
-        const dateObj = new Date(data.dia);
-        $('#dia').val(dateObj.toLocaleDateString('pt-BR'));
-
-        $('#inicio').val(data.inicio);
-        $('#final').val(data.final);
-        $('#horario').val(data.horario);
-        $('#atividade').val(data.atividade);
-
-        $('#editBtn').attr('href', `edit-atividade.html?id=${data.id}`);
-        $('#newBtn').attr('href', `new-atividade.html?estagiario_id=${data.estagiario_id}`);
-        $('#deleteBtn').attr('onclick', `deleteRecord(${data.id})`);
-        $('#viewBtn').attr('href', `view-atividade.html?id=${data.id}`);
-
-    } catch (err) {
-        console.error('Erro ao carregar dados:', err);
-        alert('Erro ao carregar dados: ' + err.message);
-    }
-
-    // Need to store current estagiario ID for new atividade operation
-    const response = await authenticatedFetch(`/atividades/${atividadeId}`);
-    if (!response.ok) throw new Error('Atividade não encontrada');
-    const data = await response.json();
-    const estagiarioId = data.estagiario_id;
-    window.currentEstagiarioId = estagiarioId;
-    // Store current atividade ID for delete operation
-    window.currentAtividadeId = atividadeId;
-
-    // Delete atividade function
-    window.deleteRecord = async function (id) {
+    window.deleteAtividade = async function (id, estagiarioId) {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
             try {
                 const response = await authenticatedFetch(`/atividades/${id}`, {
@@ -133,11 +124,17 @@ $(document).ready(async function () {
                 });
                 if (!response.ok) throw new Error('Erro ao excluir atividade');
                 alert('Atividade excluída com sucesso!');
-                window.location.href = 'view-atividade.html?estagiario_id=' + estagiarioId;
+                if (id == atividadeId) {
+                    window.location.href = 'new-atividade.html?estagiario_id=' + estagiarioId;
+                } else {
+                    await loadData();
+                }
             } catch (err) {
                 console.error('Erro ao excluir atividade:', err);
                 alert('Erro ao excluir atividade: ' + err.message);
             }
         }
     };
+
+    await loadData();
 });

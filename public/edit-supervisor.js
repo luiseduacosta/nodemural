@@ -1,5 +1,5 @@
 // src/controllers/supervisorController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -13,7 +13,7 @@ $(document).ready(async function () {
     // Define editSupervisor function first
     const editSupervisor = async (id) => {
         try {
-            const response = await fetch(`/supervisores/${id}`);
+            const response = await authenticatedFetch(`/supervisores/${id}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch supervisor');
             }
@@ -37,14 +37,12 @@ $(document).ready(async function () {
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
-    console.log('urlParams', urlParams);
 
     if (editId) {
         await editSupervisor(editId);
     } else {
         alert('ID não fornecido');
         window.location.href = 'supervisores.html';
-        console.log('Edit ID:', editId);
     }
 
     form.addEventListener('submit', async (e) => {
@@ -60,7 +58,7 @@ $(document).ready(async function () {
         const url = `/supervisores/${id}`;
         const method = 'PUT';
 
-        await fetch(url, {
+        await authenticatedFetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(supervisor)

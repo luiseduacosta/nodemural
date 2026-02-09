@@ -21,7 +21,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/supervisores', {
+            const response = await authenticatedFetch('/supervisores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(supervisor)

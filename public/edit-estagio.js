@@ -1,5 +1,5 @@
 // src/public/edit-estagio.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -18,7 +18,7 @@ $(document).ready(async function () {
 
     async function loadAreas() {
         try {
-            const response = await fetch('/areainstituicoes');
+            const response = await authenticatedFetch('/areainstituicoes');
             if (response.ok) {
                 const areas = await response.json();
                 const select = document.getElementById('area_instituicoes_id');
@@ -37,7 +37,7 @@ $(document).ready(async function () {
     // Define editEstagio function
     const editEstagio = async (id) => {
         try {
-            const response = await fetch(`/estagio/${id}`);
+            const response = await authenticatedFetch(`/estagios/${id}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch estagio');
             }
@@ -82,10 +82,10 @@ $(document).ready(async function () {
         };
 
         const id = document.getElementById('estagioId').value;
-        const url = id ? `/estagio/${id}` : '/estagio';
+        const url = id ? `/estagios/${id}` : '/estagios';
         const method = id ? 'PUT' : 'POST';
 
-        await fetch(url, {
+        await authenticatedFetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(estagio)

@@ -1,5 +1,5 @@
 // src/controllers/turmaController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {
 
@@ -11,7 +11,7 @@ $(document).ready(function () {
     const table = $('#turmasTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
-            url: '/turmas',
+            url: '/turmaestagios',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + getToken()
@@ -45,7 +45,7 @@ $(document).ready(function () {
     window.deleteTurma = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta turma de estágio?')) {
             try {
-                const response = await fetch(`/turmas/${id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/turmaestagios/${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete turma');
                 }

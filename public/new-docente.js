@@ -1,5 +1,5 @@
 // src/controllers/docenteController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -25,7 +25,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/docentes', {
+            const response = await authenticatedFetch('/docentes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(docente)

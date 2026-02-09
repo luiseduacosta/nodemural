@@ -1,5 +1,5 @@
 // src/controllers/estagioController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -18,7 +18,7 @@ $(document).ready(async function () {
 
     async function loadAreas() {
         try {
-            const response = await fetch('/areainstituicoes');
+            const response = await authenticatedFetch('/areainstituicoes');
             if (response.ok) {
                 const areas = await response.json();
                 const select = document.getElementById('area_instituicoes_id');
@@ -46,7 +46,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/estagio', {
+            const response = await authenticatedFetch('/estagio', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(estagio)

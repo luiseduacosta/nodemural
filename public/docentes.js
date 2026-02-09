@@ -1,5 +1,5 @@
 // src/public/docentes.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -13,7 +13,10 @@ $(document).ready(async function () {
         order: [[1, 'asc']],
         ajax: {
             url: '/docentes',
-            dataSrc: ''
+            dataSrc: '',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+            }
         },
         columns: [
             { data: 'id' },
@@ -44,7 +47,7 @@ $(document).ready(async function () {
     window.deleteDocente = async (id) => {
         if (confirm('Tem certeza que deseja excluir este docente?')) {
             try {
-                const response = await fetch(`/docentes/${id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/docentes/${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete docente');
                 }
