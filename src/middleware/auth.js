@@ -1,6 +1,9 @@
 // src/middleware/auth.js
 import jwt from 'jsonwebtoken';
 import Inscricao from '../models/inscricao.js';
+import Atividades from '../models/atividades.js';
+
+import Estagiario from '../models/estagiario.js';
 
 // Verify JWT token middleware
 export const verifyToken = (req, res, next) => {
@@ -97,6 +100,76 @@ export const checkOwnership = (req, res, next) => {
     return res.status(403).json({
         error: 'Acesso negado. Você só pode acessar ou editar seus próprios dados.'
     });
+};
+
+// Check if user owns the activity
+export const checkAtividadeOwnership = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Não autenticado' });
+    }
+
+    // Admin can access everything
+    if (req.user.role === 'admin') {
+        return next();
+    }
+
+    const id = req.params.id;
+
+    try {
+        const atividade = await Atividades.findById(id);
+        if (!atividade) {
+            return res.status(404).json({ error: 'Atividade não encontrada' });
+        }
+
+        // Compare atividade's estagiario_id with user's entidade_id
+        // For 'aluno' role, entidade_id IS the aluno_id.
+        // We must check if the activity belongs to an estagiario that belongs to this aluno.
+        
+        // Atividades.findById joins with estagiarios and then alunos, returning 'alunoId'.
+        
+        if (req.user.entidade_id && req.user.entidade_id == atividade.alunoId) {
+             return next();
+        }
+
+        return res.status(403).json({
+            error: 'Acesso negado. Você só pode acessar ou editar suas próprias atividades.'
+        });
+    } catch (error) {
+        console.error('Error in checkAtividadeOwnership:', error);
+        res.status(500).json({ error: 'Erro interno ao verificar permissão' });
+    }
+};
+
+export const checkEstagiarioOwnership = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Não autenticado' });
+    }
+
+    // Admin can access everything
+    if (req.user.role === 'admin') {
+        return next();
+    }
+
+    const id = req.params.id;
+
+    try {
+        const estagiario = await Estagiario.findById(id);
+        if (!estagiario) {
+            return res.status(404).json({ error: 'Estagiário não encontrado' });
+        }
+
+        // Compare estagiario's aluno_id with user's entidade_id
+        if (req.user.entidade_id && req.user.entidade_id == estagiario.aluno_id) {
+            return next();
+        }
+
+        return res.status(403).json({
+            error: 'Acesso negado. Você só pode acessar ou editar seus próprios estágios.'
+        });
+    } catch (error) {
+        console.error('Error in checkEstagiarioOwnership:', error);
+        res.status(500).json({ error: 'Erro interno ao verificar permissão' });
+    }
 };
 
 // Check if user owns the registration (inscricao)

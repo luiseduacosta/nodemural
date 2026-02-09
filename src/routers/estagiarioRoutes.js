@@ -1,7 +1,7 @@
 // src/routers/estagiarioRoutes.js
 import express from 'express';
 import * as estagiarioController from '../controllers/estagiarioController.js';
-import { verifyToken, checkRole } from '../middleware/auth.js';
+import { verifyToken, checkRole, checkEstagiarioOwnership } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.get('/aluno/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioC
 router.get('/:id/next-nivel', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getNextNivel);
 router.get('/:id/atividades', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getAtividadesByEstagiarioId);
 router.get('/:id', estagiarioController.getEstagiarioById);
-router.put('/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.updateEstagiario);
-router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.deleteEstagiario);
+router.put('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.updateEstagiario);
+router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.deleteEstagiario);
 
 export default router;
