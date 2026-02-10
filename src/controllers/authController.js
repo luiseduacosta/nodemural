@@ -26,45 +26,13 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'Email inválido' });
         }
 
-        // Create user (role defaults to 'aluno' if not specified, or only admin can set other roles)
+        // Create user (role defaults to 'aluno' if not specified)
         const userRole = role || 'aluno';
         const newUser = await User.create(email, password, nome, identificacao, userRole, entidade_id);
 
-        // Determine the redirect URL based on the user's role
-        let redirectTo = '/login.html';
-        switch (userRole) {
-            case 'aluno':
-                if (entidade_id) {
-                    redirectTo = '/view-aluno.html?id=' + entidade_id;
-                } else {
-                    redirectTo = '/new-aluno.html?registro=' + identificacao + '&nome=' + nome + '&email=' + email;
-                }
-                break;
-            case 'docente':
-                if (entidade_id) {
-                    redirectTo = '/view-docente.html?id=' + entidade_id;
-                } else {
-                    redirectTo = '/new-docente.html?siape=' + identificacao + '&nome=' + nome + '&email=' + email;
-                }
-                break;
-            case 'supervisor':
-                if (entidade_id) {
-                    redirectTo = '/view-supervisor.html?id=' + entidade_id;
-                } else {
-                    redirectTo = '/new-supervisor.html?cress=' + identificacao + '&nome=' + nome + '&email=' + email;
-                }
-                break;
-            case 'admin':
-                redirectTo = '/mural.html';
-                break;
-            default:
-                redirectTo = '/login.html';
-        }
-
         res.status(201).json({
             message: 'Usuário registrado com sucesso',
-            user: newUser,
-            redirectTo
+            user: newUser
         });
 
     } catch (error) {
