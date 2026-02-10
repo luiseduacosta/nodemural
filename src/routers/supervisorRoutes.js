@@ -17,6 +17,7 @@ router.get('/:id', verifyToken, checkRole(['admin', 'supervisor']), checkOwnersh
 router.put('/:id', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.updateSupervisor);
 
 // Specialized routes
+router.get('/:id/estagiarios', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.getEstagiariosBySupervisor);
 router.get('/:id/instituicoes', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.getInstituicoesBySupervisor);
 router.post('/:id/instituicoes', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.addInstituicaoToSupervisor);
 router.delete('/:id/instituicoes/:instituicaoId', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.removeInstituicaoFromSupervisor);

@@ -1,5 +1,5 @@
 // src/public/view-supervisor.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -80,7 +80,7 @@ async function loadInstituicoes(supervisorId) {
 
 async function loadAllInstituicoes() {
     try {
-        const response = await authenticatedFetch('/estagio');
+        const response = await authenticatedFetch('/estagios');
         if (!response.ok) {
             throw new Error('Failed to fetch all instituições');
         }
@@ -164,11 +164,11 @@ async function loadEstagiarios(supervisorId) {
     try {
         const response = await authenticatedFetch(`/supervisores/${supervisorId}/estagiarios`);
         if (!response.ok) {
-            throw new Error('Failed to fetch estagiários');
+            throw new Error('This is not an error: Sem estagiários disponíveis');
         }
 
         const estagiarios = await response.json();
-
+        // console.log(estagiarios);
         const tbody = document.querySelector('#table-estagiarios tbody');
         tbody.innerHTML = '';
 
@@ -183,7 +183,7 @@ async function loadEstagiarios(supervisorId) {
             for (const est of estagiarios) {
                 // Add estagiario to table
                 const questionario = await checkRespostas(est.estagiario_id);
-                console.log(questionario);
+                // console.log(questionario);
                 const questionario_id = questionario ? questionario.questionario_id : null;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -200,7 +200,7 @@ async function loadEstagiarios(supervisorId) {
     } catch (error) {
         console.error('Error loading estagiários:', error);
         document.getElementById('no-estagiarios-msg').classList.remove('d-none');
-        document.getElementById('no-estagiarios-msg').textContent = 'Erro ao carregar estagiários.';
+        document.getElementById('no-estagiarios-msg').textContent = 'Supervisor(a) sem estagiários.';
         document.getElementById('table-estagiarios').classList.add('d-none');
     };
 }

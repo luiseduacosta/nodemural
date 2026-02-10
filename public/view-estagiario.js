@@ -2,8 +2,8 @@
 import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
-    // Only admin and aluno can access this page
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    // Only admin, aluno and supervisor can access this page
+    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -18,9 +18,6 @@ $(document).ready(async function () {
         window.location.href = 'estagiarios.html';
         return;
     }
-
-    // Set link for new activity
-    document.getElementById('new-atividade').href = `new-atividade.html?estagiario_id=${id}`;
 
     // Initialization state
     let existingResposta = null;
@@ -232,8 +229,19 @@ $(document).ready(async function () {
         alert(`Erro ao carregar detalhes do estagiario: ${error.message}`);
     }
 
+    // Set link for new activity
+    if (!isAdmin() && getCurrentUser().id != id) {
+        document.getElementById('new-atividade').style.display = 'none';
+    } else {
+        document.getElementById('new-atividade').href = `new-atividade.html?estagiario_id=${id}`;
+    }
+
     // Go to edit-estagiario.html
     window.editEstagiario = function () {
+        if (!isAdmin() && getCurrentUser().id != id) {
+            alert('Apenas o administrador ou o próprio estagiário podem editar.');
+            return;
+        }
         window.location.href = `edit-estagiario.html?id=${id}`;
     };
 

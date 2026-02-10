@@ -171,19 +171,19 @@ $(document).ready(async function () {
                     const termoCompromissoPeriodo = configuracoes.termo_compromisso_periodo;
                     // Verify if currentPeriodo is less than termoCompromissoPeriodo
                     if (currentPeriodo < termoCompromissoPeriodo) {
-                        console.log("Periodo de estagiário atual " + currentPeriodo + " menor que termo de compromisso " + termoCompromissoPeriodo);
+                        console.log("Periodo do estagiário atual " + currentPeriodo + " menor que termo de compromisso " + termoCompromissoPeriodo);
                         // Button btnAluno-estagios redirect to new-estagiario.html
                         document.getElementById('btnAluno-estagios').href = `new-estagiario.html?id=${alunoId}`;
                         document.getElementById('btnAluno-estagios').innerHTML = 'Novo Estagiário';
                         document.getElementById('btnAluno-estagios').classList.add('btn-success');
                     } else if (currentPeriodo == termoCompromissoPeriodo) {
-                        console.log("Periodo de estagiário atual " + currentPeriodo + " igual ao termo de compromisso " + termoCompromissoPeriodo);
+                        console.log("Periodo do estagiário atual " + currentPeriodo + " igual ao termo de compromisso " + termoCompromissoPeriodo);
                         // Button btnAluno-estagios redirect to edit-estagiario.html
                         document.getElementById('btnAluno-estagios').href = `edit-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
                         document.getElementById('btnAluno-estagios').innerHTML = 'Editar Estagiário';
                         document.getElementById('btnAluno-estagios').classList.add('btn-warning');
                     } else {
-                        console.log("Periodo de estagiário atual " + currentPeriodo + " maior que termo de compromisso " + termoCompromissoPeriodo);
+                        console.log("Periodo do estagiário atual " + currentPeriodo + " maior que termo de compromisso " + termoCompromissoPeriodo);
                         // Button btnAluno-estagios redirect to view-estagiario.html
                         document.getElementById('btnAluno-estagios').href = `view-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
                         document.getElementById('btnAluno-estagios').innerHTML = 'Ver Estagiário';

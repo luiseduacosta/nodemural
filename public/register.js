@@ -81,11 +81,11 @@ async function checkSupervisor(identificacao) {
       method: 'GET',
     })
     const data = await res.json();
-    console.log(data);
+    console.log(data.id);
     if (res.ok) {
       msg.style.color = 'red';
       msg.textContent = 'Supervisor já registrado.';
-      document.getElementById('entidade_id').value = data[0]?.id;
+      document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
@@ -101,7 +101,7 @@ form.addEventListener('submit', async (e) => {
   const nome = document.getElementById('nome').value.trim();
   const role = document.getElementById('role').value.trim();
   const identificacao = document.getElementById('identificacao').value.trim();
-  const entidade_id = document.getElementById('entidade_id').value.trim() || null;
+  const entidade_id = document.getElementById('entidade_id').value.trim();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('passwordConfirm').value;

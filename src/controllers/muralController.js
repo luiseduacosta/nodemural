@@ -20,7 +20,7 @@ export const getDistinctPeriods = async (req, res) => {
         if (!periods) {
             return res.status(404).json({ error: 'No periods found' });
         } else {
-            console.log(periods);
+            // console.log(periods);
         }
         res.status(200).json(periods);
     } catch (error) {

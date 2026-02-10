@@ -68,6 +68,11 @@ $(document).ready(async function () {
     } else {
       // Only show login/register links if not logged in
       const loginLinks = navbarNav.querySelectorAll('a[href="#"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"], a[href="register.html"]');
+      // Put the login link on the right side of the navbar
+      const loginLink = navbarNav.querySelector('a[href="login.html"]');
+      if (loginLink) {
+        navbarNav.appendChild(loginLink.parentElement);
+      }
       loginLinks.forEach(link => link.parentElement.remove());
     }
   }

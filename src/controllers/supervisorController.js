@@ -42,6 +42,18 @@ export const getSupervisorById = async (req, res) => {
     }
 };
 
+// Get estagiarios for a supervisor    
+export const getEstagiariosBySupervisor = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const estagiarios = await Supervisor.findEstagiariosBySupervisorId(id);
+        res.status(200).json(estagiarios);
+    } catch (error) {
+        console.error('Error fetching estagiarios:', error);
+        res.status(500).json({ error: 'Error fetching estagiarios' });
+    }
+};
+
 // Create a new supervisor
 export const createSupervisor = async (req, res) => {
     try {

@@ -1,25 +1,23 @@
 // src/controllers/respostaController.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
-
+import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+''
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin'])) {
+    if (!getToken() || !hasRole(['admin', 'supervisor'])) {
         window.location.href = 'login.html';
         return;
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     const estagiario_id = urlParams.get('estagiario_id');
-    const questionario_id = urlParams.get('questionario_id');
-
+    const questionario_id = urlParams.get('questionario_id') || 1;
     // Load questionario info
     try {
-        const response = await fetch(`/questionarios/`);
+        const response = await authenticatedFetch(`/questionarios/`);
         if (!response.ok) {
             throw new Error('Failed to fetch questionario');
         }
         const questionarios = await response.json();
-        //        console.log(questionarios);
         // Make the questionarios selectable
         const questionarioSelect = document.getElementById('questionario_id');
         questionarios.forEach(questionario => {
@@ -38,12 +36,12 @@ $(document).ready(async function () {
 
     // Load estagiario info
     try {
-        const response = await fetch(`/estagiarios/`);
+        const response = await authenticatedFetch(`/estagiarios/`);
         if (!response.ok) {
             throw new Error('Failed to fetch estagiario');
         }
         const estagiarios = await response.json();
-        //        console.log(estagiarios);
+        // console.log(estagiarios);
         // Set estagiario info. It is not a select, but a view 
         const estagiarioSelect = document.getElementById('estagiario_id');
         estagiarios.forEach(estagiario => {
@@ -68,6 +66,9 @@ $(document).ready(async function () {
         const estagiario_id = $(this).val();
         $.ajax({
             url: `/estagiarios/${estagiario_id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             type: 'GET',
             success: function (data) {
                 $('#periodo').val(data.periodo);
@@ -82,7 +83,7 @@ $(document).ready(async function () {
 
     // Verifica se o estagario_id já foi avaliado para o questionario_id
     try {
-        const response = await fetch(`/respostas?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`);
+        const response = await authenticatedFetch(`/respostas?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`);
         if (!response.ok) {
             throw new Error('Failed to check respostas');
         }
@@ -97,11 +98,15 @@ $(document).ready(async function () {
         alert(`Erro ao verificar respostas: ${error.message}`);
     }
 
-    // Load questions
-    $('#questionario_id').on('change', function () {
-        const questionario_id = $(this).val();
+    // Questions loading function
+    function loadQuestions() {   
+        // const questionario_id = $(this).val();
+        const questionario_id = $('#questionario_id').val();
         $.ajax({
             url: `/questoes?questionario_id=${questionario_id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             type: 'GET',
             success: function (questions) {
                 renderQuestions(questions);
@@ -112,7 +117,10 @@ $(document).ready(async function () {
                 $(`newRespostaForm`).css('display', 'none');
             }
         });
-    });
+    }
+
+    // Load questions on change of questionario_id or else load questions automatically when the page loads
+    $('#questionario_id').on('change', loadQuestions).trigger('change');
 
     // Render questions based on type
     function renderQuestions(questions) {
@@ -294,6 +302,9 @@ $(document).ready(async function () {
         // Create new
         $.ajax({
             url: '/respostas',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(payload),

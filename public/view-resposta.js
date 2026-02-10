@@ -1,9 +1,9 @@
 // src/controllers/respostaController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'docente'])) {
+    if (!getToken()) {
         window.location.href = 'login.html';
         return;
     }
@@ -18,12 +18,23 @@ $(document).ready(async function () {
         return;
     }
 
+    // Set back button href for supervisor
+    if (hasRole(['supervisor'])) {
+        const backButton = document.getElementById('backButton');
+        if (backButton) {
+            backButton.href = 'view-supervisor.html?id=' + getCurrentUser().id;
+        }
+    }
+
     let existingResposta = null;
     let existingResponses = {};
 
     // Load questionario info
     $.ajax({
         url: `/questionarios/${questionario_id}`,
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         type: 'GET',
         success: function (data) {
             $('#questionarioTitle').text(data.title);
@@ -36,6 +47,9 @@ $(document).ready(async function () {
     // Load estagiario info
     $.ajax({
         url: `/estagiarios/${estagiario_id}`,
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         type: 'GET',
         success: function (data) {
             $('#alunoNome').text(data.aluno_nome || 'Não informado');
@@ -46,6 +60,9 @@ $(document).ready(async function () {
     // Load existing resposta (if any)
     $.ajax({
         url: `/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`,
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         type: 'GET',
         success: function (data) {
             existingResposta = data;
@@ -65,6 +82,9 @@ $(document).ready(async function () {
     function loadQuestions() {
         $.ajax({
             url: `/questoes?questionario_id=${questionario_id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             type: 'GET',
             success: function (questions) {
                 renderQuestions(questions);
@@ -224,10 +244,10 @@ $(document).ready(async function () {
         if (confirm('Tem certeza que deseja excluir esta resposta?')) {
             try {
                 // First get the resposta ID
-                const resposta = await fetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
+                const resposta = await authenticatedFetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
                 const data = await resposta.json();
 
-                const response = await fetch(`/respostas/${data.id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/respostas/${data.id}`, { method: 'DELETE' });
                 if (response.ok) {
                     alert('Resposta excluída com sucesso!');
                     window.location.href = 'respostas.html';
