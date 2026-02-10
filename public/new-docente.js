@@ -1,5 +1,5 @@
 // src/controllers/docenteController.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -7,6 +7,16 @@ $(document).ready(async function () {
         window.location.href = 'login.html';
         return;
     }
+
+    const currentUser = getCurrentUser();
+
+    // If the user is a docente, pre-fill the form with their own data
+    if (hasRole('docente')) {
+        document.getElementById('nome').value = currentUser.nome;
+        document.getElementById('siape').value = currentUser.identificacao;
+        document.getElementById('email').value = currentUser.email;
+    }
+
     const form = document.getElementById('newDocenteForm');
 
     form.addEventListener('submit', async (e) => {
@@ -31,17 +41,32 @@ $(document).ready(async function () {
                 body: JSON.stringify(docente)
             });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to create docente');
+            if (response.ok) {
+                const data = await response.json();
+                // Only update the user.entidade_id with the data.id if the user.role is 'docente'
+                if (currentUser && currentUser.role === 'docente') {
+                    // If entidade_id exists, it must match the new docente id
+                    if (currentUser.entidade_id && currentUser.entidade_id !== data.id) {
+                        alert('Erro: ID da entidade não corresponde ao docente criado.');
+                        return;
+                    }
+                    const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}`
+                        },
+                        body: JSON.stringify({ entidade_id: data.id })
+                    });
+                    if (!userResponse.ok) {
+                        console.error('Failed to update user entidade_id');
+                    }
+                }
+                window.location.href = 'view-docente.html?id=' + data.id;
             }
-
-            const result = await response.json();
-            // Redirect to view page
-            window.location.href = 'view-docente.html?id=' + result.id;
         } catch (error) {
             console.error('Error creating docente:', error);
             alert(`Erro ao criar docente: ${error.message}`);
         }
-    });
+    })
 });

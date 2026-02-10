@@ -3,7 +3,7 @@ import pool from '../database/db.js';
 
 const Atividades = {
     async findAll(req) {
-        let query = `SELECT f.*, TIMEDIFF(f.final, f.inicio) as horario, a.nome as aluno_nome, a.registro as aluno_registro
+        let query = `SELECT f.id, f.estagiario_id, f.dia, f.inicio, f.final, f.atividade, TIMEDIFF(f.final, f.inicio) as horario, a.nome as aluno_nome, a.registro as aluno_registro
                      FROM folhadeatividades f
                      LEFT JOIN estagiarios e ON f.estagiario_id = e.id
                      LEFT JOIN alunos a ON e.aluno_id = a.id`;
@@ -22,7 +22,7 @@ const Atividades = {
     },
 
     async findById(id) {
-        const query = `SELECT f.*, TIMEDIFF(f.final, f.inicio) as horario, a.nome as aluno_nome, a.id as alunoId, a.registro as aluno_registro
+        const query = `SELECT f.id, f.estagiario_id, f.dia, f.inicio, f.final, f.atividade, TIMEDIFF(f.final, f.inicio) as horario, a.nome as aluno_nome, a.id as alunoId, a.registro as aluno_registro
                      FROM folhadeatividades f
                      LEFT JOIN estagiarios e ON f.estagiario_id = e.id
                      LEFT JOIN alunos a ON e.aluno_id = a.id

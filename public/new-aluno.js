@@ -1,11 +1,21 @@
 // src/controllers/alunoController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin', 'aluno'])) {
         window.location.href = 'login.html';
         return;
+    }
+
+    const currentUser = getCurrentUser();
+
+    // If the user is a aluno, pre-fill the form with their own data
+    if (hasRole('aluno')) {
+        const currentUser = getCurrentUser();
+        document.getElementById('nome').value = currentUser.nome;
+        document.getElementById('registro').value = currentUser.identificacao;
+        document.getElementById('email').value = currentUser.email;
     }
 
     // Input Masks
@@ -37,9 +47,28 @@ $(document).ready(async function () {
             });
 
             if (response.ok) {
-                // Redirect to view page after successful save
                 const data = await response.json();
-                window.location.href = 'alunos.html';
+                // Check if user is aluno and needs entidade_id update
+                if (currentUser && currentUser.role === 'aluno') {
+                    // If entidade_id exists, it must match the new aluno id
+                    if (currentUser.entidade_id && currentUser.entidade_id !== data.id) {
+                        alert('Erro: ID da entidade não corresponde ao aluno criado.');
+                        return;
+                    }
+                    // Update user.entidade_id with the new aluno id
+                    const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}`
+                        },
+                        body: JSON.stringify({ entidade_id: data.id })
+                    });
+                    if (!userResponse.ok) {
+                        console.error('Failed to update user entidade_id');
+                    }
+                }
+                window.location.href = 'view-aluno.html?id=' + data.id;
             } else {
                 const text = await response.text();
                 throw new Error(text || 'Erro ao salvar aluno');

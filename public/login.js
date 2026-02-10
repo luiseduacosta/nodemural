@@ -4,6 +4,21 @@ import { isLoggedIn, getCurrentUser } from './auth-utils.js';
 // Redirect helper function
 function redirectUser(user, params) {
   let redirect = '';
+  
+  // Check entidade_id consistency for non-admin users
+  if (user.role !== 'admin' && !user.entidade_id) {
+    // Redirect to create entity page based on role
+    if (user.role === 'aluno') {
+      redirect = '/new-aluno.html';
+    } else if (user.role === 'docente') {
+      redirect = '/new-docente.html';
+    } else if (user.role === 'supervisor') {
+      redirect = '/new-supervisor.html';
+    }
+    window.location.href = redirect;
+    return;
+  }
+  
   if (user.role === 'admin') {
     redirect = params.get('redirect') || '/mural.html';
   } else if (user.role === 'aluno') {

@@ -1,9 +1,8 @@
 // src/public/register.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
-if (!getToken() || !hasRole(['admin'])) {
-  window.location.href = 'login.html';
-  return;
+function isAuthenticated() {
+  return getToken() && hasRole(['admin']);
 }
 
 // public/register.js
@@ -44,11 +43,10 @@ async function checkAluno(identificacao) {
       method: 'GET',
     })
     const data = await res.json();
-    console.log(data.id);
     if (res.ok) {
       msg.style.color = 'red';
-      msg.textContent = 'Aluno já registrado.';
-      document.getElementById('entidade_id').value = data.id;
+      msg.textContent = 'Aluno cadastrado. Ok!.';
+      document.getElementById('entidade_id').value = data[0]?.id;
     }
     return data;
   } catch (err) {
@@ -67,7 +65,7 @@ async function checkDocente(identificacao) {
     if (res.ok) {
       msg.style.color = 'red';
       msg.textContent = 'Docente já registrado.';
-      document.getElementById('entidade_id').value = data.id;
+      document.getElementById('entidade_id').value = data[0]?.id;
     }
     return data;
   } catch (err) {
@@ -86,7 +84,7 @@ async function checkSupervisor(identificacao) {
     if (res.ok) {
       msg.style.color = 'red';
       msg.textContent = 'Supervisor já registrado.';
-      document.getElementById('entidade_id').value = data.id;
+      document.getElementById('entidade_id').value = data[0]?.id;
     }
     return data;
   } catch (err) {
@@ -102,12 +100,10 @@ form.addEventListener('submit', async (e) => {
   const nome = document.getElementById('nome').value.trim();
   const role = document.getElementById('role').value.trim();
   const identificacao = document.getElementById('identificacao').value.trim();
-  const entidade_id = document.getElementById('entidade_id').value.trim();
+  const entidade_id = document.getElementById('entidade_id').value.trim() || null;
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('passwordConfirm').value;
-
-  console.log(nome, role, identificacao, entidade_id, email, password, passwordConfirm);
 
   try {
     const res = await fetch('/auth/register', {

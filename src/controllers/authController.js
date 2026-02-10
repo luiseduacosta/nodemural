@@ -27,11 +27,12 @@ export const register = async (req, res) => {
         }
 
         // Create user (role defaults to 'aluno' if not specified, or only admin can set other roles)
-        const newUser = await User.create(email, password, nome, identificacao, role || 'aluno', entidade_id);
+        const userRole = role || 'aluno';
+        const newUser = await User.create(email, password, nome, identificacao, userRole, entidade_id);
 
         // Determine the redirect URL based on the user's role
         let redirectTo = '/login.html';
-        switch (role) {
+        switch (userRole) {
             case 'aluno':
                 if (entidade_id) {
                     redirectTo = '/view-aluno.html?id=' + entidade_id;
@@ -56,6 +57,8 @@ export const register = async (req, res) => {
             case 'admin':
                 redirectTo = '/mural.html';
                 break;
+            default:
+                redirectTo = '/login.html';
         }
 
         res.status(201).json({

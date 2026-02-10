@@ -1,5 +1,5 @@
 // public/view-estagiario.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
     // Only admin and aluno can access this page
@@ -66,10 +66,14 @@ $(document).ready(async function () {
         window.currentEstagioId = id;
         window.currentAlunoId = estagiario.aluno_id;
 
-        // Hide edit/delete buttons if user is Aluno
-        if (hasRole('aluno')) {
-            document.getElementById('edit-estagiario').style.display = 'none';
+        // Hide delete buttons if user is not Admin
+        if (!isAdmin()) {
             document.getElementById('delete-estagiario').style.display = 'none';
+        }
+
+        // Show edit button if user is admin or the user is the same as the estagiario
+        if (isAdmin() || getCurrentUser().id == estagiario.aluno_id) {
+            document.getElementById('edit-estagiario').style.display = 'block';
         }
 
         // 2. Load Atividades
