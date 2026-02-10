@@ -58,7 +58,7 @@ $(document).ready(async function () {
         },
         error: function () {
             $('#statusBadge').removeClass('bg-secondary').addClass('bg-warning').text('Novo');
-            window.location.href = 'new-resposta.html/?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
+            window.location.href = 'new-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
         }
     });
 

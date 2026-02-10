@@ -164,6 +164,16 @@ const Resposta = {
         return result[0].count;
     },
 
+    // Get question count by supervisor (Legacy or expected by controller)
+    async countQuestionsBySupervisor(supervisor_id) {
+        const query = `SELECT COUNT(r.id) as count
+                      FROM respostas r
+                      JOIN estagiarios e ON r.estagiario_id = e.id
+                      WHERE e.supervisor_id = ?`;
+        const result = await pool.query(query, [supervisor_id]);
+        return result[0].count;
+    },
+
     // Check if Resposta is complete
     async isComplete(id) {
         const resposta = await this.findById(id);

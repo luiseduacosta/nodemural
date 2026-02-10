@@ -137,7 +137,7 @@ $(document).ready(async function () {
                     ? JSON.parse(resposta.response)
                     : resposta.response;
 
-                $('#statusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Já respondido');
+                $('#statusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Já avaliado');
                 loadQuestions();
             } else if (respostaResponse.status === 404) {
                 // Not a real error, just no evaluation yet

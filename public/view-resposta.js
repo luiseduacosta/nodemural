@@ -26,6 +26,12 @@ $(document).ready(async function () {
         }
     }
 
+    // Hide edit/delete buttons for aluno
+    if (hasRole(['aluno'])) {
+        $('button:contains("Editar")').hide();
+        $('button:contains("Excluir")').hide();
+    }
+
     let existingResposta = null;
     let existingResponses = {};
 

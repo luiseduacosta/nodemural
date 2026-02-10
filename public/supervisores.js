@@ -39,8 +39,12 @@ $(document).ready(function () {
 
     window.deleteSupervisor = async (id) => {
         if (confirm('Tem certeza que deseja excluir este supervisor?')) {
-            await authenticatedFetch(`/supervisores/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            const response = await authenticatedFetch(`/supervisores/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                table.ajax.reload();
+            } else {
+                alert('Erro ao excluir supervisor');
+            }
         }
     };
 });

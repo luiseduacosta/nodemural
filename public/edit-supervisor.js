@@ -58,11 +58,16 @@ $(document).ready(async function () {
         const url = `/supervisores/${id}`;
         const method = 'PUT';
 
-        await authenticatedFetch(url, {
+        const response = await authenticatedFetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(supervisor)
         });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erro ao atualizar supervisor');
+        }
 
         // Redirect back to view page after saving
         window.location.href = `view-supervisor.html?id=${id}`;

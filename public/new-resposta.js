@@ -83,23 +83,18 @@ $(document).ready(async function () {
 
     // Verifica se o estagario_id já foi avaliado para o questionario_id
     try {
-        const response = await authenticatedFetch(`/respostas?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`);
-        if (!response.ok) {
-            throw new Error('Failed to check respostas');
-        }
-        const data = await response.json();
-        if (data.exists) {
+        const response = await authenticatedFetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
+        if (response.ok) {
             alert('Este estagiário já foi avaliado para este questionário.');
-            window.location.href = `view-respostas.html?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
+            window.location.href = `view-resposta.html?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
             return;
         }
     } catch (error) {
         console.error('Error checking respostas:', error);
-        alert(`Erro ao verificar respostas: ${error.message}`);
     }
 
     // Questions loading function
-    function loadQuestions() {   
+    function loadQuestions() {
         // const questionario_id = $(this).val();
         const questionario_id = $('#questionario_id').val();
         $.ajax({
@@ -310,7 +305,7 @@ $(document).ready(async function () {
             data: JSON.stringify(payload),
             success: function () {
                 alert('Respostas salvas com sucesso!');
-                window.location.href = 'view-resposta.html/?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
+                window.location.href = 'view-resposta.html?estagiario_id=' + estagiario_id + '&questionario_id=' + questionario_id;
             },
             error: function () {
                 alert('Erro ao salvar respostas.');
