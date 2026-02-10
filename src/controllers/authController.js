@@ -125,3 +125,28 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar usuários' });
     }
 };
+
+// Update user
+export const updateUser = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { nome, email, identificacao, entidade_id } = req.body;
+        
+        // Security check: User can only update themselves unless admin
+        if (req.user.id !== id && req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Acesso negado' });
+        }
+
+        const updated = await User.update(id, { nome, email, identificacao, entidade_id });
+        
+        if (!updated) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        const user = await User.findById(id);
+        res.json({ message: 'Usuário atualizado', user });
+    } catch (error) {
+        console.error('Update user error:', error);
+        res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
+};

@@ -139,6 +139,45 @@ const User = {
         } catch (error) {
             throw error;
         }
+    },
+
+    // Update user
+    async update(id, userData) {
+        try {
+            const fields = [];
+            const values = [];
+
+            if (userData.nome !== undefined) {
+                fields.push('nome = ?');
+                values.push(userData.nome);
+            }
+            if (userData.email !== undefined) {
+                fields.push('email = ?');
+                values.push(userData.email);
+            }
+            if (userData.identificacao !== undefined) {
+                fields.push('identificacao = ?');
+                values.push(userData.identificacao);
+            }
+            if (userData.entidade_id !== undefined) {
+                fields.push('entidade_id = ?');
+                values.push(userData.entidade_id);
+            }
+            if (userData.role !== undefined) {
+                fields.push('role = ?');
+                values.push(userData.role);
+            }
+
+            if (fields.length === 0) return false;
+
+            values.push(id);
+            const query = `UPDATE auth_users SET ${fields.join(', ')} WHERE id = ?`;
+            
+            const result = await pool.query(query, values);
+            return result.affectedRows > 0;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

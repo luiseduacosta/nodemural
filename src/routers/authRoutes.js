@@ -12,6 +12,7 @@ router.get('/me', getCurrentUser);
 
 // Protected routes - require authentication
 router.get('/profile', verifyToken, authController.getProfile);
+router.put('/users/:id', verifyToken, authController.updateUser);
 
 // Admin only routes
 router.get('/users', verifyToken, checkRole(['admin']), authController.getAllUsers);
