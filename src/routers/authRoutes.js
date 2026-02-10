@@ -16,5 +16,6 @@ router.put('/users/:id', verifyToken, authController.updateUser);
 
 // Admin only routes
 router.get('/users', verifyToken, checkRole(['admin']), authController.getAllUsers);
+router.put('/users/:id', verifyToken, authController.updateUser);
 
 export default router;

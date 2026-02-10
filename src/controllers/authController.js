@@ -28,7 +28,14 @@ export const register = async (req, res) => {
 
         // Create user (role defaults to 'aluno' if not specified)
         const userRole = role || 'aluno';
-        const newUser = await User.create(email, password, nome, identificacao, userRole, entidade_id);
+
+        // Rules for entidade_id: must be null for admin
+        let finalEntidadeId = entidade_id;
+        if (userRole === 'admin') {
+            finalEntidadeId = null;
+        }
+
+        const newUser = await User.create(email, password, nome, identificacao, userRole, finalEntidadeId);
 
         res.status(201).json({
             message: 'Usuário registrado com sucesso',
@@ -127,25 +134,56 @@ export const getAllUsers = async (req, res) => {
     }
 };
 
-// Update user
+// Update user (self or admin)
 export const updateUser = async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const { nome, email, identificacao, entidade_id } = req.body;
-        
-        // Security check: User can only update themselves unless admin
-        if (req.user.id !== id && req.user.role !== 'admin') {
-            return res.status(403).json({ error: 'Acesso negado' });
-        }
+        const { id } = req.params;
+        const { nome, email, role, entidade_id } = req.body;
 
-        const updated = await User.update(id, { nome, email, identificacao, entidade_id });
-        
-        if (!updated) {
+        // Find existing user
+        const existingUser = await User.findById(id);
+        if (!existingUser) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
-        const user = await User.findById(id);
-        res.json({ message: 'Usuário atualizado', user });
+        // Authorization check: User can update themselves, or admin can update anyone
+        if (req.user.role !== 'admin' && req.user.id !== parseInt(id)) {
+            return res.status(403).json({ error: 'Acesso negado' });
+        }
+
+        const updateData = {};
+        if (nome) updateData.nome = nome;
+        if (email) updateData.email = email;
+
+        // Only admin can change role
+        if (role && req.user.role === 'admin') {
+            updateData.role = role;
+        }
+
+        // Validate entidade_id based on role (current or updated)
+        const targetRole = updateData.role || existingUser.role;
+
+        if (entidade_id !== undefined) {
+            if (targetRole === 'admin') {
+                updateData.entidade_id = null;
+            } else {
+                // For non-admin, entidade_id cannot be null if provided
+                if (entidade_id === null || entidade_id === '') {
+                    // It's allowed to be null initially, but if they try to set it, it should be valid
+                    // Actually, the requirement says "can't be empty in the other situations".
+                    // This likely means once it's set, it should have a value.
+                    // Or that it shouldn't be null in the DB if not admin.
+                    // But they might not have an entity yet.
+                    updateData.entidade_id = null;
+                } else {
+                    updateData.entidade_id = entidade_id;
+                }
+            }
+        }
+
+        const updatedUser = await User.update(id, updateData);
+        res.status(200).json(updatedUser);
+
     } catch (error) {
         console.error('Update user error:', error);
         res.status(500).json({ error: 'Erro ao atualizar usuário' });

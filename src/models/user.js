@@ -172,7 +172,7 @@ const User = {
 
             values.push(id);
             const query = `UPDATE auth_users SET ${fields.join(', ')} WHERE id = ?`;
-            
+
             const result = await pool.query(query, values);
             return result.affectedRows > 0;
         } catch (error) {
