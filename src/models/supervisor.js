@@ -9,6 +9,14 @@ const Supervisor = {
         return rows;
     },
 
+    async findByCress(cress) {
+        const rows = await pool.query(
+            'SELECT id, nome, email, celular, cress FROM supervisores WHERE cress = ?',
+            [cress]
+        );
+        return rows[0];
+    },
+
     async findById(id) {
         const rows = await pool.query(
             'SELECT id, nome, email, celular, cress FROM supervisores WHERE id = ?',

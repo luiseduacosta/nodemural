@@ -34,6 +34,14 @@ const Docente = {
         return rows[0];
     },
 
+    async findBySiape(siape) {
+        const rows = await pool.query(
+            'SELECT id, nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM docentes WHERE siape = ?',
+            [siape]
+        );
+        return rows[0];
+    },
+
     async update(id, nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
         const result = await pool.query(
             'UPDATE docentes SET nome = ?, cpf = ?, siape = ?, datanascimento = ?, localnascimento = ?, sexo = ?, telefone = ?, celular = ?, email = ?, curriculolattes = ?, atualizacaolattes = ?, formacaoprofissional = ?, universidadedegraduacao = ?, anoformacao = ?, dataingresso = ?, departamento = ?, dataegresso = ?, motivoegresso = ?, observacoes = ? WHERE id = ?',

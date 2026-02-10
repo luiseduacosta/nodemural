@@ -4,7 +4,9 @@ import { isLoggedIn, getCurrentUser } from './auth-utils.js';
 // Redirect helper function
 function redirectUser(user, params) {
   let redirect = '';
-  
+
+  console.log(user);
+
   // Check entidade_id consistency for non-admin users
   if (user.role !== 'admin' && !user.entidade_id) {
     // Redirect to create entity page based on role
@@ -18,7 +20,7 @@ function redirectUser(user, params) {
     window.location.href = redirect;
     return;
   }
-  
+
   if (user.role === 'admin') {
     redirect = params.get('redirect') || '/mural.html';
   } else if (user.role === 'aluno') {

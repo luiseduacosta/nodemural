@@ -40,6 +40,21 @@ export const getDocenteById = async (req, res) => {
     }
 };
 
+// Get all fields of a single docente by siape
+export const getDocenteBySiape = async (req, res) => {
+    try {
+        const { siape } = req.params;
+        const docente = await Docente.findBySiape(siape);
+        if (!docente) {
+            return res.status(404).json({ error: 'Docente not found' });
+        }
+        res.status(200).json(docente);
+    } catch (error) {
+        console.error('Error fetching docente:', error);
+        res.status(500).json({ error: 'Error fetching docente' });
+    }
+};
+
 // Update a docente by ID
 export const updateDocente = async (req, res) => {
     try {

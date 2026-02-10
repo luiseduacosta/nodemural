@@ -81,6 +81,7 @@ async function checkSupervisor(identificacao) {
       method: 'GET',
     })
     const data = await res.json();
+    console.log(data);
     if (res.ok) {
       msg.style.color = 'red';
       msg.textContent = 'Supervisor já registrado.';

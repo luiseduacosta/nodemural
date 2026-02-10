@@ -8,6 +8,9 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
+// Get docente by siape. Needs to login first
+router.get('/siape/:siape', docenteController.getDocenteBySiape);
+
 // Routes
 router.get('/', verifyToken, checkRole(['admin', 'aluno', 'docente']), docenteController.getAllDocentes);
 router.get('/:id/estagiarios', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.getEstagiariosByDocenteId);

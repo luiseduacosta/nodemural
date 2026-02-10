@@ -9,6 +9,8 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
+router.get('/cress/:cress', supervisorController.getSupervisorByCress);
+
 // Protected routes
 router.get('/', verifyToken, supervisorController.getAllSupervisores);
 router.get('/:id', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.getSupervisorById);
@@ -20,7 +22,7 @@ router.post('/:id/instituicoes', verifyToken, checkRole(['admin', 'supervisor'])
 router.delete('/:id/instituicoes/:instituicaoId', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.removeInstituicaoFromSupervisor);
 
 // Admin only
-router.post('/', verifyToken, checkRole(['admin']), supervisorController.createSupervisor);
+router.post('/', verifyToken, checkRole(['admin', 'supervisor']), supervisorController.createSupervisor);
 router.delete('/:id', verifyToken, checkRole(['admin']), supervisorController.deleteSupervisor);
 
 export default router;

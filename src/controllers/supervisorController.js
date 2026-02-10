@@ -12,6 +12,21 @@ export const getAllSupervisores = async (req, res) => {
     }
 };
 
+// Get supervisor by Cress
+export const getSupervisorByCress = async (req, res) => {
+    try {
+        const { cress } = req.params;
+        const supervisor = await Supervisor.findByCress(cress);
+        if (!supervisor) {
+            return res.status(404).json({ error: 'Supervisor not found' });
+        }
+        res.status(200).json(supervisor);
+    } catch (error) {
+        console.error('Error fetching supervisor:', error);
+        res.status(500).json({ error: 'Error fetching supervisor' });
+    }
+};
+
 // Get supervisor by ID
 export const getSupervisorById = async (req, res) => {
     try {
