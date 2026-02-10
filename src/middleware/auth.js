@@ -2,7 +2,6 @@
 import jwt from 'jsonwebtoken';
 import Inscricao from '../models/inscricao.js';
 import Atividades from '../models/atividades.js';
-
 import Estagiario from '../models/estagiario.js';
 
 // Verify JWT token middleware
@@ -126,8 +125,8 @@ export const checkAtividadeOwnership = async (req, res, next) => {
         // We must check if the activity belongs to an estagiario that belongs to this aluno.
         
         // Atividades.findById joins with estagiarios and then alunos, returning 'alunoId'.
-        
-        if (req.user.entidade_id && req.user.entidade_id == atividade.alunoId) {
+        // Only 'aluno' role can access activities of their own students.
+        if ( req.user.role === 'aluno' && req.user.entidade_id == atividade.alunoId) {
              return next();
         }
 
@@ -159,7 +158,7 @@ export const checkEstagiarioOwnership = async (req, res, next) => {
         }
 
         // Compare estagiario's aluno_id with user's entidade_id
-        if (req.user.entidade_id && req.user.entidade_id == estagiario.aluno_id) {
+        if ( req.user.role === 'aluno' && req.user.entidade_id == estagiario.aluno_id) {
             return next();
         }
 

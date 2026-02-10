@@ -32,7 +32,8 @@ $(document).ready(async function () {
         try {
             const response = await authenticatedFetch('/supervisores', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${getToken()}` },
                 body: JSON.stringify(supervisor)
             });
             
@@ -52,7 +53,8 @@ $(document).ready(async function () {
                 }
                 const userResponse = await authenticatedFetch(`/auth/users/${currentUser.id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${getToken()}` },
                     body: JSON.stringify({ entidade_id: newId })
                 });
                 if (!userResponse.ok) {
