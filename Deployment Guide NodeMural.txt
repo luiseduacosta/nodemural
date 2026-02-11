@@ -1,0 +1,73 @@
+Deployment Guide - NodeMural
+
+This guide explains how to deploy the NodeMural application to a server.
+
+1. Prerequisites
+Ensure the following are installed on the server:
+
+Node.js (v18 or higher)
+MariaDB (or MySQL)
+Git
+
+2. Get the Source Code
+Clone the repository to your server:
+
+bash
+git clone https://github.com/luiseduacosta/nodemural.git
+cd nodemural
+
+3. Install Dependencies
+bash
+npm install
+
+4. Environment Configuration
+Create a 
+.env
+file in the root directory:
+
+env
+# Database Configuration
+DB_HOST=localhost
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=tccess
+DB_POOL_LIMIT=10
+# Server Configuration
+PORT=3333
+NODE_ENV=production
+# JWT Configuration
+JWT_SECRET=a_very_strong_random_secret_string
+JWT_EXPIRY=7d
+
+IMPORTANT
+Change JWT_SECRET to a unique, strong string for production environments.
+
+5. Database Setup
+Create the Database: Log in to MariaDB and create the database specified in 
+.env
+:
+sql
+CREATE DATABASE tccess;
+Run Setup Scripts: The application includes scripts to initialize the tables. Run them in order:
+
+bash
+# Set up all the tables
+node src/database/setupFullDatabase.js
+
+6. Running the Application
+Production (using PM2 recommended)
+For production, it's recommended to use a process manager like PM2 to keep the app running:
+
+bash
+npm install -g pm2
+pm2 start src/server.js --name "nodemural"
+
+Direct Execution
+bash
+npm start
+
+The application will be available at http://your-server-ip:3333.
+
+7. Next Steps
+Reverse Proxy: Set up Nginx or Apache as a reverse proxy to handle SSL (HTTPS) and port 80/443 mapping.
+Firewall: Ensure the port (e.g., 3333) is open in your server's firewall.

@@ -1,5 +1,5 @@
 // src/controllers/alunoController.js
-import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser, updateAuthSession } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -50,11 +50,6 @@ $(document).ready(async function () {
                 const data = await response.json();
                 // Check if user is aluno and needs entidade_id update
                 if (currentUser && currentUser.role === 'aluno') {
-                    // If entidade_id exists, it must match the new aluno id
-                    if (currentUser.entidade_id && currentUser.entidade_id !== data.id) {
-                        alert('Erro: ID da entidade não corresponde ao aluno criado.');
-                        return;
-                    }
                     // Update user.entidade_id with the new aluno id
                     const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
                         method: 'PUT',
@@ -64,7 +59,13 @@ $(document).ready(async function () {
                         },
                         body: JSON.stringify({ entidade_id: data.id })
                     });
-                    if (!userResponse.ok) {
+
+                    if (userResponse.ok) {
+                        const updateData = await userResponse.json();
+                        if (updateData.user && updateData.token) {
+                            updateAuthSession(updateData.user, updateData.token);
+                        }
+                    } else {
                         console.error('Failed to update user entidade_id');
                     }
                 }

@@ -1,5 +1,5 @@
 // src/controllers/docenteController.js
-import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, getCurrentUser, updateAuthSession } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -45,20 +45,17 @@ $(document).ready(async function () {
                 const data = await response.json();
                 // Only update the user.entidade_id with the data.id if the user.role is 'docente'
                 if (currentUser && currentUser.role === 'docente') {
-                    // If entidade_id exists, it must match the new docente id
-                    if (currentUser.entidade_id && currentUser.entidade_id !== data.id) {
-                        alert('Erro: ID da entidade não corresponde ao docente criado.');
-                        return;
-                    }
-                    const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
+                    const userResponse = await authenticatedFetch(`/auth/users/${currentUser.id}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${getToken()}`
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ entidade_id: data.id })
                     });
-                    if (!userResponse.ok) {
+                    if (userResponse.ok) {
+                        const updateData = await userResponse.json();
+                        if (updateData.user && updateData.token) {
+                            updateAuthSession(updateData.user, updateData.token);
+                        }
+                    } else {
                         console.error('Failed to update user entidade_id');
                     }
                 }

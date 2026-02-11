@@ -104,7 +104,7 @@ async function setupDatabase() {
                 observacoes TEXT
             )`,
 
-            // 7. turma_estagios (groups of students for each internship and each professor)
+            // 7. turma_estagios (groups of students for each professor by period)
             `CREATE TABLE IF NOT EXISTS turma_estagios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 area VARCHAR(255) NOT NULL
@@ -122,6 +122,8 @@ async function setupDatabase() {
                 turno VARCHAR(20),
                 nivel INT,
                 ajuste2020 BOOLEAN,
+                nota DECIMAL(10,2),
+                ch smallint,
                 observacoes TEXT
             )`,
 
@@ -186,7 +188,7 @@ async function setupDatabase() {
                 modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )`,
 
-            // 13. respostas (responses are the answers of the supervisor to the questions: what the supervisor thinks of the intern)
+            // 13. respostas (responses are the answers of the supervisor to the questions: what the supervisor evaluates about the intern)
             `CREATE TABLE IF NOT EXISTS respostas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 questionario_id INT,

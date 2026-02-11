@@ -1,45 +1,48 @@
-// public/login.js
+// src/public/login.js
 import { isLoggedIn, getCurrentUser } from './auth-utils.js';
+import { authenticatedFetch } from './auth-utils.js';
 
 // Redirect helper function
-function redirectUser(user, params) {
+async function redirectUser(user, params) {
   let redirect = '';
 
-  console.log(user);
+  // console.log(user);
 
-  // Check entidade_id consistency for non-admin users
-  if (user.role !== 'admin' && !user.entidade_id) {
-    // Redirect to create entity page based on role
+  // check if the entidade_id has a real value and if it exists in the tables: alunos, docentes, supervisors
+  if (user.role !== 'admin' && (user.entidade_id && user.entidade_id !== 0)) {
+    // Redirect to view entity page based on role
     if (user.role === 'aluno') {
-      redirect = '/new-aluno.html';
+      const response = await authenticatedFetch(`/alunos/${user.entidade_id}`);
+      if (!response.ok) {
+        redirect = '/new-aluno.html';
+      } else {
+        redirect = `/view-aluno.html?id=${user.entidade_id}`;
+      }
     } else if (user.role === 'docente') {
-      redirect = '/new-docente.html';
+      const response = await authenticatedFetch(`/docentes/${user.entidade_id}`);
+      if (!response.ok) {
+        redirect = '/new-docente.html';
+      } else {
+        redirect = `/view-docente.html?id=${user.entidade_id}`;
+      }
     } else if (user.role === 'supervisor') {
-      redirect = '/new-supervisor.html';
+      const response = await authenticatedFetch(`/supervisores/${user.entidade_id}`);
+      if (!response.ok) {
+        redirect = '/new-supervisor.html';
+      } else {
+        redirect = `/view-supervisor.html?id=${user.entidade_id}`;
+      }
     }
     window.location.href = redirect;
     return;
   }
-
-  if (user.role === 'admin') {
-    redirect = params.get('redirect') || '/mural.html';
-  } else if (user.role === 'aluno') {
-    redirect = params.get('redirect') || `/view-aluno.html?id=${user.entidade_id}`;
-  } else if (user.role === 'docente') {
-    redirect = params.get('redirect') || `/view-docente.html?id=${user.entidade_id}`;
-  } else if (user.role === 'supervisor') {
-    redirect = params.get('redirect') || `/view-supervisor.html?id=${user.entidade_id}`;
-  } else {
-    redirect = params.get('redirect') || '/login.html';
-  }
-  window.location.href = redirect;
 }
 
 // If already logged in, redirect to appropriate page
 if (isLoggedIn()) {
   const user = getCurrentUser();
   const params = new URLSearchParams(window.location.search);
-  redirectUser(user, params);
+  await redirectUser(user, params);
 }
 
 const form = document.getElementById('loginForm');
@@ -58,7 +61,6 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ email, password })
     });
     const data = await res.json();
-    console.log(data);
     if (!res.ok) throw new Error(data.error || 'Erro no login');
 
     // store token and user

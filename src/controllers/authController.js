@@ -183,7 +183,24 @@ export const updateUser = async (req, res) => {
         }
 
         const updatedUser = await User.update(id, updateData);
-        res.status(200).json(updatedUser);
+
+        // Generate a new token to reflect updated claims (role, entidade_id)
+        const newToken = jwt.sign(
+            {
+                id: updatedUser.id,
+                email: updatedUser.email,
+                nome: updatedUser.nome,
+                role: updatedUser.role,
+                entidade_id: updatedUser.entidade_id
+            },
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production',
+            { expiresIn: process.env.JWT_EXPIRY || '7d' }
+        );
+
+        res.status(200).json({
+            user: updatedUser,
+            token: newToken
+        });
 
     } catch (error) {
         console.error('Update user error:', error);
@@ -214,7 +231,24 @@ export const updateUserByEntityId = async (req, res) => {
         if (email) updateData.email = email;
 
         const updatedUser = await User.update(user.id, updateData);
-        res.status(200).json(updatedUser);
+
+        // Generate a new token
+        const newToken = jwt.sign(
+            {
+                id: updatedUser.id,
+                email: updatedUser.email,
+                nome: updatedUser.nome,
+                role: updatedUser.role,
+                entidade_id: updatedUser.entidade_id
+            },
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production',
+            { expiresIn: process.env.JWT_EXPIRY || '7d' }
+        );
+
+        res.status(200).json({
+            user: updatedUser,
+            token: newToken
+        });
 
     } catch (error) {
         console.error('Update user by entity error:', error);

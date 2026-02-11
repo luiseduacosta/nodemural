@@ -42,11 +42,9 @@ $(document).ready(async function () {
     try {
         const response = await authenticatedFetch(`/supervisores/${id}`);
         if (!response.ok) {
-            throw new Error('Failed to fetch supervisor');
+            throw new Error('Falha ao buscar supervisor');
         }
-
         const supervisor = await response.json();
-
         // Populate the view fields
         document.getElementById('view-id').textContent = supervisor.id;
         document.getElementById('view-nome').textContent = supervisor.nome;
@@ -66,7 +64,6 @@ $(document).ready(async function () {
         // Load estagiários for this supervisor
         loadEstagiarios(id);
     } catch (error) {
-        console.error('Error loading supervisor:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
         window.location.href = 'supervisores.html';
     }
