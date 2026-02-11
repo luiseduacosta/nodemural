@@ -205,8 +205,9 @@ async function setupDatabase() {
                 dia DATE,
                 inicio TIME,
                 final TIME,
-                atividade TEXT
-            )`,
+                horario TIME,
+                atividade varchar(100),
+            `,
 
             // 15. visita (visit to the institution to evaluate if can receive interns)
             `CREATE TABLE IF NOT EXISTS visita (

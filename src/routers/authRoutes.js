@@ -13,10 +13,9 @@ router.get('/me', getCurrentUser);
 // Protected routes - require authentication
 router.get('/profile', verifyToken, authController.getProfile);
 router.put('/users/:id', verifyToken, authController.updateUser);
+router.put('/users/entity/:entidade_id', verifyToken, authController.updateUserByEntityId);
 
 // Admin only routes
 router.get('/users', verifyToken, checkRole(['admin']), authController.getAllUsers);
-router.put('/users/:id', verifyToken, authController.updateUser);
-router.put('/users/entity/:entidade_id', verifyToken, authController.updateUserByEntityId);
 
 export default router;
