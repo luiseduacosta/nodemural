@@ -26,6 +26,9 @@ $(document).ready(async function () {
         }
         const docente = await response.json();
         document.getElementById('docenteId').value = docente.id;
+
+        // Store original siape to detect changes
+        window.oldSiape = docente.siape;
         document.getElementById('nome').value = docente.nome;
         document.getElementById('siape').value = docente.siape;
         document.getElementById('cpf').value = docente.cpf || '';
@@ -65,6 +68,16 @@ $(document).ready(async function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(docente)
             });
+
+            // if edit changes the field siape, update the identificacao field in the users table too
+            if (docente.siape !== window.oldSiape) {
+                await authenticatedFetch(`/auth/users/entity/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identificacao: docente.siape })
+                });
+                window.oldSiape = docente.siape; // Update for subsequent submits
+            }
 
             if (!response.ok) {
                 const error = await response.json();

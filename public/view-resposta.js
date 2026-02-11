@@ -22,7 +22,7 @@ $(document).ready(async function () {
     if (hasRole(['supervisor'])) {
         const backButton = document.getElementById('backButton');
         if (backButton) {
-            backButton.href = 'view-supervisor.html?id=' + getCurrentUser().id;
+            backButton.href = 'view-supervisor.html?id=' + getCurrentUser().entidade_id;
         }
     }
 

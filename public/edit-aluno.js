@@ -53,6 +53,17 @@ $(document).ready(async function () {
                 },
                 body: JSON.stringify(formData)
             });
+
+            // if edit changes the field registro, update the identificacao field in the users table too
+            if (formData.registro !== window.oldRegistro) {
+                await authenticatedFetch(`/auth/users/entity/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identificacao: formData.registro })
+                });
+                window.oldRegistro = formData.registro; // Update for subsequent submits
+            }
+
             if (response.ok) {
                 // Redirect to view page after successful save
                 window.location.href = 'view-aluno.html?id=' + id;
@@ -102,6 +113,9 @@ $(document).ready(async function () {
                 }
             });
             $('#id').val(data.id); // Ensure ID is set
+
+            // Store original registro to detect changes
+            window.oldRegistro = data.registro;
         } catch (error) {
             console.error('Error loading aluno:', error);
             alert('Erro ao carregar dados do aluno: ' + error.message);

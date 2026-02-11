@@ -25,6 +25,9 @@ $(document).ready(async function () {
             document.getElementById('cress').value = supervisor.cress;
             document.getElementById('supervisorId').value = supervisor.id;
 
+            // Store original cress to detect changes
+            window.oldCress = supervisor.cress;
+
             // Store the ID for view function
             window.currentSupervisorId = id;
         } catch (error) {
@@ -63,6 +66,16 @@ $(document).ready(async function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(supervisor)
         });
+
+        // if edit changes the field CRESS, update the identificacao field in the users table too
+        if (supervisor.cress !== window.oldCress) {
+            await authenticatedFetch(`/auth/users/entity/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identificacao: supervisor.cress })
+            });
+            window.oldCress = supervisor.cress; // Update for subsequent submits
+        }
 
         if (!response.ok) {
             const error = await response.json();

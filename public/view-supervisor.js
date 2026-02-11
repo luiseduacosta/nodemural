@@ -18,6 +18,26 @@ $(document).ready(async function () {
         return;
     }
 
+    const currentUser = getCurrentUser();
+    const isAdmin = hasRole(['admin']);
+    const isSupervisor = hasRole(['supervisor']);
+    const isOwner = currentUser.entidade_id == id;
+
+    if (!isAdmin && !isSupervisor && !isOwner) {
+        window.location.href = 'supervisores.html';
+        return;
+    }
+
+    // Hide new supervisor button if not admin
+    if (!isAdmin) {
+        document.getElementById('btn_new-supervisor').style.display = 'none';
+    }
+
+    // Hide edit button if not admin or owner
+    if (!isAdmin && !isOwner) {
+        document.getElementById('btn_edit_supervisor').style.display = 'none';
+    }
+
     // Fetch the supervisor data
     try {
         const response = await authenticatedFetch(`/supervisores/${id}`);

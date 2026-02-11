@@ -138,7 +138,7 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, email, role, entidade_id } = req.body;
+        const { nome, email, role, entidade_id, identificacao } = req.body;
 
         // Find existing user
         const existingUser = await User.findById(id);
@@ -154,6 +154,7 @@ export const updateUser = async (req, res) => {
         const updateData = {};
         if (nome) updateData.nome = nome;
         if (email) updateData.email = email;
+        if (identificacao) updateData.identificacao = identificacao;
 
         // Only admin can change role
         if (role && req.user.role === 'admin') {
@@ -186,6 +187,37 @@ export const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error('Update user error:', error);
+        res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
+};
+
+// Update user by entity ID
+export const updateUserByEntityId = async (req, res) => {
+    try {
+        const { entidade_id } = req.params;
+        const { identificacao, nome, email } = req.body;
+
+        // Find user by entity ID
+        const user = await User.findByEntidadeId(entidade_id);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado para esta entidade' });
+        }
+
+        // Authorization check: Admin only or the user themselves
+        if (req.user.role !== 'admin' && req.user.id !== user.id) {
+            return res.status(403).json({ error: 'Acesso negado' });
+        }
+
+        const updateData = {};
+        if (identificacao) updateData.identificacao = identificacao;
+        if (nome) updateData.nome = nome;
+        if (email) updateData.email = email;
+
+        const updatedUser = await User.update(user.id, updateData);
+        res.status(200).json(updatedUser);
+
+    } catch (error) {
+        console.error('Update user by entity error:', error);
         res.status(500).json({ error: 'Erro ao atualizar usuário' });
     }
 };

@@ -30,14 +30,23 @@ $(document).ready(async function () {
         };
 
         try {
+            // Verificar se o(a) supervisor(a) já existe. If yes abort the creation. Can't have two supervisors with the same CRESS.
+            const existingSupervisor = await authenticatedFetch(`/supervisores/cress/${supervisor.cress}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (existingSupervisor.ok) {
+                throw new Error('CRESS do(a) supervisor(a) já existe');
+                return; // Should never happen
+            }
             const response = await authenticatedFetch('/supervisores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(supervisor)
             });
-            
+
             if (!response.ok) {
-                throw new Error('Failed to create supervisor');
+                throw new Error('Falha ao criar supervisor');
             }
 
             const result = await response.json();

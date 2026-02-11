@@ -48,7 +48,7 @@ $(document).ready(async function () {
         document.getElementById('view-supervisor').textContent = estagiario.supervisor_nome || '-';
         document.getElementById('view-periodo').textContent = estagiario.periodo || '-';
         document.getElementById('view-turma').textContent = estagiario.turma_nome || '-';
-        
+
         // Turno display
         const turnoMap = { 'D': 'Diurno', 'N': 'Noturno', 'A': 'Diurno/Noturno' };
         document.getElementById('view-turno').textContent = turnoMap[estagiario.turno] || estagiario.turno || '-';
@@ -174,7 +174,7 @@ $(document).ready(async function () {
     }
 
     // Render questions (read-only style for view page)
-    function renderQuestions(questions) {
+    async function renderQuestions(questions) {
         const container = $('#respostasContainer');
         container.empty();
 
@@ -183,11 +183,25 @@ $(document).ready(async function () {
             return;
         }
 
+        // Check if user is admin or supervisor once before the loop
+        let canEdit = isAdmin();
+        if (!canEdit && getCurrentUser().role === 'supervisor') {
+            try {
+                const estagiariosResponse = await authenticatedFetch(`/estagiarios?supervisor_id=${getCurrentUser().id}`);
+                if (estagiariosResponse.ok) {
+                    const estagiarios = await estagiariosResponse.json();
+                    canEdit = estagiarios.some(e => e.id == id);
+                }
+            } catch (error) {
+                console.error('Error checking permissions:', error);
+            }
+        }
+
         questions.forEach((question, index) => {
             const questionKey = `avaliacao${question.ordem || question.id}`;
             const value = existingResponses[questionKey] || 'Não respondido';
 
-            const questionCard = `
+            let questionCard = `
                 <div class="question-card mb-3 p-3 border rounded">
                     <div class="fw-bold mb-1 text-primary">Questão ${index + 1}</div>
                     <div class="mb-2">${escapeHtml(question.text)}</div>
@@ -196,6 +210,21 @@ $(document).ready(async function () {
                     </div>
                 </div>
             `;
+
+            // Put an edit button if the user is admin or supervisor owns this estagiario
+            if (canEdit) {
+                // Pointing to the edit-resposta.html with correct params
+                questionCard = `
+                    <div class="question-card mb-3 p-3 border rounded">
+                        <div class="fw-bold mb-1 text-primary">Questão ${index + 1}</div>
+                        <div class="mb-2">${escapeHtml(question.text)}</div>
+                        <div class="p-2 bg-light rounded shadow-sm mb-2">
+                            <strong>Resposta:</strong> ${escapeHtml(value)}
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="window.location.href='edit-resposta.html?estagiario_id=${id}&questionario_id=${questionario_id}'">Editar</button>
+                    </div>
+                `;
+            }
             container.append(questionCard);
         });
     }

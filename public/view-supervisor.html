@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,8 +22,8 @@
                     type="button" role="tab" aria-controls="dados" aria-selected="true">Dados do Supervisor</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="estagiarios-tab" data-bs-toggle="tab" data-bs-target="#estagiarios" type="button"
-                    role="tab" aria-controls="estagiarios" aria-selected="false">Estagiários</button>
+                <button class="nav-link" id="estagiarios-tab" data-bs-toggle="tab" data-bs-target="#estagiarios"
+                    type="button" role="tab" aria-controls="estagiarios" aria-selected="false">Estagiários</button>
             </li>
         </ul>
 
@@ -59,12 +59,14 @@
                         <div id="instituicoes-list" class="mb-3">
                             <p class="text-muted">Carregando...</p>
                         </div>
-                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addInstituicaoModal">+ Adicionar Instituição</button>
+                        <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#addInstituicaoModal">+ Adicionar Instituição</button>
 
                         <div class="mt-4">
                             <a href="supervisores.html" class="btn btn-secondary">Voltar</a>
-                            <button onclick="editRecord()" class="btn btn-warning">Editar</button>
-                            <a href="new-supervisor.html" class="btn btn-success">+ Novo(a)</a>
+                            <button onclick="editRecord()" class="btn btn-warning"
+                                id="btn_edit_supervisor">Editar</button>
+                            <a href="new-supervisor.html" class="btn btn-success" id="btn_new-supervisor">+ Novo(a)</a>
                         </div>
                     </div>
                 </div>
@@ -97,11 +99,12 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 
     <!-- Modal for adding institution -->
-    <div class="modal fade" id="addInstituicaoModal" tabindex="-1" aria-labelledby="addInstituicaoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addInstituicaoModal" tabindex="-1" aria-labelledby="addInstituicaoModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
