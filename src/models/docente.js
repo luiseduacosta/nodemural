@@ -17,7 +17,7 @@ const Docente = {
         if (search) {
             query += ' WHERE nome LIKE ?';
             const searchTerm = `%${search}%`;
-            params = [searchTerm, searchTerm, searchTerm, searchTerm];
+            params = [searchTerm];
         }
 
         query += ' ORDER BY nome ASC';

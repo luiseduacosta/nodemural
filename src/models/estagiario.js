@@ -69,7 +69,7 @@ const Estagiario = {
              instituicao_id = ?, turmaestagio_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
              nota = ?, ch = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch, id]
+            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, nota, ch, observacoes, id]
         );
         return result.affectedRows > 0;
     },
