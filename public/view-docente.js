@@ -95,12 +95,12 @@ async function loadEstagiarios(docenteId) {
                     <td>${est.estagiario_supervisor_nome || 'N/A'}</td>
                     <td>${est.estagiario_nivel}</td>
                     <td>${est.estagiario_periodo}</td>
-                    <td class="editable-field" data-field="ch">${est.estagiario_carga_horaria || 'N/A'}</td>
-                    <td class="editable-field" data-field="nota">${est.estagiario_nota || 'N/A'}</td>
+                    <td class="editable-field" data-field="ch">${est.estagiario_carga_horaria || ''}</td>
+                    <td class="editable-field" data-field="nota">${est.estagiario_nota || ''}</td>
                     <td class="actions">
-                        <button class="btn btn-warning btn-edit">Editar</button>
-                        <button class="btn btn-primary btn-save" style="display:none">Salvar</button>
-                        <button class="btn btn-secondary btn-cancel" style="display:none">Cancelar</button>
+                        <button class="btn btn-sm btn-warning btn-edit">Editar</button>
+                        <button class="btn btn-sm btn-primary btn-save" style="display:none">Salvar</button>
+                        <button class="btn btn-sm btn-secondary btn-cancel" style="display:none">Cancelar</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -134,13 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Make row editable, fields 'carga_horaria' and 'nota' only
+// Make row editable, fields 'ch' and 'nota' only
 function makeRowEditable(row) {
     row.classList.add('editing');
     const cells = row.querySelectorAll('.editable-field');
     cells.forEach(cell => {
-        const text = cell.textContent === 'N/A' ? '' : cell.textContent;
-        cell.innerHTML = `<input class="form-control" type="text" value="${text}">`;
+        const text = cell.textContent.trim() === '' ? '' : cell.textContent.trim();
+        cell.innerHTML = `<input class="form-control form-control-sm" type="text" value="${text}">`;
     });
 
     // Toggle buttons

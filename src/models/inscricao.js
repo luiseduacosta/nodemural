@@ -74,10 +74,10 @@ const Inscricao = {
     },
 
     async update(id, registro, aluno_id, muralestagio_id, data, periodo) {
-        // Check if another student already registered for this mural in this period
+        // Check if another student (not this one) is already registered for this mural
         const existing = await pool.query(
-            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
-            [aluno_id, muralestagio_id]
+            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND id != ?',
+            [aluno_id, muralestagio_id, id]
         );
 
         if (existing.length > 0) {

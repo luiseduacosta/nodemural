@@ -1,4 +1,3 @@
-// src/controllers/questionarioController.js
 import { getToken, hasRole } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -249,7 +248,7 @@ $(document).ready(async function () {
 
         // Create payload
         const payload = {
-            question_id: questionario_id,
+            questionario_id: questionario_id,
             estagiario_id: estagiario_id,
             response: formData
         };
@@ -260,7 +259,11 @@ $(document).ready(async function () {
                 url: `/respostas/${existingResposta.id}`,
                 type: 'PUT',
                 contentType: 'application/json',
-                data: JSON.stringify({ response: formData }),
+                data: JSON.stringify({
+                    questionario_id: questionario_id,
+                    estagiario_id: estagiario_id,
+                    response: formData
+                }),
                 success: function () {
                     alert('Respostas atualizadas com sucesso!');
                     window.location.href = 'respostas.html';

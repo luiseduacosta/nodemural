@@ -8,11 +8,9 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
-// Routes - require authentication
+// Routes - GET requires authentication, PUT requires admin role
+router.get('/', verifyToken, configuracaoController.getAllConfiguracoes);
+router.get('/:id', verifyToken, configuracaoController.getConfiguracaoById);
 router.put('/:id', verifyToken, checkRole(['admin']), configuracaoController.updateConfiguracao);
-
-// Authenticate users only routes - can view and update configuracao
-router.get('/', configuracaoController.getAllConfiguracoes);
-router.get('/:id', configuracaoController.getConfiguracaoById);
 
 export default router;

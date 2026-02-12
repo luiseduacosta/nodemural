@@ -1,4 +1,3 @@
-// src/controllers/estagiarioController.js
 import { authenticatedFetch, getToken, hasRole } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -107,10 +106,6 @@ $(document).ready(async function () {
         if (config.termo_compromisso_periodo) {
           select.val(config.termo_compromisso_periodo);
         }
-        option.value = config.termo_compromisso_periodo;
-        option.text = config.termo_compromisso_periodo;
-        option.selected = true;
-        select.append(option); // Append option selected to the select
       }
 
       // Reload table with the new default filter

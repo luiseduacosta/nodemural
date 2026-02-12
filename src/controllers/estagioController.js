@@ -74,9 +74,6 @@ export const getSupervisoresById = async (req, res) => {
     try {
         const { id } = req.params;
         const supervisores = await Estagio.findSupervisoresById(id);
-        if (supervisores.length === 0) {
-            return res.status(404).json({ error: 'Supervisores not found' });
-        }
         res.status(200).json(supervisores);
     } catch (error) {
         console.error('Error fetching supervisores:', error);

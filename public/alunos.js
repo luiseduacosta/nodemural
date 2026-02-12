@@ -1,4 +1,3 @@
-// src/routes/alunoRoutes.js
 import { getToken, getCurrentUser, isAdmin } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -18,7 +17,7 @@ $(document).ready(async function () {
   }
 
   const table = $('#alunosTable').DataTable({
-    order: [[3, 'asc']],
+    order: [[2, 'asc']],
     ajax: {
       url: '/alunos',
       dataSrc: '',

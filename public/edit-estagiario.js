@@ -124,21 +124,41 @@ $(document).ready(async function () {
             // Check Period/Level Consistency (Logic from original edit-estagiario.js)
             if (configRes.ok) {
                 const configuracoes = await configRes.json();
-                if (configuracoes.length > 0) {
-                    const currentPeriod = configuracoes[0].termo_compromisso_periodo;
+                if (configuracoes) {
+                    const currentPeriod = configuracoes.termo_compromisso_periodo;
                     const containerperiodo = document.getElementById('menssagem_periodo');
                     const containernivel = document.getElementById('menssagem_nivel');
 
-                    if (currentPeriod !== estagiario.periodo) {
-                        containerperiodo.innerHTML = `<div id="menssagem_periodo_alert" class="alert alert-warning">
-                            O período do estagiário (${estagiario.periodo}) não corresponde ao período atual do termo de compromisso ${currentPeriod}.
+                    // Compare periods
+                    if (currentPeriod < estagiario.periodo) {
+                        // ERROR: Future period - should not edit
+                        containerperiodo.innerHTML = `<div class="alert alert-danger">
+                            <strong>ERRO:</strong> Este estagiário está em um período futuro (${estagiario.periodo}). 
+                            O período atual do termo de compromisso é ${currentPeriod}. 
+                            Não é possível editar estagiários de períodos futuros.
                         </div>`;
                         
-                        containernivel.innerHTML = `<div id="menssagem_nivel_alert" class="alert alert-warning">
-                            O nível do estagiário (${estagiario.nivel}) corresponde ao período ${estagiario.periodo}. O período atual do termo de compromisso é ${currentPeriod}.
+                        // Disable form submission
+                        document.querySelector('button[type="submit"]').disabled = true;
+                        document.querySelector('button[type="submit"]').classList.add('disabled');
+                        
+                    } else if (currentPeriod > estagiario.periodo) {
+                        // WARNING: Old period - show warning but allow edit
+                        containerperiodo.innerHTML = `<div class="alert alert-warning">
+                            <strong>ATENÇÃO:</strong> Você está editando um estagiário de período anterior (${estagiario.periodo}). 
+                            O período atual do termo de compromisso é ${currentPeriod}. 
+                            Esta edição está atualizando dados de um período passado.
                         </div>`;
+                        
+                        containernivel.innerHTML = `<div class="alert alert-info">
+                            O nível do estagiário é ${estagiario.nivel} correspondente ao período ${estagiario.periodo}.
+                        </div>`;
+                        
                     } else {
-                        containerperiodo.innerHTML = '';
+                        // CORRECT: Same period - normal edit
+                        containerperiodo.innerHTML = `<div class="alert alert-success">
+                            Editando estagiário do período atual (${currentPeriod}).
+                        </div>`;
                         containernivel.innerHTML = '';
                     }
                 }

@@ -49,7 +49,7 @@ const Mural = {
     // Nested inscricoes route
     async findInscricoesByMuralId(id) {
         const rows = await pool.query(
-            'SELECT i.id as inscricao_id, i.registro as registro, a.nome as aluno_nome, i.data as data_inscricao FROM inscricoes as i JOIN alunos as a ON i.aluno_id = a.id WHERE i.muralestagio_id = ?',
+            'SELECT i.id as inscricao_id, a.registro as registro, a.nome as aluno_nome, i.data as data_inscricao FROM inscricoes as i JOIN alunos as a ON i.aluno_id = a.id WHERE i.muralestagio_id = ?',
             [id]
         );
         return rows;

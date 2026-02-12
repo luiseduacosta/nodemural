@@ -1,5 +1,4 @@
-// src/public/areainstituicoes.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -12,6 +11,9 @@ $(document).ready(async function () {
     order: [[1, 'asc']],
     ajax: {
       url: '/areainstituicoes',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+      },
       dataSrc: ''
     },
     columns: [
@@ -34,17 +36,16 @@ $(document).ready(async function () {
 
   window.deleteArea = async (id) => {
     if (confirm('Tem certeza?')) {
-      $.ajax({
-        url: `/areainstituicoes/${id}`,
-        type: 'DELETE',
-        success: function (result) {
-          table.ajax.reload();
-        },
-        error: function (xhr, status, error) {
-          console.error('Error deleting area:', error);
-          alert('Erro ao excluir área.');
+      try {
+        const response = await authenticatedFetch(`/areainstituicoes/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+          throw new Error('Erro ao excluir área');
         }
-      });
+        table.ajax.reload();
+      } catch (error) {
+        console.error('Error deleting area:', error);
+        alert('Erro ao excluir área.');
+      }
     }
   };
 })

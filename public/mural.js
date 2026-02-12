@@ -1,4 +1,3 @@
-// src/routes/muralRoutes.js
 import { getToken, isAdmin, hasRole, authenticatedFetch } from './auth-utils.js';
 
 // Everybody can access to the display of this page for the current periodo stored in the config
@@ -12,7 +11,7 @@ $(document).ready(async function () {
             url: '/mural',
             data: function (d) {
                 const token = getToken();
-                if (token && hasRole('admin', 'docente', 'supervisor')) {
+                if (token && hasRole(['admin', 'docente', 'supervisor'])) {
                     const periodo = $('#periodoFilter').val();
                     if (periodo && periodo != 'Todos') {
                         d.periodo = periodo;
@@ -102,15 +101,6 @@ $(document).ready(async function () {
                 select.append(option);
             });
 
-            // If there is not a default period, select the first one
-            if (periodos.length > 0 && !select.val()) {
-                const option = document.createElement("option");
-                option.value = periodos[0].periodo;
-                option.text = periodos[0].periodo;
-                option.selected = true;
-                select.append(option);
-            }
-
             // Reload table with the new default filter
             table.ajax.reload();
 
@@ -142,7 +132,7 @@ $(document).ready(async function () {
     window.deleteMural = async (id) => {
         if (confirm('Tem certeza que deseja excluir este mural?')) {
             try {
-                const response = await fetch(`/ mural / ${id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/mural/${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete mural');
                 }

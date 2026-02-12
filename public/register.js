@@ -1,4 +1,3 @@
-// src/public/register.js
 import { getToken, hasRole } from './auth-utils.js';
 
 function isAuthenticated() {
@@ -44,14 +43,14 @@ async function checkAluno(identificacao) {
     })
     const data = await res.json();
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Pessoa já cadastrado. Ok!.';
+      msg.style.color = 'green';
+      msg.textContent = 'Aluno(a) encontrado(a) no sistema. Pode prosseguir com o registro.';
       document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Pessoa precisa ser cadastrado no sistema de gestão de pessoas.";
+    msg.style.color = 'red';
+    msg.textContent = "Aluno(a) precisa ser cadastrado(a) primeiro no sistema de gestão de pessoas.";
   }
 }
 
@@ -63,14 +62,14 @@ async function checkDocente(identificacao) {
     })
     const data = await res.json();
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Docente já registrado.';
+      msg.style.color = 'green';
+      msg.textContent = 'Docente encontrado(a) no sistema. Pode prosseguir com o registro.';
       document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Docente precisa ser cadastrado no sistema de gestão de docentes.";
+    msg.style.color = 'red';
+    msg.textContent = "Docente precisa ser cadastrado(a) primeiro no sistema de gestão de docentes.";
   }
 }
 
@@ -83,14 +82,14 @@ async function checkSupervisor(identificacao) {
     const data = await res.json();
     console.log(data.id);
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Supervisor já registrado.';
+      msg.style.color = 'green';
+      msg.textContent = 'Supervisor(a) encontrado(a) no sistema. Pode prosseguir com o registro.';
       document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Supervisor precisa ser cadastrado no sistema de gestão de supervisores.";
+    msg.style.color = 'red';
+    msg.textContent = "Supervisor(a) precisa ser cadastrado(a) primeiro no sistema de gestão de supervisores.";
   }
 }
 

@@ -9,6 +9,7 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
+// Public routes (no auth required) - needed for registration
 router.get('/cress/:cress', supervisorController.getSupervisorByCress);
 
 // Protected routes

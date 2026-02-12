@@ -1,4 +1,3 @@
-// src/public/login.js
 import { isLoggedIn, getCurrentUser } from './auth-utils.js';
 import { authenticatedFetch } from './auth-utils.js';
 
@@ -8,27 +7,39 @@ async function redirectUser(user, params) {
 
   // check if the entidade_id has a real value and if it exists in the tables: alunos, docentes, supervisors
   if (user.role !== 'admin') {
-    // Redirect to view entity page based on role
-    if (user.role === 'aluno') {
-      const response = await authenticatedFetch(`/alunos/${user.entidade_id}`);
-      if (!response.ok) {
+    // Check if entidade_id exists
+    if (!user.entidade_id) {
+      // No entidade_id - redirect to create new entity
+      if (user.role === 'aluno') {
         redirect = '/new-aluno.html';
-      } else {
-        redirect = `/view-aluno.html?id=${user.entidade_id}`;
-      }
-    } else if (user.role === 'docente') {
-      const response = await authenticatedFetch(`/docentes/${user.entidade_id}`);
-      if (!response.ok) {
+      } else if (user.role === 'docente') {
         redirect = '/new-docente.html';
-      } else {
-        redirect = `/view-docente.html?id=${user.entidade_id}`;
-      }
-    } else if (user.role === 'supervisor') {
-      const response = await authenticatedFetch(`/supervisores/${user.entidade_id}`);
-      if (!response.ok) {
+      } else if (user.role === 'supervisor') {
         redirect = '/new-supervisor.html';
-      } else {
-        redirect = `/view-supervisor.html?id=${user.entidade_id}`;
+      }
+    } else {
+      // Redirect to view entity page based on role
+      if (user.role === 'aluno') {
+        const response = await authenticatedFetch(`/alunos/${user.entidade_id}`);
+        if (!response.ok) {
+          redirect = '/new-aluno.html';
+        } else {
+          redirect = `/view-aluno.html?id=${user.entidade_id}`;
+        }
+      } else if (user.role === 'docente') {
+        const response = await authenticatedFetch(`/docentes/${user.entidade_id}`);
+        if (!response.ok) {
+          redirect = '/new-docente.html';
+        } else {
+          redirect = `/view-docente.html?id=${user.entidade_id}`;
+        }
+      } else if (user.role === 'supervisor') {
+        const response = await authenticatedFetch(`/supervisores/${user.entidade_id}`);
+        if (!response.ok) {
+          redirect = '/new-supervisor.html';
+        } else {
+          redirect = `/view-supervisor.html?id=${user.entidade_id}`;
+        }
       }
     }
   } else {
@@ -42,11 +53,13 @@ async function redirectUser(user, params) {
 }
 
 // If already logged in, redirect to appropriate page
-if (isLoggedIn()) {
-  const user = getCurrentUser();
-  const params = new URLSearchParams(window.location.search);
-  await redirectUser(user, params);
-}
+(async () => {
+  if (isLoggedIn()) {
+    const user = getCurrentUser();
+    const params = new URLSearchParams(window.location.search);
+    await redirectUser(user, params);
+  }
+})();
 
 const form = document.getElementById('loginForm');
 const msg = document.getElementById('message');

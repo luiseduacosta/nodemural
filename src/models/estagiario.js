@@ -9,7 +9,7 @@ const Estagiario = {
         return rows;
     },
 
-    async findAll(periodo = null) {
+    async findAll(periodo = null, aluno_id = null) {
         let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
                     a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                     d.nome as professor_nome,
@@ -24,9 +24,20 @@ const Estagiario = {
                     LEFT JOIN turma_estagios t ON e.turmaestagio_id = t.id`;
 
         let params = [];
+        let conditions = [];
+        
         if (periodo) {
-            query += ' WHERE e.periodo = ?';
+            conditions.push('e.periodo = ?');
             params.push(periodo);
+        }
+        
+        if (aluno_id) {
+            conditions.push('e.aluno_id = ?');
+            params.push(aluno_id);
+        }
+        
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
         }
 
         query += ' ORDER BY e.periodo DESC, a.nome ASC';

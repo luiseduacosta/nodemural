@@ -1,4 +1,3 @@
-// src/public/estagios.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -40,9 +39,17 @@ $(document).ready(async function () {
     });
 
     window.deleteEstagio = async (id) => {
-        if (confirm('Tem certeza que deseja excluir este estagio?')) {
-            await authenticatedFetch(`/estagio/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+        if (confirm('Tem certeza que deseja excluir esta instituição de estágio?')) {
+            try {
+                const response = await authenticatedFetch(`/estagios/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Erro ao excluir instituição');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting estagio:', error);
+                alert('Erro ao excluir instituição de estágio');
+            }
         }
     };
 });

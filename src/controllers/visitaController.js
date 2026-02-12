@@ -45,7 +45,10 @@ export const updateVisita = async (req, res) => {
         const { id } = req.params;
         const { instituicao_id, data, responsavel, motivo, avaliacao, descricao } = req.body;
 
-        await Visita.update(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao);
+        const success = await Visita.update(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao);
+        if (!success) {
+            return res.status(404).json({ error: 'Visita not found' });
+        }
         res.status(204).end();
     } catch (error) {
         console.error('Error updating visita:', error);
@@ -57,7 +60,10 @@ export const updateVisita = async (req, res) => {
 export const deleteVisita = async (req, res) => {
     try {
         const { id } = req.params;
-        await Visita.delete(id);
+        const success = await Visita.delete(id);
+        if (!success) {
+            return res.status(404).json({ error: 'Visita not found' });
+        }
         res.status(204).end();
     } catch (error) {
         console.error('Error deleting visita:', error);

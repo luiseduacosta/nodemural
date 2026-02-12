@@ -8,10 +8,10 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
-// Get docente by siape. Needs to login first
+// Public routes (no auth required) - needed for registration
 router.get('/siape/:siape', docenteController.getDocenteBySiape);
 
-// Routes
+// Protected routes
 router.get('/', verifyToken, checkRole(['admin', 'aluno', 'docente']), docenteController.getAllDocentes);
 router.get('/:id/estagiarios', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.getEstagiariosByDocenteId);
 router.get('/:id', verifyToken, checkRole(['admin', 'docente']), checkOwnership, docenteController.getDocenteById);

@@ -61,7 +61,7 @@ $(document).ready(async function () {
         const response = await authenticatedFetch('/configuracoes');
         const configuracoes = await response.json();
         // Put the value in the periodo input
-        document.getElementById('periodo').value = configuracoes[0].mural_periodo_atual;
+        document.getElementById('periodo').value = configuracoes.mural_periodo_atual;
 
     } catch (error) {
         console.error('Error loading periodo:', error);

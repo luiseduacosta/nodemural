@@ -1,5 +1,4 @@
-// src/controllers/inscricaoController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -14,6 +13,9 @@ $(document).ready(async function () {
         order: [[3, 'desc'], [1, 'asc']],
         ajax: {
             url: '/inscricoes',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+            },
             data: function (d) {
                 const periodo = $('#periodoFilter').val();
                 if (periodo) {
@@ -55,7 +57,7 @@ $(document).ready(async function () {
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
-            const periodosRes = await fetch('/inscricoes/periodos');
+            const periodosRes = await authenticatedFetch('/inscricoes/periodos');
             const periodos = await periodosRes.json();
 
             const select = $('#periodoFilter');
@@ -67,7 +69,7 @@ $(document).ready(async function () {
             });
 
             // 2. Get Default Config
-            const configRes = await fetch('/configuracoes');
+            const configRes = await authenticatedFetch('/configuracoes');
             if (configRes.ok) {
                 const config = await configRes.json();
                 if (config.mural_periodo_atual) {
@@ -92,8 +94,16 @@ $(document).ready(async function () {
     // Delete Inscricao
     window.deleteInscricao = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
-            await fetch(`/inscricoes/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            try {
+                const response = await authenticatedFetch(`/inscricoes/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Erro ao excluir inscrição');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting inscricao:', error);
+                alert('Erro ao excluir inscrição');
+            }
         }
     };
 });

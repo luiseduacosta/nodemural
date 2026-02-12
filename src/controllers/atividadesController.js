@@ -48,11 +48,11 @@ export const updateAtividade = async (req, res) => {
         const { id } = req.params;
         const { estagiario_id, dia, inicio, final, atividade } = req.body;
 
-        const updated = await Atividades.update(id, estagiario_id, dia, inicio, final, atividade);
-        if (!updated) {
+        const success = await Atividades.update(id, estagiario_id, dia, inicio, final, atividade);
+        if (!success) {
             return res.status(404).json({ error: 'Atividade not found' });
         }
-        res.status(200).json(updated);
+        res.status(204).end();
     } catch (error) {
         console.error('Error updating atividade:', error);
         res.status(500).json({ error: error.message });
@@ -63,8 +63,10 @@ export const updateAtividade = async (req, res) => {
 export const deleteAtividade = async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await Atividades.delete(id);
-        // Similar to update, server.js didn't check for existence.
+        const success = await Atividades.delete(id);
+        if (!success) {
+            return res.status(404).json({ error: 'Atividade not found' });
+        }
         res.status(204).end();
     } catch (error) {
         console.error('Error deleting atividade:', error);

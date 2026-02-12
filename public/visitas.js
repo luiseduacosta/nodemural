@@ -1,5 +1,4 @@
-// src/public/visitas.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -17,6 +16,9 @@ $(document).ready(async function () {
         order: [[2, 'desc']],
         ajax: {
             url: instituicaoId ? `/visitas?instituicao_id=${instituicaoId}` : '/visitas',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+            },
             dataSrc: ''
         },
         columns: [
@@ -51,8 +53,16 @@ $(document).ready(async function () {
 
     window.deleteVisita = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta visita?')) {
-            await fetch(`/visitas/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            try {
+                const response = await authenticatedFetch(`/visitas/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Erro ao excluir visita');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting visita:', error);
+                alert('Erro ao excluir visita');
+            }
         }
     };
 });

@@ -1,4 +1,3 @@
-// src/public/questionario.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -52,6 +51,9 @@ $(document).ready(async function () {
             $.ajax({
                 url: `/questionarios/${id}`,
                 type: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + getToken()
+                },
                 success: function () {
                     $('#questionarioTable').DataTable().ajax.reload();
                 },
