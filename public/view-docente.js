@@ -8,6 +8,11 @@ $(document).ready(async function () {
         return;
     }
 
+    if (!hasRole('admin')) {
+        const excluirDocente = document.getElementById('btn-excluir_docente');
+        excluirDocente.classList.add('d-none');
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
