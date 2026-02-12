@@ -9,6 +9,7 @@ const Supervisor = {
         return rows;
     },
 
+    // Find supervisor by cress. There is only one supervisor per cress
     async findByCress(cress) {
         const rows = await pool.query(
             'SELECT id, nome, email, celular, cress FROM supervisores WHERE cress = ?',

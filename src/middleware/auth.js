@@ -157,8 +157,13 @@ export const checkEstagiarioOwnership = async (req, res, next) => {
             return res.status(404).json({ error: 'Estagiário não encontrado' });
         }
 
-        // Compare estagiario's aluno_id with user's entidade_id
-        if ( req.user.role === 'aluno' && req.user.entidade_id == estagiario.aluno_id) {
+        // Aluno can access their own estagiarios
+        if (req.user.role === 'aluno' && req.user.entidade_id == estagiario.aluno_id) {
+            return next();
+        }
+
+        // Docente can access only their own students (estagiarios where professor_id matches)
+        if (req.user.role === 'docente' && req.user.entidade_id == estagiario.professor_id) {
             return next();
         }
 

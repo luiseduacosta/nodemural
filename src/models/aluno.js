@@ -19,10 +19,10 @@ const Aluno = {
         return { id: Number(result.insertId), nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes };
     },
 
-    // Find aluno by registro
+    // Find aluno by registro. There is only one aluno per registro
     async findByRegistro(registro) {
         const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
-        return rows;
+        return rows[0];
     },
 
     async findAll(req) {

@@ -29,10 +29,12 @@ export const register = async (req, res) => {
         // Create user (role defaults to 'aluno' if not specified)
         const userRole = role || 'aluno';
 
-        // Rules for entidade_id: must be null for admin
+        // Rules for entidade_id: must be null for admin, and handle string 'undefined'
         let finalEntidadeId = entidade_id;
-        if (userRole === 'admin') {
+        if (userRole === 'admin' || entidade_id === 'undefined' || entidade_id === undefined || entidade_id === '') {
             finalEntidadeId = null;
+        } else if (entidade_id) {
+            finalEntidadeId = parseInt(entidade_id, 10) || null;
         }
 
         const newUser = await User.create(email, password, nome, identificacao, userRole, finalEntidadeId);

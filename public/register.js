@@ -1,5 +1,5 @@
 // src/public/register.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole } from './auth-utils.js';
 
 function isAuthenticated() {
   return getToken() && hasRole(['admin']);
@@ -45,13 +45,13 @@ async function checkAluno(identificacao) {
     const data = await res.json();
     if (res.ok) {
       msg.style.color = 'red';
-      msg.textContent = 'Aluno cadastrado. Ok!.';
-      document.getElementById('entidade_id').value = data[0]?.id;
+      msg.textContent = 'Pessoa já cadastrado. Ok!.';
+      document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
     msg.style.color = 'green';
-    msg.textContent = "Aluno precisa ser cadastrado no sistema de gestão de alunos.";
+    msg.textContent = "Pessoa precisa ser cadastrado no sistema de gestão de pessoas.";
   }
 }
 
@@ -65,7 +65,7 @@ async function checkDocente(identificacao) {
     if (res.ok) {
       msg.style.color = 'red';
       msg.textContent = 'Docente já registrado.';
-      document.getElementById('entidade_id').value = data[0]?.id;
+      document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
@@ -113,6 +113,7 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ nome, role, identificacao, entidade_id, email, password, passwordConfirm })
     });
     const data = await res.json();
+    console.log(data);
     if (!res.ok) throw new Error(data.error || 'Erro ao registrar');
     msg.style.color = 'green';
     msg.textContent = 'Registrado com sucesso. Redirecionando...';

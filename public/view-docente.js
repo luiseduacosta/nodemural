@@ -1,4 +1,4 @@
-// View Docente Details
+// View Docente Details and edit nota e ch de estagiarios
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -87,13 +87,21 @@ async function loadEstagiarios(docenteId) {
 
             estagiarios.forEach(est => {
                 const tr = document.createElement('tr');
+                tr.dataset.id = est.estagiario_id;
                 tr.innerHTML = `
                     <td>${est.estagiario_id}</td>
                     <td>${est.aluno_registro}</td>
-                    <td><a href="view-aluno.html?id=${est.aluno_id}">${est.aluno_nome}</a></td>
+                    <td><a href="view-estagiario.html?id=${est.estagiario_id}">${est.aluno_nome}</a></td>
                     <td>${est.estagiario_supervisor_nome || 'N/A'}</td>
                     <td>${est.estagiario_nivel}</td>
                     <td>${est.estagiario_periodo}</td>
+                    <td class="editable-field" data-field="ch">${est.estagiario_carga_horaria || 'N/A'}</td>
+                    <td class="editable-field" data-field="nota">${est.estagiario_nota || 'N/A'}</td>
+                    <td class="actions">
+                        <button class="btn btn-warning btn-edit">Editar</button>
+                        <button class="btn btn-primary btn-save" style="display:none">Salvar</button>
+                        <button class="btn btn-secondary btn-cancel" style="display:none">Cancelar</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -103,5 +111,77 @@ async function loadEstagiarios(docenteId) {
         document.getElementById('no-estagiarios-msg').classList.remove('d-none');
         document.getElementById('no-estagiarios-msg').textContent = 'Erro ao carregar estagiários.';
         document.getElementById('table-estagiarios').classList.add('d-none');
+    }
+}
+
+// Setup event delegation for the table
+document.addEventListener('DOMContentLoaded', () => {
+    const tableBody = document.querySelector('#table-estagiarios tbody');
+    if (!tableBody) return;
+
+    tableBody.addEventListener('click', (event) => {
+        const target = event.target;
+        const row = target.closest('tr');
+        if (!row) return;
+
+        if (target.classList.contains('btn-edit')) {
+            makeRowEditable(row);
+        } else if (target.classList.contains('btn-save')) {
+            saveRow(row);
+        } else if (target.classList.contains('btn-cancel')) {
+            cancelEdit(row);
+        }
+    });
+});
+
+// Make row editable, fields 'carga_horaria' and 'nota' only
+function makeRowEditable(row) {
+    row.classList.add('editing');
+    const cells = row.querySelectorAll('.editable-field');
+    cells.forEach(cell => {
+        const text = cell.textContent === 'N/A' ? '' : cell.textContent;
+        cell.innerHTML = `<input class="form-control" type="text" value="${text}">`;
+    });
+
+    // Toggle buttons
+    row.querySelector('.btn-edit').style.display = 'none';
+    row.querySelector('.btn-save').style.display = 'inline-block';
+    row.querySelector('.btn-cancel').style.display = 'inline-block';
+}
+
+// Cancel edit - reload estagiarios to restore original data
+async function cancelEdit(row) {
+    const docenteId = window.currentDocenteId;
+    await loadEstagiarios(docenteId);
+}
+
+// Save row changes
+async function saveRow(row) {
+    const estagiarioId = row.dataset.id;
+    const inputs = row.querySelectorAll('input');
+    const updatedData = {};
+
+    inputs.forEach(input => {
+        const fieldName = input.closest('td').dataset.field;
+        updatedData[fieldName] = input.value;
+    });
+
+    try {
+        const response = await authenticatedFetch(`/estagiarios/${estagiarioId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Falha ao atualizar o estagiário.');
+        }
+
+        // Reload to show updated data
+        const docenteId = window.currentDocenteId;
+        await loadEstagiarios(docenteId);
+
+    } catch (error) {
+        alert('Erro ao salvar: ' + error.message);
     }
 }

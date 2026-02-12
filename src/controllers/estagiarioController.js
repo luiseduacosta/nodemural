@@ -68,8 +68,18 @@ export const createEstagiario = async (req, res) => {
 export const updateEstagiario = async (req, res) => {
     try {
         const { id } = req.params;
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
-        const success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes);
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch } = req.body;
+
+        // If only nota and ch are provided, use partial update
+        const isPartialUpdate = Object.keys(req.body).every(key => ['nota', 'ch'].includes(key));
+
+        let success;
+        if (isPartialUpdate) {
+            success = await Estagiario.updatePartial(id, { nota, ch });
+        } else {
+            success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch);
+        }
+
         if (!success) {
             return res.status(404).json({ error: 'Estagiario not found' });
         }

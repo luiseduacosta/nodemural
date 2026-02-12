@@ -6,10 +6,8 @@ import { authenticatedFetch } from './auth-utils.js';
 async function redirectUser(user, params) {
   let redirect = '';
 
-  // console.log(user);
-
   // check if the entidade_id has a real value and if it exists in the tables: alunos, docentes, supervisors
-  if (user.role !== 'admin' && (user.entidade_id && user.entidade_id !== 0)) {
+  if (user.role !== 'admin') {
     // Redirect to view entity page based on role
     if (user.role === 'aluno') {
       const response = await authenticatedFetch(`/alunos/${user.entidade_id}`);
@@ -33,8 +31,13 @@ async function redirectUser(user, params) {
         redirect = `/view-supervisor.html?id=${user.entidade_id}`;
       }
     }
+  } else {
+    // Admin or no entidade_id - redirect to menu
+    redirect = '/mural.html';
+  }
+
+  if (redirect) {
     window.location.href = redirect;
-    return;
   }
 }
 
@@ -72,7 +75,7 @@ form.addEventListener('submit', async (e) => {
 
     // Check for redirect parameter
     const params = new URLSearchParams(window.location.search);
-
+    console.log(data.user, params);
     setTimeout(() => redirectUser(data.user, params), 800);
   } catch (err) {
     msg.style.color = 'red';

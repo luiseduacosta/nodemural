@@ -3,7 +3,7 @@ import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from '
 
 $(document).ready(async function () {
     // Only admin, aluno and supervisor can access this page
-    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor'])) {
+    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'docente'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -11,13 +11,16 @@ $(document).ready(async function () {
     // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-    let questionario_id = urlParams.get('questionario_id') || 1;
+    let questionario_id = urlParams.get('questionario_id') || 1; // This value maybe be stored in the config record.
 
     if (!id) {
         alert('ID não fornecido');
         window.location.href = 'estagiarios.html';
         return;
     }
+
+    // Constant that we use along the code to identify the current aluno ID
+    const currentAlunoId = getCurrentUser().entidade_id;
 
     // Initialization state
     let existingResposta = null;
@@ -61,7 +64,7 @@ $(document).ready(async function () {
         $('#supervisorNome').text(estagiario.supervisor_nome || 'Não informado');
 
         window.currentEstagioId = id;
-        window.currentAlunoId = estagiario.aluno_id;
+        window.currentAlunoId = estagiario.aluno_id || currentAlunoId;
 
         // Hide delete buttons if user is not Admin
         if (!isAdmin()) {
@@ -69,8 +72,10 @@ $(document).ready(async function () {
         }
 
         // Show edit button if user is admin or the user is the same as the estagiario
-        if (isAdmin() || getCurrentUser().id == estagiario.aluno_id) {
+        if (isAdmin() || (getCurrentUser().role === 'aluno' && getCurrentUser().entidade_id === currentAlunoId)) {
             document.getElementById('edit-estagiario').style.display = 'block';
+        } else {
+            document.getElementById('edit-estagiario').style.display = 'none';
         }
 
         // 2. Load Atividades
@@ -267,7 +272,7 @@ $(document).ready(async function () {
 
     // Go to edit-estagiario.html
     window.editEstagiario = function () {
-        if (!isAdmin() && getCurrentUser().id != id) {
+        if (!isAdmin() && getCurrentUser().entidade_id != currentAlunoId) {
             alert('Apenas o administrador ou o próprio estagiário podem editar.');
             return;
         }

@@ -63,12 +63,37 @@ const Estagiario = {
         return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes };
     },
 
-    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes) {
+    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch) {
         const result = await pool.query(
             `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
              instituicao_id = ?, turmaestagio_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
+             nota = ?, ch = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, id]
+            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch, id]
+        );
+        return result.affectedRows > 0;
+    },
+
+    async updatePartial(id, fields) {
+        const allowedFields = ['nota', 'ch'];
+        const updates = [];
+        const values = [];
+
+        for (const [key, value] of Object.entries(fields)) {
+            if (allowedFields.includes(key) && value !== undefined) {
+                updates.push(`${key} = ?`);
+                values.push(value);
+            }
+        }
+
+        if (updates.length === 0) {
+            return false;
+        }
+
+        values.push(id);
+        const result = await pool.query(
+            `UPDATE estagiarios SET ${updates.join(', ')} WHERE id = ?`,
+            values
         );
         return result.affectedRows > 0;
     },
@@ -114,12 +139,14 @@ const Estagiario = {
                       a.registro as aluno_registro,
                       a.nome as aluno_nome,
                       e.supervisor_id as estagiario_supervisor_id,
+                      i.instituicao as estagiario_instituicao,
                       s.nome as estagiario_supervisor_nome,
                       e.professor_id as estagiario_professor_id,
                       e.nivel as estagiario_nivel,
                       e.periodo as estagiario_periodo
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
+                      LEFT JOIN estagio i ON e.instituicao_id = i.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       WHERE e.professor_id = ?
                       ORDER BY e.periodo DESC, a.nome ASC`;
