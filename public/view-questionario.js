@@ -14,6 +14,9 @@ $(document).ready(async function () {
         $.ajax({
             url: `/questionarios/${id}`,
             type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             success: function (data) {
                 $('#id').text(data.id);
                 $('#title').text(data.title);

@@ -75,36 +75,33 @@
                                 <label class="form-label fw-bold">Professor(a)</label>
                                 <p class="form-control-plaintext" id="view-professor"></p>
                             </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Nível</label>
-                                <p class="form-control-plaintext" id="view-nivel"></p>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Período</label>
-                                <p class="form-control-plaintext" id="view-periodo"></p>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold">Turma de Estágio</label>
                                 <p class="form-control-plaintext" id="view-turma"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Nível</label>
+                                <p class="form-control-plaintext" id="view-nivel"></p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Período</label>
+                                <p class="form-control-plaintext" id="view-periodo"></p>
+                            </div>
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Turno</label>
                                 <p class="form-control-plaintext" id="view-turno"></p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Ajuste 2020</label>
                                 <p class="form-control-plaintext" id="view-ajuste2020"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Observações</label>
                                     <p class="form-control-plaintext" id="view-observacoes"></p>
@@ -152,12 +149,26 @@
 
             <!-- Respostas TAB -->
             <div class="tab-pane fade" id="respostas" role="tabpanel" aria-labelledby="respostas-tab">
+    
                 <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 id="estagiario_nota_ch" class="card-title">Avaliação docente</h2>
+                        <p class="card-text">
+                            <strong>Professor(a):</strong> <span id="view-professorNome"></span>
+                        </p>
+                        <p>
+                            <strong>Carga horária:</strong> <span id="view-ch"></span><br>
+                            <strong>Nota:</strong> <span id="view-nota"></span>
+                        </p>
+                        <span id="statusAvaliacaoDocente" class="badge bg-secondary"></span>
+                    </div>
+                </div>
+        
+                <div class="card mb-2">
                     <div class="card-body">
                         <h2 id="questionarioTitle" class="card-title">Carregando...</h2>
                         <p class="card-text">
-                            <strong>Aluno:</strong> <span id="alunoNome"></span><br>
-                            <strong>Supervisor:</strong> <span id="supervisorNome"></span>
+                            <strong>Supervisor(a):</strong> <span id="supervisorNome"></span>
                         </p>
                         <span id="statusBadge" class="badge bg-secondary"></span>
                     </div>

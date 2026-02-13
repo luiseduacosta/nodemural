@@ -26,12 +26,12 @@ $(document).ready(async function () {
             nome: document.getElementById('nome').value,
             siape: document.getElementById('siape').value,
             email: document.getElementById('email').value,
-            celular: document.getElementById('celular').value,
-            curriculolattes: document.getElementById('curriculolattes').value,
+            celular: document.getElementById('celular').value || null,
+            curriculolattes: document.getElementById('curriculolattes').value || null,
             departamento: document.getElementById('departamentoId').value,
-            dataegresso: document.getElementById('dataegresso').value,
-            motivoegresso: document.getElementById('motivoegresso').value,
-            observacoes: document.getElementById('observacoes').value
+            dataegresso: document.getElementById('dataegresso').value || null,
+            motivoegresso: document.getElementById('motivoegresso').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         try {

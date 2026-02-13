@@ -1,4 +1,3 @@
-// src/controllers/turmaController.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {

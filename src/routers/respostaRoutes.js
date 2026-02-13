@@ -26,7 +26,7 @@ router.use(express.json());
 router.get('/supervisor/:supervisor_id/estagiarios', verifyToken, checkRole(['admin', 'supervisor']), getEstagiariosBySupervisor);
 
 // Get resposta by estagiario and questionario (must be before :id route)
-router.get('/estagiario/:estagiario_id/questionario/:questionario_id', verifyToken, checkRole(['admin', 'supervisor', 'aluno']), getRespostaByEstagiarioAndQuestionario);
+router.get('/estagiario/:estagiario_id/questionario/:questionario_id', verifyToken, checkRole(['admin', 'supervisor', 'aluno', 'docente']), getRespostaByEstagiarioAndQuestionario);
 
 // Check if resposta is complete
 router.get('/:id/complete', verifyToken, checkRole(['admin', 'supervisor', 'aluno']), checkRespostaComplete);

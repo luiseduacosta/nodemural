@@ -26,6 +26,9 @@ $(document).ready(async function () {
     $.ajax({
         url: `/questionarios/${questionario_id}`,
         type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         success: function (data) {
             $('#questionarioTitle').text(data.title);
         },
@@ -38,6 +41,9 @@ $(document).ready(async function () {
     $.ajax({
         url: `/estagiarios/${estagiario_id}`,
         type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         success: function (data) {
             $('#alunoNome').text(data.aluno_nome || 'Não informado');
             $('#supervisorNome').text(data.supervisor_nome || 'Não informado');
@@ -48,6 +54,9 @@ $(document).ready(async function () {
     $.ajax({
         url: `/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`,
         type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${getToken()}`
+        },
         success: function (data) {
             existingResposta = data;
             existingResponses = typeof data.response === 'string'
@@ -67,6 +76,9 @@ $(document).ready(async function () {
         $.ajax({
             url: `/questoes?questionario_id=${questionario_id}`,
             type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             success: function (questions) {
                 renderQuestions(questions);
             },
@@ -266,6 +278,9 @@ $(document).ready(async function () {
             $.ajax({
                 url: `/respostas/${existingResposta.id}`,
                 type: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                },
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
                 success: function () {

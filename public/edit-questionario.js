@@ -13,6 +13,9 @@ $(document).ready(async function () {
     if (id) {
         $.ajax({
             url: `/questionarios/${id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             type: 'GET',
             success: function (data) {
                 $('#id').val(data.id);
@@ -46,6 +49,9 @@ $(document).ready(async function () {
         $.ajax({
             url: `/questionarios/${id}`,
             type: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            },
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function () {

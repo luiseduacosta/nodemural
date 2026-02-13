@@ -14,7 +14,7 @@ router.post('/', verifyToken, checkRole(['admin', 'aluno']), estagiarioControlle
 router.get('/', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAllEstagiarios);
 router.get('/aluno/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getEstagiariosByAlunoId);
 router.get('/:id/next-nivel', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getNextNivel);
-router.get('/:id/atividades', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAtividadesByEstagiarioId);
+router.get('/:id/atividades', verifyToken, checkRole(['admin', 'aluno', 'docente', 'supervisor']), estagiarioController.getAtividadesByEstagiarioId);
 router.get('/:id', verifyToken, checkRole(['admin', 'aluno', 'docente', 'supervisor']), estagiarioController.getEstagiarioById);
 router.put('/:id', verifyToken, checkRole(['admin', 'aluno', 'docente']), checkEstagiarioOwnership, estagiarioController.updateEstagiario);
 router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.deleteEstagiario);

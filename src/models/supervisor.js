@@ -67,11 +67,16 @@ const Supervisor = {
 
     async findEstagiariosBySupervisorId(supervisor_id) {
         const rows = await pool.query(
-            `SELECT e.id as estagiario_id, e.aluno_id as aluno_id, a.registro as aluno_registro, a.nome as aluno_nome, e.periodo as estagiario_periodo, e.nivel as estagiario_nivel 
+            `SELECT e.id as estagiario_id, 
+            e.aluno_id as aluno_id, 
+            a.registro as aluno_registro, 
+            a.nome as aluno_nome, 
+            e.periodo as estagiario_periodo, 
+            e.nivel as estagiario_nivel 
              FROM estagiarios e
              JOIN alunos a ON e.aluno_id = a.id
              WHERE e.supervisor_id = ?
-             ORDER BY a.nome ASC`,
+             ORDER BY estagiario_periodo DESC, estagiario_nivel ASC`,
             [supervisor_id]
         );
         return rows;

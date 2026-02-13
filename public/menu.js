@@ -28,7 +28,8 @@ $(document).ready(async function () {
       // Remove login/register links if already logged in
       switch (user.role) {
         case 'admin':
-
+          const loginLinksAdmin = navbarNav.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+          loginLinksAdmin.forEach(link => link.parentElement.remove());
           break;
         case 'aluno':
           const loginLinksAluno = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');

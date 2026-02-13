@@ -18,21 +18,27 @@ $(document).ready(async function () {
     async function loadData() {
         try {
             if (questionario_id) {
-                $.ajax({
+                $.ajax ({
                     url: `/questoes?questionario_id=${questionario_id}`,
                     type: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + getToken()
+                    },
                     success: function (data) {
                         table.clear().rows.add(data).draw();
                     },
                     error: function (xhr, status, error) {
                         console.error("Error loading questionario:", error);
                         alert("Erro ao carregar questionario");
-                    },
+                    }
                 });
             } else {
                 $.ajax({
                     url: `/questoes`,
                     type: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + getToken()
+                    },
                     success: function (data) {
                         table.clear().rows.add(data).draw();
                     },
@@ -60,6 +66,10 @@ $(document).ready(async function () {
         ],
         ajax: {
             url: "/questoes",
+            type: "GET",
+            headers: {
+                "Authorization": "Bearer " + getToken()
+            },
             dataSrc: "",
         },
         columns: [
@@ -97,6 +107,9 @@ $(document).ready(async function () {
             try {
                 $.ajax({
                     url: `/questoes/${id}`,
+                    headers: {
+                        "Authorization": "Bearer " + getToken()
+                    },
                     type: "DELETE",
                     success: function (data) {
                         console.log("Questão excluida");

@@ -51,15 +51,15 @@ $(document).ready(async function () {
 
         const docente = {
             nome: document.getElementById('nome').value,
-            siape: document.getElementById('siape').value || '',
-            cpf: document.getElementById('cpf').value || '',
-            celular: document.getElementById('celular').value || '',
-            email: document.getElementById('email').value || '',
-            curriculolattes: document.getElementById('curriculolattes').value || '',
+            siape: document.getElementById('siape').value || null,
+            cpf: document.getElementById('cpf').value || null,
+            celular: document.getElementById('celular').value || null,
+            email: document.getElementById('email').value || null,
+            curriculolattes: document.getElementById('curriculolattes').value || null,
             departamento: document.getElementById('departamentoID').value,
             dataegresso: document.getElementById('dataegresso').value || null,
-            motivoegresso: document.getElementById('motivoegresso').value || '',
-            observacoes: document.getElementById('observacoes').value || ''
+            motivoegresso: document.getElementById('motivoegresso').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         try {

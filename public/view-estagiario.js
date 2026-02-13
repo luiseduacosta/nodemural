@@ -2,7 +2,7 @@
 import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from './auth-utils.js';
 
 $(document).ready(async function () {
-    // Only admin, aluno and supervisor can access this page
+    // Only admin, aluno, supervisor and docente can access this page
     if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'docente'])) {
         window.location.href = 'login.html';
         return;
@@ -154,6 +154,17 @@ $(document).ready(async function () {
         } catch (error) {
             console.error('Error loading evaluation status:', error);
             $('#statusBadge').removeClass('bg-success bg-warning').addClass('bg-secondary').text('Erro ao verificar');
+        }
+
+        // 5. Load fields nota e ch from estagiarios
+        const estagiarioDetailsResponse = await authenticatedFetch(`/estagiarios/${id}`);
+        if (estagiarioDetailsResponse.ok) {
+            const estagiarioDetails = await estagiarioDetailsResponse.json();
+            document.getElementById('view-professorNome').textContent = estagiarioDetails.professor_nome !== null ? estagiarioDetails.professor_nome : '-';
+            document.getElementById('view-nota').textContent = estagiarioDetails.nota !== null ? estagiarioDetails.nota : '-';
+            document.getElementById('view-ch').textContent = estagiarioDetails.ch !== null ? estagiarioDetails.ch : '-';
+        } else {
+            $('#statusAvaliacaoDocente').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação docente');
         }
 
     } catch (error) {

@@ -6,7 +6,7 @@ const user = getCurrentUser();
 $(document).ready(async function () {
 
     // Se não estiver logado ou não for admin ou aluno, redireciona para o login
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    if (!getToken() || !hasRole(['admin', 'aluno', 'docente', 'supervisor'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -30,6 +30,12 @@ $(document).ready(async function () {
         if (user.role !== 'admin') {
             document.getElementById('btnAluno-excluir').classList.add('d-none');
         }
+    }
+
+    // Hide the edit and new-estagiario buttons if it not the own aluno
+    if (user.role != 'aluno' && user.entidade_id != id) {
+        document.getElementById('btnAluno-editar').classList.add('d-none');
+        document.getElementById('btnAluno-estagios').classList.add('d-none');
     }
 
     // Fetch the aluno data

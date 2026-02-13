@@ -10,6 +10,10 @@ $(document).ready(async function () {
     $('#questionarioTable').DataTable({
         "ajax": {
             "url": "/questionarios",
+            "method": "GET",
+            "headers": {
+                "Authorization": "Bearer " + getToken()
+            },
             "dataSrc": ""
         },
         "columns": [

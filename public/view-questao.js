@@ -28,6 +28,9 @@ $(document).ready(async function () {
             // GET /questoes/:id
             $.ajax({
                 url: `/questoes/${id}`,
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                },
                 type: 'GET',
                 success: function (questao) {
                     $("#id").text(questao.id);
