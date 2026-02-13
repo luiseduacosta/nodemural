@@ -396,9 +396,9 @@ $(document).ready(async function () {
             height = height + art4Height;
             doc.text(10, height, lines5, { maxWidth: 180, align: 'justify' });
 
-            const subTitulo ='Da ESS';
+            const subTitulo1 ='Da ESS';
             height = height + art5Height;
-            doc.text(10, height + 1, subTitulo, { align: 'left'});
+            doc.text(10, height + 1, subTitulo1, { align: 'left'});
 
             // Date
             const today = new Date().toLocaleDateString('pt-BR');
