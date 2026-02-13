@@ -27,6 +27,9 @@ $(document).ready(async function () {
             $.ajax({
                 url: "/questionarios",
                 type: "GET",
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
                 success: function (questionarios) {
                     const select = $("#questionario_id");
                     questionarios.forEach((q) => {
