@@ -1,5 +1,6 @@
 // public/view-estagiario.js
 import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from './auth-utils.js';
+// jsPDF is loaded via CDN as window.jspdf.jsPDF
 
 $(document).ready(async function () {
     // Only admin, aluno, supervisor and docente can access this page
@@ -336,6 +337,80 @@ $(document).ready(async function () {
                 console.error('Error deleting resposta:', error);
                 alert(`Erro ao excluir: ${error.message}`);
             }
+        }
+    };
+
+    // Generate Certificate PDF
+    window.generateCertificate = async function () {
+        try {
+            const estagiarioResponse = await authenticatedFetch(`/estagiarios/${id}`);
+            if (!estagiarioResponse.ok) {
+                throw new Error('Failed to fetch estagiario details');
+            }
+            const est = await estagiarioResponse.json();
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Header
+            doc.setFontSize(20);
+            doc.text(105, 10, 'TERMOS DE COMPROMISSO DE ESTÁGIO', { align: 'center', valign: 'middle'});
+
+            doc.setFontSize(10);
+
+            const headerText = 'O presente TERMO DE COMPROMISSO DE ESTÁGIO que entre si assinam a Coordenação de Estágio da Escola de Serviço Social/UFRJ, o (a) Aluno ' + est.aluno_nome + ', a  instituição ' + est.instituicao_nome + ' e o (a) Supervisor (a) de Campo ' + est.supervisor_nome + ', visa estabelecer condições gerais que regulam a realização de ESTÁGIO OBRIGATÓRIO. Ficam estabelecidas entre as partes as seguintes condições básicas para a realização do estágio:';
+            const lines = doc.splitTextToSize(headerText, 180);
+            const headerHeight = doc.getTextDimensions(lines).h;
+            doc.text(10, 20, lines, { maxWidth: 180, align: 'justify' });
+
+            const art1 = 'Art. 01. As atividades a serem desenvolvidas pelo (a) estagiário (a), deverão ser compatíveis com o curso de Serviço Social e norteadas pelos princípios preconizados na Política de Estágio (ABEPSS), tais como: a indissociabilidade entre as dimensões teórico-metodológica, ético-política e técnico-operativa; articulação entre Formação e Exercício Profissional; indissociabilidade entre estágio e supervisão acadêmica e de campo; articulação entre Universidade e Sociedade; unidade teoria e prática e articulação entre ensino, pesquisa e extensão.';
+            const lines1 = doc.splitTextToSize(art1, 180);
+            const art1Height = doc.getTextDimensions(lines1).h;
+            doc.text(10, 25 + headerHeight, lines1, { maxWidth: 180, align: 'justify' });
+
+            const art2 = 'Art. 02. As atividades desenvolvidas no campo de estágio deverão ter compatibilidade com as previstas no termo de compromisso.';
+            const lines2 = doc.splitTextToSize(art2, 180);
+            const art2Height = doc.getTextDimensions(lines2).h;
+            let height = 25 + headerHeight + art1Height;
+            doc.text(10, height, lines2, { maxWidth: 180, align: 'justify' });
+
+            const art3 = 'Art. 03. O plano de atividades do estagiário, elaborado em acordo dos alunos, a parte concedente do estágio e a instituição de ensino, será incorporado ao termo de compromisso por meio de aditivos à medida que for avaliado, progressivamente, o desenho do aluno.';
+            const lines3 = doc.splitTextToSize(art3, 180);
+            const art3Height = doc.getTextDimensions(lines3).h;
+            height = height + art2Height;
+            doc.text(10, height, lines3, { maxWidth: 180, align: 'justify' });
+
+            const art4 = 'Art. 04. A quebra deste contrato, deverá ser precedida de apresentação de solicitação formal à Coordenação de Estágio, com no mínimo 1 mês de antes do término do período letivo em curso. Contendo parecer do supervisor(a) de campo e do supervisor(a) acadêmico.';
+            const lines4 = doc.splitTextToSize(art4, 180);
+            const art4Height = doc.getTextDimensions(lines4).h;
+            height = height + art3Height;
+            doc.text(10, height, lines4, { maxWidth: 180, align: 'justify' });
+
+            const art5 = 'Art. 05. Em caso de demissão do supervisor(a), ocorrência de férias ou licença deste profissional ao longo do período letivo, outro assistente social deverá ser imediatamente indicado para supervisão técnica do estagiário.';
+            const lines5 = doc.splitTextToSize(art5, 180);
+            const art5Height = doc.getTextDimensions(lines5).h;
+            height = height + art4Height;
+            doc.text(10, height, lines5, { maxWidth: 180, align: 'justify' });
+
+            const subTitulo ='Da ESS';
+            height = height + art5Height;
+            doc.text(10, height + 1, subTitulo, { align: 'left'});
+
+            // Date
+            const today = new Date().toLocaleDateString('pt-BR');
+            height = height + art5Height;
+            doc.text(`Data de emissão: ${today}`, 105, height + 10, { align: 'center' });
+
+            // Save
+            doc.save(`certificado_${est.aluno_nome}_${est.periodo}.pdf`);
+
+        } catch (error) {
+            console.error('Error generating certificate:', error);
+            alert(`Erro ao gerar certificado: ${error.message}`);
         }
     };
 });
