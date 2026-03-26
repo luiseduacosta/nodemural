@@ -13,29 +13,28 @@ const Estagiario = {
         let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
                     a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                     d.nome as professor_nome,
-                    s.nome as supervisor_nome,
+                    s.nome as supervisor_nome, s.cress as supervisor_cress,
                     i.instituicao as instituicao_nome,
                     t.area as turma_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
                     LEFT JOIN docentes d ON e.professor_id = d.id
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
-                    LEFT JOIN estagio i ON e.instituicao_id = i.id
-                    LEFT JOIN turma_estagios t ON e.turmaestagio_id = t.id`;
+                    LEFT JOIN estagio i ON e.instituicao_id = i.id`;
 
         let params = [];
         let conditions = [];
-        
+
         if (periodo) {
             conditions.push('e.periodo = ?');
             params.push(periodo);
         }
-        
+
         if (aluno_id) {
             conditions.push('e.aluno_id = ?');
             params.push(aluno_id);
         }
-        
+
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
         }
@@ -51,6 +50,7 @@ const Estagiario = {
                       a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome,
+                      s.cress as supervisor_cress,
                       i.instituicao as instituicao_nome,
                       t.area as turma_nome
                       FROM estagiarios e
@@ -58,29 +58,28 @@ const Estagiario = {
                       LEFT JOIN docentes d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       LEFT JOIN estagio i ON e.instituicao_id = i.id
-                      LEFT JOIN turma_estagios t ON e.turmaestagio_id = t.id
                       WHERE e.id = ?`;
         const rows = await pool.query(query, [id]);
         return rows[0];
     },
 
-    async create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes) {
+    async create(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
             `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id,
-             turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes]
+             periodo, turno, nivel, ajuste2020, observacoes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes]
         );
-        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes };
+        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes };
     },
 
-    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch) {
+    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch) {
         const result = await pool.query(
             `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
-             instituicao_id = ?, turmaestagio_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
+             instituicao_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
              nota = ?, ch = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, nota, ch, observacoes, id]
+            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, nota, ch, observacoes, id] 
         );
         return result.affectedRows > 0;
     },
@@ -116,6 +115,10 @@ const Estagiario = {
 
     async findByAlunoId(aluno_id) {
         const query = `SELECT e.*,
+                      e.ajuste2020 as estagiario_ajuste2020,
+                      a.nome as aluno_nome, 
+                      a.registro as aluno_registro, 
+                      a.turno as aluno_turno,
                       i.instituicao as instituicao_nome,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome
@@ -180,7 +183,7 @@ const Estagiario = {
 
     async getNextNivel(aluno_id) {
         const estagiarioRows = await pool.query(
-            'SELECT ajuste2020, nivel, instituicao_id, professor_id, supervisor_id, turmaestagio_id, periodo FROM estagiarios WHERE aluno_id = ? ORDER BY nivel DESC LIMIT 1',
+            'SELECT ajuste2020, nivel, instituicao_id, professor_id, supervisor_id, periodo FROM estagiarios WHERE aluno_id = ? ORDER BY nivel DESC LIMIT 1',
             [aluno_id]
         );
 
@@ -191,7 +194,6 @@ const Estagiario = {
                 professor_id: null,
                 supervisor_id: null,
                 instituicao_id: null,
-                turmaestagio_id: null,
                 periodo: null,
             };
         } else {
@@ -200,7 +202,6 @@ const Estagiario = {
             const instituicao_id = estagiarioRows[0].instituicao_id;
             const professor_id = estagiarioRows[0].professor_id;
             const supervisor_id = estagiarioRows[0].supervisor_id;
-            const turmaestagio_id = estagiarioRows[0].turmaestagio_id;
             const periodo = estagiarioRows[0].periodo;
 
             const nivelRows = await pool.query(
@@ -227,7 +228,6 @@ const Estagiario = {
                 instituicao_id: instituicao_id,
                 professor_id: professor_id,
                 supervisor_id: supervisor_id,
-                turmaestagio_id: turmaestagio_id,
                 periodo: periodo,
             };
         }

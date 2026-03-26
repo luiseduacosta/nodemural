@@ -89,7 +89,7 @@ const Aluno = {
                 i.periodo as periodo, 
                 m.instituicao as mural_instituicao
             FROM inscricoes as i 
-            JOIN mural_estagio as m ON i.muralestagio_id = m.id 
+            JOIN mural_estagios as m ON i.muralestagio_id = m.id 
             LEFT JOIN alunos as a ON i.aluno_id = a.id 
             WHERE i.aluno_id = ?
             ORDER by periodo`,

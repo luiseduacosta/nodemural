@@ -55,8 +55,8 @@ export const getAtividadesByEstagiarioId = async (req, res) => {
 // Create a new estagiario
 export const createEstagiario = async (req, res) => {
     try {
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
-        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes);
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
+        const estagiario = await Estagiario.create(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes);
         res.status(201).json(estagiario);
     } catch (error) {
         console.error('Error creating estagiario:', error);
@@ -68,7 +68,7 @@ export const createEstagiario = async (req, res) => {
 export const updateEstagiario = async (req, res) => {
     try {
         const { id } = req.params;
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch } = req.body;
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch } = req.body;
 
         // If only nota and ch are provided, use partial update
         const isPartialUpdate = Object.keys(req.body).every(key => ['nota', 'ch'].includes(key));
@@ -77,7 +77,7 @@ export const updateEstagiario = async (req, res) => {
         if (isPartialUpdate) {
             success = await Estagiario.updatePartial(id, { nota, ch });
         } else {
-            success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch);
+            success = await Estagiario.update(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch);
         }
 
         if (!success) {

@@ -35,7 +35,7 @@ $(document).ready(async function () {
     ],
     orderCellsTop: true,
     ajax: {
-      url: "/estagiarios", 
+      url: "/estagiarios",
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -142,4 +142,39 @@ $(document).ready(async function () {
       }
     }
   };
+
+  // Generate and download Markdown report
+  $("#btn-report-md").on("click", function () {
+    const data = table.rows({ filter: 'applied' }).data().toArray();
+    const period = $("#periodoFilter").val() || 'Geral';
+
+    if (data.length === 0) {
+      alert("Não há dados para exportar com os filtros atuais.");
+      return;
+    }
+
+    let markdown = `# Relatório de Estagiários - Período: ${period}\n\n`;
+    markdown += `| Aluno | Instituição | Supervisor | CRESS | Professor |\n`;
+    markdown += `| :--- | :--- | :--- | :--- | :--- |\n`;
+
+    data.forEach(row => {
+      const aluno = row.aluno_nome || "-";
+      const instituicao = row.instituicao_nome || "-";
+      const supervisor = row.supervisor_nome || "-";
+      const cress = row.supervisor_cress || "-";
+      const professor = row.professor_nome || "-";
+
+      markdown += `| ${aluno} | ${instituicao} | ${supervisor} | ${cress} | ${professor} |\n`;
+    });
+
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `relatorio_estagiarios_${period.replace(/\//g, '-')}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 });
