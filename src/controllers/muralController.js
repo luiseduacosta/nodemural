@@ -20,7 +20,7 @@ export const getDistinctPeriods = async (req, res) => {
         if (!periods) {
             return res.status(404).json({ error: 'No periods found' });
         } else {
-            // console.log(periods);
+            console.log(periods);
         }
         res.status(200).json(periods);
     } catch (error) {
@@ -59,8 +59,8 @@ export const getInscricoesByMuralId = async (req, res) => {
 // Create a new mural entry
 export const createMural = async (req, res) => {
     try {
-        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, cargaHoraria, requisitos, turmaestagio_id, horario, professor_id, dataSelecao, dataInscricao, horarioSelecao, localSelecao, formaSelecao, contato, outras, periodo, datafax, localInscricao, email } = req.body;
-        const mural = await Mural.create(instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, cargaHoraria, requisitos, turmaestagio_id, horario, professor_id, dataSelecao, dataInscricao, horarioSelecao, localSelecao, formaSelecao, contato, outras, periodo, datafax, localInscricao, email);
+        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, professor_id, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, datafax, local_inscricao, email } = req.body;
+        const mural = await Mural.create(instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, professor_id, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, datafax, local_inscricao, email);
         res.status(201).json(mural);
     } catch (error) {
         console.error('Error creating mural:', error);
@@ -72,8 +72,8 @@ export const createMural = async (req, res) => {
 export const updateMural = async (req, res) => {
     try {
         const { id } = req.params;
-        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, cargaHoraria, requisitos, turmaestagio_id, horario, professor_id, dataSelecao, dataInscricao, horarioSelecao, localSelecao, formaSelecao, contato, outras, periodo, datafax, localInscricao, email } = req.body;
-        const success = await Mural.update(id, instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, cargaHoraria, requisitos, turmaestagio_id, horario, professor_id, dataSelecao, dataInscricao, horarioSelecao, localSelecao, formaSelecao, contato, outras, periodo, datafax, localInscricao, email);
+        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, professor_id, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, datafax, local_inscricao, email } = req.body;
+        const success = await Mural.update(id, instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, professor_id, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, datafax, local_inscricao, email);
         if (!success) {
             return res.status(404).json({ error: 'Mural not found' });
         }
