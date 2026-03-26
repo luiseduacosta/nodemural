@@ -4,37 +4,37 @@ import pool from '../database/db.js';
 const Estagio = {
     async findAll() {
         const rows = await pool.query(
-            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.areainstituicoes_id = ai.id ORDER BY e.instituicao ASC'
+            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN areas a ON i.area_id = a.id ORDER BY i.instituicao ASC'
         );
         return rows;
     },
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT e.*, ai.area as area_nome FROM estagio e LEFT JOIN area_instituicoes ai ON e.areainstituicoes_id = ai.id WHERE e.id = ?',
+            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN areas a ON i.area_id = a.id WHERE i.id = ?',
             [id]
         );
         return rows[0];
     },
 
-    async create(instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
+    async create(instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
         const result = await pool.query(
-            'INSERT INTO estagio (instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes]
+            'INSERT INTO instituicoes (instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes]
         );
-        return { id: Number(result.insertId), instituicao, cnpj, beneficio, areainstituicoes_id };
+        return { id: Number(result.insertId), instituicao, cnpj, beneficio, area_id };
     },
-    async update(id, instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
+    async update(id, instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes) {
         const result = await pool.query(
-            'UPDATE estagio SET instituicao = ?, cnpj = ?, beneficio = ?, areainstituicoes_id = ?, url = ?, endereco = ?, bairro = ?, municipio = ?, cep = ?, telefone = ?, fim_de_semana = ?, convenio = ?, expira = ?, seguro = ?, avaliacao = ?, observacoes = ? WHERE id = ?',
-            [instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes, id]
+            'UPDATE instituicoes SET instituicao = ?, cnpj = ?, beneficio = ?, area_id = ?, url = ?, endereco = ?, bairro = ?, municipio = ?, cep = ?, telefone = ?, fim_de_semana = ?, convenio = ?, expira = ?, seguro = ?, avaliacao = ?, observacoes = ? WHERE id = ?',
+            [instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes, id]
         );
         return result.affectedRows > 0;
     },
 
     async delete(id) {
         const result = await pool.query(
-            'DELETE FROM estagio WHERE id = ?',
+            'DELETE FROM instituicoes WHERE id = ?',
             [id]
         );
         return result.affectedRows > 0;
@@ -53,7 +53,7 @@ const Estagio = {
     async findMuralById(id) {
         const query = `
             SELECT id, periodo, vagas
-            FROM mural_estagio
+            FROM mural_estagios
             WHERE instituicao_id = ?
             ORDER BY periodo DESC
         `;
