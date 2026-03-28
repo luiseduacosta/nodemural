@@ -70,7 +70,7 @@ const Aluno = {
             JOIN alunos as a ON e.aluno_id = a.id 
             LEFT JOIN docentes as d ON e.professor_id = d.id
             LEFT JOIN supervisores as s ON e.supervisor_id = s.id
-            LEFT JOIN estagio as i ON e.instituicao_id = i.id
+            LEFT JOIN instituicoes as i ON e.instituicao_id = i.id
             WHERE e.aluno_id = ?
             ORDER BY e.periodo ASC`,
             [id]
@@ -107,14 +107,14 @@ const Aluno = {
     },
 
     async delete(id) {
-        // if aluno has estagiarios: not possible to delete
+        // if aluno has estagiarios: not delete
         const estagiarios = await pool.query('SELECT * FROM estagiarios WHERE aluno_id = ?', [id]);
         if (estagiarios.length > 0) { // Fix: removed [0] invalid access locally if pool returns array directly
             console.log('Aluno possui estagiários: não é possível excluir');
             throw new Error('Aluno possui estagiários: não é possível excluir');
         }
 
-        // if aluno has inscricoes: not possible to delete
+        // if aluno has inscricoes: not delete
         const inscricoes = await pool.query('SELECT * FROM inscricoes WHERE aluno_id = ?', [id]);
         if (inscricoes.length > 0) {
             console.log('Aluno possui inscrições: não é possível excluir');

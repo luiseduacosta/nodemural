@@ -56,7 +56,7 @@ const Supervisor = {
     async findInstituicoesBySupervisorId(supervisor_id) {
         const rows = await pool.query(
             `SELECT e.id as instituicao_id, e.instituicao
-             FROM estagio e
+             FROM instituicoes e
              INNER JOIN inst_super i ON e.id = i.instituicao_id
              WHERE i.supervisor_id = ?
              ORDER BY e.instituicao ASC`,

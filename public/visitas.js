@@ -23,7 +23,7 @@ $(document).ready(async function () {
         },
         columns: [
             { data: 'id' },
-            { data: 'instituicao', render: function (data, type, row) { return `<a href="view-visita.html?id=${row.id}">${data}</a>` } },
+            { data: 'instituicao_nome', render: function (data, type, row) { return `<a href="view-visita.html?id=${row.id}">${data}</a>` } },
             {
                 data: 'data', render: function (data) {
                     if (!data) return '';

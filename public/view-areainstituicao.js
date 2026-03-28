@@ -1,5 +1,5 @@
 // View Area Instituicao Details
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -19,7 +19,7 @@ $(document).ready(async function () {
 
     // Fetch the area data
     try {
-        const response = await fetch(`/areainstituicoes/${id}`);
+        const response = await authenticatedFetch(`/areainstituicoes/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch area');
         }
@@ -42,7 +42,7 @@ $(document).ready(async function () {
     async function deleteArea(id) {
         if (confirm('Tem certeza que deseja excluir esta área?')) {
             try {
-                const response = await fetch(`/areainstituicoes/${id}`, {
+                const response = await authenticatedFetch(`/areainstituicoes/${id}`, {
                     method: 'DELETE'
                 });
                 if (response.ok) {

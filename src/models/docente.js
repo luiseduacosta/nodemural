@@ -72,7 +72,7 @@ const Docente = {
             FROM estagiarios e 
             JOIN alunos a ON e.aluno_id = a.id 
             LEFT JOIN supervisores s ON e.supervisor_id = s.id 
-            LEFT JOIN estagio i ON e.instituicao_id = i.id 
+            LEFT JOIN instituicoes i ON e.instituicao_id = i.id 
             LEFT JOIN docentes d ON e.professor_id = d.id 
             WHERE e.professor_id = ?
             ORDER BY e.periodo DESC, e.nivel DESC, a.nome ASC`,

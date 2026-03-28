@@ -152,7 +152,7 @@ export const checkEstagiarioOwnership = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const estagiario = await Estagiario.findById(id);
+        const estagiario = await Estagiario.findByPk(id);
         if (!estagiario) {
             return res.status(404).json({ error: 'Estagiário não encontrado' });
         }
@@ -195,7 +195,7 @@ export const checkInscricaoOwnership = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const inscricao = await Inscricao.findById(id);
+        const inscricao = await Inscricao.findByIdEstagiario(id);
         if (!inscricao) {
             return res.status(404).json({ error: 'Inscrição não encontrada' });
         }

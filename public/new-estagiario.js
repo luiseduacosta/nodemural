@@ -21,7 +21,7 @@ $(document).ready(async function () {
             // Fetch everything in parallel for speed
             const [alunoRes, instRes, docRes, turmaRes, configRes] = await Promise.all([
                 authenticatedFetch('/alunos'),
-                authenticatedFetch('/estagios'),
+                authenticatedFetch('/instituicoes'),
                 authenticatedFetch('/docentes'),
                 authenticatedFetch('/turmaestagios'),
                 authenticatedFetch('/configuracoes')
@@ -80,7 +80,7 @@ $(document).ready(async function () {
     async function loadSupervisores(instituicaoId, targetId = null) {
         if (!instituicaoId) return;
         try {
-            const res = await authenticatedFetch(`/estagios/${instituicaoId}/supervisores`);
+            const res = await authenticatedFetch(`/instituicoes/${instituicaoId}/supervisores`);
             if (res.ok) {
                 const supervisores = await res.json();
                 const select = document.getElementById('supervisor_id');

@@ -62,7 +62,7 @@ $(document).ready(async function () {
         document.getElementById('view-periodo').textContent = mural.periodo || 'N/A';
         document.getElementById('view-instituicao').textContent = mural.instituicao;
         // Se não estiver logado, não pode ver o link do estágio
-        document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-estagio.html?id=${mural.instituicao_id}`;
+        document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-instituicao.html?id=${mural.instituicao_id}`;
         document.getElementById('view-vagas').textContent = mural.vagas;
         document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
         document.getElementById('view-cargaHoraria').textContent = mural.cargaHoraria || 'N/A';

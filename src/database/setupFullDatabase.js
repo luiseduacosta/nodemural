@@ -83,8 +83,8 @@ async function setupDatabase() {
                 area VARCHAR(255) NOT NULL
             )`,
 
-            // 6. estagio (Institutions, places where the students can do the internship)
-            `CREATE TABLE IF NOT EXISTS estagio (
+            // 6. instituicoes (Institutions, places where the students can do the internship)
+            `CREATE TABLE IF NOT EXISTS instituicoes (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao VARCHAR(255) NOT NULL,
                 cnpj VARCHAR(20),
@@ -209,8 +209,8 @@ async function setupDatabase() {
                 atividade varchar(100),
             `,
 
-            // 15. visita (visit to the institution to evaluate if can receive interns)
-            `CREATE TABLE IF NOT EXISTS visita (
+            // 15. visitas (visit to the institution to evaluate if can receive interns)
+            `CREATE TABLE IF NOT EXISTS visitas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao_id INT,
                 data DATE,

@@ -4,7 +4,7 @@ import Visita from '../models/visita.js';
 // Get all visitas
 export const getAllVisitas = async (req, res) => {
     try {
-        const visitas = await Visita.findAll(req);
+        const visitas = await Visita.findAllVisitas(req);
         res.status(200).json(visitas);
     } catch (error) {
         console.error('Error fetching visitas:', error);
@@ -16,7 +16,7 @@ export const getAllVisitas = async (req, res) => {
 export const getVisitaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const visita = await Visita.findById(id);
+        const visita = await Visita.findByIdVisita(id);
         if (!visita) {
             return res.status(404).json({ error: 'Visita not found' });
         }
@@ -31,7 +31,7 @@ export const getVisitaById = async (req, res) => {
 export const createVisita = async (req, res) => {
     try {
         const { instituicao_id, data, responsavel, motivo, avaliacao, descricao } = req.body;
-        const newVisita = await Visita.create(instituicao_id, data, responsavel, motivo, avaliacao, descricao);
+        const newVisita = await Visita.createVisita(instituicao_id, data, responsavel, motivo, avaliacao, descricao);
         res.status(201).json(newVisita);
     } catch (error) {
         console.error('Error creating visita:', error);
@@ -45,7 +45,7 @@ export const updateVisita = async (req, res) => {
         const { id } = req.params;
         const { instituicao_id, data, responsavel, motivo, avaliacao, descricao } = req.body;
 
-        const success = await Visita.update(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao);
+        const success = await Visita.updateVisita(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao);
         if (!success) {
             return res.status(404).json({ error: 'Visita not found' });
         }
@@ -60,7 +60,7 @@ export const updateVisita = async (req, res) => {
 export const deleteVisita = async (req, res) => {
     try {
         const { id } = req.params;
-        const success = await Visita.delete(id);
+        const success = await Visita.deleteVisita(id);
         if (!success) {
             return res.status(404).json({ error: 'Visita not found' });
         }

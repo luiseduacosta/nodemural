@@ -97,7 +97,7 @@ async function loadInstituicoes(supervisorId) {
 
 async function loadAllInstituicoes() {
     try {
-        const response = await authenticatedFetch('/estagios');
+        const response = await authenticatedFetch('/instituicoes');
         if (!response.ok) {
             throw new Error('Failed to fetch all instituições');
         }

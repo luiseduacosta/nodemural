@@ -2,25 +2,24 @@
 import pool from '../database/db.js';
 
 const Estagiario = {
-    async findDistinctPeriods() {
+    async findDistinctPeriodsEstagiario() {
         const rows = await pool.query(
             'SELECT DISTINCT periodo FROM estagiarios ORDER BY periodo DESC'
         );
         return rows;
     },
 
-    async findAll(periodo = null, aluno_id = null) {
+    async findAllEstagiario(periodo = null, aluno_id = null) {  
         let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
                     a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                     d.nome as professor_nome,
                     s.nome as supervisor_nome, s.cress as supervisor_cress,
-                    i.instituicao as instituicao_nome,
-                    t.area as turma_nome
+                    i.instituicao as instituicao_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
                     LEFT JOIN docentes d ON e.professor_id = d.id
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
-                    LEFT JOIN estagio i ON e.instituicao_id = i.id`;
+                    LEFT JOIN instituicoes i ON e.instituicao_id = i.id`;
 
         let params = [];
         let conditions = [];
@@ -44,47 +43,46 @@ const Estagiario = {
         return rows;
     },
 
-    async findById(id) {
+    async findByIdEstagiario(id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
                       a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome,
                       s.cress as supervisor_cress,
-                      i.instituicao as instituicao_nome,
-                      t.area as turma_nome
+                      i.instituicao as instituicao_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
                       LEFT JOIN docentes d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
-                      LEFT JOIN estagio i ON e.instituicao_id = i.id
+                      LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       WHERE e.id = ?`;
         const rows = await pool.query(query, [id]);
         return rows[0];
     },
 
-    async create(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes) {
+    async createEstagiario(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
             `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id,
-             periodo, turno, nivel, ajuste2020, observacoes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes]
+             periodo, nivel, ajuste2020, observacoes)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, ajuste2020, observacoes]
         );
-        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes };
+        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes };
     },
 
-    async update(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch) {
+    async updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, nota, ch) {
         const result = await pool.query(
             `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
-             instituicao_id = ?, periodo = ?, turno = ?, nivel = ?, ajuste2020 = ?,
+             instituicao_id = ?, periodo = ?, nivel = ?, ajuste2020 = ?,
              nota = ?, ch = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, nota, ch, observacoes, id] 
+            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, nota, ch, observacoes, id] 
         );
         return result.affectedRows > 0;
     },
 
-    async updatePartial(id, fields) {
+    async updatePartialEstagiario(id, fields) {
         const allowedFields = ['nota', 'ch'];
         const updates = [];
         const values = [];
@@ -108,12 +106,12 @@ const Estagiario = {
         return result.affectedRows > 0;
     },
 
-    async delete(id) {
+    async deleteEstagiario(id) {
         const result = await pool.query('DELETE FROM estagiarios WHERE id = ?', [id]);
         return result.affectedRows > 0;
     },
 
-    async findByAlunoId(aluno_id) {
+    async findByAlunoIdEstagiario(aluno_id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
                       a.nome as aluno_nome, 
@@ -123,7 +121,8 @@ const Estagiario = {
                       d.nome as professor_nome,
                       s.nome as supervisor_nome
                       FROM estagiarios e
-                      LEFT JOIN estagio i ON e.instituicao_id = i.id
+                      LEFT JOIN alunos a ON e.aluno_id = a.id
+                      LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       LEFT JOIN docentes d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       WHERE e.aluno_id = ?
@@ -132,7 +131,7 @@ const Estagiario = {
         return rows;
     },
 
-    async findBySupervisorId(supervisor_id) {
+    async findBySupervisorIdEstagiario(supervisor_id) {
         const query = `SELECT e.id as estagiario_id,
                       a.id as aluno_id,
                       a.registro as aluno_registro,
@@ -147,7 +146,7 @@ const Estagiario = {
         return rows;
     },
 
-    async findByProfessorId(professor_id) {
+    async findByProfessorIdEstagiario(professor_id) {
         const query = `SELECT e.id as estagiario_id,
                       a.id as aluno_id,
                       a.registro as aluno_registro,
@@ -160,7 +159,7 @@ const Estagiario = {
                       e.periodo as estagiario_periodo
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
-                      LEFT JOIN estagio i ON e.instituicao_id = i.id
+                      LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       WHERE e.professor_id = ?
                       ORDER BY e.periodo DESC, a.nome ASC`;
@@ -168,20 +167,21 @@ const Estagiario = {
         return rows;
     },
 
-    async findAtividadesByEstagiarioId(estagiario_id) {
+    async findAtividadesByEstagiarioIdEstagiario(estagiario_id) {
         const query = `SELECT a.*,
                           e.ajuste2020 as estagiario_ajuste2020,
                           e.nivel as estagiario_nivel,
                           e.periodo as estagiario_periodo
                           FROM folhadeatividades a
                           LEFT JOIN estagiarios e ON a.estagiario_id = e.id
+                          LEFT JOIN alunos b ON e.aluno_id = b.id
                           WHERE a.estagiario_id = ?
                           ORDER BY a.dia DESC, a.inicio ASC`;
         const rows = await pool.query(query, [estagiario_id]);
         return rows;
     },
 
-    async getNextNivel(aluno_id) {
+    async getNextNivelEstagiario(aluno_id) {
         const estagiarioRows = await pool.query(
             'SELECT ajuste2020, nivel, instituicao_id, professor_id, supervisor_id, periodo FROM estagiarios WHERE aluno_id = ? ORDER BY nivel DESC LIMIT 1',
             [aluno_id]

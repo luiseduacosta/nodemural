@@ -19,7 +19,7 @@ $(document).ready(async function () {
 
     // Load instituições for the dropdown
     try {
-        const response = await authenticatedFetch('/estagios');
+        const response = await authenticatedFetch('/instituicoes');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
 
@@ -49,7 +49,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/visitas', {
+            const response = await authenticatedFetch('/visitas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(visita)

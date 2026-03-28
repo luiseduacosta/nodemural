@@ -16,7 +16,7 @@ $(document).ready(async function () {
 
     // Load instituições for the dropdown
     try {
-        const response = await authenticatedFetch('/estagios');
+        const response = await authenticatedFetch('/instituicoes');
         const estagios = await response.json();
         const select = document.getElementById('instituicao_id');
 

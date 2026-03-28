@@ -6,7 +6,7 @@ const Inscricao = {
         let query = `SELECT i.*, a.nome as aluno_nome, m.instituicao
                     FROM inscricoes i
                     LEFT JOIN alunos a ON i.aluno_id = a.id
-                    LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id`;
+                    LEFT JOIN mural_estagios m ON i.muralestagio_id = m.id`;
         let params = [];
 
         if (periodo) {
@@ -27,17 +27,17 @@ const Inscricao = {
         return rows;
     },
 
-    async findById(id) {
+    async findByIdInscricao(id) {
         const query = `SELECT i.*, a.nome as aluno_nome, a.email as aluno_email, m.instituicao
                       FROM inscricoes i
                       LEFT JOIN alunos a ON i.aluno_id = a.id
-                      LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id
+                      LEFT JOIN mural_estagios m ON i.muralestagio_id = m.id
                       WHERE i.id = ?`;
         const rows = await pool.query(query, [id]);
         return rows[0];
     },
 
-    async findByAlunoAndMural(aluno_id, muralestagio_id) {
+    async findByAlunoAndMuralInscricao(aluno_id, muralestagio_id) {
         const rows = await pool.query(
             'SELECT * FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? LIMIT 1',
             [aluno_id, muralestagio_id]
@@ -45,7 +45,7 @@ const Inscricao = {
         return rows;
     },
 
-    async findByMuralId(mural_id) {
+    async findByMuralIdInscricao(mural_id) {
         const query = `SELECT i.*, a.nome as aluno_nome, a.email as aluno_email, a.registro as aluno_registro
                       FROM inscricoes i
                       LEFT JOIN alunos a ON i.aluno_id = a.id
@@ -91,7 +91,7 @@ const Inscricao = {
         return result.affectedRows > 0;
     },
 
-    async delete(id) {
+    async deleteInscricao(id) {
         const result = await pool.query(
             'DELETE FROM inscricoes WHERE id = ?',
             [id]

@@ -2,10 +2,10 @@
 import pool from '../database/db.js';
 
 const Visita = {
-    async findAll(req) {
-        let query = `SELECT v.*, e.instituicao
-                     FROM visita v
-                     LEFT JOIN estagio e ON v.instituicao_id = e.id`;
+    async findAllVisitas(req) {
+        let query = `SELECT v.*, i.instituicao as instituicao_nome
+                     FROM visitas v
+                     LEFT JOIN instituicoes i ON v.instituicao_id = i.id`;
         let params = [];
 
         if (req && req.query && req.query.instituicao_id) {
@@ -19,30 +19,30 @@ const Visita = {
         return rows;
     },
 
-    async findById(id) {
-        const query = "SELECT visita.*, estagio.instituicao FROM visita left join estagio on visita.instituicao_id = estagio.id WHERE visita.id = ?";
+    async findByIdVisita(id) {
+        const query = "SELECT v.*, i.instituicao as instituicao_nome FROM visitas v left join instituicoes i on v.instituicao_id = i.id WHERE v.id = ?";
         const rows = await pool.query(query, [id]);
         return rows[0];
     },
 
-    async create(instituicao_id, data, responsavel, motivo, avaliacao, descricao) {
+    async createVisita(instituicao_id, data, responsavel, motivo, avaliacao, descricao) {
         const result = await pool.query(
-            "INSERT INTO visita (instituicao_id, data, responsavel, motivo, avaliacao, descricao) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO visitas (instituicao_id, data, responsavel, motivo, avaliacao, descricao) VALUES (?, ?, ?, ?, ?, ?)",
             [instituicao_id, data, responsavel, motivo, avaliacao, descricao]
         );
         return { id: Number(result.insertId), instituicao_id, data, responsavel, motivo, avaliacao, descricao };
     },
 
-    async update(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao) {
+    async updateVisita(id, instituicao_id, data, responsavel, motivo, avaliacao, descricao) {
         const result = await pool.query(
-            "UPDATE visita SET instituicao_id = ?, data = ?, responsavel = ?, motivo = ?, avaliacao = ?, descricao = ? WHERE id = ?",
+            "UPDATE visitas SET instituicao_id = ?, data = ?, responsavel = ?, motivo = ?, avaliacao = ?, descricao = ? WHERE id = ?",
             [instituicao_id, data, responsavel, motivo, avaliacao, descricao, id]
         );
         return result.affectedRows > 0;
     },
 
-    async delete(id) {
-        const result = await pool.query("DELETE FROM visita WHERE id = ?", [id]);
+    async deleteVisita(id) {
+        const result = await pool.query("DELETE FROM visitas WHERE id = ?", [id]);
         return result.affectedRows > 0;
     }
 };

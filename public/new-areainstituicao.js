@@ -1,5 +1,5 @@
 // src/controllers/areaInstituicaoController.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {
 
@@ -17,7 +17,7 @@ $(document).ready(function () {
         });
 
         try {
-            const response = await fetch('/areainstituicoes', {
+            const response = await authenticatedFetch('/areainstituicoes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

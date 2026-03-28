@@ -1,5 +1,5 @@
 // src/public/edit-areainstituicao.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -28,7 +28,7 @@ $(document).ready(async function () {
         });
 
         try {
-            const response = await fetch(`/areainstituicoes/${id}`, {
+            const response = await authenticatedFetch(`/areainstituicoes/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ $(document).ready(async function () {
     // Load Area
     async function loadArea(id) {
         try {
-            const response = await fetch(`/areainstituicoes/${id}`);
+            const response = await authenticatedFetch(`/areainstituicoes/${id}`);
             if (!response.ok) throw new Error('Failed to fetch area');
             const data = await response.json();
 
