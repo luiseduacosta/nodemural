@@ -86,7 +86,7 @@ async function setupDatabase() {
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao VARCHAR(255) NOT NULL,
                 cnpj VARCHAR(18) NOT NULL,
-                areainstituicao_id INT NOT NULL,
+                area_id INT NOT NULL,
                 natureza VARCHAR(50) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 url VARCHAR(255) NOT NULL,

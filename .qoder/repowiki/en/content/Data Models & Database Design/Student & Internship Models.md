@@ -338,7 +338,7 @@ int id PK
 string instituicao
 string cnpj
 string beneficio
-int areainstituicoes_id
+int area_id
 string url
 string endereco
 string bairro
@@ -518,7 +518,7 @@ M4 --> DB
 - Indexing recommendations
   - Add indexes on frequently filtered fields: inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo
   - Add indexes on mural_estagio.instituicao_id, mural_estagio.periodo
-  - Add indexes on estagio.areainstituicoes_id, estagio.id for supervisor and listing lookups
+  - Add indexes on estagio.area_id, estagio.id for supervisor and listing lookups
 - Query optimization
   - Prefer selective queries with WHERE clauses and ORDER BY clauses aligned with indexes
   - Avoid unnecessary JOINs when only IDs are required

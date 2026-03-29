@@ -412,7 +412,7 @@ varchar area
 ESTAGIO {
 int id PK
 varchar instituicao
-int areainstituicoes_id FK
+int area_id FK
 }
 ESTAGIARIOS {
 int id PK

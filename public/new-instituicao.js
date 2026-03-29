@@ -23,7 +23,7 @@ $(document).ready(async function () {
             const response = await authenticatedFetch('/areainstituicoes');
             if (response.ok) {
                 const areas = await response.json();
-                const select = document.getElementById('areainstituicoes_id');
+                const select = document.getElementById('area_id');
                 areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;
@@ -46,7 +46,7 @@ $(document).ready(async function () {
             natureza: document.getElementById('natureza').value,
             email: document.getElementById('email').value,
             beneficios: document.getElementById('beneficios').value,
-            areainstituicao_id: document.getElementById('areainstituicao_id').value,
+            area_id: document.getElementById('area_id').value,
             url: document.getElementById('url').value,
             endereco: document.getElementById('endereco').value,
             bairro: document.getElementById('bairro').value,
