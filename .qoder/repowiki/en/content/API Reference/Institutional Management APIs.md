@@ -279,7 +279,7 @@ Start(["Request Received"]) --> Validate["Validate request body"]
 Validate --> Valid{"Valid?"}
 Valid --> |No| Err400["Return 400 Bad Request"]
 Valid --> |Yes| Create["Model.create(area)"]
-Create --> Persist["INSERT INTO area_instituicoes"]
+Create --> Persist["INSERT INTO areas"]
 Persist --> Success["Return 201 Created with new area"]
 Err400 --> End(["Exit"])
 Success --> End

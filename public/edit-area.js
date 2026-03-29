@@ -1,4 +1,4 @@
-// src/public/edit-areainstituicao.js
+// src/public/edit-area.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -15,7 +15,7 @@ $(document).ready(async function () {
         loadArea(id);
     } else {
         alert('ID não fornecido');
-        window.location.href = 'areainstituicoes.html';
+        window.location.href = 'areas.html';
     }
 
     // Form Submission
@@ -28,7 +28,7 @@ $(document).ready(async function () {
         });
 
         try {
-            const response = await authenticatedFetch(`/areainstituicoes/${id}`, {
+            const response = await authenticatedFetch(`/areas/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ $(document).ready(async function () {
             });
 
             if (response.ok) {
-                window.location.href = 'view-areainstituicao.html?id=' + id;
+                window.location.href = 'view-area.html?id=' + id;
             } else {
                 const text = await response.text();
                 throw new Error(text || 'Erro ao atualizar área');
@@ -51,7 +51,7 @@ $(document).ready(async function () {
     // Load Area
     async function loadArea(id) {
         try {
-            const response = await authenticatedFetch(`/areainstituicoes/${id}`);
+            const response = await authenticatedFetch(`/areas/${id}`);
             if (!response.ok) throw new Error('Failed to fetch area');
             const data = await response.json();
 

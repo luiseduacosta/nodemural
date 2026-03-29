@@ -10,7 +10,7 @@ $(document).ready(async function () {
   const table = $('#areasTable').DataTable({
     order: [[1, 'asc']],
     ajax: {
-      url: '/areainstituicoes',
+      url: '/areas',
       beforeSend: function (xhr) {
         xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
       },
@@ -18,12 +18,12 @@ $(document).ready(async function () {
     },
     columns: [
       { data: 'id' },
-      { data: 'area', render: function (data, type, row) { return `<a href="view-areainstituicao.html?id=${row.id}">${row.area}</a>` } },
+      { data: 'area', render: function (data, type, row) { return `<a href="view-area.html?id=${row.id}">${row.area}</a>` } },
       {
         data: null,
         render: function (data, type, row) {
           return `
-            <button onclick="window.location.href='edit-areainstituicao.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
+            <button onclick="window.location.href='edit-area.html?id=${row.id}'" class="btn btn-sm btn-warning">Editar</button>
             <button onclick="deleteArea(${row.id})" class="btn btn-sm btn-danger">Excluir</button>
           `;
         }
@@ -37,7 +37,7 @@ $(document).ready(async function () {
   window.deleteArea = async (id) => {
     if (confirm('Tem certeza?')) {
       try {
-        const response = await authenticatedFetch(`/areainstituicoes/${id}`, { method: 'DELETE' });
+        const response = await authenticatedFetch(`/areas/${id}`, { method: 'DELETE' });
         if (!response.ok) {
           throw new Error('Erro ao excluir área');
         }

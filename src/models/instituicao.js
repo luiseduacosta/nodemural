@@ -4,14 +4,14 @@ import pool from '../database/db.js';
 const Instituicao = {
     async findAll() {
         const rows = await pool.query(
-            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN area_instituicoes a ON i.area_id = a.id ORDER BY i.instituicao ASC'
+            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN areas a ON i.area_id = a.id ORDER BY i.instituicao ASC'
         );
         return rows;
     },
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN area_instituicoes a ON i.area_id = a.id WHERE i.id = ?',
+            'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN areas a ON i.area_id = a.id WHERE i.id = ?',
             [id]
         );
         return rows[0];

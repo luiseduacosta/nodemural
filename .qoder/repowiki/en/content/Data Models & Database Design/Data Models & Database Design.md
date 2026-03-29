@@ -116,8 +116,8 @@ This section summarizes the entities and their roles, focusing on fields, constr
 
 - estagio
   - Purpose: Stores internship institution details.
-  - Key fields: id (auto-increment), instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes.
-  - Relationships: One-to-many with estagiarios; many-to-one with area_instituicoes; many-to-one with mural_estagio via mural.
+  - Key fields: id (auto-increment), instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes.
+  - Relationships: One-to-many with estagiarios; many-to-one with areas; many-to-one with mural_estagio via mural.
   - Access patterns: List with area name; find supervisors linked via junction table; list mural entries.
 
 - estagiarios
@@ -169,7 +169,7 @@ This section summarizes the entities and their roles, focusing on fields, constr
   - Relationships: Many-to-one with estagiarios.
   - Access patterns: List/create/update/delete.
 
-- area_instituicoes
+- areas
   - Purpose: Institution area classification.
   - Key fields: id (auto-increment), area.
   - Relationships: Many-to-one with estagio.
@@ -243,7 +243,7 @@ DOCENTES ||--o{ ESTAGIARIOS : "advises"
 SUPERVISORES ||--o{ ESTAGIARIOS : "supervises"
 ESTAGIO ||--o{ ESTAGIARIOS : "hosts"
 TURMA_ESTAGIOS ||--o{ ESTAGIARIOS : "groups"
-AREA_INSTITUICOES ||--o{ ESTAGIO : "classifies"
+AREAS ||--o{ ESTAGIO : "classifies"
 MURAL_ESTAGIO ||--o{ INSCRICOES : "posts"
 ESTAGIO ||--o{ MURAL_ESTAGIO : "advertises"
 SUPERVISORES ||--o{ INST_SUPER : "links"
@@ -300,7 +300,7 @@ VISITA ||--|| ESTAGIO : "visits"
 - Pagination:
   - Ordering by date/time supports efficient client-side pagination.
 - Indexing recommendations:
-  - Add indexes on frequently filtered columns: alunos.registro, inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo, mural_estagio.instituicao_id, mural_estagio.periodo, estagiarios.aluno_id, estagiarios.supervisor_id, estagiarios.professor_id, supervisores.id (for junction), estagio.areainstituicoes_id, questionarios.id, questoes.questionario_id, respostas.estagiario_id, respostas.questionario_id, folhadeatividades.estagiario_id, visita.instituicao_id.
+  - Add indexes on frequently filtered columns: alunos.registro, inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo, mural_estagio.instituicao_id, mural_estagio.periodo, estagiarios.aluno_id, estagiarios.supervisor_id, estagiarios.professor_id, supervisores.id (for junction), estagio.area_id, questionarios.id, questoes.questionario_id, respostas.estagiario_id, respostas.questionario_id, folhadeatividades.estagiario_id, visita.instituicao_id.
   - Composite indexes for frequent multi-column filters (e.g., inscricoes(aluno_id, muralestagio_id, periodo)).
 
 **Section sources**
@@ -424,7 +424,7 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
 - docentes
   - Fields: id, nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes.
 - estagio
-  - Fields: id, instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes.
+  - Fields: id, instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes.
 - estagiarios
   - Fields: id, aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes, ajuste2020.
 - inscricoes
@@ -444,7 +444,7 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
   - Fields: id, instituicao_id, data, responsavel, motivo, avaliacao, descricao.
 - turma_estagios
   - Fields: id, area.
-- area_instituicoes
+- areas
   - Fields: id, area.
 - configuracoes
   - Fields: id, mural_periodo_atual, curso_turma_atual, curso_abertura_inscricoes, curso_encerramento_inscricoes, termo_compromisso_periodo, termo_compromisso_inicio, termo_compromisso_final, periodo_calendario_academico.
@@ -470,17 +470,17 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
 
 ### Appendix B: Suggested Database Constraints and Indexes
 - Primary Keys
-  - alunos(id), docentes(id), estagio(id), estagiarios(id), inscricoes(id), supervisores(id), questionarios(id), questoes(id), respostas(id), folhadeatividades(id), visita(id), turma_estagios(id), area_instituicoes(id), configuracoes(id), mural_estagio(id).
+  - alunos(id), docentes(id), estagio(id), estagiarios(id), inscricoes(id), supervisores(id), questionarios(id), questoes(id), respostas(id), folhadeatividades(id), visita(id), turma_estagios(id), areas(id), configuracoes(id), mural_estagio(id).
 - Foreign Keys (recommended)
   - estagiarios.aluno_id → alunos(id), estagiarios.professor_id → docentes(id), estagiarios.supervisor_id → supervisores(id), estagiarios.instituicao_id → estagio(id), estagiarios.turmaestagio_id → turma_estagios(id).
   - inscricoes.aluno_id → alunos(id), inscricoes.muralestagio_id → mural_estagio(id).
   - mural_estagio.instituicao_id → estagio(id), mural_estagio.turmaestagio_id → turma_estagios(id).
-  - estagio.areainstituicoes_id → area_instituicoes(id).
+  - estagio.area_id → areas(id).
   - respostas.questionario_id → questionarios(id), respostas.estagiario_id → estagiarios(id).
   - folhadeatividades.estagiario_id → estagiarios(id).
   - visita.instituicao_id → estagio(id).
   - inst_super(supervisor_id, instituicao_id) → supervisores(id), estagio(id).
 - Indexes (recommended)
-  - alunos(registro), inscricoes(aluno_id, muralestagio_id, periodo), mural_estagio(instituicao_id, periodo), estagiarios(aluno_id, supervisor_id, professor_id), supervisores(id), estagio(areainstituicoes_id), questionarios(id), questoes(questionario_id), respostas(estagiario_id, questionario_id), folhadeatividades(estagiario_id), visita(instituicao_id).
+  - alunos(registro), inscricoes(aluno_id, muralestagio_id, periodo), mural_estagio(instituicao_id, periodo), estagiarios(aluno_id, supervisor_id, professor_id), supervisores(id), estagio(area_id), questionarios(id), questoes(questionario_id), respostas(estagiario_id, questionario_id), folhadeatividades(estagiario_id), visita(instituicao_id).
 
 [No sources needed since this appendix provides general recommendations]

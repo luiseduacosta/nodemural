@@ -23,7 +23,7 @@ $(document).ready(async function () {
 
     async function loadAreas() {
         try {
-            const response = await authenticatedFetch('/areainstituicoes');
+            const response = await authenticatedFetch('/areas');
             if (response.ok) {
                 const areas = await response.json();
                 const select = document.getElementById('area_id');
@@ -54,7 +54,7 @@ $(document).ready(async function () {
             document.getElementById('instituicaoId').value = instituicao.id;
 
             if (instituicao.area_id) {
-                document.getElementById('areainstituicao_id').value = instituicao.area_id;
+                document.getElementById('area_id').value = instituicao.area_id;
             }
 
             // Store the ID for view function

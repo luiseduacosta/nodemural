@@ -1,4 +1,4 @@
-// src/controllers/areaInstituicaoController.js
+// src/controllers/areaController.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {
@@ -17,7 +17,7 @@ $(document).ready(function () {
         });
 
         try {
-            const response = await authenticatedFetch('/areainstituicoes', {
+            const response = await authenticatedFetch('/areas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ $(document).ready(function () {
             });
 
             if (response.ok) {
-                window.location.href = 'areainstituicoes.html';
+                window.location.href = 'areas.html';
             } else {
                 const text = await response.text();
                 throw new Error(text || 'Erro ao salvar área');

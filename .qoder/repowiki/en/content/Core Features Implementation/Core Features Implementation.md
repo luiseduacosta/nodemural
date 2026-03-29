@@ -213,7 +213,7 @@ participant DB as "db.js"
 Client->>Router : GET /estagios/ : id
 Router->>Ctrl : getEstagioById()
 Ctrl->>Model : findById(id)
-Model->>DB : SELECT ... JOIN area_instituicoes
+Model->>DB : SELECT ... JOIN areas
 DB-->>Model : Row
 Model-->>Ctrl : {estagio with area}
 Ctrl-->>Client : 200 JSON
@@ -465,7 +465,7 @@ string email
 ESTAGIOS {
 int id PK
 string instituicao
-int areainstituicoes_id FK
+int area_id FK
 }
 ESTAGIARIOS {
 int id PK

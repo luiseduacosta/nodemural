@@ -1,16 +1,16 @@
 import pool from '../database/db.js';
 
-const AreaInstituicao = {
+const Area = {
     async findAll() {
         const rows = await pool.query(
-            'SELECT * FROM area_instituicoes ORDER BY area ASC'
+            'SELECT * FROM areas ORDER BY area ASC'
         );
         return rows;
     },
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT * FROM area_instituicoes WHERE id = ?',
+            'SELECT * FROM areas WHERE id = ?',
             [id]
         );
         return rows[0];
@@ -18,7 +18,7 @@ const AreaInstituicao = {
 
     async create(area) {
         const result = await pool.query(
-            'INSERT INTO area_instituicoes (area) VALUES (?)',
+            'INSERT INTO areas (area) VALUES (?)',
             [area]
         );
         return { id: Number(result.insertId), area };
@@ -26,7 +26,7 @@ const AreaInstituicao = {
 
     async update(id, area) {
         const result = await pool.query(
-            'UPDATE area_instituicoes SET area = ? WHERE id = ?',
+            'UPDATE areas SET area = ? WHERE id = ?',
             [area, id]
         );
         return result.affectedRows > 0;
@@ -34,11 +34,11 @@ const AreaInstituicao = {
 
     async delete(id) {
         const result = await pool.query(
-            'DELETE FROM area_instituicoes WHERE id = ?',
+            'DELETE FROM areas WHERE id = ?',
             [id]
         );
         return result.affectedRows > 0;
     }
 };
 
-export default AreaInstituicao;
+export default Area;

@@ -175,7 +175,7 @@ Nested endpoints:
 
 Request schemas:
 - Creation and update schema:
-  - Required: instituicao, areainstituicoes_id
+  - Required: instituicao, area_id
   - Optional: cnpj, beneficio, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes
 
 Response schemas:

@@ -140,7 +140,7 @@ This section defines the core entities and their attributes, constraints, and re
   - Relationships: belongs to alunos and mural_estagio
 
 - estagio (internship institution)
-  - Fields: id (primary key), instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes
+  - Fields: id (primary key), instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes
   - Business constraints: none enforced at model level
   - Relationships: many supervisors via inst_super; many murals via mural_estagio
 
@@ -417,7 +417,7 @@ int id PK
 string instituicao
 string cnpj
 string beneficio
-int areainstituicoes_id
+int area_id
 string url
 string endereco
 string bairro

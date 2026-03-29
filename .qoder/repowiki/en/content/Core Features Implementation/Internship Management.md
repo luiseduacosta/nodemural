@@ -198,7 +198,7 @@ participant DB as "db.js"
 FE_List->>Router : GET /estagios
 Router->>Ctrl : getAllEstagios()
 Ctrl->>Model : findAll()
-Model->>DB : SELECT ... JOIN area_instituicoes
+Model->>DB : SELECT ... JOIN areas
 DB-->>Model : Rows
 Model-->>Ctrl : Institutions[]
 Ctrl-->>Router : JSON

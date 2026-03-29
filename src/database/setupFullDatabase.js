@@ -104,8 +104,8 @@ async function setupDatabase() {
                 observacoes TEXT
             )`,
 
-            // 6. area_instituicoes (areas of the institutions)
-            `CREATE TABLE IF NOT EXISTS area_instituicoes (
+            // 6. areas (areas of the institutions)
+            `CREATE TABLE IF NOT EXISTS areas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 area VARCHAR(90) NOT NULL
             )`,

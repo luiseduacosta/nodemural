@@ -20,7 +20,7 @@ $(document).ready(async function () {
 
     async function loadAreas() {
         try {
-            const response = await authenticatedFetch('/areainstituicoes');
+            const response = await authenticatedFetch('/areas');
             if (response.ok) {
                 const areas = await response.json();
                 const select = document.getElementById('area_id');
@@ -39,7 +39,7 @@ $(document).ready(async function () {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Add area_instituicoes_id to the instituicao object
+        // Add areas_id to the instituicao object
         const instituicao = {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,

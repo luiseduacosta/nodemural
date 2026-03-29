@@ -13,13 +13,13 @@ $(document).ready(async function () {
     const id = urlParams.get('id');
     if (!id) {
         alert('ID não fornecido');
-        window.location.href = 'areainstituicoes.html';
+        window.location.href = 'areas.html';
         return;
     }
 
     // Fetch the area data
     try {
-        const response = await authenticatedFetch(`/areainstituicoes/${id}`);
+        const response = await authenticatedFetch(`/areas/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch area');
         }
@@ -30,24 +30,24 @@ $(document).ready(async function () {
         document.getElementById('view-area').textContent = area.area;
 
         // Setup buttons
-        $('#btn-edit').click(() => window.location.href = `edit-areainstituicao.html?id=${id}`);
+        $('#btn-edit').click(() => window.location.href = `edit-area.html?id=${id}`);
         $('#btn-delete').click(() => deleteArea(id));
 
     } catch (error) {
         console.error('Error loading area:', error);
         alert('Erro ao carregar dados da área.');
-        window.location.href = 'areainstituicoes.html';
+        window.location.href = 'areas.html';
     }
 
     async function deleteArea(id) {
         if (confirm('Tem certeza que deseja excluir esta área?')) {
             try {
-                const response = await authenticatedFetch(`/areainstituicoes/${id}`, {
+                const response = await authenticatedFetch(`/areas/${id}`, {
                     method: 'DELETE'
                 });
                 if (response.ok) {
                     alert('Área excluída com sucesso!');
-                    window.location.href = 'areainstituicoes.html';
+                    window.location.href = 'areas.html';
                 } else {
                     throw new Error('Erro ao excluir');
                 }

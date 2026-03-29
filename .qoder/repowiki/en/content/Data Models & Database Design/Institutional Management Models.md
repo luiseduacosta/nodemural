@@ -222,7 +222,7 @@ UI->>Router : POST /areainstituicoes
 Router->>Ctrl : createAreaInstituicao()
 Ctrl->>Ctrl : validate area
 Ctrl->>Model : create(area)
-Model->>DB : INSERT INTO area_instituicoes
+Model->>DB : INSERT INTO areas
 DB-->>Model : insertId
 Model-->>Ctrl : {id, area}
 Ctrl-->>UI : JSON {id, area}
@@ -401,7 +401,7 @@ VisitaController --> VisitaModel : "uses"
 
 ```mermaid
 erDiagram
-AREA_INSTITUICOES {
+AREAS {
 int id PK
 varchar area
 }
@@ -443,7 +443,7 @@ varchar motivo
 varchar avaliacao
 text descricao
 }
-AREA_INSTITUICOES ||--o{ TURMA_ESTAGIOS : "groups"
+AREAS ||--o{ TURMA_ESTAGIOS : "groups"
 TURMA_ESTAGIOS ||--o{ ESTAGIARIOS : "assigns"
 ESTAGIO ||--o{ ESTAGIARIOS : "hosts"
 ESTAGIARIOS ||--o{ FOLHADEATIVIDADES : "records"
@@ -516,7 +516,7 @@ M_V --> P
 
 ## Performance Considerations
 - Indexing recommendations:
-  - Add indexes on foreign keys: area_instituicoes.id, turma_estagios.id, estagio.id, estagiarios.turmaestagio_id, estagiarios.instituicao_id, folhadeatividades.estagiario_id, visita.instituicao_id.
+  - Add indexes on foreign keys: areas.id, turma_estagios.id, estagio.id, estagiarios.turmaestagio_id, estagiarios.instituicao_id, folhadeatividades.estagiario_id, visita.instituicao_id.
   - Consider composite indexes for frequent filters (e.g., estagiario_id + dia, instituicao_id + data).
 - Query ordering:
   - Listing endpoints already order by relevant fields; ensure indexes support these orders.
