@@ -3,8 +3,8 @@ import { getToken, hasRole, authenticatedFetch, isAdmin, getCurrentUser } from '
 // jsPDF is loaded via CDN as window.jspdf.jsPDF
 
 $(document).ready(async function () {
-    // Only admin, aluno, supervisor and docente can access this page
-    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'docente'])) {
+    // Only admin, aluno, supervisor and professor can access this page
+    if (!getToken() || !hasRole(['admin', 'aluno', 'supervisor', 'professor'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -164,7 +164,7 @@ $(document).ready(async function () {
             document.getElementById('view-nota').textContent = estagiarioDetails.nota !== null ? estagiarioDetails.nota : '-';
             document.getElementById('view-ch').textContent = estagiarioDetails.ch !== null ? estagiarioDetails.ch : '-';
         } else {
-            $('#statusAvaliacaoDocente').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação docente');
+            $('#statusAvaliacaoProfessor').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação professor');
         }
 
     } catch (error) {
@@ -459,7 +459,7 @@ $(document).ready(async function () {
             height = height + art6_1Height;
             doc.text(margin_left + 5, height, lines6_2, { maxWidth: 165, align: 'justify' });
 
-            const art7 = 'Art. 07. Será indicado pelos Departamentos da ESS, um docente para acompanhamento acadêmico e orientação do Estagiário por meio da disciplina de Orientação ao Trabalho Acadêmico.';
+            const art7 = 'Art. 07. Será indicado pelos Departamentos da ESS, um professor para acompanhamento acadêmico e orientação do Estagiário por meio da disciplina de Orientação ao Trabalho Acadêmico.';
             const lines7 = doc.splitTextToSize(art7, 170);
             const art7Height = doc.getTextDimensions(lines7).h;
             height = height + art6_2Height;

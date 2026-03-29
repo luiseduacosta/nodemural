@@ -59,7 +59,7 @@ const User = {
         }
     },
 
-    // Find user by ID and also fetch the related entity record (aluno/docente/supervisor) based on role
+    // Find user by ID and also fetch the related entity record (aluno/professor/supervisor) based on role
     // Returns { user, entidade } where entidade is null if not found or not applicable
     async findByIdWithEntidade(id) {
         try {
@@ -71,8 +71,8 @@ const User = {
             if (user.entidade_id && user.role === 'aluno') {
                 const rows = await pool.query('SELECT * FROM alunos WHERE id = ?', [user.entidade_id]);
                 entidade = rows[0] || null;
-            } else if (user.entidade_id && user.role === 'docente') {
-                const rows = await pool.query('SELECT * FROM docentes WHERE id = ?', [user.entidade_id]);
+            } else if (user.entidade_id && user.role === 'professor') {
+                const rows = await pool.query('SELECT * FROM professores WHERE id = ?', [user.entidade_id]);
                 entidade = rows[0] || null;
             } else if (user.entidade_id && user.role === 'supervisor') {
                 const rows = await pool.query('SELECT * FROM supervisores WHERE id = ?', [user.entidade_id]);
@@ -85,11 +85,11 @@ const User = {
         }
     },
 
-    // First find role and entidade_id in 'auth_users' table with the id, if it exists then with the value of role find into either table 'alunos', 'docentes' or 'supervisores' with the value of entidade_id
+    // First find role and entidade_id in 'auth_users' table with the id, if it exists then with the value of role find into either table 'alunos', 'professores' or 'supervisores' with the value of entidade_id
     async findByEntidadeId(entidade_id) {
         try {
             const rows = await pool.query(
-                'SELECT * FROM auth_users WHERE role IN ("aluno", "docente", "supervisor") AND entidade_id = ? AND ativo = TRUE',
+                'SELECT * FROM auth_users WHERE role IN ("aluno", "professor", "supervisor") AND entidade_id = ? AND ativo = TRUE',
                 [entidade_id]
             );
             return rows[0] || null;

@@ -22,7 +22,7 @@ $(document).ready(async function () {
             const [alunoRes, instRes, docRes, turmaRes, configRes] = await Promise.all([
                 authenticatedFetch('/alunos'),
                 authenticatedFetch('/instituicoes'),
-                authenticatedFetch('/docentes'),
+                authenticatedFetch('/professores'),
                 authenticatedFetch('/configuracoes')
             ]);
 
@@ -46,9 +46,9 @@ $(document).ready(async function () {
 
             // Professores
             if (docRes.ok) {
-                const docentes = await docRes.json();
+                const professores = await docRes.json();
                 const select = document.getElementById('professor_id');
-                docentes.forEach(doc => select.add(new Option(doc.nome, doc.id)));
+                professores.forEach(doc => select.add(new Option(doc.nome, doc.id)));
             }
 
             // Default Period

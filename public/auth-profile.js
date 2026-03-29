@@ -19,7 +19,7 @@ if (user) {
   const roleColors = {
     admin: 'danger',
     supervisor: 'warning',
-    docente: 'info',
+    professor: 'info',
     aluno: 'success'
   };
   roleEl.className = `badge bg-${roleColors[user.role] || 'secondary'}`;

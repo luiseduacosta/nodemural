@@ -11,7 +11,7 @@ $(document).ready(async function () {
             url: '/mural',
             data: function (d) {
                 const token = getToken();
-                if (token && hasRole(['admin', 'docente', 'supervisor'])) {
+                if (token && hasRole(['admin', 'professor', 'supervisor'])) {
                     const periodo = $('#periodoFilter').val();
                     if (periodo && periodo != 'Todos') {
                         d.periodo = periodo;

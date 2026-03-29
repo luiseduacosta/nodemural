@@ -1,4 +1,4 @@
-// public/docente_estagiarios_nota.js
+// public/professor_estagiarios_nota.js
 // Make a editable table to update estagiario fields 'nota' and 'carga_horaria'
 import { authenticatedFetch, getCurrentUser } from './auth-utils.js';
 
@@ -6,19 +6,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.getElementById('estagiario-table-body');
     let estagiarios = [];
 
-    // Get current user (docente) and fetch their estagiarios
+    // Get current user (professor) and fetch their estagiarios
     const user = getCurrentUser();
     if (!user || !user.entidade_id) {
-        tableBody.innerHTML = '<tr><td colspan="5">Erro: Docente não identificado</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5">Erro: Professor(a) não identificado(a)</td></tr>';
         return;
     }
 
-    const docenteId = user.entidade_id;
+    const professorId = user.entidade_id;
 
     // 1. FETCH REAL DATA FROM API
     async function fetchEstagiarios() {
         try {
-            const response = await authenticatedFetch(`/docentes/${docenteId}/estagiarios`);
+            const response = await authenticatedFetch(`/professores/${professorId}/estagiarios`);
             if (!response.ok) {
                 throw new Error('Falha ao carregar estagiários');
             }
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function makeRowEditable(row) {
         row.classList.add('editing');
         const editableFields = row.querySelectorAll('.editable-field');
-        
+
         editableFields.forEach(field => {
             const text = field.textContent;
             field.innerHTML = `<input class="form-control" style="width: 100px;" type="text" value="${text}">`;
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (estagiarioIndex > -1) {
                 estagiarios[estagiarioIndex] = { ...estagiarios[estagiarioIndex], ...updatedData };
             }
-            
+
             renderTable(); // Re-renderiza a tabela com os dados atualizados
 
         } catch (error) {

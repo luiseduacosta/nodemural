@@ -7,7 +7,7 @@ import 'dotenv/config.js';
 
 import authRoutes from "./routers/authRoutes.js";
 import alunoRoutes from "./routers/alunoRoutes.js";
-import docenteRoutes from "./routers/docenteRoutes.js";
+import professorRoutes from "./routers/professorRoutes.js";
 import instituicaoRoutes from "./routers/instituicaoRoutes.js";
 import estagiarioRoutes from "./routers/estagiarioRoutes.js";
 import muralRoutes from "./routers/muralRoutes.js";
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 // --- ROUTES ---
 app.use("/auth", authRoutes);
 app.use("/alunos", alunoRoutes);
-app.use("/docentes", docenteRoutes);
+app.use("/professores", professorRoutes);
 app.use("/instituicoes", instituicaoRoutes);
 app.use("/estagiarios", estagiarioRoutes);
 app.use("/mural", muralRoutes);

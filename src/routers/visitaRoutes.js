@@ -9,8 +9,8 @@ const router = express.Router();
 router.use(express.json());
 
 // Routes - require authentication
-router.get('/', verifyToken, checkRole(['admin', 'docente']), visitaController.getAllVisitas);
-router.get('/:id', verifyToken, checkRole(['admin', 'docente']), visitaController.getVisitaById);
+router.get('/', verifyToken, checkRole(['admin', 'professor']), visitaController.getAllVisitas);
+router.get('/:id', verifyToken, checkRole(['admin', 'professor']), visitaController.getVisitaById);
 router.post('/', verifyToken, checkRole(['admin']), visitaController.createVisita);
 router.put('/:id', verifyToken, checkRole(['admin']), visitaController.updateVisita);
 router.delete('/:id', verifyToken, checkRole(['admin']), visitaController.deleteVisita);

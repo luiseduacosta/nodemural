@@ -1,17 +1,17 @@
-// src/models/docente.js
+// src/models/professor.js
 import pool from '../database/db.js';
 
-const Docente = {
+const Professor = {
     async create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
         const result = await pool.query(
-            'INSERT INTO docentes (nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO professores (nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes]
         );
         return { id: Number(result.insertId), nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes };
     },
 
     async findAll(search = null) {
-        let query = 'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM docentes';
+        let query = 'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores';
         let params = [];
 
         if (search) {
@@ -28,35 +28,35 @@ const Docente = {
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM docentes WHERE id = ?',
+            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores WHERE id = ?',
             [id]
         );
         return rows[0];
     },
 
-    // Find docente by siape. There is only one docente per siape
+    // Find professor by siape. There is only one professor per siape
     async findBySiape(siape) {
         const rows = await pool.query(
-            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM docentes WHERE siape = ?',
+            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores WHERE siape = ?',
             [siape]
         );
         return rows[0];
     },
 
-    async update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes,  dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
+    async update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
         const result = await pool.query(
-            'UPDATE docentes SET nome = ?, cpf = ?, siape = ?, cress = ?, regiao = ?, telefone = ?, celular = ?, email = ?, curriculolattes = ?, atualizacaolattes = ?, dataingresso = ?, departamento = ?, dataegresso = ?, motivoegresso = ?, observacoes = ? WHERE id = ?',
+            'UPDATE professores SET nome = ?, cpf = ?, siape = ?, cress = ?, regiao = ?, telefone = ?, celular = ?, email = ?, curriculolattes = ?, atualizacaolattes = ?, dataingresso = ?, departamento = ?, dataegresso = ?, motivoegresso = ?, observacoes = ? WHERE id = ?',
             [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes, id]
         );
         return result.affectedRows > 0;
     },
 
     async delete(id) {
-        const result = await pool.query('DELETE FROM docentes WHERE id = ?', [id]);
+        const result = await pool.query('DELETE FROM professores WHERE id = ?', [id]);
         return result.affectedRows > 0;
     },
 
-    async findEstagiariosByDocenteId(docenteId) {
+    async findEstagiariosByProfessorId(professorId) {
         const rows = await pool.query(
             `SELECT 
                 e.id as estagiario_id,
@@ -73,13 +73,13 @@ const Docente = {
             JOIN alunos a ON e.aluno_id = a.id 
             LEFT JOIN supervisores s ON e.supervisor_id = s.id 
             LEFT JOIN instituicoes i ON e.instituicao_id = i.id 
-            LEFT JOIN docentes d ON e.professor_id = d.id 
+            LEFT JOIN professores p ON e.professor_id = p.id 
             WHERE e.professor_id = ?
             ORDER BY e.periodo DESC, e.nivel DESC, a.nome ASC`,
-            [docenteId]
+            [professorId]
         );
         return rows;
     }
 };
 
-export default Docente;
+export default Professor;

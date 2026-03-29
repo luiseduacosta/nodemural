@@ -162,8 +162,8 @@ export const checkEstagiarioOwnership = async (req, res, next) => {
             return next();
         }
 
-        // Docente can access only their own students (estagiarios where professor_id matches)
-        if (req.user.role === 'docente' && req.user.entidade_id == estagiario.professor_id) {
+        // Professor can access only their own students (estagiarios where professor_id matches)
+        if (req.user.role === 'professor' && req.user.entidade_id == estagiario.professor_id) {
             return next();
         }
 

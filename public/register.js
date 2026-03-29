@@ -9,7 +9,7 @@ const form = document.getElementById('registerForm');
 const msg = document.getElementById('message');
 
 // Se role for aluno, identificacao deve ser DRE
-// Se role for docente, identificacao deve ser SIAPE
+// Se role for professor, identificacao deve ser SIAPE
 // Se role for supervisor, identificacao deve ser CRESS
 const roleSelect = document.getElementById('role');
 const identificacaoInput = document.getElementById('identificacao');
@@ -17,7 +17,7 @@ const identificacaoInput = document.getElementById('identificacao');
 roleSelect.addEventListener('change', () => {
   if (roleSelect.value === 'aluno') {
     identificacaoInput.placeholder = 'DRE';
-  } else if (roleSelect.value === 'docente') {
+  } else if (roleSelect.value === 'professor') {
     identificacaoInput.placeholder = 'SIAPE';
   } else if (roleSelect.value === 'supervisor') {
     identificacaoInput.placeholder = 'CRESS';
@@ -28,8 +28,8 @@ identificacaoInput.addEventListener('change', () => {
   console.log("role: " + roleSelect.value + " identificacao: " + identificacaoInput.value);
   if (roleSelect.value === 'aluno') {
     checkAluno(identificacaoInput.value);
-  } else if (roleSelect.value === 'docente') {
-    checkDocente(identificacaoInput.value);
+  } else if (roleSelect.value === 'professor') {
+    checkProfessor(identificacaoInput.value);
   } else if (roleSelect.value === 'supervisor') {
     checkSupervisor(identificacaoInput.value);
   }
@@ -54,22 +54,22 @@ async function checkAluno(identificacao) {
   }
 }
 
-// Verificar se o docente tem um registro
-async function checkDocente(identificacao) {
+// Verificar se o professor tem um registro
+async function checkProfessor(identificacao) {
   try {
-    const res = await fetch('/docentes/siape/' + identificacao, {
+    const res = await fetch('/professores/siape/' + identificacao, {
       method: 'GET',
     })
     const data = await res.json();
     if (res.ok) {
       msg.style.color = 'green';
-      msg.textContent = 'Docente encontrado(a) no sistema. Pode prosseguir com o registro.';
+      msg.textContent = 'Professor encontrado(a) no sistema. Pode prosseguir com o registro.';
       document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
     msg.style.color = 'red';
-    msg.textContent = "Docente precisa ser cadastrado(a) primeiro no sistema de gestão de docentes.";
+    msg.textContent = "Professor precisa ser cadastrado(a) primeiro no sistema de gestão de professores.";
   }
 }
 

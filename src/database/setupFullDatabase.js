@@ -8,14 +8,14 @@ async function setupDatabase() {
         console.log('🚀 Starting database setup...');
 
         const queries = [
-            // 1. auth_users (users of the system. Can be admin, supervisor, docente or aluno)
+            // 1. auth_users (users of the system. Can be admin, supervisor, professor or aluno)
             `CREATE TABLE IF NOT EXISTS auth_users (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
                 identificacao VARCHAR(50),
-                role ENUM('admin', 'supervisor', 'docente', 'aluno') DEFAULT 'aluno',
+                role ENUM('admin', 'supervisor', 'professor', 'aluno') DEFAULT 'aluno',
                 entidade_id INT,
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -44,7 +44,7 @@ async function setupDatabase() {
                 observacoes TEXT
             )`,
 
-            // 3. docentes (university professors)
+            // 3. professores (university professors)
             `CREATE TABLE IF NOT EXISTS professores (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 nome VARCHAR(255) NOT NULL,

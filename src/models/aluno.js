@@ -67,7 +67,7 @@ const Aluno = {
                 i.instituicao as instituicao_nome
             FROM estagiarios as e 
             JOIN alunos as a ON e.aluno_id = a.id 
-            LEFT JOIN docentes as d ON e.professor_id = d.id
+            LEFT JOIN professores as d ON e.professor_id = d.id
             LEFT JOIN supervisores as s ON e.supervisor_id = s.id
             LEFT JOIN instituicoes as i ON e.instituicao_id = i.id
             WHERE e.aluno_id = ?

@@ -17,7 +17,7 @@ const Estagiario = {
                     i.instituicao as instituicao_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
-                    LEFT JOIN docentes d ON e.professor_id = d.id
+                    LEFT JOIN professores d ON e.professor_id = d.id
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
                     LEFT JOIN instituicoes i ON e.instituicao_id = i.id`;
 
@@ -53,7 +53,7 @@ const Estagiario = {
                       i.instituicao as instituicao_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
-                      LEFT JOIN docentes d ON e.professor_id = d.id
+                      LEFT JOIN professores d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       WHERE e.id = ?`;
@@ -122,7 +122,7 @@ const Estagiario = {
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
-                      LEFT JOIN docentes d ON e.professor_id = d.id
+                      LEFT JOIN professores d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       WHERE e.aluno_id = ?
                       ORDER BY e.periodo DESC, e.nivel ASC`;

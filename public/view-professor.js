@@ -1,16 +1,16 @@
-// View Docente Details and edit nota e ch de estagiarios
+// View Professor Details and edit nota e ch de estagiarios
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin', 'docente'])) {
+    if (!getToken() || !hasRole(['admin', 'professor'])) {
         window.location.href = 'login.html';
         return;
     }
 
     if (!hasRole('admin')) {
-        const excluirDocente = document.getElementById('btn-excluir_docente');
-        excluirDocente.classList.add('d-none');
+        const excluirProfessor = document.getElementById('btn-excluir_professor');
+        excluirProfessor.classList.add('d-none');
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -18,69 +18,69 @@ $(document).ready(async function () {
 
     if (!id) {
         alert('ID não fornecido');
-        window.location.href = 'docentes.html';
+        window.location.href = 'professores.html';
         return;
     }
 
     try {
         $.ajaxSetup({ headers: { 'Content-Type': 'application/json' } });
-        const response = await authenticatedFetch(`/docentes/${id}`);
+        const response = await authenticatedFetch(`/professores/${id}`);
         if (!response.ok) {
-            throw new Error('Failed to fetch docente');
+            throw new Error('Failed to fetch professor(a)');
         }
 
-        const docente = await response.json();
+        const professor = await response.json();
 
-        $('#view-id').text(docente.id);
-        $('#view-siape').text(docente.siape);
-        $('#view-nome').text(docente.nome);
-        $('#view-cpf').text(docente.cpf || '-');
-        $('#view-cress').text(docente.cress || '-');
-        $('#view-regiao').text(docente.regiao || '-');
-        $('#view-email').text(docente.email);
-        $('#view-celular').text(docente.celular || '-');
-        $('#view-telefone').text(docente.telefone || '-');
-        $('#view-dataingresso').text(docente.dataingresso ? new Date(docente.dataingresso).toLocaleDateString('pt-BR') : '-');
-        $('#view-departamento').text(docente.departamento || 'Sem dados');
-        $('#view-curriculolattes').html(docente.curriculolattes ? `<a href="http://lattes.cnpq.br/${docente.curriculolattes}" target="_blank">${docente.curriculolattes}</a>` : '-');
-        $('#view-atualizacaolattes').text(docente.atualizacaolattes ? new Date(docente.atualizacaolattes).toLocaleDateString('pt-BR') : '-');
-        $('#view-dataegresso').text(docente.dataegresso ? new Date(docente.dataegresso).toLocaleDateString('pt-BR') : '-');
-        $('#view-motivoegresso').text(docente.motivoegresso || '-');
-        $('#view-observacoes').text(docente.observacoes || '-');
-        window.currentDocenteId = id;
+        $('#view-id').text(professor.id);
+        $('#view-siape').text(professor.siape);
+        $('#view-nome').text(professor.nome);
+        $('#view-cpf').text(professor.cpf || '-');
+        $('#view-cress').text(professor.cress || '-');
+        $('#view-regiao').text(professor.regiao || '-');
+        $('#view-email').text(professor.email);
+        $('#view-celular').text(professor.celular || '-');
+        $('#view-telefone').text(professor.telefone || '-');
+        $('#view-dataingresso').text(professor.dataingresso ? new Date(professor.dataingresso).toLocaleDateString('pt-BR') : '-');
+        $('#view-departamento').text(professor.departamento || 'Sem dados');
+        $('#view-curriculolattes').html(professor.curriculolattes ? `<a href="http://lattes.cnpq.br/${professor.curriculolattes}" target="_blank">${professor.curriculolattes}</a>` : '-');
+        $('#view-atualizacaolattes').text(professor.atualizacaolattes ? new Date(professor.atualizacaolattes).toLocaleDateString('pt-BR') : '-');
+        $('#view-dataegresso').text(professor.dataegresso ? new Date(professor.dataegresso).toLocaleDateString('pt-BR') : '-');
+        $('#view-motivoegresso').text(professor.motivoegresso || '-');
+        $('#view-observacoes').text(professor.observacoes || '-');
+        window.currentProfessorId = id;
 
-        // Load estagiários for this docente
+        // Load estagiários for this professor
         loadEstagiarios(id);
 
     } catch (error) {
-        console.error('Error loading docente:', error);
-        alert(`Erro ao carregar dados do docente: ${error.message}`);
-        window.location.href = 'docentes.html';
+        console.error('Error loading professor(a):', error);
+        alert(`Erro ao carregar dados do professor(a): ${error.message}`);
+        window.location.href = 'professores.html';
     }
 });
 
 window.editRecord = function () {
-    window.location.href = `edit-docente.html?id=${window.currentDocenteId}`;
+    window.location.href = `edit-professor.html?id=${window.currentProfessorId}`;
 };
 
 window.deleteRecord = async function () {
-    if (confirm('Tem certeza que deseja excluir este docente?')) {
+    if (confirm('Tem certeza que deseja excluir este(a) professor(a)?')) {
         try {
-            const response = await authenticatedFetch(`/docentes/${window.currentDocenteId}`, { method: 'DELETE' });
+            const response = await authenticatedFetch(`/professores/${window.currentProfessorId}`, { method: 'DELETE' });
             if (!response.ok) {
-                throw new Error('Failed to delete docente');
+                throw new Error('Failed to delete professor(a)');
             }
-            window.location.href = 'docentes.html';
+            window.location.href = 'professores.html';
         } catch (error) {
-            console.error('Error deleting docente:', error);
-            alert('Erro ao excluir docente');
+            console.error('Error deleting professor(a):', error);
+            alert('Erro ao excluir professor(a)');
         }
     }
 };
 
-async function loadEstagiarios(docenteId) {
+async function loadEstagiarios(professorId) {
     try {
-        const response = await authenticatedFetch(`/docentes/${docenteId}/estagiarios`);
+        const response = await authenticatedFetch(`/professores/${professorId}/estagiarios`);
         if (!response.ok) {
             throw new Error('Failed to fetch estagiários');
         }
@@ -162,8 +162,8 @@ function makeRowEditable(row) {
 
 // Cancel edit - reload estagiarios to restore original data
 async function cancelEdit(row) {
-    const docenteId = window.currentDocenteId;
-    await loadEstagiarios(docenteId);
+    const professorId = window.currentProfessorId;
+    await loadEstagiarios(professorId);
 }
 
 // Save row changes
@@ -189,8 +189,8 @@ async function saveRow(row) {
         }
 
         // Reload to show updated data
-        const docenteId = window.currentDocenteId;
-        await loadEstagiarios(docenteId);
+        const professorId = window.currentProfessorId;
+        await loadEstagiarios(professorId);
 
     } catch (error) {
         alert('Erro ao salvar: ' + error.message);

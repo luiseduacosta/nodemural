@@ -1,17 +1,17 @@
-// src/controllers/docenteController.js
+// src/controllers/professorController.js
 import { getToken, hasRole, authenticatedFetch, getCurrentUser, updateAuthSession } from './auth-utils.js';
 
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin', 'docente'])) {
+    if (!getToken() || !hasRole(['admin', 'professor'])) {
         window.location.href = 'login.html';
         return;
     }
 
     const currentUser = getCurrentUser();
 
-    // If the user is a docente, pre-fill the form with their own data
-    if (hasRole('docente')) {
+    // If the user is a professor, pre-fill the form with their own data
+    if (hasRole('professor')) {
         document.getElementById('nome').value = currentUser.nome;
         document.getElementById('siape').value = currentUser.identificacao;
         document.getElementById('email').value = currentUser.email;
@@ -38,12 +38,12 @@ $(document).ready(async function () {
     });
 
     // Form submission
-    const form = document.getElementById('newDocenteForm');
+    const form = document.getElementById('newProfessorForm');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const docente = {
+        const professor = {
             nome: document.getElementById('nome').value,
             siape: document.getElementById('siape').value,
             cpf: document.getElementById('cpf').value || null,
@@ -62,16 +62,16 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await authenticatedFetch('/docentes', {
+            const response = await authenticatedFetch('/professores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(docente)
+                body: JSON.stringify(professor)
             });
 
             if (response.ok) {
                 const data = await response.json();
-                // Only update the user.entidade_id with the data.id if the user.role is 'docente'
-                if (currentUser && currentUser.role === 'docente') {
+                // Only update the user.entidade_id with the data.id if the user.role is 'professor'
+                if (currentUser && currentUser.role === 'professor') {
                     const userResponse = await authenticatedFetch(`/auth/users/${currentUser.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
@@ -86,11 +86,11 @@ $(document).ready(async function () {
                         console.error('Failed to update user entidade_id');
                     }
                 }
-                window.location.href = 'view-docente.html?id=' + data.id;
+                window.location.href = 'view-professor.html?id=' + data.id;
             }
         } catch (error) {
-            console.error('Error creating docente:', error);
-            alert(`Erro ao criar docente: ${error.message}`);
+            console.error('Error creating professor:', error);
+            alert(`Erro ao criar professor: ${error.message}`);
         }
     })
 });

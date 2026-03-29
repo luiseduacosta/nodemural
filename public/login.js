@@ -5,15 +5,15 @@ import { authenticatedFetch } from './auth-utils.js';
 async function redirectUser(user, params) {
   let redirect = '';
 
-  // check if the entidade_id has a real value and if it exists in the tables: alunos, docentes, supervisors
+  // check if the entidade_id has a real value and if it exists in the tables: alunos, professores, supervisors
   if (user.role !== 'admin') {
     // Check if entidade_id exists
     if (!user.entidade_id) {
       // No entidade_id - redirect to create new entity
       if (user.role === 'aluno') {
         redirect = '/new-aluno.html';
-      } else if (user.role === 'docente') {
-        redirect = '/new-docente.html';
+      } else if (user.role === 'professor') {
+        redirect = '/new-professor.html';
       } else if (user.role === 'supervisor') {
         redirect = '/new-supervisor.html';
       }
@@ -26,12 +26,12 @@ async function redirectUser(user, params) {
         } else {
           redirect = `/view-aluno.html?id=${user.entidade_id}`;
         }
-      } else if (user.role === 'docente') {
-        const response = await authenticatedFetch(`/docentes/${user.entidade_id}`);
+      } else if (user.role === 'professor') {
+        const response = await authenticatedFetch(`/professores/${user.entidade_id}`);
         if (!response.ok) {
-          redirect = '/new-docente.html';
+          redirect = '/new-professor.html';
         } else {
-          redirect = `/view-docente.html?id=${user.entidade_id}`;
+          redirect = `/view-professor.html?id=${user.entidade_id}`;
         }
       } else if (user.role === 'supervisor') {
         const response = await authenticatedFetch(`/supervisores/${user.entidade_id}`);
