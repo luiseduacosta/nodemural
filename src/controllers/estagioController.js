@@ -1,3 +1,4 @@
+// Deprecated: This controller is no longer used as the estagio routes have been removed.
 import Estagio from '../models/estagio.js';
 
 // Get all estagios (institutions)

@@ -44,7 +44,7 @@ export const getMuralById = async (req, res) => {
     }
 };
 
-// Nested inscricoes route
+// Get inscricoes by mural ID
 export const getInscricoesByMuralId = async (req, res) => {
     try {
         const { id } = req.params;
