@@ -51,11 +51,10 @@ $(document).ready(async function () {
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';
         document.getElementById('view-supervisor').textContent = estagiario.supervisor_nome || '-';
         document.getElementById('view-periodo').textContent = estagiario.periodo || '-';
-        document.getElementById('view-turma').textContent = estagiario.turma_nome || '-';
 
         // Turno display
         const turnoMap = { 'D': 'Diurno', 'N': 'Noturno', 'A': 'Diurno/Noturno' };
-        document.getElementById('view-turno').textContent = turnoMap[estagiario.turno] || estagiario.turno || '-';
+        document.getElementById('view-turno').textContent = turnoMap[estagiario.aluno_turno] || estagiario.aluno_turno || '-';
         document.getElementById('view-ajuste2020').textContent = estagiario.ajuste2020 !== null ? estagiario.ajuste2020 : '-';
 
         document.getElementById('view-observacoes').textContent = estagiario.observacoes || '-';

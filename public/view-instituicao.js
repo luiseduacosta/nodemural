@@ -166,4 +166,25 @@ async function fetchSupervisores(id) {
     } catch (error) {
         console.error('Error fetching supervisores:', error);
     }
+
+    // Function to delete the record
+    window.deleteRecord = async function () {
+        const confirmDelete = confirm('Tem certeza de que deseja excluir este registro?');
+        if (confirmDelete) {
+            try {
+                const response = await authenticatedFetch(`/instituicoes/${window.currentInstituicaoId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Registro excluído com sucesso!');
+                    window.location.href = 'instituicoes.html';
+                } else {
+                    throw new Error('Failed to delete record');
+                }
+            } catch (error) {
+                console.error('Error deleting record:', error);
+                alert(`Erro ao excluir registro: ${error.message}`);
+            }
+        }
+    }
 }

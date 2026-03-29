@@ -28,7 +28,7 @@ const Supervisor = {
 
     async create(nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) {
         const result = await pool.query(
-            'INSERT INTO supervisores (nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) VALUES (?, ?, ?, ?)',
+            'INSERT INTO supervisores (nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes]
         );
         return { id: Number(result.insertId), nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes };

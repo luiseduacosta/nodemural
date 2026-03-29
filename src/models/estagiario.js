@@ -63,21 +63,20 @@ const Estagiario = {
 
     async createEstagiario(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
-            `INSERT INTO estagiarios (aluno_id, professor_id, supervisor_id, instituicao_id,
+            `INSERT INTO estagiarios (aluno_id, registro, professor_id, supervisor_id, instituicao_id,
              periodo, nivel, ajuste2020, observacoes)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, ajuste2020, observacoes]
+             VALUES (?, (SELECT registro FROM alunos WHERE id = ?), ?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes]
         );
         return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes };
     },
 
-    async updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, nota, ch) {
+    async updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes) {
         const result = await pool.query(
             `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
              instituicao_id = ?, periodo = ?, nivel = ?, ajuste2020 = ?,
-             nota = ?, ch = ?,
              observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, nota, ch, observacoes, id] 
+            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, id] 
         );
         return result.affectedRows > 0;
     },

@@ -11,6 +11,7 @@ $(document).ready(async function () {
     const form = document.getElementById('newInstituicaoForm');
 
     // Input Masks
+    $('#cep').inputmask('99999-999');
     $('#cnpj').inputmask('99.999.999/9999-99');
     $('#telefone').inputmask('(99) 9999-9999');
 
@@ -22,7 +23,7 @@ $(document).ready(async function () {
             const response = await authenticatedFetch('/areainstituicoes');
             if (response.ok) {
                 const areas = await response.json();
-                const select = document.getElementById('area_instituicoes_id');
+                const select = document.getElementById('areainstituicoes_id');
                 areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;

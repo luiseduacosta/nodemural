@@ -6,6 +6,7 @@ const Instituicao = {
         const rows = await pool.query(
             'SELECT i.*, a.area as area_nome FROM instituicoes i LEFT JOIN area_instituicoes a ON i.areainstituicoes_id = a.id ORDER BY i.instituicao ASC'
         );
+        console.log(rows);
         return rows;
     },
 
@@ -53,7 +54,7 @@ const Instituicao = {
     async findMuralById(id) {
         const query = `
             SELECT id, periodo, vagas
-            FROM mural_estagio
+            FROM mural_estagios
             WHERE instituicao_id = ?
             ORDER BY periodo DESC
         `;

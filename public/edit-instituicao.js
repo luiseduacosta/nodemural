@@ -26,7 +26,7 @@ $(document).ready(async function () {
             const response = await authenticatedFetch('/areainstituicoes');
             if (response.ok) {
                 const areas = await response.json();
-                const select = document.getElementById('area_instituicoes_id');
+                const select = document.getElementById('areainstituicao_id');
                 areas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area.id;
@@ -53,8 +53,8 @@ $(document).ready(async function () {
             document.getElementById('beneficio').value = instituicao.beneficio || '';
             document.getElementById('instituicaoId').value = instituicao.id;
 
-            if (instituicao.area_instituicoes_id) {
-                document.getElementById('area_instituicoes_id').value = instituicao.area_instituicoes_id;
+            if (instituicao.areainstituicoes_id) {
+                document.getElementById('areainstituicao_id').value = instituicao.areainstituicoes_id;
             }
 
             // Store the ID for view function
@@ -83,7 +83,7 @@ $(document).ready(async function () {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,
             beneficio: document.getElementById('beneficio').value,
-            area_instituicoes_id: document.getElementById('area_instituicoes_id').value || null
+            areainstituicoes_id: document.getElementById('areainstituicao_id').value || null
         };
 
         const id = document.getElementById('instituicaoId').value;
