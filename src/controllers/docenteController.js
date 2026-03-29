@@ -4,8 +4,8 @@ import Docente from '../models/docente.js';
 // Create a new docente
 export const createDocente = async (req, res) => {
     try {
-        const { nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
-        const docente = await Docente.create(nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
+        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
+        const docente = await Docente.create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
         res.status(201).json(docente);
     } catch (error) {
         console.error('Error creating docente:', error);
@@ -59,8 +59,8 @@ export const getDocenteBySiape = async (req, res) => {
 export const updateDocente = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
-        const success = await Docente.update(id, nome, cpf, siape, datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
+        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
+        const success = await Docente.update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Docente not found' });
         }

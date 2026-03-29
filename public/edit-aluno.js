@@ -6,14 +6,15 @@ $(document).ready(async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
         return;
     }
 
     const user = getCurrentUser();
-    // If user is aluno, they can only edit their own record
-    if (user.role === 'aluno' && user.entidade_id != id) {
+    // If user is admin or the self aluno, they can only edit their own record
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
+        alert('Você não tem permissão para editar este aluno.');
         window.location.href = 'mural.html';
         return;
     }
@@ -21,9 +22,24 @@ $(document).ready(async function () {
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
-    $('#nascimento').inputmask('99-99-9999');
+    $('#nascimento').inputmask('99/99/9999');
     $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
 
+    // Initialize EasyMDE for observacoes field
+    const observacoesMDE = new EasyMDE({ 
+        element: document.getElementById('observacoes'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
+
+    // Load Aluno
     if (id) {
         loadAluno(id);
     }
@@ -41,6 +57,9 @@ $(document).ready(async function () {
             formData[item.name] = item.value;
             // console.log(item.name, item.value);
         });
+
+        // Add EasyMDE value
+        formData.observacoes = observacoesMDE.value();
 
         try {
             const url = id ? `/alunos/${id}` : '/alunos';
@@ -94,8 +113,6 @@ $(document).ready(async function () {
                 throw new Error('Aluno não encontrado');
             }
 
-            console.log('Loading aluno data:', data);
-
             // Populate form
             Object.keys(data).forEach(key => {
                 const input = $(`#${key}`);
@@ -113,6 +130,11 @@ $(document).ready(async function () {
                 }
             });
             $('#id').val(data.id); // Ensure ID is set
+
+            // Set EasyMDE value
+            if (data.observacoes) {
+                observacoesMDE.value(data.observacoes);
+            }
 
             // Store original registro to detect changes
             window.oldRegistro = data.registro;
@@ -179,6 +201,13 @@ $(document).ready(async function () {
                 isValid = true;
             }
             // If registro is 8 digits the year of the ingresso is equal to '19' + positions 0 and 1
+            if (ingresso && !ingressoRegex.test(ingresso)) {
+                $('#ingresso').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#ingresso').removeClass('is-invalid');
+                isValid = true;
+            }
         } else if (registro.length === 8) {
             const anoRegistro = parseInt('19' + registro.substring(0, 2));
             const anoIngresso = parseInt(ingresso.substring(0, 4));
@@ -199,6 +228,28 @@ $(document).ready(async function () {
             isValid = false;
         } else {
             $('#ingresso').removeClass('is-invalid');
+            isValid = true;
+        }
+
+        // Telefone format: (99) 9999.9999
+        const telefone = $('#telefone').val();
+        const telefoneRegex = /^\([0-9]{2}\)\s[0-9]{4,5}\.[0-9]{4}$/;
+        if (telefone && !telefoneRegex.test(telefone)) {
+            $('#telefone').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#telefone').removeClass('is-invalid');
+            isValid = true;
+        }
+
+        // Celular format: (99) 99999.9999
+        const celular = $('#celular').val();
+        const celularRegex = /^\([0-9]{2}\)\s[0-9]{5}\.[0-9]{4}$/;
+        if (celular && !celularRegex.test(celular)) {
+            $('#celular').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#celular').removeClass('is-invalid');
             isValid = true;
         }
 

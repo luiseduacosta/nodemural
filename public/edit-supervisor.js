@@ -8,6 +8,20 @@ $(document).ready(async function () {
         return;
     }
 
+    // Input Masks
+    $('#cpf').inputmask('999.999.999-99');
+    $('#email').inputmask('email');
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#ano_formacao').inputmask('9999');
+
+    // Form submission
     const form = document.getElementById('editSupervisorForm');
 
     // Define editSupervisor function first
@@ -24,6 +38,12 @@ $(document).ready(async function () {
             document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
             document.getElementById('supervisorId').value = supervisor.id;
+            document.getElementById('regiao').value = supervisor.regiao || '';
+            document.getElementById('cpf').value = supervisor.cpf || '';
+            document.getElementById('escola').value = supervisor.escola || '';
+            document.getElementById('ano_formacao').value = supervisor.ano_formacao || '';
+            document.getElementById('cargo').value = supervisor.cargo || '';
+            document.getElementById('observacoes').value = supervisor.observacoes || '';
 
             // Store original cress to detect changes
             window.oldCress = supervisor.cress;
@@ -54,7 +74,13 @@ $(document).ready(async function () {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || '',
             celular: document.getElementById('celular').value || null,
-            cress: document.getElementById('cress').value
+            cress: document.getElementById('cress').value,
+            regiao: document.getElementById('regiao').value || '',
+            cpf: document.getElementById('cpf').value || '',
+            escola: document.getElementById('escola').value || '',
+            ano_formacao: document.getElementById('ano_formacao').value || '',
+            cargo: document.getElementById('cargo').value || '',
+            observacoes: document.getElementById('observacoes').value || ''
         };
 
         const id = document.getElementById('supervisorId').value;

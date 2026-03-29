@@ -14,7 +14,7 @@ $(document).ready(async function () {
     const roleIsAluno = hasRole('aluno');
     const currentAlunoId = getCurrentUser().entidade_id;
     const currentUserId = roleIsAluno ? currentAlunoId : urlParams.get('id');
- 
+
     // 2. Initial Data Load (Dropdowns)
     async function loadInitialData() {
         try {
@@ -23,7 +23,6 @@ $(document).ready(async function () {
                 authenticatedFetch('/alunos'),
                 authenticatedFetch('/instituicoes'),
                 authenticatedFetch('/docentes'),
-                authenticatedFetch('/turmaestagios'),
                 authenticatedFetch('/configuracoes')
             ]);
 
@@ -50,13 +49,6 @@ $(document).ready(async function () {
                 const docentes = await docRes.json();
                 const select = document.getElementById('professor_id');
                 docentes.forEach(doc => select.add(new Option(doc.nome, doc.id)));
-            }
-
-            // Turmas
-            if (turmaRes.ok) {
-                const turmas = await turmaRes.json();
-                const select = document.getElementById('turmaestagio_id');
-                turmas.forEach(turma => select.add(new Option(turma.area, turma.id)));
             }
 
             // Default Period
@@ -111,7 +103,6 @@ $(document).ready(async function () {
 
                 if (data.instituicao_id) document.getElementById('instituicao_id').value = data.instituicao_id;
                 if (data.professor_id) document.getElementById('professor_id').value = data.professor_id;
-                if (data.turmaestagio_id) document.getElementById('turmaestagio_id').value = data.turmaestagio_id;
 
                 // Trigger supervisor load for this institution
                 if (data.instituicao_id) {
@@ -148,9 +139,7 @@ $(document).ready(async function () {
             professor_id: document.getElementById('professor_id').value,
             supervisor_id: document.getElementById('supervisor_id').value || null,
             instituicao_id: document.getElementById('instituicao_id').value,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
-            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value || 0,
             observacoes: document.getElementById('observacoes').value || null

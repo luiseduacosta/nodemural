@@ -47,11 +47,10 @@ $(document).ready(async function () {
     async function loadInitialData() {
         try {
             // Fetch dropdown options in parallel
-            const [alunoRes, instRes, docRes, turmaRes] = await Promise.all([
+            const [alunoRes, instRes, docRes] = await Promise.all([
                 authenticatedFetch('/alunos'),
                 authenticatedFetch('/instituicoes'),
                 authenticatedFetch('/docentes'),
-                authenticatedFetch('/turmaestagios')
             ]);
 
             // Alunos
@@ -75,13 +74,6 @@ $(document).ready(async function () {
                 const docentes = await docRes.json();
                 const select = document.getElementById('professor_id');
                 docentes.forEach(doc => select.add(new Option(doc.nome, doc.id)));
-            }
-
-            // Turmas
-            if (turmaRes.ok) {
-                const turmas = await turmaRes.json();
-                const select = document.getElementById('turmaestagio_id');
-                turmas.forEach(turma => select.add(new Option(turma.area, turma.id)));
             }
 
             // After dropdowns are ready, load the specific estagiario data
@@ -109,10 +101,8 @@ $(document).ready(async function () {
             document.getElementById('aluno_id').value = estagiario.aluno_id;
             document.getElementById('professor_id').value = estagiario.professor_id || '';
             document.getElementById('instituicao_id').value = estagiario.instituicao_id;
-            document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || '';
             document.getElementById('periodo').value = estagiario.periodo;
             document.getElementById('nivel').value = estagiario.nivel;
-            document.getElementById('turno').value = estagiario.turno || 'A';
             document.getElementById('ajuste2020').value = estagiario.ajuste2020 || 0;
             document.getElementById('observacoes').value = estagiario.observacoes || '';
 
@@ -137,11 +127,11 @@ $(document).ready(async function () {
                             O período atual do termo de compromisso é ${currentPeriod}. 
                             Não é possível editar estagiários de períodos futuros.
                         </div>`;
-                        
+
                         // Disable form submission
                         document.querySelector('button[type="submit"]').disabled = true;
                         document.querySelector('button[type="submit"]').classList.add('disabled');
-                        
+
                     } else if (currentPeriod > estagiario.periodo) {
                         // WARNING: Old period - show warning but allow edit
                         containerperiodo.innerHTML = `<div class="alert alert-warning">
@@ -149,11 +139,11 @@ $(document).ready(async function () {
                             O período atual do termo de compromisso é ${currentPeriod}. 
                             Esta edição está atualizando dados de um período passado.
                         </div>`;
-                        
+
                         containernivel.innerHTML = `<div class="alert alert-info">
                             O nível do estagiário é ${estagiario.nivel} correspondente ao período ${estagiario.periodo}.
                         </div>`;
-                        
+
                     } else {
                         // CORRECT: Same period - normal edit
                         containerperiodo.innerHTML = `<div class="alert alert-success">
@@ -185,9 +175,7 @@ $(document).ready(async function () {
             professor_id: document.getElementById('professor_id').value || null,
             supervisor_id: document.getElementById('supervisor_id').value || null,
             instituicao_id: document.getElementById('instituicao_id').value,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
-            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value || 0,
             observacoes: document.getElementById('observacoes').value || null

@@ -6,7 +6,7 @@ const user = getCurrentUser();
 $(document).ready(async function () {
 
     // Se não estiver logado ou não for admin ou aluno, redireciona para o login
-    if (!getToken() || !hasRole(['admin', 'aluno', 'docente', 'supervisor'])) {
+    if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -21,19 +21,19 @@ $(document).ready(async function () {
     }
 
     // If the user is an aluno and the id is not his, redirect to the mural
-    if (user.role == 'aluno' && user.entidade_id != id) {
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
         alert('Você não tem permissão para visualizar este aluno');
         window.location.href = 'mural.html';
         return;
     } else {
         // If the user is not an admin, hide the delete button
-        if (user.role !== 'admin') {
+        if (!hasRole(['admin'])) {
             document.getElementById('btnAluno-excluir').classList.add('d-none');
         }
     }
 
     // Hide the edit and new-estagiario buttons if it not the own aluno
-    if (user.role != 'aluno' && user.entidade_id != id) {
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
         document.getElementById('btnAluno-editar').classList.add('d-none');
         document.getElementById('btnAluno-estagios').classList.add('d-none');
     }
@@ -45,6 +45,10 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch aluno');
         }
         const aluno = await response.json();
+        if (!aluno) {
+            throw new Error('Aluno não encontrado');
+        }
+
         // Format the date
         const datanascimento = new Date(aluno.nascimento);
         const datanascimentoFormatada = datanascimento.toLocaleDateString('pt-BR');
@@ -52,8 +56,10 @@ $(document).ready(async function () {
         // Populate the view fields
         document.getElementById('view-id').textContent = aluno.id;
         document.getElementById('view-nome').textContent = aluno.nome;
+        document.getElementById('view-registro').textContent = aluno.registro;
         document.getElementById('view-email').textContent = aluno.email;
         document.getElementById('view-ingresso').textContent = aluno.ingresso;
+        document.getElementById('view-turno').textContent = aluno.turno;
         document.getElementById('view-telefone').textContent = aluno.telefone;
         document.getElementById('view-celular').textContent = aluno.celular;
         document.getElementById('view-cpf').textContent = aluno.cpf;
@@ -65,7 +71,6 @@ $(document).ready(async function () {
         document.getElementById('view-municipio').textContent = aluno.municipio;
         document.getElementById('view-bairro').textContent = aluno.bairro;
         document.getElementById('view-observacoes').textContent = aluno.observacoes;
-
         // Replace the href value to be used in new-estagiario.js
         document.getElementById("btnAluno-estagios").href = `new-estagiario.html?id=${id}`;
 
@@ -113,6 +118,9 @@ $(document).ready(async function () {
             }
             if (estagiariosResponse.ok) {
                 const estagiarios = await estagiariosResponse.json();
+                if (!estagiarios) {
+                    throw new Error('Sem estagiários');
+                }
                 if (Array.isArray(estagiarios) && estagiarios.length > 0) {
                     console.log("Com estagiários");
                 } else {
@@ -160,56 +168,58 @@ $(document).ready(async function () {
 });
 
 // if role is aluno then verify if it is estagiario, then check estagiario periodo with configuracoes termo_compromisso_periodo and render accordingly 
-(async () => {
+window.checkEstagiarioPeriodo = async () => {
     try {
         const user = getCurrentUser();
-        if (user && user.role === 'aluno') {
-            const alunoId = user.entidade_id;
-            const response = await authenticatedFetch(`/alunos/${alunoId}/estagiarios`);
-            if (response.ok) {
-                const estagiarios = await response.json();
-                if (estagiarios.length > 0) {
-                    // Pick last estagiario
-                    const currentPeriodo = estagiarios[estagiarios.length - 1].periodo;
-                    // Get termo_compromisso_periodo from table configuracoes
-                    const configuracoesResponse = await authenticatedFetch('/configuracoes');
-                    const configuracoes = await configuracoesResponse.json();
-                    const termoCompromissoPeriodo = configuracoes.termo_compromisso_periodo;
-                    // Verify if currentPeriodo is less than termoCompromissoPeriodo
-                    if (currentPeriodo < termoCompromissoPeriodo) {
-                        console.log("Periodo do estagiário atual " + currentPeriodo + " menor que termo de compromisso " + termoCompromissoPeriodo);
-                        // Button btnAluno-estagios redirect to new-estagiario.html
-                        document.getElementById('btnAluno-estagios').href = `new-estagiario.html?id=${alunoId}`;
-                        document.getElementById('btnAluno-estagios').innerHTML = 'Novo Estagiário';
-                        document.getElementById('btnAluno-estagios').classList.add('btn-success');
-                    } else if (currentPeriodo == termoCompromissoPeriodo) {
-                        console.log("Periodo do estagiário atual " + currentPeriodo + " igual ao termo de compromisso " + termoCompromissoPeriodo);
-                        // Button btnAluno-estagios redirect to edit-estagiario.html
-                        document.getElementById('btnAluno-estagios').href = `edit-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
-                        document.getElementById('btnAluno-estagios').innerHTML = 'Editar Estagiário';
-                        document.getElementById('btnAluno-estagios').classList.add('btn-warning');
-                    } else {
-                        console.log("Periodo do estagiário atual " + currentPeriodo + " maior que termo de compromisso " + termoCompromissoPeriodo);
-                        // Button btnAluno-estagios redirect to view-estagiario.html
-                        document.getElementById('btnAluno-estagios').href = `view-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
-                        document.getElementById('btnAluno-estagios').innerHTML = 'Ver Estagiário';
-                        document.getElementById('btnAluno-estagios').classList.add('btn-info');
-                    }
+        if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != window.currentAlunoId)) {
+            alert('Você não tem permissão para visualizar este aluno.');
+            window.location.href = 'mural.html';
+            return;
+        }
+        const alunoId = user.entidade_id;
+        const response = await authenticatedFetch(`/alunos/${alunoId}/estagiarios`);
+        if (response.ok) {
+            const estagiarios = await response.json();
+            if (estagiarios.length > 0) {
+                // Pick last estagiario
+                const currentPeriodo = estagiarios[estagiarios.length - 1].periodo;
+                // Get termo_compromisso_periodo from table configuracoes
+                const configuracoesResponse = await authenticatedFetch('/configuracoes');
+                const configuracoes = await configuracoesResponse.json();
+                const termoCompromissoPeriodo = configuracoes.termo_compromisso_periodo;
+                // Verify if currentPeriodo is less than termoCompromissoPeriodo
+                if (currentPeriodo < termoCompromissoPeriodo) {
+                    console.log("Periodo do estagiário atual " + currentPeriodo + " menor que termo de compromisso " + termoCompromissoPeriodo);
+                    // Button btnAluno-estagios redirect to new-estagiario.html
+                    document.getElementById('btnAluno-estagios').href = `new-estagiario.html?id=${alunoId}`;
+                    document.getElementById('btnAluno-estagios').innerHTML = 'Novo Estagiário';
+                    document.getElementById('btnAluno-estagios').classList.add('btn-success');
+                } else if (currentPeriodo == termoCompromissoPeriodo) {
+                    console.log("Periodo do estagiário atual " + currentPeriodo + " igual ao termo de compromisso " + termoCompromissoPeriodo);
+                    // Button btnAluno-estagios redirect to edit-estagiario.html
+                    document.getElementById('btnAluno-estagios').href = `edit-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
+                    document.getElementById('btnAluno-estagios').innerHTML = 'Editar Estagiário';
+                    document.getElementById('btnAluno-estagios').classList.add('btn-warning');
+                } else {
+                    console.log("Periodo do estagiário atual " + currentPeriodo + " maior que termo de compromisso " + termoCompromissoPeriodo);
+                    // Button btnAluno-estagios redirect to view-estagiario.html
+                    document.getElementById('btnAluno-estagios').href = `view-estagiario.html?id=${estagiarios[estagiarios.length - 1].id}`;
+                    document.getElementById('btnAluno-estagios').innerHTML = 'Ver Estagiário';
+                    document.getElementById('btnAluno-estagios').classList.add('btn-info');
                 }
             }
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error fetching estagiarios:', error);
     }
-})();
+};
 
 // Function to redirect to edit mode
 window.editRecord = function () {
     const user = getCurrentUser();
-    const isAdmin = user && user.role === 'admin';
-    const isOwner = user && user.role === 'aluno' && user.entidade_id == window.currentAlunoId;
-
-    if (!isAdmin && !isOwner) {
+    // Check if user is admin or aluno and is the owner
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != window.currentAlunoId)) {
         alert('Você não tem permissão para editar este aluno.');
         return;
     }
@@ -218,9 +228,10 @@ window.editRecord = function () {
 
 // Function to delete aluno
 window.deleteRecord = async function () {
-    // Se não for admin, não pode excluir
-    if (!getToken() || !hasRole(['admin'])) {
-        alert('Você precisa estar logado e ser admin para excluir um aluno.');
+    const user = getCurrentUser();
+    // Check if user is admin or aluno and is the owner
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != window.currentAlunoId)) {
+        alert('Você não tem permissão para excluir este aluno.');
         return;
     }
     if (confirm('Tem certeza que deseja excluir este aluno?')) {

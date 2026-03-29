@@ -8,12 +8,19 @@ $(document).ready(async function () {
         return;
     }
 
+    // Input Masks
+
     const form = document.getElementById('newMuralForm');
 
-    // Initialize EasyMDE
-    const requisitosMDE = new EasyMDE({ element: document.getElementById('requisitos') });
-    const outrasMDE = new EasyMDE({ element: document.getElementById('outras') });
-
+    // Initialize EasyMDE for requisitos and outras textareas with toolbar configuration
+    const requisitosMDE = new EasyMDE({ 
+        element: document.getElementById('requisitos'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
+    const outrasMDE = new EasyMDE({ 
+        element: document.getElementById('outras'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
 
     // Load instituições for the dropdown
     try {
@@ -76,25 +83,24 @@ $(document).ready(async function () {
             periodo: document.getElementById('periodo').value,
             vagas: document.getElementById('vagas').value,
             convenio: document.getElementById('convenio').value,
-            cargaHoraria: document.getElementById('cargaHoraria').value || null,
+            carga_horaria: document.getElementById('carga_horaria').value || null,
             final_de_semana: document.getElementById('final_de_semana').value || null,
             horario: document.getElementById('horario').value || null,
             beneficios: document.getElementById('beneficios').value || null,
             requisitos: requisitosMDE.value() || null,
 
-            dataInscricao: document.getElementById('dataInscricao').value || null,
-            dataSelecao: document.getElementById('dataSelecao').value || null,
-            horarioSelecao: document.getElementById('horarioSelecao').value || null,
-            localSelecao: document.getElementById('localSelecao').value || null,
-            formaSelecao: document.getElementById('formaSelecao').value || null,
-            localInscricao: document.getElementById('localInscricao').value,
+            data_inscricao: document.getElementById('data_inscricao').value || null,
+            data_selecao: document.getElementById('data_selecao').value || null,
+            horario_selecao: document.getElementById('horario_selecao').value || null,
+            local_selecao: document.getElementById('local_selecao').value || null,
+            forma_selecao: document.getElementById('forma_selecao').value || null,
+            local_inscricao: document.getElementById('local_inscricao').value || null,
             contato: document.getElementById('contato').value || null,
             email: document.getElementById('email').value || null,
             professor_id: document.getElementById('professor_id').value || null,
             turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             datafax: document.getElementById('datafax').value || null,
             outras: outrasMDE.value() || null
-
         };
 
         try {

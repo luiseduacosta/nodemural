@@ -3,7 +3,7 @@ import { getToken, hasRole, getCurrentUser, updateAuthSession } from './auth-uti
 
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -11,8 +11,7 @@ $(document).ready(async function () {
     const currentUser = getCurrentUser();
 
     // If the user is a aluno, pre-fill the form with their own data
-    if (hasRole('aluno')) {
-        const currentUser = getCurrentUser();
+    if (hasRole(['aluno'])) {
         document.getElementById('nome').value = currentUser.nome;
         document.getElementById('registro').value = currentUser.identificacao;
         document.getElementById('email').value = currentUser.email;
@@ -21,8 +20,22 @@ $(document).ready(async function () {
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
-    $('#nascimento').inputmask('99-99-9999');
+    $('#nascimento').inputmask('99/99/9999');
     $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+
+    // Initialize EasyMDE for observacoes field
+    const observacoesMDE = new EasyMDE({ 
+        element: document.getElementById('observacoes'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
 
     // Form Submission
     $('#newAlunoForm').on('submit', async function (e) {
@@ -32,24 +45,30 @@ $(document).ready(async function () {
             return;
         }
 
+        // Serialize form data
         const formData = {};
         $(this).serializeArray().forEach(item => {
             formData[item.name] = item.value;
         });
 
+        // Add EasyMDE value
+        formData.observacoes = observacoesMDE.value();
+
         try {
             const response = await fetch('/alunos', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
                 },
                 body: JSON.stringify(formData)
             });
 
+            // if edit changes the field registro, update the identificacao field in the users table too
             if (response.ok) {
                 const data = await response.json();
                 // Check if user is aluno and needs entidade_id update
-                if (currentUser && currentUser.role === 'aluno') {
+                if (hasRole('aluno') && currentUser && currentUser.entidade_id !== data.id) {
                     // Update user.entidade_id with the new aluno id
                     const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
                         method: 'PUT',

@@ -33,6 +33,19 @@ $(document).ready(async function () {
         document.getElementById('view-area').textContent = instituicao.area_nome || 'Não definida';
         document.getElementById('view-cnpj').textContent = instituicao.cnpj;
         document.getElementById('view-beneficio').textContent = instituicao.beneficio || 'Sem dados';
+        document.getElementById('view-natureza').textContent = instituicao.natureza || 'Sem dados';
+        document.getElementById('view-email').textContent = instituicao.email || 'Sem dados';
+        document.getElementById('view-url').textContent = instituicao.url || 'Sem dados';
+        document.getElementById('view-endereco').textContent = instituicao.endereco || 'Sem dados';
+        document.getElementById('view-bairro').textContent = instituicao.bairro || 'Sem dados';
+        document.getElementById('view-municipio').textContent = instituicao.municipio || 'Sem dados';
+        document.getElementById('view-cep').textContent = instituicao.cep || 'Sem dados';
+        document.getElementById('view-telefone').textContent = instituicao.telefone || 'Sem dados';
+        document.getElementById('view-fim_de_semana').textContent = instituicao.fim_de_semana || 'Sem dados';
+        document.getElementById('view-convenio').textContent = instituicao.convenio || 'Sem dados';
+        document.getElementById('view-expira').textContent = instituicao.expira || 'Sem dados';
+        document.getElementById('view-seguro').textContent = instituicao.seguro || 'Sem dados';
+        document.getElementById('view-observacoes').textContent = instituicao.observacoes || 'Sem dados';
 
         // Store the ID for edit function
         window.currentInstituicaoId = id;

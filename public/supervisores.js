@@ -21,6 +21,7 @@ $(document).ready(function () {
             { data: 'email' },
             { data: 'celular' },
             { data: 'cress' },
+            { data: 'regiao' },
             {
                 data: null,
                 render: function (data, type, row) {

@@ -12,6 +12,7 @@ $(document).ready(async function () {
 
     // Input Masks
     $('#cnpj').inputmask('99.999.999/9999-99');
+    $('#telefone').inputmask('(99) 9999-9999');
 
     // Load areas
     loadAreas();
@@ -41,8 +42,21 @@ $(document).ready(async function () {
         const instituicao = {
             instituicao: document.getElementById('instituicao').value,
             cnpj: document.getElementById('cnpj').value,
-            beneficio: document.getElementById('beneficio').value,
-            area_instituicoes_id: document.getElementById('area_instituicoes_id').value
+            natureza: document.getElementById('natureza').value,
+            email: document.getElementById('email').value,
+            beneficios: document.getElementById('beneficios').value,
+            areainstituicao_id: document.getElementById('areainstituicao_id').value,
+            url: document.getElementById('url').value,
+            endereco: document.getElementById('endereco').value,
+            bairro: document.getElementById('bairro').value,
+            municipio: document.getElementById('municipio').value,
+            cep: document.getElementById('cep').value,
+            telefone: document.getElementById('telefone').value,
+            fim_de_semana: document.getElementById('fim_de_semana').value,
+            convenio: document.getElementById('convenio').value,
+            expira: document.getElementById('expira').value,
+            seguro: document.getElementById('seguro').value,
+            observacoes: document.getElementById('observacoes').value
         };
 
         try {

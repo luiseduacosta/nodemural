@@ -17,6 +17,12 @@ $(document).ready(async function () {
         document.getElementById('cress').value = currentUser.identificacao;
     }
 
+    $('#telefone').inputmask('(99) 9999-9999');
+    $('#celular').inputmask({
+        mask: ["(99) 9999-9999", "(99) 99999-9999"],
+        keepStatic: true
+    });
+
     const form = document.getElementById('newSupervisorForm');
 
     form.addEventListener('submit', async (e) => {
@@ -26,7 +32,13 @@ $(document).ready(async function () {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || null,
             celular: document.getElementById('celular').value || '',
-            cress: document.getElementById('cress').value
+            cress: document.getElementById('cress').value,
+            regiao: document.getElementById('regiao').value || null,
+            cpf: document.getElementById('cpf').value || null,
+            escola: document.getElementById('escola').value || null,
+            ano_formacao: document.getElementById('ano_formacao').value || null,
+            cargo: document.getElementById('cargo').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         try {

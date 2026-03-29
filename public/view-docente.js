@@ -34,11 +34,17 @@ $(document).ready(async function () {
         $('#view-id').text(docente.id);
         $('#view-siape').text(docente.siape);
         $('#view-nome').text(docente.nome);
+        $('#view-cpf').text(docente.cpf || '-');
+        $('#view-cress').text(docente.cress || '-');
+        $('#view-regiao').text(docente.regiao || '-');
         $('#view-email').text(docente.email);
         $('#view-celular').text(docente.celular || '-');
+        $('#view-telefone').text(docente.telefone || '-');
+        $('#view-dataingresso').text(docente.dataingresso ? new Date(docente.dataingresso).toLocaleDateString('pt-BR') : '-');
         $('#view-departamento').text(docente.departamento || 'Sem dados');
         $('#view-curriculolattes').html(docente.curriculolattes ? `<a href="http://lattes.cnpq.br/${docente.curriculolattes}" target="_blank">${docente.curriculolattes}</a>` : '-');
-        $('#view-dataegresso').text(docente.dataegresso ? new Date(docente.dataegresso).toLocaleDateString() : '-');
+        $('#view-atualizacaolattes').text(docente.atualizacaolattes ? new Date(docente.atualizacaolattes).toLocaleDateString('pt-BR') : '-');
+        $('#view-dataegresso').text(docente.dataegresso ? new Date(docente.dataegresso).toLocaleDateString('pt-BR') : '-');
         $('#view-motivoegresso').text(docente.motivoegresso || '-');
         $('#view-observacoes').text(docente.observacoes || '-');
         window.currentDocenteId = id;

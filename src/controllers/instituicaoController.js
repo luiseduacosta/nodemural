@@ -29,8 +29,8 @@ export const getInstituicaoById = async (req, res) => {
 // Create a new instituicao
 export const createInstituicao = async (req, res) => {
     try {
-        const { instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const newInstituicao = await Instituicao.create(instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const { instituicao, cnpj, natureza, email, beneficios, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes } = req.body;
+        const newInstituicao = await Instituicao.create(instituicao, cnpj, natureza, email, beneficios, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes);
         res.status(201).json(newInstituicao);
     } catch (error) {
         console.error('Error creating instituicao:', error);
@@ -42,8 +42,8 @@ export const createInstituicao = async (req, res) => {
 export const updateInstituicao = async (req, res) => {
     try {
         const { id } = req.params;
-        const { instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const success = await Instituicao.update(id, instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const { instituicao, cnpj, natureza, email, beneficios, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes } = req.body;
+        const success = await Instituicao.update(id, instituicao, cnpj, natureza, email, beneficios, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Instituicao not found' });
         }

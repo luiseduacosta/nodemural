@@ -55,8 +55,8 @@ export const getAtividadesByEstagiarioIdEstagiario = async (req, res) => {
 // Create a new estagiario
 export const createEstagiarioEstagiario = async (req, res) => {
     try {
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes } = req.body;
-        const estagiario = await Estagiario.createEstagiario(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes);
+        const { aluno_id, registro, professor_id, supervisor_id, instituicao_id, periodo, tc, tc_solicitacao, nivel, ajuste2020, benetransporte, benealimentacao, bentebolsa, nota, ch, observacoes, } = req.body;
+        const estagiario = await Estagiario.createEstagiario(aluno_id, registro, professor_id, supervisor_id, instituicao_id, periodo, tc, tc_solicitacao, nivel, ajuste2020, benetransporte, benealimentacao, bentebolsa, nota, ch, observacoes);
         res.status(201).json(estagiario);
     } catch (error) {
         console.error('Error creating estagiario:', error);
@@ -68,7 +68,7 @@ export const createEstagiarioEstagiario = async (req, res) => {
 export const updateEstagiarioEstagiario = async (req, res) => {
     try {
         const { id } = req.params;
-        const { aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch } = req.body;
+        const { aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, benetransporte, benealimentacao, bentebolsa, nota, ch, observacoes } = req.body;
 
         // If only nota and ch are provided, use partial update
         const isPartialUpdate = Object.keys(req.body).every(key => ['nota', 'ch'].includes(key));
@@ -77,7 +77,7 @@ export const updateEstagiarioEstagiario = async (req, res) => {
         if (isPartialUpdate) {
             success = await Estagiario.updatePartialEstagiario(id, { nota, ch });
         } else {
-            success = await Estagiario.updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, turno, nivel, ajuste2020, observacoes, nota, ch);
+            success = await Estagiario.updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, benetransporte, benealimentacao, bentebolsa, nota, ch, observacoes);
         }
 
         if (!success) {

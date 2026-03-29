@@ -17,6 +17,27 @@ $(document).ready(async function () {
         document.getElementById('email').value = currentUser.email;
     }
 
+    // Mask: Data format
+    $('#dataingresso').inputmask('99/99/9999');
+    $('#dataegresso').inputmask('99/99/9999');
+    $('#cpf').inputmask('999.999.999-99');
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.99999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#atualizacaolattes').inputmask('99/99/9999');
+
+    // Initialize EasyMDE
+    const observacoesMDE = new EasyMDE({ 
+        element: document.getElementById('observacoes'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
+
+    // Form submission
     const form = document.getElementById('newDocenteForm');
 
     form.addEventListener('submit', async (e) => {
@@ -25,13 +46,19 @@ $(document).ready(async function () {
         const docente = {
             nome: document.getElementById('nome').value,
             siape: document.getElementById('siape').value,
+            cpf: document.getElementById('cpf').value || null,
+            cress: document.getElementById('cress').value || null,
+            regiao: document.getElementById('regiao').value || null,
             email: document.getElementById('email').value,
             celular: document.getElementById('celular').value || null,
+            telefone: document.getElementById('telefone').value || null,
+            dataingresso: document.getElementById('dataingresso').value || null,
             curriculolattes: document.getElementById('curriculolattes').value || null,
+            atualizacaolattes: document.getElementById('atualizacaolattes').value || null,
             departamento: document.getElementById('departamentoId').value,
             dataegresso: document.getElementById('dataegresso').value || null,
             motivoegresso: document.getElementById('motivoegresso').value || null,
-            observacoes: document.getElementById('observacoes').value || null
+            observacoes: observacoesMDE.value() || null
         };
 
         try {

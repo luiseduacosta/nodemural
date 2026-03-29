@@ -51,6 +51,12 @@ $(document).ready(async function () {
         document.getElementById('view-email').textContent = supervisor.email;
         document.getElementById('view-celular').textContent = supervisor.celular;
         document.getElementById('view-cress').textContent = supervisor.cress;
+        document.getElementById('view-regiao').textContent = supervisor.regiao;
+        document.getElementById('view-cpf').textContent = supervisor.cpf;
+        document.getElementById('view-escola').textContent = supervisor.escola;
+        document.getElementById('view-ano_formacao').textContent = supervisor.ano_formacao;
+        document.getElementById('view-cargo').textContent = supervisor.cargo;
+        document.getElementById('view-observacoes').textContent = supervisor.observacoes;
 
         // Store the ID for edit function
         window.currentSupervisorId = id;
