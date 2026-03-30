@@ -30,7 +30,12 @@ $(document).ready(async function () {
         }
 
         const professor = await response.json();
-
+        console.log(professor.curriculolattes.split('/').pop());
+        if (!professor) {
+            throw new Error('Professor(a) não encontrado');
+        } 
+        
+        // Populate the view fields
         $('#view-id').text(professor.id);
         $('#view-siape').text(professor.siape);
         $('#view-nome').text(professor.nome);
@@ -42,7 +47,7 @@ $(document).ready(async function () {
         $('#view-telefone').text(professor.telefone || '-');
         $('#view-dataingresso').text(professor.dataingresso ? new Date(professor.dataingresso).toLocaleDateString('pt-BR') : '-');
         $('#view-departamento').text(professor.departamento || 'Sem dados');
-        $('#view-curriculolattes').html(professor.curriculolattes ? `<a href="http://lattes.cnpq.br/${professor.curriculolattes}" target="_blank">${professor.curriculolattes}</a>` : '-');
+        $('#view-curriculolattes').html(professor.curriculolattes ? `<a href="http://lattes.cnpq.br/${professor.curriculolattes.split('/').pop()}" target="_blank">${professor.curriculolattes}</a>` : '-');
         $('#view-atualizacaolattes').text(professor.atualizacaolattes ? new Date(professor.atualizacaolattes).toLocaleDateString('pt-BR') : '-');
         $('#view-dataegresso').text(professor.dataegresso ? new Date(professor.dataegresso).toLocaleDateString('pt-BR') : '-');
         $('#view-motivoegresso').text(professor.motivoegresso || '-');

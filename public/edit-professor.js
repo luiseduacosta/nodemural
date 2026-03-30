@@ -30,7 +30,11 @@ $(document).ready(async function () {
         mask: ["(99) 9999.9999", "(99) 99999.9999"],
         keepStatic: true
     });
-    $('#atualizacaolattes').inputmask('99/99/9999');
+    // Digits 16 characters
+    $('#curriculolattes').inputmask({
+        mask: '[9999999999999999]',
+        greedy: false
+    });
 
     // Initialize EasyMDE
     const observacoesMDE = new EasyMDE({ 

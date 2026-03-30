@@ -17,25 +17,28 @@ $(document).ready(async function () {
         document.getElementById('email').value = currentUser.email;
     }
 
-    // Mask: Data format
-    $('#dataingresso').inputmask('99/99/9999');
-    $('#dataegresso').inputmask('99/99/9999');
-    $('#cpf').inputmask('999.999.999-99');
-    $('#telefone').inputmask({
-        mask: ["(99) 9999.99999", "(99) 99999.9999"],
-        keepStatic: true
-    });
-    $('#celular').inputmask({
-        mask: ["(99) 9999.9999", "(99) 99999.9999"],
-        keepStatic: true
-    });
-    $('#atualizacaolattes').inputmask('99/99/9999');
+    if ($.fn.inputmask) {
+        $('#cpf').inputmask('999.999.999-99');
+        $('#telefone').inputmask({
+            mask: ["(99) 9999.9999", "(99) 99999.9999"],
+            keepStatic: true
+        });
+        $('#celular').inputmask({
+            mask: ["(99) 9999.9999", "(99) 99999.9999"],
+            keepStatic: true
+        });
+       $('#curriculolattes').inputmask({
+            mask: '[9999999999999999]',
+            greedy: false
+       });
+    }
 
     // Initialize EasyMDE
     const observacoesMDE = new EasyMDE({ 
         element: document.getElementById('observacoes'),
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
     });
+
 
     // Form submission
     const form = document.getElementById('newProfessorForm');
