@@ -9,7 +9,7 @@
 - [src/controllers/authController.js](file://src/controllers/authController.js)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js)
 - [src/server.js](file://src/server.js)
@@ -42,7 +42,7 @@ end
 subgraph "Routers"
 RA["src/routers/authRoutes.js"]
 RL["src/routers/alunoRoutes.js"]
-RD["src/routers/professsorRoutes.js"]
+RD["src/routers/docenteRoutes.js"]
 RS["src/routers/supervisorRoutes.js"]
 RT["src/routers/atividadesRoutes.js"]
 end
@@ -75,7 +75,7 @@ M --> MI
 - [src/server.js](file://src/server.js#L31-L54)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/professsorRoutes.js](file://src/routers/professsorRoutes.js#L1-L20)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
@@ -87,7 +87,7 @@ M --> MI
 - [src/server.js](file://src/server.js#L31-L54)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/professsorRoutes.js](file://src/routers/professsorRoutes.js#L1-L20)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
@@ -116,7 +116,7 @@ Key implementation references:
 - [src/models/user.js](file://src/models/user.js#L106-L142)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L20-L23)
-- [src/routers/professsorRoutes.js](file://src/routers/professsorRoutes.js#L11-L17)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
 
 ## Architecture Overview
@@ -147,7 +147,7 @@ R-->>C : "Response"
 - [src/server.js](file://src/server.js#L31-L54)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L20-L23)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
@@ -161,7 +161,7 @@ R-->>C : "Response"
 ### Roles and Permissions
 - admin: Full access to all endpoints.
 - supervisor: Can manage estagiarios and view inscriptions; restricted write access to supervisor-owned entities.
-- professor: Can manage alunos and atividades; restricted write access to professor-owned entities.
+- docente: Can manage alunos and atividades; restricted write access to docente-owned entities.
 - aluno: Can view own data and public resources; restricted write access to aluno-owned entities.
 
 These roles and their typical capabilities are documented in the project guide.
@@ -185,7 +185,7 @@ Usage patterns:
 - [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L16-L17)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L21-L23)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L12-L17)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L12-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L13-L24)
 
 ### getCurrentUser Functionality
@@ -268,7 +268,7 @@ Ownership-protected endpoints:
 **Section sources**
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L23)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
 
 ### Practical Scenarios and Examples
@@ -281,8 +281,8 @@ Ownership-protected endpoints:
   - Reference: [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L21-L23)
 
 - Docente-managed entities:
-  - GET /professsores/:id/estagiarios requires admin or professor and ownership checks.
-  - Reference: [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L12-L14)
+  - GET /docentes/:id/estagiarios requires admin or docente and ownership checks.
+  - Reference: [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L12-L14)
 
 - Supervisor-managed institutions:
   - GET/POST/DELETE /supervisores/:id/instituicoes require admin or supervisor and ownership checks.

@@ -33,7 +33,7 @@ This guide helps you install, configure, and run NodeMural quickly. It covers pr
 NodeMural is a Node.js application using Express and MariaDB. The backend is organized into modular folders:
 - src/server.js: Entry point that initializes Express, middleware, static serving, routes, and port binding
 - src/database/: Database connection pool and initialization scripts
-- src/routers/: Route groups for features (e.g., auth, alunos, professores, estagios)
+- src/routers/: Route groups for features (e.g., auth, alunos, docentes, estagios)
 - src/controllers/: Business logic for each route group
 - src/middleware/: Shared middleware for authentication and authorization
 - src/models/: Data access logic and ORM-like functions
@@ -64,17 +64,17 @@ MW --> CTRL_AUTH
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L1-L73)
+- [src/server.js](file://src/server.js#L1-L62)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
-- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
-- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js)
+- [src/models/user.js](file://src/models/user.js)
 
 **Section sources**
-- [README.md](file://README.md#L1-L61)
-- [src/server.js](file://src/server.js#L1-L73)
+- [README.md](file://README.md)
+- [src/server.js](file://src/server.js#L1-L62)
 
 ## Core Components
 - Express server and routing: Initializes the server, registers routes, serves static files, and binds to a configurable port
@@ -84,12 +84,12 @@ MW --> CTRL_AUTH
 - Auth routes and controller: Public endpoints for registration and login, protected endpoints for profile and admin-only user listing
 
 **Section sources**
-- [src/server.js](file://src/server.js#L1-L73)
+- [src/server.js](file://src/server.js#L1-L62)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/models/user.js](file://src/models/user.js#L1-L146)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
-- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/models/user.js](file://src/models/user.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js)
 
 ## Architecture Overview
 The application follows a layered architecture:
@@ -120,11 +120,11 @@ Models --> Pool
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
-- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
-- [src/models/user.js](file://src/models/user.js#L1-L146)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/server.js](file://src/server.js#L1-L62)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js)
+- [src/models/user.js](file://src/models/user.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -189,12 +189,12 @@ Skip --> Done
 ```
 
 **Diagram sources**
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
 - [README.md](file://README.md#L44-L46)
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 
 ### Application Startup
 - Production mode
@@ -227,8 +227,8 @@ The server listens on the port configured by PORT (default 3333) and serves stat
 - For JWT usage, include Authorization: Bearer <token> in requests
 
 **Section sources**
-- [src/server.js](file://src/server.js#L71-L72)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L164-L190)
+- [src/server.js](file://src/server.js#L60-L61)
+- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L164-L191)
 
 ## Dependency Analysis
 Key runtime dependencies:
@@ -288,10 +288,10 @@ Common issues and resolutions:
   - Fix: Confirm Express static path is configured and public/ contains required files
 
 **Section sources**
-- [src/server.js](file://src/server.js#L71-L72)
+- [src/server.js](file://src/server.js#L60-L61)
 - [src/database/db.js](file://src/database/db.js#L5-L13)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L299)
+- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
 
 ## Conclusion
 You now have the essentials to install, configure, and run NodeMural. Confirm prerequisites, set up .env, prepare MariaDB, start the server, and verify access. Use the provided endpoints and middleware patterns to integrate authentication and protect your routes.
@@ -313,7 +313,7 @@ You now have the essentials to install, configure, and run NodeMural. Confirm pr
 **Section sources**
 - [README.md](file://README.md#L18-L28)
 - [src/database/db.js](file://src/database/db.js#L5-L13)
-- [src/server.js](file://src/server.js#L71-L72)
+- [src/server.js](file://src/server.js#L60-L61)
 
 ### Appendix B: Authentication Workflow
 ```mermaid
@@ -341,7 +341,7 @@ Ctrl-->>Client : {token, user}
 ```
 
 **Diagram sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
-- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
-- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js)
+- [src/models/user.js](file://src/models/user.js)
 - [src/database/db.js](file://src/database/db.js#L1-L15)

@@ -9,19 +9,19 @@
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md)
 - [src/middleware/auth.js](file://src/middleware/auth.js)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js)
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js)
 - [src/controllers/alunoController.js](file://src/controllers/alunoController.js)
-- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/controllers/estagioController.js](file://src/controllers/estagioController.js)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js)
 - [src/controllers/atividadesController.js](file://src/controllers/atividadesController.js)
 - [src/controllers/visitaController.js](file://src/controllers/visitaController.js)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
-- [src/models/instituicao.js](file://src/models/instituicao.js)
+- [src/models/estagio.js](file://src/models/estagio.js)
 - [src/models/inscricao.js](file://src/models/inscricao.js)
 - [src/models/atividades.js](file://src/models/atividades.js)
 - [src/models/visita.js](file://src/models/visita.js)
@@ -179,8 +179,8 @@ Business logic highlights:
 - No explicit validation logic shown in controller; model responsibilities align with other entities.
 
 **Section sources**
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
-- [src/controllers/professorController.js](file://src/controllers/professorController.js)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
+- [src/controllers/docenteController.js](file://src/controllers/docenteController.js)
 
 ### Supervisors (Supervisores)
 CRUD operations:
@@ -206,28 +206,28 @@ Business logic highlights:
 ```mermaid
 sequenceDiagram
 participant Client as "Client"
-participant Router as "instituicaoRoutes.js"
-participant Ctrl as "instituicaoController.js"
-participant Model as "instituicao.js"
+participant Router as "estagioRoutes.js"
+participant Ctrl as "estagioController.js"
+participant Model as "estagio.js"
 participant DB as "db.js"
-Client->>Router : GET /instituicoes/ : id
-Router->>Ctrl : getInstituicoesById()
+Client->>Router : GET /estagios/ : id
+Router->>Ctrl : getEstagioById()
 Ctrl->>Model : findById(id)
-Model->>DB : SELECT ... JOIN areas
+Model->>DB : SELECT ... JOIN area_instituicoes
 DB-->>Model : Row
 Model-->>Ctrl : {estagio with area}
 Ctrl-->>Client : 200 JSON
 ```
 
 **Diagram sources**
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
-- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L14-L27)
-- [src/models/instituicao.js](file://src/models/instituicao.js#L12-L18)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
+- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L14-L27)
+- [src/models/estagio.js](file://src/models/estagio.js#L12-L18)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
-- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
 
 ### Questionnaires
 CRUD operations:
@@ -284,8 +284,8 @@ Business logic highlights:
 - Controller delegates to model; model performs standard SQL operations.
 
 **Section sources**
-- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js)
-- [src/controllers/areaController.js](file://src/controllers/areaController.js)
+- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js)
+- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js)
 
 ### Configurations
 CRUD operations:
@@ -373,25 +373,25 @@ High-level dependencies:
 ```mermaid
 graph LR
 Server["src/server.js"] --> RAluno["alunoRoutes.js"]
-Server --> REstagio["instituicaoRoutes.js"]
+Server --> REstagio["estagioRoutes.js"]
 Server --> RInscricao["inscricaoRoutes.js"]
 Server --> RAtiv["atividadesRoutes.js"]
 Server --> RVisita["visitaRoutes.js"]
 Server --> RQuest["questionarioRoutes.js"]
 RAluno --> CAluno["alunoController.js"]
-RInstituicao --> CInstituicao["instituicaoController.js"]
+REstagio --> CEstagio["estagioController.js"]
 RInscricao --> CInscricao["inscricaoController.js"]
 RAtiv --> CAtiv["atividadesController.js"]
 RVisita --> CVisita["visitaController.js"]
 RQuest --> CQuest["questionarioController.js"]
 CAluno --> MAluno["aluno.js"]
-CInstituicao --> MEstagio["instituicao.js"]
+CEstagio --> MEstagio["estagio.js"]
 CInscricao --> MInscricao["inscricao.js"]
 CAtiv --> MAtiv["atividades.js"]
 CVisita --> MVisita["visita.js"]
 CQuest --> MQuest["questionario.js"]
 MAluno --> DB["db.js"]
-MInstituicao --> DB
+MEstagio --> DB
 MInscricao --> DB
 MAtiv --> DB
 MVisita --> DB
@@ -401,19 +401,19 @@ MQuest --> DB
 **Diagram sources**
 - [src/server.js](file://src/server.js#L8-L24)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js)
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js)
 - [src/controllers/alunoController.js](file://src/controllers/alunoController.js)
-- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/controllers/estagioController.js](file://src/controllers/estagioController.js)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js)
 - [src/controllers/atividadesController.js](file://src/controllers/atividadesController.js)
 - [src/controllers/visitaController.js](file://src/controllers/visitaController.js)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
-- [src/models/instituicao.js](file://src/models/instituicao.js)
+- [src/models/estagio.js](file://src/models/estagio.js)
 - [src/models/inscricao.js](file://src/models/inscricao.js)
 - [src/models/atividades.js](file://src/models/atividades.js)
 - [src/models/visita.js](file://src/models/visita.js)
@@ -462,10 +462,10 @@ string registro UK
 string nome
 string email
 }
-INSTITUICOES {
+ESTAGIOS {
 int id PK
 string instituicao
-int area_id FK
+int areainstituicoes_id FK
 }
 ESTAGIARIOS {
 int id PK
@@ -488,12 +488,12 @@ int muralestagio_id FK
 string periodo
 }
 ALUNOS ||--o{ ESTAGIARIOS : "has"
-INSTITUICOES ||--o{ ESTAGIARIOS : "hosts"
+ESTAGIOS ||--o{ ESTAGIARIOS : "hosts"
 ALUNOS ||--o{ INSCRICOES : "applies to"
 MURAL_ESTAGIO ||--o{ INSCRICOES : "contains"
 ```
 
 **Diagram sources**
 - [src/models/aluno.js](file://src/models/aluno.js#L74-L115)
-- [src/models/instituicao.js](file://src/models/instituicao.js#L53-L62)
+- [src/models/estagio.js](file://src/models/estagio.js#L53-L62)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L48-L56)

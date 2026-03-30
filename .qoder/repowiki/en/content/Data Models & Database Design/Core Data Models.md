@@ -4,7 +4,7 @@
 **Referenced Files in This Document**
 - [user.js](file://src/models/user.js)
 - [aluno.js](file://src/models/aluno.js)
-- [professor.js](file://src/models/professor.js)
+- [docente.js](file://src/models/docente.js)
 - [supervisor.js](file://src/models/supervisor.js)
 - [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 - [db.js](file://src/database/db.js)
@@ -12,7 +12,7 @@
 - [authController.js](file://src/controllers/authController.js)
 - [estagiario.js](file://src/models/estagiario.js)
 - [inscricao.js](file://src/models/inscricao.js)
-- [instituicao.js](file://src/models/instituicao.js)
+- [estagio.js](file://src/models/estagio.js)
 - [README.md](file://README.md)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md)
 </cite>
@@ -44,11 +44,11 @@ graph TB
 subgraph "Models"
 U["user.js"]
 A["aluno.js"]
-D["professor.js"]
+D["docente.js"]
 S["supervisor.js"]
 E["estagiario.js"]
 I["inscricao.js"]
-J["instituicao.js"]
+J["estagio.js"]
 end
 subgraph "Database"
 AU["auth_users"]
@@ -86,21 +86,21 @@ SETUP --> DB
 ```
 
 **Diagram sources**
-- [user.js](file://src/models/user.js#L1-L146)
-- [aluno.js](file://src/models/aluno.js#L1-L146)
-- [professor.js](file://src/models/professor.js#L1-L72)
-- [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [estagiario.js](file://src/models/estagiario.js#L1-L187)
-- [inscricao.js](file://src/models/inscricao.js#L1-L104)
-- [instituicao.js](file://src/models/instituicao.js#L1-L66)
-- [auth.js](file://src/middleware/auth.js#L1-L137)
-- [authController.js](file://src/controllers/authController.js#L1-L157)
-- [db.js](file://src/database/db.js#L1-L15)
-- [setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
+- [user.js](file://src/models/user.js)
+- [aluno.js](file://src/models/aluno.js)
+- [professor.js](file://src/models/professor.js)
+- [supervisor.js](file://src/models/supervisor.js)
+- [estagiario.js](file://src/models/estagiario.js)
+- [inscricao.js](file://src/models/inscricao.js)
+- [instituicao.js](file://src/models/instituicao.js)
+- [auth.js](file://src/middleware/auth.js)
+- [authController.js](file://src/controllers/authController.js)
+- [db.js](file://src/database/db.js)
+- [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 
 **Section sources**
-- [README.md](file://README.md#L1-L61)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L1-L312)
+- [README.md](file://README.md)
+- [AUTH_GUIDE.md](file://AUTH_GUIDE.md)
 
 ## Core Components
 This section defines the core entities and their attributes, constraints, and relationships.
@@ -140,19 +140,19 @@ This section defines the core entities and their attributes, constraints, and re
   - Relationships: belongs to alunos and mural_estagio
 
 - estagio (internship institution)
-  - Fields: id (primary key), instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes
+  - Fields: id (primary key), instituicao, cnpj, beneficio, areainstituicoes_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes
   - Business constraints: none enforced at model level
   - Relationships: many supervisors via inst_super; many murals via mural_estagio
 
 **Section sources**
-- [setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
-- [user.js](file://src/models/user.js#L5-L143)
-- [aluno.js](file://src/models/aluno.js#L5-L143)
-- [professor.js](file://src/models/professor.js#L4-L68)
-- [supervisor.js](file://src/models/supervisor.js#L4-L73)
-- [estagiario.js](file://src/models/estagiario.js#L4-L183)
-- [inscricao.js](file://src/models/inscricao.js#L4-L100)
-- [instituicao.js](file://src/models/instituicao.js#L4-L62)
+- [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [user.js](file://src/models/user.js)
+- [aluno.js](file://src/models/aluno.js)
+- [docente.js](file://src/models/professor.js)
+- [supervisor.js](file://src/models/supervisor.js)
+- [estagiario.js](file://src/models/estagiario.js)
+- [inscricao.js](file://src/models/inscricao.js)
+- [estagio.js](file://src/models/instituicao.js)
 
 ## Architecture Overview
 The authentication and user lifecycle are implemented as follows:
@@ -189,14 +189,14 @@ Ctrl-->>Client : "200 OK + token + user"
 ```
 
 **Diagram sources**
-- [authController.js](file://src/controllers/authController.js#L6-L74)
-- [user.js](file://src/models/user.js#L7-L34)
-- [db.js](file://src/database/db.js#L5-L13)
+- [authController.js](file://src/controllers/authController.js)
+- [user.js](file://src/models/user.js)
+- [db.js](file://src/database/db.js)
 
 **Section sources**
-- [authController.js](file://src/controllers/authController.js#L1-L157)
-- [user.js](file://src/models/user.js#L1-L146)
-- [db.js](file://src/database/db.js#L1-L15)
+- [authController.js](file://src/controllers/authController.js)
+- [user.js](file://src/models/user.js)
+- [db.js](file://src/database/db.js)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L66-L135)
 
 ## Detailed Component Analysis
@@ -240,11 +240,11 @@ class User {
 ```
 
 **Diagram sources**
-- [user.js](file://src/models/user.js#L5-L143)
+- [user.js](file://src/models/user.js)
 
 **Section sources**
-- [user.js](file://src/models/user.js#L1-L146)
-- [setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
+- [user.js](file://src/models/user.js)
+- [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 
 ### Aluno (Student)
 - Responsibilities
@@ -280,10 +280,10 @@ class Aluno {
 ```
 
 **Diagram sources**
-- [aluno.js](file://src/models/aluno.js#L4-L143)
+- [aluno.js](file://src/models/aluno.js)
 
 **Section sources**
-- [aluno.js](file://src/models/aluno.js#L1-L146)
+- [aluno.js](file://src/models/aluno.js)
 
 ### Docente (Professor)
 - Responsibilities
@@ -310,10 +310,10 @@ class Docente {
 ```
 
 **Diagram sources**
-- [professor.js](file://src/models/professor.js#L4-L68)
+- [docente.js](file://src/models/professor.js)
 
 **Section sources**
-- [professor.js](file://src/models/professor.js#L1-L72)
+- [docente.js](file://src/models/professor.js)
 
 ### Supervisor
 - Responsibilities
@@ -342,10 +342,10 @@ class Supervisor {
 ```
 
 **Diagram sources**
-- [supervisor.js](file://src/models/supervisor.js#L4-L73)
+- [supervisor.js](file://src/models/supervisor.js)
 
 **Section sources**
-- [supervisor.js](file://src/models/supervisor.js#L1-L77)
+- [supervisor.js](file://src/models/supervisor.js)
 
 ### Entity Relationship Diagram (ERD)
 The following ERD maps the core entities and their relationships as implemented in the codebase.
@@ -417,7 +417,7 @@ int id PK
 string instituicao
 string cnpj
 string beneficio
-int area_id
+int areainstituicoes_id
 string url
 string endereco
 string bairro
@@ -469,22 +469,22 @@ ALUNOS ||--o{ INSCRICOES : "aluno_id"
 ```
 
 **Diagram sources**
-- [setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
-- [aluno.js](file://src/models/aluno.js#L10-L19)
-- [professor.js](file://src/models/professor.js#L5-L10)
-- [supervisor.js](file://src/models/supervisor.js#L20-L25)
-- [estagiario.js](file://src/models/estagiario.js#L56-L63)
-- [inscricao.js](file://src/models/inscricao.js#L58-L73)
-- [instituicao.js](file://src/models/instituicao.js#L20-L25)
+- [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [aluno.js](file://src/models/aluno.js)
+- [docente.js](file://src/models/professor.js)
+- [supervisor.js](file://src/models/supervisor.js)
+- [estagiario.js](file://src/models/estagiario.js)
+- [inscricao.js](file://src/models/inscricao.js)
+- [estagio.js](file://src/models/instituicao.js)
 
 **Section sources**
-- [setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
-- [aluno.js](file://src/models/aluno.js#L1-L146)
-- [professor.js](file://src/models/professor.js#L1-L72)
-- [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [estagiario.js](file://src/models/estagiario.js#L1-L187)
-- [inscricao.js](file://src/models/inscricao.js#L1-L104)
-- [instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [aluno.js](file://src/models/aluno.js)
+- [docente.js](file://src/models/professor.js)
+- [supervisor.js](file://src/models/supervisor.js)
+- [estagiario.js](file://src/models/estagiario.js)
+- [inscricao.js](file://src/models/inscricao.js)
+- [estagio.js](file://src/models/instituicao.js)
 
 ## Dependency Analysis
 - Internal dependencies
@@ -504,30 +504,30 @@ UM --> DB["db.js"]
 AM["auth.js"] --> DB
 AM --> IC["inscricao.js"]
 AL["aluno.js"] --> DB
-DT["professor.js"] --> DB
+DT["docente.js"] --> DB
 SP["supervisor.js"] --> DB
 ES["estagiario.js"] --> DB
 IN["inscricao.js"] --> DB
-EG["instituicao.js"] --> DB
+EG["estagio.js"] --> DB
 ```
 
 **Diagram sources**
-- [authController.js](file://src/controllers/authController.js#L1-L157)
-- [user.js](file://src/models/user.js#L1-L146)
-- [auth.js](file://src/middleware/auth.js#L1-L137)
-- [db.js](file://src/database/db.js#L1-L15)
-- [aluno.js](file://src/models/aluno.js#L1-L146)
-- [professor.js](file://src/models/professor.js#L1-L72)
-- [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [estagiario.js](file://src/models/estagiario.js#L1-L187)
-- [inscricao.js](file://src/models/inscricao.js#L1-L104)
-- [instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [authController.js](file://src/controllers/authController.js)
+- [user.js](file://src/models/user.js)
+- [auth.js](file://src/middleware/auth.js)
+- [db.js](file://src/database/db.js)
+- [aluno.js](file://src/models/aluno.js)
+- [docente.js](file://src/models/professor.js)
+- [supervisor.js](file://src/models/supervisor.js)
+- [estagiario.js](file://src/models/estagiario.js)
+- [inscricao.js](file://src/models/inscricao.js)
+- [estagio.js](file://src/models/instituicao.js)
 
 **Section sources**
-- [auth.js](file://src/middleware/auth.js#L1-L137)
-- [authController.js](file://src/controllers/authController.js#L1-L157)
-- [user.js](file://src/models/user.js#L1-L146)
-- [db.js](file://src/database/db.js#L1-L15)
+- [auth.js](file://src/middleware/auth.js)
+- [authController.js](file://src/controllers/authController.js)
+- [user.js](file://src/models/user.js)
+- [db.js](file://src/database/db.js)
 
 ## Performance Considerations
 - Indexing recommendations
@@ -560,16 +560,11 @@ EG["instituicao.js"] --> DB
   - Confirm auth_users table exists via setupAuthUsers.js
 
 **Section sources**
-- [auth.js](file://src/middleware/auth.js#L6-L29)
-- [auth.js](file://src/middleware/auth.js#L32-L48)
-- [auth.js](file://src/middleware/auth.js#L77-L98)
-- [auth.js](file://src/middleware/auth.js#L100-L136)
-- [authController.js](file://src/controllers/authController.js#L10-L27)
-- [authController.js](file://src/controllers/authController.js#L86-L96)
-- [user.js](file://src/models/user.js#L9-L13)
-- [aluno.js](file://src/models/aluno.js#L11-L14)
-- [inscricao.js](file://src/models/inscricao.js#L60-L67)
-- [aluno.js](file://src/models/aluno.js#L125-L139)
+- [auth.js](file://src/middleware/auth.js)
+- [authController.js](file://src/controllers/authController.js)
+- [user.js](file://src/models/user.js)
+- [aluno.js](file://src/models/aluno.js)
+- [inscricao.js](file://src/models/inscricao.js)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
 
 ## Conclusion

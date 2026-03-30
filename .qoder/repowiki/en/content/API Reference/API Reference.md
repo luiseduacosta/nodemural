@@ -10,6 +10,7 @@
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
 - [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
 - [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
@@ -19,7 +20,14 @@
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js)
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js)
 - [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js)
+- [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js)
 - [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/models/user.js](file://src/models/user.js)
+- [src/models/professor.js](file://src/models/professor.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
 </cite>
 
 ## Table of Contents
@@ -44,8 +52,9 @@ The server registers route groups under top-level prefixes and exposes several n
 graph TB
 Server["src/server.js<br/>Express app"] --> AuthRoutes["/auth<br/>src/routers/authRoutes.js"]
 Server --> AlunoRoutes["/alunos<br/>src/routers/alunoRoutes.js"]
-Server --> professorRoutes["/docentes<br/>src/routers/professorRoutes.js"]
-Server --> instituicaoRoutes["/estagios<br/>src/routers/instituicaoRoutes.js"]
+Server --> ProfessorRoutes["/professores<br/>src/routers/professorRoutes.js"]
+Server --> InstituicaoRoutes["/instituicoes<br/>src/routers/instituicaoRoutes.js"]
+Server --> EstagioRoutes["/estagios<br/>src/routers/estagioRoutes.js"]
 Server --> EstagiarioRoutes["/estagiarios<br/>src/routers/estagiarioRoutes.js"]
 Server --> MuralRoutes["/mural<br/>(not registered in server.js)"]
 Server --> InscricaoRoutes["/inscricoes<br/>src/routers/inscricaoRoutes.js"]
@@ -54,24 +63,27 @@ Server --> QuestionarioRoutes["/questionarios<br/>src/routers/questionarioRoutes
 Server --> QuestaoRoutes["/questoes<br/>src/routers/questaoRoutes.js"]
 Server --> AtividadesRoutes["/atividades<br/>src/routers/atividadesRoutes.js"]
 Server --> VisitaRoutes["/visitas<br/>src/routers/visitaRoutes.js"]
-Server --> TurmaRoutes["/turmas<br/>src/routers/turmaRoutes.js"]
-Server --> areaRoutes["/areainstituicoes<br/>src/routers/areaRoutes.js"]
+Server --> TurmaRoutes["/turmaestagios<br/>src/routers/turmaRoutes.js"]
+Server --> AreaRoutes["/areas<br/>src/routers/areaRoutes.js"]
+Server --> RespostaRoutes["/respostas<br/>src/routers/respostaRoutes.js"]
 Server --> ConfiguracaoRoutes["/configuracoes<br/>src/routers/configuracaoRoutes.js"]
-Server --> RespostaRoutes["/respostas<br/>(not registered in server.js)"]
 Server --> Nested["Nested Routes"]
 Nested --> NestSup["/supervisores/:id/estagiarios"]
-Nested --> NestProf["/docentes/:id/estagiarios"]
+Nested --> NestProf["/professores/:id/estagiarios"]
 Nested --> NestAluno["/alunos/:id/estagiarios"]
 Nested --> NestMural["/mural/:id/inscricoes"]
 Nested --> NestAluno2["/alunos/:id/inscricoes"]
+Nested --> NestInst["/instituicoes/:id/supervisores"]
+Nested --> NestInst2["/instituicoes/:id/mural"]
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L37-L64)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/server.js](file://src/server.js#L37-L53)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L22)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L23)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L21)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
@@ -80,7 +92,8 @@ Nested --> NestAluno2["/alunos/:id/inscricoes"]
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
-- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L18)
+- [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js#L1-L54)
 - [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js#L1-L18)
 
 **Section sources**
@@ -89,17 +102,19 @@ Nested --> NestAluno2["/alunos/:id/inscricoes"]
 ## Core Components
 - Authentication and Authorization
   - JWT-based authentication via Authorization header with Bearer scheme.
-  - Role-based access control (RBAC) supports roles: admin, supervisor, docente, aluno.
-  - Ownership checks restrict access to personal records for specific roles.
+  - Role-based access control (RBAC) supports roles: admin, supervisor, professor, aluno.
+  - Enhanced ownership checks restrict access to personal records for specific roles.
+  - User management endpoints support entity-based updates.
 - Request Body Parsing
   - JSON body parsing enabled globally and per-route where applicable.
 - Nested Routes
-  - Relationship endpoints for supervisors, professors, students, and mural posts.
+  - Relationship endpoints for supervisors, professors, students, institutions, and mural posts.
 
 Key behaviors:
 - Protected endpoints require a valid, non-expired JWT.
 - Admin role grants broad access; other roles may be restricted by ownership or role middleware.
 - Some endpoints enforce ownership checks for specific resources.
+- Entity-based authentication allows users to be associated with specific entities (aluno, professor, supervisor).
 
 **Section sources**
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
@@ -120,9 +135,9 @@ The API follows a layered architecture:
 sequenceDiagram
 participant C as "Client"
 participant S as "Express Server<br/>src/server.js"
-participant R as "Route Group<br/>e.g., src/routers/alunoRoutes.js"
+participant R as "Route Group<br/>e.g., src/routers/authRoutes.js"
 participant M as "Auth Middleware<br/>src/middleware/auth.js"
-participant Ctrl as "Controller<br/>e.g., alunoController.js"
+participant Ctrl as "Controller<br/>e.g., authController.js"
 C->>S : HTTP Request
 S->>R : Route match (prefix)
 R->>M : verifyToken / checkRole / checkOwnership
@@ -136,7 +151,7 @@ end
 
 **Diagram sources**
 - [src/server.js](file://src/server.js#L37-L53)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L22)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L32-L48)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L77-L98)
@@ -149,8 +164,8 @@ end
   - POST /auth/register
     - Description: Registers a new user account.
     - Auth: Not authenticated.
-    - Request: JSON payload with email, password, passwordConfirm, nome, role (optional).
-    - Response: Created user object with id, email, nome, role.
+    - Request: JSON payload with email, password, passwordConfirm, nome, identificacao, role (optional), entidade_id (optional).
+    - Response: Created user object with id, email, nome, identificacao, role, entidade_id.
     - Errors: 400 validation errors, 500 server error.
   - POST /auth/login
     - Description: Authenticates user and returns JWT.
@@ -161,13 +176,25 @@ end
   - GET /auth/me
     - Description: Returns decoded user info from token.
     - Auth: Requires Bearer token.
-    - Response: { user: { id, email, nome, role, iat, exp } }.
+    - Response: { user: { id, email, nome, role, entidade_id, iat, exp } }.
     - Errors: 401 missing/expired/invalid token.
   - GET /auth/profile
     - Description: Retrieves authenticated user profile.
     - Auth: Requires Bearer token.
-    - Response: User profile fields including ativo and criado_em.
+    - Response: User profile fields including identificacao, role, entidade_id, ativo, and criado_em.
     - Errors: 401 unauthorized, 403 forbidden, 500 server error.
+  - PUT /auth/users/:id
+    - Description: Updates user profile (self or admin).
+    - Auth: Requires Bearer token; admin or same user.
+    - Request: JSON with nome, email, identificacao, role (admin only), entidade_id (role-dependent).
+    - Response: Updated user object and new token with updated claims.
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
+  - PUT /auth/users/entity/:entidade_id
+    - Description: Updates user by entity ID (admin or same user).
+    - Auth: Requires Bearer token; admin or user with matching entity.
+    - Request: JSON with identificacao, nome, email.
+    - Response: Updated user object and new token.
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
   - GET /auth/users
     - Description: Lists all users (admin only).
     - Auth: Requires Bearer token; admin role.
@@ -178,12 +205,119 @@ Security Notes:
 - Use HTTPS in production.
 - Store JWT securely on the client (e.g., HttpOnly cookies if using sessions).
 - Rotate JWT_SECRET in production.
+- Entity-based authentication allows users to be linked to specific entities (aluno, professor, supervisor).
+
+**Updated** Enhanced authentication endpoints now include comprehensive user management with entity-based updates and improved role handling.
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L18)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L21)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L5-L260)
+- [src/models/user.js](file://src/models/user.js#L6-L185)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L66-L161)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L194-L202)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
+
+### Professors (professores)
+- Base Path: /professores
+- Methods and Paths
+  - GET /professores
+    - Description: List all professores (admin, aluno, professor).
+    - Auth: Bearer token; admin, aluno, or professor.
+    - Response: Array of professores.
+    - Errors: 401/403, 500 server error.
+  - GET /professores/:id
+    - Description: Retrieve professor by ID (admin or professor; ownership required).
+    - Auth: Bearer token; admin or professor (ownership via entidade_id).
+    - Response: Single professor object.
+    - Errors: 401/403, 404 not found, 500 server error.
+  - GET /professores/siape/:siape
+    - Description: Retrieve professor by siape (public).
+    - Auth: Not authenticated.
+    - Response: Single professor object.
+    - Errors: 404 not found, 500 server error.
+  - GET /professores/:id/estagiarios
+    - Description: Get estagiarios linked to professor (admin or professor; ownership required).
+    - Auth: Bearer token; admin or professor (ownership via entidade_id).
+    - Response: Array of estagiarios with student details.
+    - Errors: 401/403, 500 server error.
+  - POST /professores
+    - Description: Create professor (admin or professor).
+    - Auth: Bearer token; admin or professor.
+    - Request: JSON professor data with comprehensive fields.
+    - Response: Created professor object.
+    - Errors: 400 validation, 401/403, 500 server error.
+  - PUT /professores/:id
+    - Description: Update professor (admin or professor; ownership required).
+    - Auth: Bearer token; admin or professor (ownership via entidade_id).
+    - Request: JSON professor data with comprehensive fields.
+    - Response: No content (204).
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
+  - DELETE /professores/:id
+    - Description: Delete professor (admin only).
+    - Auth: Bearer token; admin.
+    - Response: No content (204).
+    - Errors: 401/403, 404 not found, 500 server error.
+
+Professor Fields:
+- nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes
+
+**Updated** Added comprehensive professor management with full CRUD operations and enhanced authentication with ownership checks.
+
+**Section sources**
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L21)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L4-L100)
+- [src/models/professor.js](file://src/models/professor.js#L4-L86)
+
+### Institutions (instituicoes)
+- Base Path: /instituicoes
+- Methods and Paths
+  - POST /instituicoes
+    - Description: Create institution (admin only).
+    - Auth: Bearer token; admin role.
+    - Request: JSON institution data with comprehensive fields.
+    - Response: Created institution object.
+    - Errors: 400 validation, 401/403, 500 server error.
+  - GET /instituicoes
+    - Description: List all institutions (authenticated).
+    - Auth: Bearer token; requires authentication.
+    - Response: Array of institutions with area information.
+    - Errors: 401 unauthorized, 500 server error.
+  - GET /instituicoes/:id
+    - Description: Retrieve institution by ID (authenticated).
+    - Auth: Bearer token; requires authentication.
+    - Response: Single institution object with area information.
+    - Errors: 401 unauthorized, 404 not found, 500 server error.
+  - GET /instituicoes/:id/supervisores
+    - Description: Get supervisores linked to institution (admin, aluno).
+    - Auth: Bearer token; admin or aluno.
+    - Response: Array of supervisores.
+    - Errors: 401/403, 500 server error.
+  - GET /instituicoes/:id/mural
+    - Description: Get mural entries linked to institution (authenticated).
+    - Auth: Bearer token; requires authentication.
+    - Response: Array of mural entries with periodo and vagas.
+    - Errors: 401 unauthorized, 500 server error.
+  - PUT /instituicoes/:id
+    - Description: Update institution (admin only).
+    - Auth: Bearer token; admin role.
+    - Request: JSON institution data with comprehensive fields.
+    - Response: No content (204).
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
+  - DELETE /instituicoes/:id
+    - Description: Delete institution (admin only).
+    - Auth: Bearer token; admin role.
+    - Response: No content (204).
+    - Errors: 401/403, 404 not found, 500 server error.
+
+Institution Fields:
+- instituicao, cnpj, natureza, email, beneficios, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes
+
+**New** Added comprehensive institutional management with full CRUD operations and relationship endpoints.
+
+**Section sources**
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L11-L19)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L3-L95)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L4-L66)
 
 ### Students (alunos)
 - Base Path: /alunos
@@ -238,95 +372,52 @@ Nested Routes
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L24)
 - [src/server.js](file://src/server.js#L60)
 
-### Teachers (docentes)
-- Base Path: /professores
+### Internships (estagios)
+- Base Path: /estagios
 - Methods and Paths
-  - GET /professores
-    - Description: List all professores (admin or professor).
-    - Auth: Bearer token; admin or professor.
-    - Response: Array of professores.
-    - Errors: 401/403, 500 server error.
-  - GET /professores/:id
-    - Description: Retrieve docente by ID (admin or professor; ownership).
-    - Auth: Bearer token; admin or professor (ownership).
-    - Response: Single professor object.
-    - Errors: 401/403, 404 not found, 500 server error.
-  - GET /professores/:id/estagiarios
-    - Description: Get estagiarios linked to professor (admin or professor; ownership).
-    - Auth: Bearer token; admin or professor (ownership).
-    - Response: Array of estagiarios.
-    - Errors: 401/403, 500 server error.
-  - POST /professores
-    - Description: Create professor (admin only).
-    - Auth: Bearer token; admin.
-    - Request: JSON professor data.
-    - Response: Created professor object.
-    - Errors: 400 validation, 401/403, 500 server error.
-  - PUT /professores/:id
-    - Description: Update professor (admin or professor; ownership).
-    - Auth: Bearer token; admin or professor (ownership).
-    - Request: JSON professor data.
-    - Response: Updated professor object.
-    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
-  - DELETE /professores/:id
-    - Description: Delete professor (admin only).
-    - Auth: Bearer token; admin.
-    - Response: Deletion result.
-    - Errors: 401/403, 404 not found, 500 server error.
-
-Nested Routes
-- /professores/:id/estagiarios → [src/server.js](file://src/server.js#L58)
-
-**Section sources**
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
-- [src/server.js](file://src/server.js#L58)
-
-### Internships (instituicoes)
-- Base Path: /instituicoes
-- Methods and Paths
-  - POST /instituicoes
-    - Description: Create instituicao.
+  - POST /estagios
+    - Description: Create estagio.
     - Auth: Not authenticated.
-    - Request: JSON instituicao data.
-    - Response: Created instituicao object.
+    - Request: JSON estagio data.
+    - Response: Created estagio object.
     - Errors: 400 validation, 500 server error.
-  - GET /instituicoes
-    - Description: List all instituicoes.
+  - GET /estagios
+    - Description: List all estagios.
     - Auth: Not authenticated.
-    - Response: Array of instituicoes.
+    - Response: Array of estagios.
     - Errors: 500 server error.
-  - GET /instituicoes/:id
-    - Description: Retrieve instituicao by ID.
+  - GET /estagios/:id
+    - Description: Retrieve estagio by ID.
     - Auth: Not authenticated.
-    - Response: Single instituicao object.
+    - Response: Single estagio object.
     - Errors: 404 not found, 500 server error.
-  - GET /instituicoes/:id/supervisores
-    - Description: Get supervisores linked to instituicao.
+  - GET /estagios/:id/supervisores
+    - Description: Get supervisores linked to estagio.
     - Auth: Not authenticated.
     - Response: Array of supervisores.
     - Errors: 500 server error.
-  - GET /instituicoes/:id/mural
-    - Description: Get mural entries linked to instituicao.
+  - GET /estagios/:id/mural
+    - Description: Get mural entries linked to estagio.
     - Auth: Not authenticated.
     - Response: Array of mural entries.
     - Errors: 500 server error.
-  - PUT /instituicoa/:id
-    - Description: Update instituicao.
+  - PUT /estagios/:id
+    - Description: Update estagio.
     - Auth: Not authenticated.
-    - Request: JSON institucao data.
-    - Response: Updated instituicao object.
+    - Request: JSON estagio data.
+    - Response: Updated estagio object.
     - Errors: 400 validation, 404 not found, 500 server error.
-  - DELETE /instituicoes/:id
-    - Description: Delete instituicao.
+  - DELETE /estagios/:id
+    - Description: Delete estagio.
     - Auth: Not authenticated.
     - Response: Deletion result.
     - Errors: 404 not found, 500 server error.
 
 Nested Routes
-- /instituicoes/:id/estagiarios → [src/server.js](file://src/server.js#L59)
+- /estagios/:id/estagiarios → [src/server.js](file://src/server.js#L59)
 
 **Section sources**
-- [src/routers/institucaoRoutes.js](file://src/routers/institucaoRoutes.js#L10-L17)
+- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L10-L17)
 - [src/server.js](file://src/server.js#L59)
 
 ### Interns (estagiarios)
@@ -624,31 +715,31 @@ Nested Routes
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js#L10-L15)
 
 ### Classes (turmas)
-- Base Path: /turmas
+- Base Path: /turmaestagios
 - Methods and Paths
-  - GET /turmas
+  - GET /turmaestagios
     - Description: List all turmas.
     - Auth: Not authenticated.
     - Response: Array of turmas.
     - Errors: 500 server error.
-  - GET /turmas/:id
+  - GET /turmaestagios/:id
     - Description: Retrieve turma by ID.
     - Auth: Not authenticated.
     - Response: Single turma object.
     - Errors: 404 not found, 500 server error.
-  - POST /turmas
+  - POST /turmaestagios
     - Description: Create turma.
     - Auth: Not authenticated.
     - Request: JSON turma data.
     - Response: Created turma object.
     - Errors: 400 validation, 500 server error.
-  - PUT /turmas/:id
+  - PUT /turmaestagios/:id
     - Description: Update turma.
     - Auth: Not authenticated.
     - Request: JSON turma data.
     - Response: Updated turma object.
     - Errors: 400 validation, 404 not found, 500 server error.
-  - DELETE /turmas/:id
+  - DELETE /turmaestagios/:id
     - Description: Delete turma.
     - Auth: Not authenticated.
     - Response: Deletion result.
@@ -657,39 +748,112 @@ Nested Routes
 **Section sources**
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L10-L15)
 
-### Areas of Institutions (areas)
+### Areas (areas)
 - Base Path: /areas
 - Methods and Paths
   - GET /areas
-    - Description: List all areas.
-    - Auth: Not authenticated.
+    - Description: List all areas (authenticated).
+    - Auth: Bearer token; requires authentication.
     - Response: Array of areas.
-    - Errors: 500 server error.
+    - Errors: 401 unauthorized, 500 server error.
   - GET /areas/:id
-    - Description: Retrieve area by ID.
-    - Auth: Not authenticated.
+    - Description: Retrieve area by ID (authenticated).
+    - Auth: Bearer token; requires authentication.
     - Response: Single area object.
-    - Errors: 404 not found, 500 server error.
+    - Errors: 401 unauthorized, 404 not found, 500 server error.
   - POST /areas
-    - Description: Create area.
-    - Auth: Not authenticated.
+    - Description: Create area (admin only).
+    - Auth: Bearer token; admin role.
     - Request: JSON area data.
     - Response: Created area object.
-    - Errors: 400 validation, 500 server error.
+    - Errors: 400 validation, 401/403, 500 server error.
   - PUT /areas/:id
-    - Description: Update area.
-    - Auth: Not authenticated.
+    - Description: Update area (admin only).
+    - Auth: Bearer token; admin role.
     - Request: JSON area data.
-    - Response: Updated area object.
-    - Errors: 400 validation, 404 not found, 500 server error.
+    - Response: No content (204).
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
   - DELETE /areas/:id
-    - Description: Delete area.
-    - Auth: Not authenticated.
-    - Response: Deletion result.
-    - Errors: 404 not found, 500 server error.
+    - Description: Delete area (admin only).
+    - Auth: Bearer token; admin role.
+    - Response: No content (204).
+    - Errors: 401/403, 404 not found, 500 server error.
+
+**New** Added area management functionality for institutional categorization.
 
 **Section sources**
-- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L6-L10)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L10-L16)
+
+### Responses (respostas)
+- Base Path: /respostas
+- Methods and Paths
+  - GET /respostas
+    - Description: List all respostas (admin, supervisor, aluno, professor).
+    - Auth: Bearer token; admin, supervisor, aluno, or professor.
+    - Response: Array of respostas.
+    - Errors: 401/403, 500 server error.
+  - GET /respostas/:id
+    - Description: Retrieve resposta by ID (admin, supervisor, aluno, professor).
+    - Auth: Bearer token; admin, supervisor, aluno, or professor.
+    - Response: Single resposta object.
+    - Errors: 401/403, 404 not found, 500 server error.
+  - GET /respostas/:id/complete
+    - Description: Check if resposta is complete (admin, supervisor, aluno).
+    - Auth: Bearer token; admin, supervisor, or aluno.
+    - Response: Completion status.
+    - Errors: 401/403, 404 not found, 500 server error.
+  - GET /respostas/questionario/:questionario_id
+    - Description: Get all respostas by questionario (admin, supervisor, aluno, professor).
+    - Auth: Bearer token; admin, supervisor, aluno, or professor.
+    - Response: Array of respostas.
+    - Errors: 401/403, 500 server error.
+  - GET /respostas/estagiario/:estagiario_id
+    - Description: Get all respostas by estagiario (admin, supervisor, aluno, professor).
+    - Auth: Bearer token; admin, supervisor, aluno, or professor.
+    - Response: Array of respostas.
+    - Errors: 401/403, 500 server error.
+  - GET /respostas/supervisor/:supervisor_id
+    - Description: Get all respostas by supervisor (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Response: Array of respostas.
+    - Errors: 401/403, 500 server error.
+  - GET /respostas/supervisor/:supervisor_id/estagiarios
+    - Description: Get estagiarios by supervisor (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Response: Array of estagiarios.
+    - Errors: 401/403, 500 server error.
+  - GET /respostas/estagiario/:estagiario_id/questionario/:questionario_id
+    - Description: Get resposta by estagiario and questionario (admin, supervisor, aluno, professor).
+    - Auth: Bearer token; admin, supervisor, aluno, or professor.
+    - Response: Single resposta object.
+    - Errors: 401/403, 404 not found, 500 server error.
+  - GET /respostas/supervisor/:supervisor_id/question-count
+    - Description: Get question count by supervisor (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Response: Question count.
+    - Errors: 401/403, 500 server error.
+  - POST /respostas
+    - Description: Create resposta (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Request: JSON resposta data.
+    - Response: Created resposta object.
+    - Errors: 400 validation, 401/403, 500 server error.
+  - PUT /respostas/:id
+    - Description: Update resposta (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Request: JSON resposta data.
+    - Response: No content (204).
+    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
+  - DELETE /respostas/:id
+    - Description: Delete resposta (admin, supervisor).
+    - Auth: Bearer token; admin or supervisor.
+    - Response: No content (204).
+    - Errors: 401/403, 404 not found, 500 server error.
+
+**New** Added comprehensive response management for questionnaire completion tracking.
+
+**Section sources**
+- [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js#L25-L52)
 
 ### Settings (configuracoes)
 - Base Path: /configuracoes
@@ -771,6 +935,7 @@ end
 - Route-to-Middleware Dependencies
   - Many routes depend on verifyToken and/or checkRole.
   - Ownership checks are applied selectively via checkOwnership and checkInscricaoOwnership.
+  - Enhanced professor and institution routes use specialized ownership checks.
 - Route-to-Controller Dependencies
   - Each route group imports and invokes a controller module.
 - Server-to-Route Dependencies
@@ -779,8 +944,9 @@ end
 ```mermaid
 graph LR
 Server["src/server.js"] --> AR["alunoRoutes.js"]
-Server --> DR["professorRoutes.js"]
-Server --> ER["instituicaoRoutes.js"]
+Server --> PR["professorRoutes.js"]
+Server --> IR["instituicaoRoutes.js"]
+Server --> ER["estagioRoutes.js"]
 Server --> ETR["estagiarioRoutes.js"]
 Server --> IR["inscricaoRoutes.js"]
 Server --> SR["supervisorRoutes.js"]
@@ -790,9 +956,11 @@ Server --> ATR["atividadesRoutes.js"]
 Server --> VR["visitaRoutes.js"]
 Server --> TR["turmaRoutes.js"]
 Server --> AIR["areaRoutes.js"]
+Server --> RR["respostaRoutes.js"]
 Server --> CR["configuracaoRoutes.js"]
 AR --> AMW["auth.js (verifyToken, checkRole, checkOwnership)"]
-DR --> DMW["auth.js (verifyToken, checkRole, checkOwnership)"]
+PR --> PMW["auth.js (verifyToken, checkRole, checkOwnership)"]
+IR --> IMW["auth.js (verifyToken, checkRole)"]
 SR --> SMW["auth.js (verifyToken, checkRole, checkOwnership)"]
 IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 ```
@@ -801,6 +969,7 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 - [src/server.js](file://src/server.js#L37-L53)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
 - [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L4)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
@@ -809,6 +978,7 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 - [src/server.js](file://src/server.js#L37-L53)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
 - [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L4)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
@@ -825,9 +995,7 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 - Payload Size
   - Validate and limit JSON payload sizes to mitigate memory pressure.
 - Caching
-  - Cache read-heavy lists (e.g., questionarios, questoes) with appropriate invalidation.
-
-[No sources needed since this section provides general guidance]
+  - Cache read-heavy lists (e.g., questionarios, questoes, instituicoes) with appropriate invalidation.
 
 ## Troubleshooting Guide
 Common Issues and Fixes
@@ -840,6 +1008,7 @@ Common Issues and Fixes
 - 403 Access Denied
   - Confirm user role and ownership requirements for the endpoint.
   - Admin privileges override role restrictions.
+  - For entity-based endpoints, ensure entidade_id matches user's entity.
 - 404 Resource Not Found
   - Verify IDs and nested route parameters.
 - 500 Internal Server Error
@@ -853,37 +1022,45 @@ Common Issues and Fixes
 - [src/middleware/auth.js](file://src/middleware/auth.js#L95-L98)
 
 ## Conclusion
-This API reference documents all REST endpoints, their authentication and authorization requirements, nested routes, and error handling patterns. Apply the provided middleware consistently, secure tokens properly, and consider rate limiting and CORS for production readiness.
-
-[No sources needed since this section summarizes without analyzing specific files]
+This API reference documents all REST endpoints, their authentication and authorization requirements, nested routes, and error handling patterns. The recent additions include comprehensive institutional management, professor management, and enhanced authentication endpoints with entity-based user management. Apply the provided middleware consistently, secure tokens properly, and consider rate limiting and CORS for production readiness.
 
 ## Appendices
 
 ### Practical Usage Examples
 - Authentication
-  - POST /auth/register with { email, password, passwordConfirm, nome, role? }
+  - POST /auth/register with { email, password, passwordConfirm, nome, identificacao?, role?, entidade_id? }
   - POST /auth/login with { email, password }
   - GET /auth/profile with Authorization: Bearer <token>
+  - PUT /auth/users/:id with { nome?, email?, identificacao?, role? (admin only), entidade_id? }
 - CRUD Examples
   - POST /alunos with aluno data (admin or aluno)
   - GET /alunos/:id
   - PUT /alunos/:id (admin or aluno; ownership)
   - DELETE /alunos/:id (admin)
+  - POST /professores with professor data (admin or professor)
+  - GET /professores/:id
+  - PUT /professores/:id (admin or professor; ownership)
+  - DELETE /professores/:id (admin)
+  - POST /instituicoes with institution data (admin)
+  - GET /instituicoes/:id
+  - PUT /instituicoes/:id (admin)
+  - DELETE /instituicoes/:id (admin)
 - Relationship Endpoints
   - GET /alunos/:id/inscricoes
   - GET /supervisores/:id/estagiarios
   - GET /mural/:id/inscricoes
-
-[No sources needed since this section provides general guidance]
+  - GET /professores/:id/estagiarios
+  - GET /instituicoes/:id/supervisores
+  - GET /instituicoes/:id/mural
 
 ### Integration Guidelines
 - Frontend
   - Persist JWT securely (avoid localStorage for sensitive APIs).
   - Attach Authorization header to all authenticated requests.
   - Handle token refresh or re-login on 401 responses.
+  - Implement entity-based navigation for different user roles.
 - Backend
   - Centralize middleware usage in route definitions.
   - Log and monitor 401/403 occurrences for misuse detection.
   - Validate inputs and sanitize outputs.
-
-[No sources needed since this section provides general guidance]
+  - Implement proper error handling for entity-based operations.

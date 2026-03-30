@@ -15,7 +15,7 @@
 - [new-supervisor.js](file://public/new-supervisor.js)
 - [edit-supervisor.js](file://public/edit-supervisor.js)
 - [view-supervisor.js](file://public/view-supervisor.js)
-- [instituicao.js](file://src/models/instituicao.js)
+- [estagio.js](file://src/models/estagio.js)
 </cite>
 
 ## Table of Contents
@@ -318,7 +318,7 @@ RefreshInst --> End(["Done"])
 
 **Section sources**
 - [view-supervisor.js](file://public/view-supervisor.js#L163-L206)
-- [instituicao.js](file://src/models/instituicao.js#L43-L51)
+- [estagio.js](file://src/models/estagio.js#L43-L51)
 
 ## Dependency Analysis
 - Route-layer dependencies:
