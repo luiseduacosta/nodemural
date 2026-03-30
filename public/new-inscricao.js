@@ -19,7 +19,7 @@ $(document).ready(async function () {
     // Set today's date as default
     const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     document.getElementById('data').value = today;
-    
+
     // Load alunos for the dropdown
     try {
         const response = await authenticatedFetch('/alunos');
@@ -59,14 +59,14 @@ $(document).ready(async function () {
         const muralestagios = await response.json();
         const select = document.getElementById('muralestagio_id');
 
-        muralestagios.forEach(muralestagio => {
+        muralinstituicoes.forEach(muralestagio => {
             // console.log('muralestagio:', muralestagio);
             const option = document.createElement('option');
-            option.value = muralestagio.id;
-            option.textContent = `${muralestagio.periodo} - ${muralestagio.instituicao}`;
-            if (muralestagio.id == muralEstagioId) {
+            option.value = muralinstituicao.id;
+            option.textContent = `${muralinstituicao.periodo} - ${muralinstituicao.instituicao}`;
+            if (muralinstituicao.id == muralEstagioId) {
                 option.selected = true;
-                document.getElementById('periodo').value = muralestagio.periodo;
+                document.getElementById('periodo').value = muralinstituicao.periodo;
             }
             select.appendChild(option);
         });

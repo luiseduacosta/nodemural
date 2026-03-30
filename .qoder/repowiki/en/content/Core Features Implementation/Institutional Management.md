@@ -3,18 +3,18 @@
 <cite>
 **Referenced Files in This Document**
 - [src/server.js](file://src/server.js)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js)
+- [src/models/area.js](file://src/models/area.js)
 - [src/database/db.js](file://src/database/db.js)
-- [public/areainstituicoes.html](file://public/areainstituicoes.html)
-- [public/areainstituicoes.js](file://public/areainstituicoes.js)
-- [public/new-areainstituicao.html](file://public/new-areainstituicao.html)
-- [public/new-areainstituicao.js](file://public/new-areainstituicao.js)
-- [public/edit-areainstituicao.html](file://public/edit-areainstituicao.html)
-- [public/edit-areainstituicao.js](file://public/edit-areainstituicao.js)
-- [public/view-areainstituicao.html](file://public/view-areainstituicao.html)
-- [public/view-areainstituicao.js](file://public/view-areainstituicao.js)
+- [public/areas.html](file://public/areas.html)
+- [public/areas.js](file://public/areas.js)
+- [public/new-area.html](file://public/new-area.html)
+- [public/new-area.js](file://public/new-area.js)
+- [public/edit-area.html](file://public/edit-area.html)
+- [public/edit-area.js](file://public/edit-area.js)
+- [public/view-area.html](file://public/view-area.html)
+- [public/view-area.js](file://public/view-area.js)
 - [public/menu.html](file://public/menu.html)
 - [public/auth-utils.js](file://public/auth-utils.js)
 </cite>
@@ -43,16 +43,16 @@ The system follows a layered architecture:
 ```mermaid
 graph TB
 subgraph "Frontend"
-A["areainstituicoes.html<br/>List Areas"]
-B["new-areainstituicao.html<br/>Create Area"]
-C["edit-areainstituicao.html<br/>Edit Area"]
-D["view-areainstituicao.html<br/>View Area Details"]
+A["area.html<br/>List Areas"]
+B["new-area.html<br/>Create Area"]
+C["edit-area.html<br/>Edit Area"]
+D["view-area.html<br/>View Area Details"]
 end
 subgraph "Backend"
 S["server.js<br/>Express Server"]
-R["areaInstituicaoRoutes.js<br/>REST Routes"]
-Ctl["areaInstituicaoController.js<br/>Handlers"]
-M["areaInstituicao.js<br/>Model"]
+R["areaRoutes.js<br/>REST Routes"]
+Ctl["areaController.js<br/>Handlers"]
+M["area.js<br/>Model"]
 DB["db.js<br/>MariaDB Pool"]
 end
 A --> |AJAX/HTTP| S
@@ -67,26 +67,26 @@ M --> DB
 
 **Diagram sources**
 - [src/server.js](file://src/server.js#L31-L72)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/areainstituicoes.html](file://public/areainstituicoes.html#L1-L46)
-- [public/new-areainstituicao.html](file://public/new-areainstituicao.html#L1-L42)
-- [public/edit-areainstituicao.html](file://public/edit-areainstituicao.html#L1-L44)
-- [public/view-areainstituicao.html](file://public/view-areainstituicao.html#L1-L49)
+- [public/area.html](file://public/area.html#L1-L46)
+- [public/new-area.html](file://public/new-area.html#L1-L42)
+- [public/edit-area.html](file://public/edit-area.html#L1-L44)
+- [public/view-area.html](file://public/view-area.html#L1-L49)
 
 **Section sources**
 - [src/server.js](file://src/server.js#L31-L72)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
 
 ## Core Components
 - REST API for institutional areas:
-  - GET /areainstituicoes: List all areas.
-  - GET /areainstituicoes/:id: Retrieve a specific area.
-  - POST /areainstituicoes: Create a new area.
-  - PUT /areainstituicoes/:id: Update an existing area.
-  - DELETE /areainstituicoes/:id: Remove an area.
+  - GET /area: List all areas.
+  - GET /area/:id: Retrieve a specific area.
+  - POST /area: Create a new area.
+  - PUT /area/:id: Update an existing area.
+  - DELETE /area/:id: Remove an area.
 - Model operations:
   - Find all areas ordered by name.
   - Find area by ID.
@@ -100,13 +100,13 @@ M --> DB
   - View details page with action buttons.
 
 **Section sources**
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
-- [public/areainstituicoes.html](file://public/areainstituicoes.html#L1-L46)
-- [public/new-areainstituicao.html](file://public/new-areainstituicao.html#L1-L42)
-- [public/edit-areainstituicao.html](file://public/edit-areainstituicao.html#L1-L44)
-- [public/view-areainstituicao.html](file://public/view-areainstituicao.html#L1-L49)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
+- [public/area.html](file://public/area.html#L1-L46)
+- [public/new-area.html](file://public/new-area.html#L1-L42)
+- [public/edit-area.html](file://public/edit-area.html#L1-L44)
+- [public/view-area.html](file://public/view-area.html#L1-L49)
 
 ## Architecture Overview
 The system implements a classic MVC-like separation:
@@ -119,9 +119,9 @@ The system implements a classic MVC-like separation:
 sequenceDiagram
 participant FE as "Frontend"
 participant SRV as "Express Server"
-participant RT as "areaInstituicaoRoutes"
-participant CTL as "areaInstituicaoController"
-participant MDL as "areaInstituicao Model"
+participant RT as "areaRoutes"
+participant CTL as "areaController"
+participant MDL as "area Model"
 participant DB as "MariaDB Pool"
 FE->>SRV : HTTP Request (GET/POST/PUT/DELETE)
 SRV->>RT : Route matching
@@ -136,9 +136,9 @@ SRV-->>FE : HTTP response
 
 **Diagram sources**
 - [src/server.js](file://src/server.js#L31-L72)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -156,14 +156,14 @@ SRV-->>FE : HTTP response
 
 ```mermaid
 classDiagram
-class AreaInstituicaoController {
-+getAllAreaInstituicoes(req,res)
-+getAreaInstituicaoById(req,res)
-+createAreaInstituicao(req,res)
-+updateAreaInstituicao(req,res)
-+deleteAreaInstituicao(req,res)
+class AreaController {
++getAllAreas(req,res)
++getAreaById(req,res)
++createArea(req,res)
++updateArea(req,res)
++deleteArea(req,res)
 }
-class AreaInstituicaoModel {
+class AreaModel {
 +findAll()
 +findById(id)
 +create(area)
@@ -173,19 +173,19 @@ class AreaInstituicaoModel {
 class MariaDBPool {
 +query(sql, params)
 }
-AreaInstituicaoController --> AreaInstituicaoModel : "calls"
-AreaInstituicaoModel --> MariaDBPool : "uses"
+AreaController --> AreaModel : "calls"
+AreaModel --> MariaDBPool : "uses"
 ```
 
 **Diagram sources**
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 
 ### Frontend: Area Management Pages
 - List page:
@@ -193,7 +193,7 @@ AreaInstituicaoModel --> MariaDBPool : "uses"
   - Provides navigation to create, view, and edit actions.
   - Supports deletion via AJAX with confirmation.
 - Create page:
-  - Validates required fields and submits via Fetch to POST /areainstituicoes.
+  - Validates required fields and submits via Fetch to POST /areas.
 - Edit page:
   - Loads area by ID, populates the form, and submits updates via PUT.
 - View details page:
@@ -202,45 +202,45 @@ AreaInstituicaoModel --> MariaDBPool : "uses"
 ```mermaid
 sequenceDiagram
 participant U as "User"
-participant L as "areainstituicoes.html"
-participant J as "areainstituicoes.js"
+participant L as "areas.html"
+participant J as "areas.js"
 participant S as "Express Server"
-participant R as "areaInstituicaoRoutes"
-participant C as "areaInstituicaoController"
+participant R as "areaRoutes"
+participant C as "areaController"
 U->>L : Open list page
 L->>J : Initialize DataTables
-J->>S : GET /areainstituicoes
+J->>S : GET /areas
 S->>R : Route match
-R->>C : getAllAreaInstituicoes
+R->>C : getAllAreas
 C-->>S : JSON areas
 S-->>J : 200 OK
 J-->>L : Render table rows
 U->>L : Click Delete
 L->>J : deleteArea(id)
-J->>S : DELETE /areainstituicoes/ : id
+J->>S : DELETE /areas/ : id
 S->>R : Route match
-R->>C : deleteAreaInstituicao
+R->>C : deleteArea
 C-->>S : Result
 S-->>J : 200 OK
 J-->>L : Reload table
 ```
 
 **Diagram sources**
-- [public/areainstituicoes.html](file://public/areainstituicoes.html#L1-L46)
-- [public/areainstituicoes.js](file://public/areainstituicoes.js#L1-L50)
+- [public/area.html](file://public/areas.html#L1-L46)
+- [public/area.js](file://public/areas.js#L1-L50)
 - [src/server.js](file://src/server.js#L31-L72)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
 
 **Section sources**
-- [public/areainstituicoes.html](file://public/areainstituicoes.html#L1-L46)
-- [public/areainstituicoes.js](file://public/areainstituicoes.js#L1-L50)
-- [public/new-areainstituicao.html](file://public/new-areainstituicao.html#L1-L42)
-- [public/new-areainstituicao.js](file://public/new-areainstituicao.js#L1-L39)
-- [public/edit-areainstituicao.html](file://public/edit-areainstituicao.html#L1-L44)
-- [public/edit-areainstituicao.js](file://public/edit-areainstituicao.js#L1-L65)
-- [public/view-areainstituicao.html](file://public/view-areainstituicao.html#L1-L49)
-- [public/view-areainstituicao.js](file://public/view-areainstituicao.js#L1-L200)
+- [public/areas.html](file://public/areas.html#L1-L46)
+- [public/areas.js](file://public/areas.js#L1-L50)
+- [public/new-area.html](file://public/new-area.html#L1-L42)
+- [public/new-area.js](file://public/new-area.js#L1-L39)
+- [public/edit-area.html](file://public/edit-area.html#L1-L44)
+- [public/edit-area.js](file://public/edit-area.js#L1-L65)
+- [public/view-area.html](file://public/view-area.html#L1-L49)
+- [public/view-area.js](file://public/view-area.js#L1-L200)
 
 ### Administrative Boundary Management
 - Access control:
@@ -249,9 +249,9 @@ J-->>L : Reload table
   - Menu exposes links to institutional areas for administrative workflows.
 
 **Section sources**
-- [public/areainstituicoes.js](file://public/areainstituicoes.js#L4-L9)
-- [public/new-areainstituicao.js](file://public/new-areainstituicao.js#L4-L9)
-- [public/edit-areainstituicao.js](file://public/edit-areainstituicao.js#L4-L9)
+- [public/areas.js](file://public/areas.js#L4-L9)
+- [public/new-area.js](file://public/new-area.js#L4-L9)
+- [public/edit-area.js](file://public/edit-area.js#L4-L9)
 - [public/menu.html](file://public/menu.html#L38-L42)
 - [public/auth-utils.js](file://public/auth-utils.js#L1-L200)
 
@@ -261,10 +261,10 @@ J-->>L : Reload table
 - Frontend forms enforce required field presence before submission.
 
 **Section sources**
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L30-L42)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L44-L61)
-- [public/new-areainstituicao.html](file://public/new-areainstituicao.html#L22-L31)
-- [public/edit-areainstituicao.html](file://public/edit-areainstituicao.html#L22-L33)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L30-L42)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L44-L61)
+- [public/new-area.html](file://public/new-area.html#L22-L31)
+- [public/edit-area.html](file://public/edit-area.html#L22-L33)
 
 ### Workflow: Institutional Coordination and Change Management
 - New area creation:
@@ -305,38 +305,38 @@ Cancel --> End
 ```
 
 **Diagram sources**
-- [public/new-areainstituicao.js](file://public/new-areainstituicao.js#L11-L38)
-- [public/edit-areainstituicao.js](file://public/edit-areainstituicao.js#L22-L48)
-- [public/areainstituicoes.js](file://public/areainstituicoes.js#L35-L49)
+- [public/new-area.js](file://public/new-area.js#L11-L38)
+- [public/edit-area.js](file://public/edit-area.js#L22-L48)
+- [public/areas.js](file://public/areas.js#L35-L49)
 
 ## Dependency Analysis
 - Routing:
-  - The server mounts the area institution routes under /areainstituicoes.
+  - The server mounts the area institution routes under /areas.
 - Controllers depend on models for persistence.
 - Models depend on the database pool for SQL execution.
 - Frontend pages depend on the backend REST endpoints and shared authentication utilities.
 
 ```mermaid
 graph LR
-FE["Frontend Pages"] --> API["/areainstituicoes/*"]
-API --> Routes["areaInstituicaoRoutes"]
-Routes --> Controller["areaInstituicaoController"]
-Controller --> Model["areaInstituicao Model"]
+FE["Frontend Pages"] --> API["/areas/*"]
+API --> Routes["areaRoutes"]
+Routes --> Controller["areaController"]
+Controller --> Model["area Model"]
 Model --> Pool["MariaDB Pool"]
 ```
 
 **Diagram sources**
 - [src/server.js](file://src/server.js#L53-L53)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/routers/areas.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
 - [src/server.js](file://src/server.js#L53-L53)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L76)
-- [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L44)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L1-L76)
+- [src/models/area.js](file://src/models/area.js#L1-L44)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Performance Considerations
@@ -358,14 +358,14 @@ Model --> Pool["MariaDB Pool"]
   - Verify environment variables for host, user, password, database, and pool limit.
 
 **Section sources**
-- [public/areainstituicoes.js](file://public/areainstituicoes.js#L6-L9)
-- [public/new-areainstituicao.js](file://public/new-areainstituicao.js#L6-L9)
-- [public/edit-areainstituicao.js](file://public/edit-areainstituicao.js#L6-L9)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L8-L10)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L23-L25)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L38-L40)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L57-L60)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L73-L75)
+- [public/areas.js](file://public/areas.js#L6-L9)
+- [public/new-area.js](file://public/new-area.js#L6-L9)
+- [public/edit-area.js](file://public/edit-area.js#L6-L9)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L8-L10)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L23-L25)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L38-L40)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L57-L60)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L73-L75)
 - [src/database/db.js](file://src/database/db.js#L5-L13)
 
 ## Conclusion
@@ -403,9 +403,9 @@ The Institutional Management system provides a robust foundation for managing in
   - Error: 500 Internal Server Error.
 
 **Section sources**
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L6-L10)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L4-L12)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L14-L27)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L29-L42)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L44-L61)
-- [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L63-L76)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L6-L10)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L4-L12)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L14-L27)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L29-L42)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L44-L61)
+- [src/controllers/areaController.js](file://src/controllers/areaController.js#L63-L76)

@@ -16,7 +16,7 @@
 - [.gitignore](file://.gitignore)
 - [test/check_tables_temp.js](file://test/check_tables_temp.js)
 - [test/create_estagio_table.js](file://test/create_estagio_table.js)
-- [test/verify_estagio.js](file://test/verify_estagio.js)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js)
 </cite>
 
 ## Table of Contents
@@ -264,7 +264,7 @@ Router-->>Client : 200 OK
 **Section sources**
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/create_estagio_table.js](file://test/create_estagio_table.js#L1-L41)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 
 ## Dependency Analysis
 - Runtime dependencies include Express, MariaDB driver, bcryptjs, jsonwebtoken, axios, dotenv, and nodemon.

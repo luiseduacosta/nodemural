@@ -1,10 +1,10 @@
 // Deprecated: This controller is no longer used as the estagio routes have been removed.
-import Estagio from '../models/estagio.js';
+import Estagio from '../models/instituicao.js';
 
 // Get all estagios (institutions)
 export const getAllEstagios = async (req, res) => {
     try {
-        const estagios = await Estagio.findAll();
+        const estagios = await instituicao.findAll();
         res.status(200).json(estagios);
     } catch (error) {
         console.error('Error fetching estagios:', error);
@@ -16,7 +16,7 @@ export const getAllEstagios = async (req, res) => {
 export const getEstagioById = async (req, res) => {
     try {
         const { id } = req.params;
-        const estagio = await Estagio.findById(id);
+        const estagio = await instituicao.findById(id);
         if (!estagio) {
             return res.status(404).json({ error: 'Estagio not found' });
         }
@@ -31,7 +31,7 @@ export const getEstagioById = async (req, res) => {
 export const createEstagio = async (req, res) => {
     try {
         const { instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const estagio = await Estagio.create(instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const estagio = await instituicao.create(instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
         res.status(201).json(estagio);
     } catch (error) {
         console.error('Error creating estagio:', error);
@@ -44,7 +44,7 @@ export const updateEstagio = async (req, res) => {
     try {
         const { id } = req.params;
         const { instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes } = req.body;
-        const success = await Estagio.update(id, instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
+        const success = await instituicao.update(id, instituicao, cnpj, beneficio, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, avaliacao, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Estagio not found' });
         }
@@ -59,7 +59,7 @@ export const updateEstagio = async (req, res) => {
 export const deleteEstagio = async (req, res) => {
     try {
         const { id } = req.params;
-        const success = await Estagio.delete(id);
+        const success = await instituicao.delete(id);
         if (!success) {
             return res.status(404).json({ error: 'Estagio not found' });
         }
@@ -74,7 +74,7 @@ export const deleteEstagio = async (req, res) => {
 export const getSupervisoresById = async (req, res) => {
     try {
         const { id } = req.params;
-        const supervisores = await Estagio.findSupervisoresById(id);
+        const supervisores = await instituicao.findSupervisoresById(id);
         res.status(200).json(supervisores);
     } catch (error) {
         console.error('Error fetching supervisores:', error);
@@ -86,7 +86,7 @@ export const getSupervisoresById = async (req, res) => {
 export const getMuralById = async (req, res) => {
     try {
         const { id } = req.params;
-        const mural = await Estagio.findMuralById(id);
+        const mural = await instituicao.findMuralById(id);
         res.status(200).json(mural);
     } catch (error) {
         console.error('Error fetching mural:', error);

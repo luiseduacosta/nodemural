@@ -2,21 +2,21 @@
 
 <cite>
 **Referenced Files in This Document**
-- [src/models/docente.js](file://src/models/docente.js)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
+- [src/models/professor.js](file://src/models/professor.js)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
 - [src/middleware/auth.js](file://src/middleware/auth.js)
 - [src/database/db.js](file://src/database/db.js)
-- [public/docentes.html](file://public/docentes.html)
-- [public/docentes.js](file://public/docentes.js)
-- [public/new-docente.html](file://public/new-docente.html)
-- [public/new-docente.js](file://public/new-docente.js)
-- [public/edit-docente.html](file://public/edit-docente.html)
-- [public/edit-docente.js](file://public/edit-docente.js)
-- [public/view-docente.html](file://public/view-docente.html)
-- [public/view-docente.js](file://public/view-docente.js)
+- [public/professores.html](file://public/professores.html)
+- [public/professores.js](file://public/professores.js)
+- [public/new-professor.html](file://public/new-professor.html)
+- [public/new-professor.js](file://public/new-professor.js)
+- [public/edit-professor.html](file://public/edit-professor.html)
+- [public/edit-professor.js](file://public/edit-professor.js)
+- [public/view-professor.html](file://public/view-professor.html)
+- [public/view-professor.js](file://public/view-professor.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
-- [src/models/estagio.js](file://src/models/estagio.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
 </cite>
 
 ## Table of Contents
@@ -43,15 +43,15 @@ The Professor Management feature spans three layers:
 ```mermaid
 graph TB
 subgraph "Frontend"
-FE_List["docentes.html<br/>docentes.js"]
-FE_View["view-docente.html<br/>view-docente.js"]
-FE_Create["new-docente.html<br/>new-docente.js"]
-FE_Edit["edit-docente.html<br/>edit-docente.js"]
+FE_List["professores.html<br/>professores.js"]
+FE_View["view-professor.html<br/>view-professor.js"]
+FE_Create["new-professor.html<br/>new-professor.js"]
+FE_Edit["edit-professor.html<br/>edit-professor.js"]
 end
 subgraph "Backend"
-R["docenteRoutes.js"]
-C["docenteController.js"]
-M["docente.js (Model)"]
+R["professorRoutes.js"]
+C["professorController.js"]
+M["professor.js (Model)"]
 MW["auth.js (Middleware)"]
 DB["db.js (MariaDB Pool)"]
 end
@@ -66,26 +66,26 @@ M --> DB
 ```
 
 **Diagram sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/docentes.html](file://public/docentes.html#L1-L48)
-- [public/view-docente.html](file://public/view-docente.html#L1-L143)
-- [public/new-docente.html](file://public/new-docente.html#L1-L82)
-- [public/edit-docente.html](file://public/edit-docente.html#L1-L88)
+- [public/professores.html](file://public/professores.html#L1-L48)
+- [public/view-professor.html](file://public/view-professor.html#L1-L143)
+- [public/new-professor.html](file://public/new-professor.html#L1-L82)
+- [public/edit-professor.html](file://public/edit-professor.html#L1-L88)
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/docentes.html](file://public/docentes.html#L1-L48)
-- [public/view-docente.html](file://public/view-docente.html#L1-L143)
-- [public/new-docente.html](file://public/new-docente.html#L1-L82)
-- [public/edit-docente.html](file://public/edit-docente.html#L1-L88)
+- [public/professores.html](file://public/professores.html#L1-L48)
+- [public/view-professor.html](file://public/view-professor.html#L1-L143)
+- [public/new-professor.html](file://public/new-professor.html#L1-L82)
+- [public/edit-professor.html](file://public/edit-professor.html#L1-L88)
 
 ## Core Components
 - Model: Provides CRUD operations for professors and a specialized query to list supervised students (estagiários) grouped by student and supervisor.
@@ -100,14 +100,14 @@ Key responsibilities:
 - Supervision queries connect professors to students via the estagio table and related entities.
 
 **Section sources**
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/new-docente.js](file://public/new-docente.js#L1-L48)
-- [public/edit-docente.js](file://public/edit-docente.js#L1-L84)
-- [public/view-docente.js](file://public/view-docente.js#L1-L108)
+- [public/professores.js](file://public/professores.js#L1-L59)
+- [public/new-professor.js](file://public/new-professor.js#L1-L48)
+- [public/edit-professor.js](file://public/edit-professor.js#L1-L84)
+- [public/view-professor.js](file://public/view-professor.js#L1-L108)
 
 ## Architecture Overview
 The system follows a layered architecture:
@@ -119,10 +119,10 @@ The system follows a layered architecture:
 ```mermaid
 sequenceDiagram
 participant Browser as "Browser"
-participant Router as "docenteRoutes.js"
+participant Router as "professorRoutes.js"
 participant MW as "auth.js"
-participant Ctrl as "docenteController.js"
-participant Model as "docente.js"
+participant Ctrl as "professorController.js"
+participant Model as "professor.js"
 participant DB as "db.js"
 Browser->>Router : GET /docentes/ : id
 Router->>MW : verifyToken(), checkRole(), checkOwnership()
@@ -145,10 +145,10 @@ Ctrl-->>Browser : 201 Created JSON
 ```
 
 **Diagram sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -182,9 +182,9 @@ AlunoModel --> EstagioModel : "joins estagio"
 ```
 
 **Diagram sources**
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 
 Implementation highlights:
 - Data normalization occurs in the model’s SQL statements and returned objects.
@@ -192,7 +192,7 @@ Implementation highlights:
 - The model relies on a shared MariaDB pool for all queries.
 
 **Section sources**
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ### Controller Layer: Validation, Ownership, and Business Logic
@@ -206,7 +206,7 @@ Validation and ownership:
 - Ownership checks are applied via middleware to ensure only authorized users can access or modify records.
 
 **Section sources**
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 
 ### Route Layer: Access Control and Endpoint Contracts
@@ -224,7 +224,7 @@ Access control:
 - checkOwnership: Ensures non-admin users can only access or modify their own records.
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 
 ### Frontend Integration: Templates and Scripts
@@ -235,41 +235,41 @@ Access control:
 
 ```mermaid
 sequenceDiagram
-participant List as "docentes.js"
+participant List as "professores.js"
 participant API as "/docentes"
 participant Table as "DataTable"
 List->>API : GET /docentes
 API-->>List : 200 JSON
 List->>Table : populate rows
-participant Create as "new-docente.js"
+participant Create as "new-professor.js"
 participant API2 as "/docentes"
 Create->>API2 : POST /docentes
 API2-->>Create : 201 JSON {id}
-Create->>View : redirect to view-docente.html?id={id}
-participant Edit as "edit-docente.js"
+Create->>View : redirect to view-professor.html?id={id}
+participant Edit as "edit-professor.js"
 participant API3 as "/docentes/ : id"
 Edit->>API3 : GET /docentes/ : id
 API3-->>Edit : 200 JSON
 Edit->>API3 : PUT /docentes/ : id
 API3-->>Edit : 204 No Content
-Edit->>View : redirect to view-docente.html?id={id}
+Edit->>View : redirect to view-professor.html?id={id}
 ```
 
 **Diagram sources**
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/new-docente.js](file://public/new-docente.js#L1-L48)
-- [public/edit-docente.js](file://public/edit-docente.js#L1-L84)
-- [public/view-docente.js](file://public/view-docente.js#L1-L108)
+- [public/professores.js](file://public/professores.js#L1-L59)
+- [public/new-professor.js](file://public/new-professor.js#L1-L48)
+- [public/edit-professor.js](file://public/edit-professor.js#L1-L84)
+- [public/view-professor.js](file://public/view-professor.js#L1-L108)
 
 **Section sources**
-- [public/docentes.html](file://public/docentes.html#L1-L48)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/new-docente.html](file://public/new-docente.html#L1-L82)
-- [public/new-docente.js](file://public/new-docente.js#L1-L48)
-- [public/edit-docente.html](file://public/edit-docente.html#L1-L88)
-- [public/edit-docente.js](file://public/edit-docente.js#L1-L84)
-- [public/view-docente.html](file://public/view-docente.html#L1-L143)
-- [public/view-docente.js](file://public/view-docente.js#L1-L108)
+- [public/professores.html](file://public/professores.html#L1-L48)
+- [public/professores.js](file://public/professores.js#L1-L59)
+- [public/new-professor.html](file://public/new-professor.html#L1-L82)
+- [public/new-professor.js](file://public/new-professor.js#L1-L48)
+- [public/edit-professor.html](file://public/edit-professor.html#L1-L88)
+- [public/edit-professor.js](file://public/edit-professor.js#L1-L84)
+- [public/view-professor.html](file://public/view-professor.html#L1-L143)
+- [public/view-professor.js](file://public/view-professor.js#L1-L108)
 
 ### Supervision Coordination and Performance Tracking
 Supervision data is derived from the professor’s supervised students:
@@ -285,13 +285,13 @@ RenderTable --> End(["Done"])
 ```
 
 **Diagram sources**
-- [src/models/docente.js](file://src/models/docente.js#L50-L68)
-- [public/view-docente.js](file://public/view-docente.js#L70-L107)
+- [src/models/professor.js](file://src/models/professor.js#L50-L68)
+- [public/view-professor.js](file://public/view-professor.js#L70-L107)
 
 **Section sources**
-- [src/models/docente.js](file://src/models/docente.js#L50-L68)
-- [public/view-docente.html](file://public/view-docente.html#L105-L131)
-- [public/view-docente.js](file://public/view-docente.js#L70-L107)
+- [src/models/professor.js](file://src/models/professor.js#L50-L68)
+- [public/view-professor.html](file://public/view-professor.html#L105-L131)
+- [public/view-professor.js](file://public/view-professor.js#L70-L107)
 
 ## Dependency Analysis
 - Routes depend on middleware for authentication and authorization.
@@ -301,25 +301,25 @@ RenderTable --> End(["Done"])
 
 ```mermaid
 graph LR
-FE["Frontend Scripts"] --> R["docenteRoutes.js"]
+FE["Frontend Scripts"] --> R["professorRoutes.js"]
 R --> MW["auth.js"]
-R --> C["docenteController.js"]
-C --> M["docente.js"]
+R --> C["professorController.js"]
+C --> M["professor.js"]
 M --> DB["db.js"]
 ```
 
 **Diagram sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Performance Considerations
@@ -338,9 +338,9 @@ Common issues and resolutions:
 
 **Section sources**
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/view-docente.js](file://public/view-docente.js#L1-L108)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
+- [public/professores.js](file://public/professores.js#L1-L59)
+- [public/view-professor.js](file://public/view-professor.js#L1-L108)
 
 ## Conclusion
 The Professor Management system provides a robust, secure, and user-friendly solution for managing professors, their academic profiles, and supervision relationships. The layered architecture cleanly separates concerns, while middleware enforces strong access controls. The frontend offers intuitive forms and views, and the model layer efficiently retrieves supervision data. Adhering to the documented validation rules and ownership policies ensures data consistency and alignment with the broader academic management system.
@@ -356,10 +356,10 @@ The Professor Management system provides a robust, secure, and user-friendly sol
 - The system relies on frontend form validation and middleware/role enforcement for access control.
 
 **Section sources**
-- [public/new-docente.html](file://public/new-docente.html#L21-L68)
-- [public/edit-docente.html](file://public/edit-docente.html#L21-L75)
-- [public/new-docente.js](file://public/new-docente.js#L12-L25)
-- [public/edit-docente.js](file://public/edit-docente.js#L48-L62)
+- [public/new-professor.html](file://public/new-professor.html#L21-L68)
+- [public/edit-professor.html](file://public/edit-professor.html#L21-L75)
+- [public/new-professor.js](file://public/new-professor.js#L12-L25)
+- [public/edit-professor.js](file://public/edit-professor.js#L48-L62)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L32-L48)
 
 ### Academic Hierarchy and Relationship Management
@@ -368,6 +368,6 @@ The Professor Management system provides a robust, secure, and user-friendly sol
 - Student records include estagiario associations, enabling cross-referencing between professors, supervisors, and institutions.
 
 **Section sources**
-- [src/models/docente.js](file://src/models/docente.js#L50-L68)
+- [src/models/professor.js](file://src/models/professor.js#L50-L68)
 - [src/models/aluno.js](file://src/models/aluno.js#L74-L95)
-- [src/models/estagio.js](file://src/models/estagio.js#L43-L62)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L43-L62)

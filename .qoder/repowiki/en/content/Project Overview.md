@@ -12,8 +12,8 @@
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
 - [src/controllers/alunoController.js](file://src/controllers/alunoController.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js)
-- [src/models/estagio.js](file://src/models/estagio.js)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js)
 - [public/index.html](file://public/index.html)
 - [public/menu.html](file://public/menu.html)
@@ -214,7 +214,7 @@ AuthCtrl-->>Client : userProfile
 Key roles and permissions:
 - Admin: Full access to all endpoints
 - Supervisor: Manages estagiários, views inscriptions
-- Docente: Manages alunos, atividades
+- Professor: Manages alunos, atividades
 - Aluno: Views own data, mural
 
 **Section sources**
@@ -285,13 +285,13 @@ Docente --> Aluno : "coordination"
 ```
 
 **Diagram sources**
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/controllers/alunoController.js](file://src/controllers/alunoController.js#L58-L83)
 
 **Section sources**
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 
 ### Questionnaire System
 The questionnaire module supports creation, management, and completion of surveys:
@@ -333,7 +333,7 @@ graph LR
 NAV["Navigation Bar"] --> MURAL["Mural Page"]
 NAV --> ALUNOS["Students"]
 NAV --> ESTAGIARIOS["Interns Dropdown"]
-NAV --> DOCENTES["Teachers"]
+NAV --> PROFESSORES["Teachers"]
 NAV --> ATIVIDADES["Activities"]
 NAV --> QUESTIONARIOS["Questionnaires"]
 NAV --> INSTITUICOES["Institutions Dropdown"]

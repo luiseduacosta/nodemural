@@ -20,10 +20,10 @@ $(document).ready(async function () {
         const estagios = await response.json();
         const select = document.getElementById('instituicao_id');
 
-        estagios.forEach(estagio => {
+        instituicoes.forEach(estagio => {
             const option = document.createElement('option');
-            option.value = estagio.id;
-            option.textContent = estagio.instituicao;
+            option.value = instituicao.id;
+            option.textContent = instituicao.instituicao;
             select.appendChild(option);
         });
     } catch (error) {
@@ -125,7 +125,7 @@ $(document).ready(async function () {
             horario: document.getElementById('horario').value || null,
             beneficios: document.getElementById('beneficios').value || null,
             requisitos: requisitosMDE.value() || null,
-            
+
             data_inscricao: document.getElementById('data_inscricao').value || null,
             data_selecao: document.getElementById('data_selecao').value || null,
             horario_selecao: document.getElementById('horario_selecao').value || null,

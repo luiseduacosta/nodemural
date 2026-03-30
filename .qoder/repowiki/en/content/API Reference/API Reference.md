@@ -8,8 +8,8 @@
 - [README.md](file://README.md)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
@@ -18,7 +18,7 @@
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js)
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js)
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js)
 - [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js)
 </cite>
 
@@ -44,8 +44,8 @@ The server registers route groups under top-level prefixes and exposes several n
 graph TB
 Server["src/server.js<br/>Express app"] --> AuthRoutes["/auth<br/>src/routers/authRoutes.js"]
 Server --> AlunoRoutes["/alunos<br/>src/routers/alunoRoutes.js"]
-Server --> DocenteRoutes["/docentes<br/>src/routers/docenteRoutes.js"]
-Server --> EstagioRoutes["/estagios<br/>src/routers/estagioRoutes.js"]
+Server --> professorRoutes["/docentes<br/>src/routers/professorRoutes.js"]
+Server --> instituicaoRoutes["/estagios<br/>src/routers/instituicaoRoutes.js"]
 Server --> EstagiarioRoutes["/estagiarios<br/>src/routers/estagiarioRoutes.js"]
 Server --> MuralRoutes["/mural<br/>(not registered in server.js)"]
 Server --> InscricaoRoutes["/inscricoes<br/>src/routers/inscricaoRoutes.js"]
@@ -55,7 +55,7 @@ Server --> QuestaoRoutes["/questoes<br/>src/routers/questaoRoutes.js"]
 Server --> AtividadesRoutes["/atividades<br/>src/routers/atividadesRoutes.js"]
 Server --> VisitaRoutes["/visitas<br/>src/routers/visitaRoutes.js"]
 Server --> TurmaRoutes["/turmas<br/>src/routers/turmaRoutes.js"]
-Server --> AreaInstituicaoRoutes["/areainstituicoes<br/>src/routers/areaInstituicaoRoutes.js"]
+Server --> areaRoutes["/areainstituicoes<br/>src/routers/areaRoutes.js"]
 Server --> ConfiguracaoRoutes["/configuracoes<br/>src/routers/configuracaoRoutes.js"]
 Server --> RespostaRoutes["/respostas<br/>(not registered in server.js)"]
 Server --> Nested["Nested Routes"]
@@ -70,8 +70,8 @@ Nested --> NestAluno2["/alunos/:id/inscricoes"]
 - [src/server.js](file://src/server.js#L37-L64)
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
@@ -80,7 +80,7 @@ Nested --> NestAluno2["/alunos/:id/inscricoes"]
 - [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
 - [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js#L1-L18)
 
 **Section sources**
@@ -190,7 +190,7 @@ Security Notes:
 - Methods and Paths
   - GET /alunos
     - Description: List all alunos (authenticated).
-    - Auth: Bearer token; admin or docente.
+    - Auth: Bearer token; admin or professor.
     - Response: Array of alunos.
     - Errors: 401/403, 500 server error.
   - GET /alunos/:id
@@ -205,7 +205,7 @@ Security Notes:
     - Errors: 404 if not found, 500 server error.
   - GET /alunos/:id/estagiarios
     - Description: Get estagiarios linked to aluno (authenticated).
-    - Auth: Bearer token; admin or docente.
+    - Auth: Bearer token; admin or professor.
     - Response: Array of estagiarios.
     - Errors: 401/403, 500 server error.
   - GET /alunos/:id/inscricoes
@@ -239,94 +239,94 @@ Nested Routes
 - [src/server.js](file://src/server.js#L60)
 
 ### Teachers (docentes)
-- Base Path: /docentes
+- Base Path: /professores
 - Methods and Paths
-  - GET /docentes
-    - Description: List all docentes (admin or docente).
-    - Auth: Bearer token; admin or docente.
-    - Response: Array of docentes.
+  - GET /professores
+    - Description: List all professores (admin or professor).
+    - Auth: Bearer token; admin or professor.
+    - Response: Array of professores.
     - Errors: 401/403, 500 server error.
-  - GET /docentes/:id
-    - Description: Retrieve docente by ID (admin or docente; ownership).
-    - Auth: Bearer token; admin or docente (ownership).
-    - Response: Single docente object.
+  - GET /professores/:id
+    - Description: Retrieve docente by ID (admin or professor; ownership).
+    - Auth: Bearer token; admin or professor (ownership).
+    - Response: Single professor object.
     - Errors: 401/403, 404 not found, 500 server error.
-  - GET /docentes/:id/estagiarios
-    - Description: Get estagiarios linked to docente (admin or docente; ownership).
-    - Auth: Bearer token; admin or docente (ownership).
+  - GET /professores/:id/estagiarios
+    - Description: Get estagiarios linked to professor (admin or professor; ownership).
+    - Auth: Bearer token; admin or professor (ownership).
     - Response: Array of estagiarios.
     - Errors: 401/403, 500 server error.
-  - POST /docentes
-    - Description: Create docente (admin only).
+  - POST /professores
+    - Description: Create professor (admin only).
     - Auth: Bearer token; admin.
-    - Request: JSON docente data.
-    - Response: Created docente object.
+    - Request: JSON professor data.
+    - Response: Created professor object.
     - Errors: 400 validation, 401/403, 500 server error.
-  - PUT /docentes/:id
-    - Description: Update docente (admin or docente; ownership).
-    - Auth: Bearer token; admin or docente (ownership).
-    - Request: JSON docente data.
-    - Response: Updated docente object.
+  - PUT /professores/:id
+    - Description: Update professor (admin or professor; ownership).
+    - Auth: Bearer token; admin or professor (ownership).
+    - Request: JSON professor data.
+    - Response: Updated professor object.
     - Errors: 400 validation, 401/403, 404 not found, 500 server error.
-  - DELETE /docentes/:id
-    - Description: Delete docente (admin only).
+  - DELETE /professores/:id
+    - Description: Delete professor (admin only).
     - Auth: Bearer token; admin.
     - Response: Deletion result.
     - Errors: 401/403, 404 not found, 500 server error.
 
 Nested Routes
-- /docentes/:id/estagiarios → [src/server.js](file://src/server.js#L58)
+- /professores/:id/estagiarios → [src/server.js](file://src/server.js#L58)
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
 - [src/server.js](file://src/server.js#L58)
 
-### Internships (estagios)
-- Base Path: /estagios
+### Internships (instituicoes)
+- Base Path: /instituicoes
 - Methods and Paths
-  - POST /estagios
-    - Description: Create estagio.
+  - POST /instituicoes
+    - Description: Create instituicao.
     - Auth: Not authenticated.
-    - Request: JSON estagio data.
-    - Response: Created estagio object.
+    - Request: JSON instituicao data.
+    - Response: Created instituicao object.
     - Errors: 400 validation, 500 server error.
-  - GET /estagios
-    - Description: List all estagios.
+  - GET /instituicoes
+    - Description: List all instituicoes.
     - Auth: Not authenticated.
-    - Response: Array of estagios.
+    - Response: Array of instituicoes.
     - Errors: 500 server error.
-  - GET /estagios/:id
-    - Description: Retrieve estagio by ID.
+  - GET /instituicoes/:id
+    - Description: Retrieve instituicao by ID.
     - Auth: Not authenticated.
-    - Response: Single estagio object.
+    - Response: Single instituicao object.
     - Errors: 404 not found, 500 server error.
-  - GET /estagios/:id/supervisores
-    - Description: Get supervisores linked to estagio.
+  - GET /instituicoes/:id/supervisores
+    - Description: Get supervisores linked to instituicao.
     - Auth: Not authenticated.
     - Response: Array of supervisores.
     - Errors: 500 server error.
-  - GET /estagios/:id/mural
-    - Description: Get mural entries linked to estagio.
+  - GET /instituicoes/:id/mural
+    - Description: Get mural entries linked to instituicao.
     - Auth: Not authenticated.
     - Response: Array of mural entries.
     - Errors: 500 server error.
-  - PUT /estagios/:id
-    - Description: Update estagio.
+  - PUT /instituicoa/:id
+    - Description: Update instituicao.
     - Auth: Not authenticated.
-    - Request: JSON estagio data.
-    - Response: Updated estagio object.
+    - Request: JSON institucao data.
+    - Response: Updated instituicao object.
     - Errors: 400 validation, 404 not found, 500 server error.
-  - DELETE /estagios/:id
-    - Description: Delete estagio.
+  - DELETE /instituicoes/:id
+    - Description: Delete instituicao.
     - Auth: Not authenticated.
     - Response: Deletion result.
     - Errors: 404 not found, 500 server error.
 
 Nested Routes
-- /estagios/:id/estagiarios → [src/server.js](file://src/server.js#L59)
+- /instituicoes/:id/estagiarios → [src/server.js](file://src/server.js#L59)
 
 **Section sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L10-L17)
+- [src/routers/institucaoRoutes.js](file://src/routers/institucaoRoutes.js#L10-L17)
 - [src/server.js](file://src/server.js#L59)
 
 ### Interns (estagiarios)
@@ -657,39 +657,39 @@ Nested Routes
 **Section sources**
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L10-L15)
 
-### Areas of Institutions (areainstituicoes)
-- Base Path: /areainstituicoes
+### Areas of Institutions (areas)
+- Base Path: /areas
 - Methods and Paths
-  - GET /areainstituicoes
+  - GET /areas
     - Description: List all areas.
     - Auth: Not authenticated.
     - Response: Array of areas.
     - Errors: 500 server error.
-  - GET /areainstituicoes/:id
+  - GET /areas/:id
     - Description: Retrieve area by ID.
     - Auth: Not authenticated.
     - Response: Single area object.
     - Errors: 404 not found, 500 server error.
-  - POST /areainstituicoes
+  - POST /areas
     - Description: Create area.
     - Auth: Not authenticated.
     - Request: JSON area data.
     - Response: Created area object.
     - Errors: 400 validation, 500 server error.
-  - PUT /areainstituicoes/:id
+  - PUT /areas/:id
     - Description: Update area.
     - Auth: Not authenticated.
     - Request: JSON area data.
     - Response: Updated area object.
     - Errors: 400 validation, 404 not found, 500 server error.
-  - DELETE /areainstituicoes/:id
+  - DELETE /areas/:id
     - Description: Delete area.
     - Auth: Not authenticated.
     - Response: Deletion result.
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L6-L10)
+- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L6-L10)
 
 ### Settings (configuracoes)
 - Base Path: /configuracoes
@@ -779,8 +779,8 @@ end
 ```mermaid
 graph LR
 Server["src/server.js"] --> AR["alunoRoutes.js"]
-Server --> DR["docenteRoutes.js"]
-Server --> ER["estagioRoutes.js"]
+Server --> DR["professorRoutes.js"]
+Server --> ER["instituicaoRoutes.js"]
 Server --> ETR["estagiarioRoutes.js"]
 Server --> IR["inscricaoRoutes.js"]
 Server --> SR["supervisorRoutes.js"]
@@ -789,7 +789,7 @@ Server --> QAr["questaoRoutes.js"]
 Server --> ATR["atividadesRoutes.js"]
 Server --> VR["visitaRoutes.js"]
 Server --> TR["turmaRoutes.js"]
-Server --> AIR["areaInstituicaoRoutes.js"]
+Server --> AIR["areaRoutes.js"]
 Server --> CR["configuracaoRoutes.js"]
 AR --> AMW["auth.js (verifyToken, checkRole, checkOwnership)"]
 DR --> DMW["auth.js (verifyToken, checkRole, checkOwnership)"]
@@ -800,7 +800,7 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 **Diagram sources**
 - [src/server.js](file://src/server.js#L37-L53)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L5)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
@@ -808,7 +808,7 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 **Section sources**
 - [src/server.js](file://src/server.js#L37-L53)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L5)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)

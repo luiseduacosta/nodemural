@@ -33,7 +33,7 @@ This guide helps you install, configure, and run NodeMural quickly. It covers pr
 NodeMural is a Node.js application using Express and MariaDB. The backend is organized into modular folders:
 - src/server.js: Entry point that initializes Express, middleware, static serving, routes, and port binding
 - src/database/: Database connection pool and initialization scripts
-- src/routers/: Route groups for features (e.g., auth, alunos, docentes, estagios)
+- src/routers/: Route groups for features (e.g., auth, alunos, professores, estagios)
 - src/controllers/: Business logic for each route group
 - src/middleware/: Shared middleware for authentication and authorization
 - src/models/: Data access logic and ORM-like functions

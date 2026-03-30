@@ -2,22 +2,22 @@
 
 <cite>
 **Referenced Files in This Document**
-- [areaInstituicao.js](file://src/models/areaInstituicao.js)
+- [area.js](file://src/models/area.js)
 - [turma.js](file://src/models/turma.js)
 - [atividades.js](file://src/models/atividades.js)
 - [visita.js](file://src/models/visita.js)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js)
+- [areaController.js](file://src/controllers/areaController.js)
 - [turmaController.js](file://src/controllers/turmaController.js)
 - [atividadesController.js](file://src/controllers/atividadesController.js)
 - [visitaController.js](file://src/controllers/visitaController.js)
-- [areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js)
+- [areaRoutes.js](file://src/routers/areaRoutes.js)
 - [turmaRoutes.js](file://src/routers/turmaRoutes.js)
 - [atividadesRoutes.js](file://src/routers/atividadesRoutes.js)
 - [visitaRoutes.js](file://src/routers/visitaRoutes.js)
 - [db.js](file://src/database/db.js)
 - [estagiario.js](file://src/models/estagiario.js)
-- [estagio.js](file://src/models/estagio.js)
-- [areainstituicoes.js](file://public/areainstituicoes.js)
+- [instituicao.js](file://src/models/instituicao.js)
+- [areas.js](file://public/areas.js)
 - [turmas.js](file://public/turmas.js)
 - [atividades.js](file://public/atividades.js)
 - [visitas.js](file://public/visitas.js)
@@ -49,19 +49,19 @@ The system follows a layered architecture:
 ```mermaid
 graph TB
 subgraph "Presentation Layer"
-UI_Areas["Public Areas Page<br/>areainstituicoes.js"]
+UI_Areas["Public Areas Page<br/>areas.js"]
 UI_Turmas["Public Classes Page<br/>turmas.js"]
 UI_Atividades["Public Activities Page<br/>atividades.js"]
 UI_Visitas["Public Visits Page<br/>visitas.js"]
 end
 subgraph "Routing Layer"
-R_Areas["Routes: /areainstituicoes<br/>areaInstituicaoRoutes.js"]
+R_Areas["Routes: /areainstituicoes<br/>areaRoutes.js"]
 R_Turmas["Routes: /turmas<br/>turmaRoutes.js"]
 R_Ativ["Routes: /atividades<br/>atividadesRoutes.js"]
 R_Vis["Routes: /visitas<br/>visitaRoutes.js"]
 end
 subgraph "Controllers"
-C_Areas["Controller: AreaInstituicaoController"]
+C_Areas["Controller: areaController"]
 C_Turmas["Controller: TurmaController"]
 C_Ativ["Controller: AtividadesController"]
 C_Vis["Controller: VisitaController"]
@@ -86,30 +86,30 @@ M_Estagio --> DB
 ```
 
 **Diagram sources**
-- [areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
+- [areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
 - [turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
 - [atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 - [turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [atividadesController.js](file://src/controllers/atividadesController.js#L1-L88)
 - [visitaController.js](file://src/controllers/visitaController.js#L1-L67)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [turma.js](file://src/models/turma.js#L1-L39)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
 - [db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
+- [areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
 - [turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
 - [atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 - [turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [atividadesController.js](file://src/controllers/atividadesController.js#L1-L88)
 - [visitaController.js](file://src/controllers/visitaController.js#L1-L67)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [turma.js](file://src/models/turma.js#L1-L39)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
@@ -131,8 +131,8 @@ This section documents the four institutional management models with their field
   - Deletion returns success/failure based on match.
 
 **Section sources**
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L29-L42)
+- [area.js](file://src/models/area.js#L1-L45)
+- [areaController.js](file://src/controllers/areaController.js#L29-L42)
 
 ### Class/Course Model
 - Purpose: Represent class groups associated with institutional areas.
@@ -206,10 +206,10 @@ The system uses a clean separation of concerns:
 
 ```mermaid
 sequenceDiagram
-participant UI as "Public Page<br/>areainstituicoes.js"
-participant Router as "Routes<br/>areaInstituicaoRoutes.js"
-participant Ctrl as "Controller<br/>areaInstituicaoController.js"
-participant Model as "Model<br/>areaInstituicao.js"
+participant UI as "Public Page<br/>areas.js"
+participant Router as "Routes<br/>areaRoutes.js"
+participant Ctrl as "Controller<br/>areaController.js"
+participant Model as "Model<br/>area.js"
 participant DB as "MariaDB Pool<br/>db.js"
 UI->>Router : GET /areainstituicoes
 Router->>Ctrl : getAllAreaInstituicoes()
@@ -229,10 +229,10 @@ Ctrl-->>UI : JSON {id, area}
 ```
 
 **Diagram sources**
-- [areainstituicoes.js](file://public/areainstituicoes.js#L1-L51)
-- [areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [areas.js](file://public/areas.js#L1-L51)
+- [areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
+- [area.js](file://src/models/area.js#L1-L45)
 - [db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -256,23 +256,23 @@ class AreaInstituicaoModel {
 +update(id, area)
 +delete(id)
 }
-class AreaInstituicaoController {
+class areaController {
 +getAllAreaInstituicoes(req,res)
 +getAreaInstituicaoById(req,res)
 +createAreaInstituicao(req,res)
 +updateAreaInstituicao(req,res)
 +deleteAreaInstituicao(req,res)
 }
-AreaInstituicaoController --> AreaInstituicaoModel : "uses"
+areaController --> AreaInstituicaoModel : "uses"
 ```
 
 **Diagram sources**
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [area.js](file://src/models/area.js#L1-L45)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 
 **Section sources**
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [area.js](file://src/models/area.js#L1-L45)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 
 ### Class/Course Entity
 - Responsibilities:
@@ -395,7 +395,7 @@ VisitaController --> VisitaModel : "uses"
 - Institutional Areas and Classes:
   - Classes are grouped by institutional areas; area entities provide categorization.
 - Classes and Activities:
-  - Activities belong to estagiarios; classes are linked to estagiarios via estagio and turma_estagios.
+  - Activities belong to estagiarios; classes are linked to estagiarios via estagio and turma_instituicoes.
 - Activities and Visits:
   - Both activities and visits are associated with institutions (estagio) and can be filtered by institution context.
 
@@ -451,9 +451,9 @@ ESTAGIO ||--o{ VISITA : "receives"
 ```
 
 **Diagram sources**
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [turma.js](file://src/models/turma.js#L1-L39)
-- [estagio.js](file://src/models/estagio.js#L1-L18)
+- [instituicao.js](file://src/models/instituicao.js#L1-L18)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
@@ -466,15 +466,15 @@ ESTAGIO ||--o{ VISITA : "receives"
 
 ```mermaid
 graph LR
-UI_A["areainstituicoes.js"] --> R_A["areaInstituicaoRoutes.js"]
+UI_A["areas.js"] --> R_A["areaRoutes.js"]
 UI_T["turmas.js"] --> R_T["turmaRoutes.js"]
 UI_AT["atividades.js"] --> R_AT["atividadesRoutes.js"]
 UI_V["visitas.js"] --> R_V["visitaRoutes.js"]
-R_A --> C_A["areaInstituicaoController.js"]
+R_A --> C_A["areaController.js"]
 R_T --> C_T["turmaController.js"]
 R_AT --> C_AT["atividadesController.js"]
 R_V --> C_V["visitaController.js"]
-C_A --> M_A["areaInstituicao.js"]
+C_A --> M_A["area.js"]
 C_T --> M_T["turma.js"]
 C_AT --> M_AT["atividades.js"]
 C_V --> M_V["visita.js"]
@@ -485,30 +485,30 @@ M_V --> P
 ```
 
 **Diagram sources**
-- [areainstituicoes.js](file://public/areainstituicoes.js#L1-L51)
+- [areas.js](file://public/areas.js#L1-L51)
 - [turmas.js](file://public/turmas.js#L1-L56)
 - [atividades.js](file://public/atividades.js#L1-L67)
 - [visitas.js](file://public/visitas.js#L1-L59)
-- [areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
+- [areaRoutes.js](file://src/routers/areaRoutes.js#L1-L13)
 - [turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
 - [atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
 - [visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 - [turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [atividadesController.js](file://src/controllers/atividadesController.js#L1-L88)
 - [visitaController.js](file://src/controllers/visitaController.js#L1-L67)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [turma.js](file://src/models/turma.js#L1-L39)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
 - [db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
+- [areaController.js](file://src/controllers/areaController.js#L1-L77)
 - [turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [atividadesController.js](file://src/controllers/atividadesController.js#L1-L88)
 - [visitaController.js](file://src/controllers/visitaController.js#L1-L67)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [turma.js](file://src/models/turma.js#L1-L39)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
@@ -516,7 +516,7 @@ M_V --> P
 
 ## Performance Considerations
 - Indexing recommendations:
-  - Add indexes on foreign keys: areas.id, turma_estagios.id, estagio.id, estagiarios.turmaestagio_id, estagiarios.instituicao_id, folhadeatividades.estagiario_id, visita.instituicao_id.
+  - Add indexes on foreign keys: areas.id, turma_instituicoes.id, instituicao.id, estagiarios.turmaestagio_id, estagiarios.instituicao_id, folhadeatividades.estagiario_id, visita.instituicao_id.
   - Consider composite indexes for frequent filters (e.g., estagiario_id + dia, instituicao_id + data).
 - Query ordering:
   - Listing endpoints already order by relevant fields; ensure indexes support these orders.
@@ -542,11 +542,11 @@ M_V --> P
     - Verify DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, and DB_POOL_LIMIT environment variables.
 
 **Section sources**
-- [areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L33-L35)
+- [areaController.js](file://src/controllers/areaController.js#L33-L35)
 - [turmaController.js](file://src/controllers/turmaController.js#L7-L9)
 - [atividadesController.js](file://src/controllers/atividadesController.js#L34-L35)
 - [visitaController.js](file://src/controllers/visitaController.js#L33-L35)
-- [areainstituicoes.js](file://public/areainstituicoes.js#L6-L9)
+- [areas.js](file://public/areas.js#L6-L9)
 - [turmas.js](file://public/turmas.js#L6-L9)
 - [atividades.js](file://public/atividades.js#L7-L15)
 - [visitas.js](file://public/visitas.js#L6-L9)

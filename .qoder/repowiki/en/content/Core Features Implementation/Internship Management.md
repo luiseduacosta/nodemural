@@ -2,9 +2,9 @@
 
 <cite>
 **Referenced Files in This Document**
-- [src/models/estagio.js](file://src/models/estagio.js)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
 - [src/models/supervisor.js](file://src/models/supervisor.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
 - [src/models/inscricao.js](file://src/models/inscricao.js)
@@ -12,9 +12,9 @@
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [src/middleware/auth.js](file://src/middleware/auth.js)
 - [src/database/db.js](file://src/database/db.js)
-- [public/estagios.js](file://public/estagios.js)
-- [public/edit-estagio.js](file://public/edit-estagio.js)
-- [public/view-estagio.js](file://public/view-estagio.js)
+- [public/instituicoes.js](file://public/instituicoes.js)
+- [public/edit-instituicao.js](file://public/edit-instituicao.js)
+- [public/view-instituicao.js](file://public/view-instituicao.js)
 - [public/inscricoes.js](file://public/inscricoes.js)
 - [public/new-inscricao.js](file://public/new-inscricao.js)
 - [public/edit-inscricao.js](file://public/edit-inscricao.js)
@@ -45,17 +45,17 @@ The system follows a layered architecture:
 ```mermaid
 graph TB
 subgraph "Frontend"
-FE_Estagios["estagios.js"]
-FE_EditEstagio["edit-estagio.js"]
-FE_ViewEstagio["view-estagio.js"]
+FE_Estagios["instituicoes.js"]
+FE_EditEstagio["edit-instituicao.js"]
+FE_ViewEstagio["view-instituicao.js"]
 FE_Inscricoes["inscricoes.js"]
 FE_NewInscricao["new-inscricao.js"]
 FE_EditInscricao["edit-inscricao.js"]
 end
 subgraph "Backend"
-R_Estagio["estagioRoutes.js"]
-C_Estagio["estagioController.js"]
-M_Estagio["estagio.js"]
+R_Estagio["instituicaoRoutes.js"]
+C_Estagio["instituicaoController.js"]
+M_Estagio["instituicao.js"]
 R_Inscricao["inscricaoRoutes.js"]
 C_Inscricao["inscricaoController.js"]
 M_Inscricao["inscricao.js"]
@@ -83,9 +83,9 @@ R_Estagio --> MW_Auth
 ```
 
 **Diagram sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
@@ -93,27 +93,27 @@ R_Estagio --> MW_Auth
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/estagios.js](file://public/estagios.js#L1-L46)
-- [public/edit-estagio.js](file://public/edit-estagio.js#L1-L103)
-- [public/view-estagio.js](file://public/view-estagio.js#L1-L158)
+- [public/instituicoes.js](file://public/instituicoes.js#L1-L46)
+- [public/edit-instituicao.js](file://public/edit-instituicao.js#L1-L103)
+- [public/view-instituicao.js](file://public/view-instituicao.js#L1-L158)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
 - [public/new-inscricao.js](file://public/new-inscricao.js#L1-L160)
 - [public/edit-inscricao.js](file://public/edit-inscricao.js#L1-L150)
 
 **Section sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [src/models/supervisor.js](file://src/models/supervisor.js#L1-L77)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/estagios.js](file://public/estagios.js#L1-L46)
-- [public/edit-estagio.js](file://public/edit-estagio.js#L1-L103)
-- [public/view-estagio.js](file://public/view-estagio.js#L1-L158)
+- [public/instituicoes.js](file://public/instituicoes.js#L1-L46)
+- [public/edit-instituicao.js](file://public/edit-instituicao.js#L1-L103)
+- [public/view-instituicao.js](file://public/view-instituicao.js#L1-L158)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
 - [public/new-inscricao.js](file://public/new-inscricao.js#L1-L160)
 - [public/edit-inscricao.js](file://public/edit-inscricao.js#L1-L150)
@@ -132,9 +132,9 @@ R_Estagio --> MW_Auth
   - Token verification, role-based access control, ownership checks for inscriptions.
 
 **Section sources**
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
 - [src/models/supervisor.js](file://src/models/supervisor.js#L1-L77)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
@@ -163,9 +163,9 @@ Router-->>FE : HTTP Response
 ```
 
 **Diagram sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
@@ -190,10 +190,10 @@ Router-->>FE : HTTP Response
 
 ```mermaid
 sequenceDiagram
-participant FE_List as "estagios.js"
-participant Router as "estagioRoutes.js"
-participant Ctrl as "estagioController.js"
-participant Model as "estagio.js"
+participant FE_List as "instituicoes.js"
+participant Router as "instituicaoRoutes.js"
+participant Ctrl as "instituicaoController.js"
+participant Model as "instituicao.js"
 participant DB as "db.js"
 FE_List->>Router : GET /estagios
 Router->>Ctrl : getAllEstagios()
@@ -214,19 +214,19 @@ Router-->>FE_List : Status
 ```
 
 **Diagram sources**
-- [public/estagios.js](file://public/estagios.js#L1-L46)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [public/instituicoes.js](file://public/instituicoes.js#L1-L46)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [public/estagios.js](file://public/estagios.js#L1-L46)
-- [public/edit-estagio.js](file://public/edit-estagio.js#L1-L103)
-- [public/view-estagio.js](file://public/view-estagio.js#L1-L158)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [public/instituicoes.js](file://public/instituicoes.js#L1-L46)
+- [public/edit-instituicao.js](file://public/edit-instituicao.js#L1-L103)
+- [public/view-instituicao.js](file://public/view-instituicao.js#L1-L158)
 
 ### Supervisor Management
 - Responsibilities:
@@ -240,10 +240,10 @@ Router-->>FE_List : Status
 
 ```mermaid
 sequenceDiagram
-participant FE_View as "view-estagio.js"
-participant Router as "estagioRoutes.js"
-participant Ctrl as "estagioController.js"
-participant Model as "estagio.js"
+participant FE_View as "view-instituicao.js"
+participant Router as "instituicaoRoutes.js"
+participant Ctrl as "instituicaoController.js"
+participant Model as "instituicao.js"
 participant DB as "db.js"
 FE_View->>Router : GET /estagio/ : id/supervisores
 Router->>Ctrl : getSupervisoresById()
@@ -256,16 +256,16 @@ Router-->>FE_View : Supervisors[]
 ```
 
 **Diagram sources**
-- [public/view-estagio.js](file://public/view-estagio.js#L1-L158)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [public/view-instituicao.js](file://public/view-instituicao.js#L1-L158)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
 - [src/models/supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [src/models/estagio.js](file://src/models/estagio.js#L43-L51)
-- [public/view-estagio.js](file://public/view-estagio.js#L124-L157)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L43-L51)
+- [public/view-instituicao.js](file://public/view-instituicao.js#L124-L157)
 
 ### Student (Aluno) Management
 - Responsibilities:
@@ -370,7 +370,7 @@ Next --> Handler["Route Handler"]
 **Section sources**
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4-L18)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L8-L9)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L8-L9)
 
 ## Dependency Analysis
 - Controllers depend on models for data access.
@@ -380,11 +380,11 @@ Next --> Handler["Route Handler"]
 
 ```mermaid
 graph LR
-FE["Frontend Modules"] --> R_E["estagioRoutes.js"]
+FE["Frontend Modules"] --> R_E["instituicaoRoutes.js"]
 FE --> R_I["inscricaoRoutes.js"]
-R_E --> C_E["estagioController.js"]
+R_E --> C_E["instituicaoController.js"]
 R_I --> C_I["inscricaoController.js"]
-C_E --> M_E["estagio.js"]
+C_E --> M_E["instituicao.js"]
 C_I --> M_I["inscricao.js"]
 M_E --> DB["db.js"]
 M_I --> DB
@@ -393,23 +393,23 @@ R_E --> MW
 ```
 
 **Diagram sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [public/estagios.js](file://public/estagios.js#L1-L46)
+- [public/instituicoes.js](file://public/instituicoes.js#L1-L46)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
 
 **Section sources**
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
@@ -447,7 +447,7 @@ R_E --> MW
 - [src/middleware/auth.js](file://src/middleware/auth.js#L100-L136)
 - [src/controllers/inscricaoController.js](file://src/controllers/inscricaoController.js#L72-L78)
 - [src/database/db.js](file://src/database/db.js#L5-L13)
-- [public/estagios.js](file://public/estagios.js#L6-L9)
+- [public/instituicoes.js](file://public/instituicoes.js#L6-L9)
 - [public/inscricoes.js](file://public/inscricoes.js#L6-L9)
 
 ## Conclusion
@@ -476,5 +476,5 @@ The Internship Management system provides a clear separation of concerns across 
   - DELETE /inscricoes/:id
 
 **Section sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L10-L17)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L10-L17)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)

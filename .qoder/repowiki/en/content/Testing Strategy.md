@@ -7,12 +7,12 @@
 - [test/check_tables_temp.js](file://test/check_tables_temp.js)
 - [test/create_estagio_table.js](file://test/create_estagio_table.js)
 - [test/alter_estagio_table.js](file://test/alter_estagio_table.js)
-- [test/verify_estagio.js](file://test/verify_estagio.js)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js)
 - [src/database/db.js](file://src/database/db.js)
 - [src/server.js](file://src/server.js)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js)
-- [src/models/estagio.js](file://src/models/estagio.js)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js)
 - [src/models/questionario.js](file://src/models/questionario.js)
@@ -45,13 +45,13 @@ T2["check_questionarios.js"]
 T3["check_tables_temp.js"]
 T4["create_estagio_table.js"]
 T5["alter_estagio_table.js"]
-T6["verify_estagio.js"]
+T6["verify_instituicao.js"]
 end
 subgraph "Backend"
 S["server.js"]
-R1["estagioRoutes.js"]
-C1["estagioController.js"]
-M1["estagio.js"]
+R1["instituicaoRoutes.js"]
+C1["instituicaoController.js"]
+M1["instituicao.js"]
 R2["questionarioRoutes.js"]
 C2["questionarioController.js"]
 M2["questionario.js"]
@@ -75,11 +75,11 @@ T5 --> DB
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/create_estagio_table.js](file://test/create_estagio_table.js#L1-L41)
 - [test/alter_estagio_table.js](file://test/alter_estagio_table.js#L1-L40)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js#L1-L16)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js#L1-L72)
 - [src/models/questionario.js](file://src/models/questionario.js#L1-L38)
@@ -91,7 +91,7 @@ T5 --> DB
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/create_estagio_table.js](file://test/create_estagio_table.js#L1-L41)
 - [test/alter_estagio_table.js](file://test/alter_estagio_table.js#L1-L40)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 - [package.json](file://package.json#L1-L32)
@@ -110,9 +110,9 @@ Key responsibilities:
 **Section sources**
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 - [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js#L1-L16)
 - [src/controllers/questionarioController.js](file://src/controllers/questionarioController.js#L1-L72)
 - [src/models/questionario.js](file://src/models/questionario.js#L1-L38)
@@ -125,11 +125,11 @@ The testing architecture leverages:
 
 ```mermaid
 sequenceDiagram
-participant Test as "Integration Test<br/>verify_estagio.js"
+participant Test as "Integration Test<br/>verify_instituicao.js"
 participant Server as "Express Server<br/>server.js"
-participant Routes as "Routes<br/>estagioRoutes.js"
-participant Ctrl as "Controller<br/>estagioController.js"
-participant Model as "Model<br/>estagio.js"
+participant Routes as "Routes<br/>instituicaoRoutes.js"
+participant Ctrl as "Controller<br/>instituicaoController.js"
+participant Model as "Model<br/>instituicao.js"
 participant Pool as "DB Pool<br/>db.js"
 Test->>Server : "POST /estagios"
 Server->>Routes : "Dispatch"
@@ -155,11 +155,11 @@ Test->>Server : "GET /estagios/ : id (404)"
 ```
 
 **Diagram sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -215,16 +215,16 @@ Done --> End
 ```
 
 **Diagram sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 
 **Section sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 
 ### Questionnaire System Testing
 Controllers and models expose full CRUD for questionnaires. Tests should:
@@ -276,7 +276,7 @@ Patterns to adopt:
 **Section sources**
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/check_questionarios.js](file://test/check_questionarios.js#L1-L29)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
@@ -297,7 +297,7 @@ Patterns to adopt:
 - Health checks: verify server readiness and database connectivity before running tests.
 
 **Section sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
 
 ### Test Environment Setup
@@ -327,8 +327,8 @@ Patterns to adopt:
 - Keep test data minimal and deterministic; clean up after execution.
 
 **Section sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js#L1-L16)
 
 ### Test Case Organization
@@ -339,7 +339,7 @@ Patterns to adopt:
 **Section sources**
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/check_questionarios.js](file://test/check_questionarios.js#L1-L29)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 
 ### Debugging Test Failures
 - Capture and log HTTP responses, status codes, and error stacks.
@@ -347,7 +347,7 @@ Patterns to adopt:
 - Use schema inspection scripts to confirm table definitions.
 
 **Section sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L77-L86)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L77-L86)
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/check_questionarios.js](file://test/check_questionarios.js#L1-L29)
 
@@ -361,10 +361,10 @@ The testing suite depends on:
 
 ```mermaid
 graph LR
-V["verify_estagio.js"] --> SRV["server.js"]
-SRV --> RT1["estagioRoutes.js"]
-RT1 --> CT1["estagioController.js"]
-CT1 --> MD1["estagio.js"]
+V["verify_instituicao.js"] --> SRV["server.js"]
+SRV --> RT1["instituicaoRoutes.js"]
+RT1 --> CT1["instituicaoController.js"]
+CT1 --> MD1["instituicao.js"]
 MD1 --> DB["db.js"]
 QV["check_questionarios.js"] --> DB
 TS["check_tables_temp.js"] --> DB
@@ -374,11 +374,11 @@ AT["alter_estagio_table.js"] --> DB
 ```
 
 **Diagram sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 - [test/check_questionarios.js](file://test/check_questionarios.js#L1-L29)
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
@@ -387,11 +387,11 @@ AT["alter_estagio_table.js"] --> DB
 - [test/alter_estagio_table.js](file://test/alter_estagio_table.js#L1-L40)
 
 **Section sources**
-- [test/verify_estagio.js](file://test/verify_estagio.js#L1-L90)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L1-L90)
 - [src/server.js](file://src/server.js#L1-L73)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/controllers/estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 ## Performance Considerations
@@ -413,7 +413,7 @@ Common issues and resolutions:
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 - [test/check_tables_temp.js](file://test/check_tables_temp.js#L1-L40)
 - [test/check_questionarios.js](file://test/check_questionarios.js#L1-L29)
-- [test/verify_estagio.js](file://test/verify_estagio.js#L77-L86)
+- [test/verify_instituicao.js](file://test/verify_instituicao.js#L77-L86)
 
 ## Conclusion
 The current testing strategy combines database utilities and HTTP-based integration tests to validate critical components. By centralizing environment configuration, structuring tests around CRUD lifecycles, and maintaining schema and data verifications, NodeMural can achieve robust QA coverage. Extending this approach with continuous integration, performance and load testing, and improved test organization will further strengthen reliability and developer confidence.

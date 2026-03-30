@@ -1,6 +1,6 @@
-// src/routers/estagioRoutes.js
+// src/routers/instituicaoRoutes.js
 import express from 'express';
-import * as estagioController from '../controllers/estagioController.js';
+import * as instituicaoController from '../controllers/instituicaoController.js';
 import { verifyToken, checkRole, checkOwnership } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -9,12 +9,12 @@ const router = express.Router();
 router.use(express.json());
 
 // Routes
-router.post('/', verifyToken, checkRole(['admin']), estagioController.createEstagio);
-router.get('/', verifyToken, estagioController.getAllEstagios);
-router.get('/:id/supervisores', verifyToken, checkRole(['admin', 'aluno']), estagioController.getSupervisoresById);
-router.get('/:id/mural', verifyToken, estagioController.getMuralById);
-router.get('/:id', verifyToken, estagioController.getEstagioById);
-router.put('/:id', verifyToken, checkRole(['admin']), estagioController.updateEstagio);
-router.delete('/:id', verifyToken, checkRole(['admin']), estagioController.deleteEstagio);
+router.post('/', verifyToken, checkRole(['admin']), instituicaoController.createEstagio);
+router.get('/', verifyToken, instituicaoController.getAllEstagios);
+router.get('/:id/supervisores', verifyToken, checkRole(['admin', 'aluno']), instituicaoController.getSupervisoresById);
+router.get('/:id/mural', verifyToken, instituicaoController.getMuralById);
+router.get('/:id', verifyToken, instituicaoController.getEstagioById);
+router.put('/:id', verifyToken, checkRole(['admin']), instituicaoController.updateEstagio);
+router.delete('/:id', verifyToken, checkRole(['admin']), instituicaoController.deleteEstagio);
 
 export default router;

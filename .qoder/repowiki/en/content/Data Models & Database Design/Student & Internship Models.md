@@ -2,18 +2,18 @@
 
 <cite>
 **Referenced Files in This Document**
-- [estagio.js](file://src/models/estagio.js)
+- [instituicao.js](file://src/models/instituicao.js)
 - [estagiario.js](file://src/models/estagiario.js)
 - [inscricao.js](file://src/models/inscricao.js)
 - [mural.js](file://src/models/mural.js)
 - [aluno.js](file://src/models/aluno.js)
 - [supervisor.js](file://src/models/supervisor.js)
-- [docente.js](file://src/models/docente.js)
-- [estagioController.js](file://src/controllers/estagioController.js)
+- [professor.js](file://src/models/professor.js)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js)
 - [estagiarioController.js](file://src/controllers/estagiarioController.js)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js)
 - [muralController.js](file://src/controllers/muralController.js)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [muralRoutes.js](file://src/routers/muralRoutes.js)
@@ -50,25 +50,25 @@ The system follows a layered architecture:
 ```mermaid
 graph TB
 subgraph "Presentation Layer"
-R1["estagioRoutes.js"]
+R1["instituicaoRoutes.js"]
 R2["estagiarioRoutes.js"]
 R3["inscricaoRoutes.js"]
 R4["muralRoutes.js"]
 end
 subgraph "Controllers"
-C1["estagioController.js"]
+C1["instituicaoController.js"]
 C2["estagiarioController.js"]
 C3["inscricaoController.js"]
 C4["muralController.js"]
 end
 subgraph "Models"
-M1["estagio.js"]
+M1["instituicao.js"]
 M2["estagiario.js"]
 M3["inscricao.js"]
 M4["mural.js"]
 MA["aluno.js"]
 MS["supervisor.js"]
-MD["docente.js"]
+MD["professor.js"]
 end
 subgraph "Persistence"
 DB["db.js (MariaDB Pool)"]
@@ -87,25 +87,25 @@ MD --> DB
 ```
 
 **Diagram sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [estagiarioController.js](file://src/controllers/estagiarioController.js#L1-L133)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [muralController.js](file://src/controllers/muralController.js#L1-L101)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [aluno.js](file://src/models/aluno.js#L1-L146)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [docente.js](file://src/models/docente.js#L1-L72)
+- [professor.js](file://src/models/professor.js#L1-L72)
 - [db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
@@ -139,7 +139,7 @@ This section defines the four core entities and their responsibilities.
   - Business constraints: Capacity management via vacancies; access restricted to admin for create/update/delete
 
 **Section sources**
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [mural.js](file://src/models/mural.js#L1-L91)
@@ -202,9 +202,9 @@ Ctrl-->>Client : 201 Created
   - No explicit role guards in controller; routes are defined in router but controller does not enforce roles
 
 **Section sources**
-- [estagio.js](file://src/models/estagio.js#L1-L66)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 
 ### estagiario (Internship Participant)
 - Responsibilities
@@ -412,9 +412,9 @@ MURAL_ESTAGIO ||--o{ INSCRICOES : "contains applications"
 
 **Diagram sources**
 - [aluno.js](file://src/models/aluno.js#L1-L146)
-- [docente.js](file://src/models/docente.js#L1-L72)
+- [professor.js](file://src/models/professor.js#L1-L72)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
@@ -479,11 +479,11 @@ The following diagram shows dependencies among controllers, models, and routers.
 
 ```mermaid
 graph LR
-R1["estagioRoutes.js"] --> C1["estagioController.js"]
+R1["instituicaoRoutes.js"] --> C1["instituicaoController.js"]
 R2["estagiarioRoutes.js"] --> C2["estagiarioController.js"]
 R3["inscricaoRoutes.js"] --> C3["inscricaoController.js"]
 R4["muralRoutes.js"] --> C4["muralController.js"]
-C1 --> M1["estagio.js"]
+C1 --> M1["instituicao.js"]
 C2 --> M2["estagiario.js"]
 C3 --> M3["inscricao.js"]
 C4 --> M4["mural.js"]
@@ -494,22 +494,22 @@ M4 --> DB
 ```
 
 **Diagram sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [estagiarioController.js](file://src/controllers/estagiarioController.js#L1-L133)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [muralController.js](file://src/controllers/muralController.js#L1-L101)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
@@ -517,8 +517,8 @@ M4 --> DB
 ## Performance Considerations
 - Indexing recommendations
   - Add indexes on frequently filtered fields: inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo
-  - Add indexes on mural_estagio.instituicao_id, mural_estagio.periodo
-  - Add indexes on estagio.area_id, estagio.id for supervisor and listing lookups
+  - Add indexes on mural_instituicao.instituicao_id, mural_instituicao.periodo
+  - Add indexes on instituicao.area_id, instituicao.id for supervisor and listing lookups
 - Query optimization
   - Prefer selective queries with WHERE clauses and ORDER BY clauses aligned with indexes
   - Avoid unnecessary JOINs when only IDs are required

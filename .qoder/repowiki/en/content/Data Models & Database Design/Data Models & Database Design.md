@@ -4,8 +4,8 @@
 **Referenced Files in This Document**
 - [db.js](file://src/database/db.js)
 - [aluno.js](file://src/models/aluno.js)
-- [docente.js](file://src/models/docente.js)
-- [estagio.js](file://src/models/estagio.js)
+- [professor.js](file://src/models/professor.js)
+- [instituicao.js](file://src/models/instituicao.js)
 - [estagiario.js](file://src/models/estagiario.js)
 - [inscricao.js](file://src/models/inscricao.js)
 - [supervisor.js](file://src/models/supervisor.js)
@@ -14,7 +14,7 @@
 - [atividades.js](file://src/models/atividades.js)
 - [visita.js](file://src/models/visita.js)
 - [turma.js](file://src/models/turma.js)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js)
+- [area.js](file://src/models/area.js)
 - [configuracao.js](file://src/models/configuracao.js)
 - [mural.js](file://src/models/mural.js)
 - [resposta.js](file://src/models/resposta.js)
@@ -45,8 +45,8 @@ DB["MariaDB Pool<br/>src/database/db.js"]
 end
 subgraph "Models"
 AL["Aluno Model<br/>src/models/aluno.js"]
-DC["Docente Model<br/>src/models/docente.js"]
-ES["Estagio Model<br/>src/models/estagio.js"]
+DC["Docente Model<br/>src/models/professor.js"]
+ES["Estagio Model<br/>src/models/instituicao.js"]
 EG["Estagiario Model<br/>src/models/estagiario.js"]
 IN["Inscricao Model<br/>src/models/inscricao.js"]
 SV["Supervisor Model<br/>src/models/supervisor.js"]
@@ -55,7 +55,7 @@ QA["Questao Model<br/>src/models/questao.js"]
 AT["Atividades Model<br/>src/models/atividades.js"]
 VS["Visita Model<br/>src/models/visita.js"]
 TR["Turma Model<br/>src/models/turma.js"]
-AR["AreaInstituicao Model<br/>src/models/areaInstituicao.js"]
+AR["AreaInstituicao Model<br/>src/models/area.js"]
 CF["Configuracao Model<br/>src/models/configuracao.js"]
 MR["Mural Model<br/>src/models/mural.js"]
 RP["Resposta Model<br/>src/models/resposta.js"]
@@ -80,8 +80,8 @@ DB --> RP
 **Diagram sources**
 - [db.js](file://src/database/db.js#L1-L15)
 - [aluno.js](file://src/models/aluno.js#L1-L146)
-- [docente.js](file://src/models/docente.js#L1-L72)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [professor.js](file://src/models/professor.js#L1-L72)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
@@ -90,7 +90,7 @@ DB --> RP
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
 - [turma.js](file://src/models/turma.js#L1-L39)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [configuracao.js](file://src/models/configuracao.js#L1-L26)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [resposta.js](file://src/models/resposta.js#L1-L183)
@@ -123,14 +123,14 @@ This section summarizes the entities and their roles, focusing on fields, constr
 - estagiarios
   - Purpose: Tracks student internships across periods and levels.
   - Key fields: id (auto-increment), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes, ajuste2020.
-  - Relationships: Many-to-one with alunos, docentes, supervisores, estagio, turma_estagios.
+  - Relationships: Many-to-one with alunos, docentes, supervisores, estagio, turma_instituicoes.
   - Access patterns: List with joins; find by aluno_id, supervisor_id, professor_id; compute next level based on rules.
 
 - inscricoes
   - Purpose: Records student applications to internship postings.
   - Key fields: id (auto-increment), registro, aluno_id, muralestagio_id, data, periodo.
   - Constraints: Application uniqueness per student per posting per period enforced by model checks.
-  - Relationships: Many-to-one with alunos and mural_estagio.
+  - Relationships: Many-to-one with alunos and mural_instituicao.
   - Access patterns: List by period; find by student/posting combination; nested listing from mural.
 
 - supervisores
@@ -160,7 +160,7 @@ This section summarizes the entities and their roles, focusing on fields, constr
 - visitas
   - Purpose: Supervisory visits to institutions.
   - Key fields: id (auto-increment), instituicao_id, data, responsavel, motivo, avaliacao, descricao.
-  - Relationships: Many-to-one with estagio.
+  - Relationships: Many-to-one with instituicao.
   - Access patterns: List filtered by institution; join to show institution name.
 
 - turma_estagios
@@ -172,7 +172,7 @@ This section summarizes the entities and their roles, focusing on fields, constr
 - areas
   - Purpose: Institution area classification.
   - Key fields: id (auto-increment), area.
-  - Relationships: Many-to-one with estagio.
+  - Relationships: Many-to-one with instituicao.
   - Access patterns: List/create/update/delete.
 
 - configuracoes
@@ -188,8 +188,8 @@ This section summarizes the entities and their roles, focusing on fields, constr
 
 **Section sources**
 - [aluno.js](file://src/models/aluno.js#L1-L146)
-- [docente.js](file://src/models/docente.js#L1-L72)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [professor.js](file://src/models/professor.js#L1-L72)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
@@ -199,7 +199,7 @@ This section summarizes the entities and their roles, focusing on fields, constr
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
 - [turma.js](file://src/models/turma.js#L1-L39)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [configuracao.js](file://src/models/configuracao.js#L1-L26)
 - [mural.js](file://src/models/mural.js#L1-L91)
 
@@ -260,9 +260,9 @@ VISITA ||--|| ESTAGIO : "visits"
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [turma.js](file://src/models/turma.js#L1-L39)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [resposta.js](file://src/models/resposta.js#L1-L183)
 - [atividades.js](file://src/models/atividades.js#L1-L57)
@@ -300,7 +300,7 @@ VISITA ||--|| ESTAGIO : "visits"
 - Pagination:
   - Ordering by date/time supports efficient client-side pagination.
 - Indexing recommendations:
-  - Add indexes on frequently filtered columns: alunos.registro, inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo, mural_estagio.instituicao_id, mural_estagio.periodo, estagiarios.aluno_id, estagiarios.supervisor_id, estagiarios.professor_id, supervisores.id (for junction), estagio.area_id, questionarios.id, questoes.questionario_id, respostas.estagiario_id, respostas.questionario_id, folhadeatividades.estagiario_id, visita.instituicao_id.
+  - Add indexes on frequently filtered columns: alunos.registro, inscricoes.aluno_id, inscricoes.muralestagio_id, inscricoes.periodo, mural_instituicao.instituicao_id, mural_instituicao.periodo, estagiarios.aluno_id, estagiarios.supervisor_id, estagiarios.professor_id, supervisores.id (for junction), instituicao.area_id, questionarios.id, questoes.questionario_id, respostas.estagiario_id, respostas.questionario_id, folhadeatividades.estagiario_id, visita.instituicao_id.
   - Composite indexes for frequent multi-column filters (e.g., inscricoes(aluno_id, muralestagio_id, periodo)).
 
 **Section sources**
@@ -349,8 +349,8 @@ POOL["MariaDB Pool<br/>src/database/db.js"]
 MODELS["Model Modules"]
 POOL --> MODELS
 MODELS --> AL["aluno.js"]
-MODELS --> DC["docente.js"]
-MODELS --> ES["estagio.js"]
+MODELS --> DC["professor.js"]
+MODELS --> ES["instituicao.js"]
 MODELS --> EG["estagiario.js"]
 MODELS --> IN["inscricao.js"]
 MODELS --> SV["supervisor.js"]
@@ -359,7 +359,7 @@ MODELS --> QA["questao.js"]
 MODELS --> AT["atividades.js"]
 MODELS --> VS["visita.js"]
 MODELS --> TR["turma.js"]
-MODELS --> AR["areaInstituicao.js"]
+MODELS --> AR["area.js"]
 MODELS --> CF["configuracao.js"]
 MODELS --> MR["mural.js"]
 MODELS --> RP["resposta.js"]
@@ -368,8 +368,8 @@ MODELS --> RP["resposta.js"]
 **Diagram sources**
 - [db.js](file://src/database/db.js#L1-L15)
 - [aluno.js](file://src/models/aluno.js#L1-L146)
-- [docente.js](file://src/models/docente.js#L1-L72)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [professor.js](file://src/models/professor.js#L1-L72)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [supervisor.js](file://src/models/supervisor.js#L1-L77)
@@ -378,7 +378,7 @@ MODELS --> RP["resposta.js"]
 - [atividades.js](file://src/models/atividades.js#L1-L57)
 - [visita.js](file://src/models/visita.js#L1-L51)
 - [turma.js](file://src/models/turma.js#L1-L39)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
+- [area.js](file://src/models/area.js#L1-L45)
 - [configuracao.js](file://src/models/configuracao.js#L1-L26)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [resposta.js](file://src/models/resposta.js#L1-L183)
@@ -453,8 +453,8 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
 
 **Section sources**
 - [aluno.js](file://src/models/aluno.js#L10-L20)
-- [docente.js](file://src/models/docente.js#L5-L11)
-- [estagio.js](file://src/models/estagio.js#L20-L26)
+- [professor.js](file://src/models/professor.js#L5-L11)
+- [instituicao.js](file://src/models/instituicao.js#L20-L26)
 - [estagiario.js](file://src/models/estagiario.js#L56-L64)
 - [inscricao.js](file://src/models/inscricao.js#L58-L74)
 - [supervisor.js](file://src/models/supervisor.js#L20-L26)
@@ -464,7 +464,7 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
 - [atividades.js](file://src/models/atividades.js#L34-L40)
 - [visita.js](file://src/models/visita.js#L28-L34)
 - [turma.js](file://src/models/turma.js#L6-L12)
-- [areaInstituicao.js](file://src/models/areaInstituicao.js#L19-L25)
+- [area.js](file://src/models/area.js#L19-L25)
 - [configuracao.js](file://src/models/configuracao.js#L17-L23)
 - [mural.js](file://src/models/mural.js#L57-L67)
 
@@ -474,8 +474,8 @@ NodeMural’s data models provide a clear, relational foundation for managing ac
 - Foreign Keys (recommended)
   - estagiarios.aluno_id → alunos(id), estagiarios.professor_id → docentes(id), estagiarios.supervisor_id → supervisores(id), estagiarios.instituicao_id → estagio(id), estagiarios.turmaestagio_id → turma_estagios(id).
   - inscricoes.aluno_id → alunos(id), inscricoes.muralestagio_id → mural_estagio(id).
-  - mural_estagio.instituicao_id → estagio(id), mural_estagio.turmaestagio_id → turma_estagios(id).
-  - estagio.area_id → areas(id).
+  - mural_instituicao.instituicao_id → estagio(id), mural_instituicao.turmaestagio_id → turma_estagios(id).
+  - instituicao.area_id → areas(id).
   - respostas.questionario_id → questionarios(id), respostas.estagiario_id → estagiarios(id).
   - folhadeatividades.estagiario_id → estagiarios(id).
   - visita.instituicao_id → estagio(id).

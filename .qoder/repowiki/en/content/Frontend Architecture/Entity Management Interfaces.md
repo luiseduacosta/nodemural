@@ -3,7 +3,7 @@
 <cite>
 **Referenced Files in This Document**
 - [public/alunos.js](file://public/alunos.js)
-- [public/docentes.js](file://public/docentes.js)
+- [public/professores.js](file://public/professores.js)
 - [public/estagiarios.js](file://public/estagiarios.js)
 - [public/turmas.js](file://public/turmas.js)
 - [public/inscricoes.js](file://public/inscricoes.js)
@@ -50,7 +50,7 @@ A1["alunos.html<br/>alunos.js"]
 A2["edit-aluno.html<br/>edit-aluno.js"]
 A3["new-aluno.html<br/>new-aluno.js"]
 A4["view-aluno.html<br/>view-aluno.js"]
-D1["docentes.html<br/>docentes.js"]
+D1["professores.html<br/>professores.js"]
 E1["estagiarios.html<br/>estagiarios.js"]
 T1["turmas.html<br/>turmas.js"]
 I1["inscricoes.html<br/>inscricoes.js"]
@@ -81,7 +81,7 @@ M1 --> U1
 - [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
 - [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
 - [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
+- [public/professores.js](file://public/professores.js#L1-L59)
 - [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
 - [public/turmas.js](file://public/turmas.js#L1-L56)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
@@ -110,7 +110,7 @@ Key patterns:
 **Section sources**
 - [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 - [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
+- [public/professores.js](file://public/professores.js#L1-L59)
 - [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
 - [public/turmas.js](file://public/turmas.js#L1-L56)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
@@ -194,8 +194,8 @@ EA->>U : "Redirect on success or alert on error"
 - [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
 
 ### Docentes Interface
-- Listing: docentes.js initializes a DataTable with columns for name, siape, email, phone, department, and actions. Deletion uses fetch with error handling and reloads the table.
-- Access control: requires token and role admin or docente.
+- Listing: professores.js initializes a DataTable with columns for name, siape, email, phone, department, and actions. Deletion uses fetch with error handling and reloads the table.
+- Access control: requires token and role admin or professor.
 
 ```mermaid
 flowchart TD
@@ -208,10 +208,10 @@ Ok --> |No| Err["console.error + alert"] --> End2
 ```
 
 **Diagram sources**
-- [public/docentes.js](file://public/docentes.js#L44-L57)
+- [public/professores.js](file://public/professores.js#L44-L57)
 
 **Section sources**
-- [public/docentes.js](file://public/docentes.js#L1-L59)
+- [public/professores.js](file://public/professores.js#L1-L59)
 
 ### Estagiarios Interface
 - Advanced filtering: estagiarios.js adds per-column search inputs and a period filter. It loads distinct periods and default period from configuration, then reloads the table accordingly.
@@ -297,7 +297,7 @@ AU["auth-utils.js"] --> AL["alunos.js"]
 AU --> ED["edit-aluno.js"]
 AU --> NE["new-aluno.js"]
 AU --> VI["view-aluno.js"]
-AU --> DO["docentes.js"]
+AU --> DO["professores.js"]
 AU --> ES["estagiarios.js"]
 AU --> TU["turmas.js"]
 AU --> IN["inscricoes.js"]
@@ -322,7 +322,7 @@ MU --> DT
 - [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
 - [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
 - [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
+- [public/professores.js](file://public/professores.js#L1-L59)
 - [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
 - [public/turmas.js](file://public/turmas.js#L1-L56)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
@@ -334,7 +334,7 @@ MU --> DT
 **Section sources**
 - [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 - [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
+- [public/professores.js](file://public/professores.js#L1-L59)
 - [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
 - [public/turmas.js](file://public/turmas.js#L1-L56)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
@@ -364,7 +364,7 @@ Common issues and resolutions:
 **Section sources**
 - [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 - [public/alunos.js](file://public/alunos.js#L52-L68)
-- [public/docentes.js](file://public/docentes.js#L44-L57)
+- [public/professores.js](file://public/professores.js#L44-L57)
 - [public/estagiarios.js](file://public/estagiarios.js#L123-L140)
 - [public/turmas.js](file://public/turmas.js#L41-L54)
 - [public/inscricoes.js](file://public/inscricoes.js#L92-L98)

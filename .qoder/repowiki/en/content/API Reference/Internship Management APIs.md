@@ -3,9 +3,9 @@
 <cite>
 **Referenced Files in This Document**
 - [server.js](file://src/server.js)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js)
-- [estagioController.js](file://src/controllers/estagioController.js)
-- [estagio.js](file://src/models/estagio.js)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [instituicao.js](file://src/models/instituicao.js)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js)
 - [inscricao.js](file://src/models/inscricao.js)
@@ -44,17 +44,17 @@ subgraph "Server"
 S["Express Server<br/>src/server.js"]
 end
 subgraph "Routers"
-ER["estagioRoutes.js"]
+ER["instituicaoRoutes.js"]
 IR["inscricaoRoutes.js"]
 MR["muralRoutes.js"]
 end
 subgraph "Controllers"
-EC["estagioController.js"]
+EC["instituicaoController.js"]
 IC["inscricaoController.js"]
 MC["muralController.js"]
 end
 subgraph "Models"
-EM["estagio.js"]
+EM["instituicao.js"]
 IM["inscricao.js"]
 MM["mural.js"]
 end
@@ -82,25 +82,25 @@ MC --> DB
 
 **Diagram sources**
 - [server.js](file://src/server.js#L31-L73)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [mural.js](file://src/models/mural.js#L1-L91)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [auth.js](file://src/middleware/auth.js#L1-L137)
 - [db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
 - [server.js](file://src/server.js#L31-L73)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
 
 ## Core Components
-- Internship Opportunities (/estagios): CRUD operations for institutions offering internships, including nested endpoints for supervisors and institution-specific listings.
+- Internship Opportunities (/instituicoes): CRUD operations for institutions offering internships, including nested endpoints for supervisors and institution-specific listings.
 - Applications (/inscricoes): CRUD operations for student applications to internship opportunities, with filtering by period and ownership checks.
 - Institution Listings (/mural): Institution-specific listings of internship opportunities with nested application retrieval.
 
@@ -110,7 +110,7 @@ Key responsibilities:
 - Relationship endpoints linking to students, supervisors, and institutions.
 
 **Section sources**
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [mural.js](file://src/models/mural.js#L1-L91)
 - [auth.js](file://src/middleware/auth.js#L1-L137)
@@ -122,54 +122,54 @@ The system exposes REST endpoints organized by domain. Routers define endpoint c
 sequenceDiagram
 participant C as "Client"
 participant SRV as "Express Server"
-participant ER as "estagioRoutes"
-participant EC as "estagioController"
-participant EM as "estagio Model"
+participant ER as "instituicaoRoutes"
+participant EC as "instituicaoController"
+participant EM as "instituicao Model"
 participant DB as "MariaDB"
-C->>SRV : "GET /estagios"
+C->>SRV : "GET /instituicoes"
 SRV->>ER : "Route match"
-ER->>EC : "getAllEstagios()"
+ER->>EC : "getAllInstituicoes()"
 EC->>EM : "findAll()"
-EM->>DB : "SELECT ... FROM estagio"
+EM->>DB : "SELECT ... FROM instituicao"
 DB-->>EM : "Rows"
-EM-->>EC : "Array of estagios"
+EM-->>EC : "Array of instituicoes"
 EC-->>C : "200 OK JSON"
 ```
 
 **Diagram sources**
 - [server.js](file://src/server.js#L31-L73)
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L12)
-- [estagio.js](file://src/models/estagio.js#L1-L10)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L12)
+- [instituicao.js](file://src/models/instituicao.js#L1-L10)
 - [db.js](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
 
-### Internship Opportunities API (/estagios)
+### Internship Opportunities API (/instituicoes)
 Endpoints:
-- GET /estagios
+- GET /instituicoes
   - Description: List all internship opportunities with institution and area information.
-  - Response: Array of estagio objects.
-- GET /estagios/:id
+  - Response: Array of instituicoes objects.
+- GET /instituicoes/:id
   - Description: Retrieve a specific internship opportunity by ID.
-  - Response: Single estagio object.
-- POST /estagios
+  - Response: Single instituicao object.
+- POST /instituicoes
   - Description: Create a new internship opportunity.
   - Request body: Internship creation schema.
-  - Response: Created estagio object.
-- PUT /estagios/:id
+  - Response: Created instituicao object.
+- PUT /instituicoes/:id
   - Description: Update an existing internship opportunity.
   - Request body: Internship update schema.
   - Response: 204 No Content on success.
-- DELETE /estagios/:id
+- DELETE /instituicoes/:id
   - Description: Cancel/delete an internship opportunity.
   - Response: 204 No Content on success.
 
 Nested endpoints:
-- GET /estagios/:id/supervisores
+- GET /instituicoes/:id/supervisores
   - Description: Retrieve supervisors associated with an internship opportunity.
   - Response: Array of supervisors linked to the institution.
-- GET /estagios/:id/mural
+- GET /instituicoes/:id/mural
   - Description: Retrieve institution-specific listings (mural) for an internship opportunity.
   - Response: Array of mural entries.
 
@@ -182,12 +182,12 @@ Response schemas:
 - Estagio object includes institution details and area name.
 
 Notes:
-- Ownership verification is not enforced for create/update/delete operations in the estagio controller; admin privileges are implied by the absence of explicit ownership checks in the controller logic.
+- Ownership verification is not enforced for create/update/delete operations in the instituicao controller; admin privileges are implied by the absence of explicit ownership checks in the controller logic.
 
 **Section sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L11-L17)
-- [estagioController.js](file://src/controllers/estagioController.js#L4-L70)
-- [estagio.js](file://src/models/estagio.js#L5-L62)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L11-L17)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L4-L70)
+- [instituicao.js](file://src/models/instituicao.js#L5-L62)
 
 ### Applications API (/inscricoes)
 Endpoints:
@@ -267,9 +267,9 @@ Endpoints:
 - [mural.js](file://src/models/mural.js#L5-L87)
 
 ### Relationship Endpoints
-- GET /estagios/:id/supervisores
+- GET /instituicao/:id/supervisores
   - Returns supervisors linked to an institution.
-- GET /estagios/:id/mural
+- GET /instituicao/:id/mural
   - Returns institution listings (mural) for an institution.
 - GET /mural/:id/inscricoes
   - Returns applications for a listing.
@@ -279,7 +279,7 @@ Endpoints:
 These endpoints facilitate navigation between students, supervisors, and institutions through the internship ecosystem.
 
 **Section sources**
-- [estagioController.js](file://src/controllers/estagioController.js#L72-L97)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L72-L97)
 - [mural.js](file://src/models/mural.js#L49-L56)
 
 ## Dependency Analysis
@@ -291,10 +291,10 @@ The system exhibits clear separation of concerns:
 
 ```mermaid
 graph LR
-ER["estagioRoutes.js"] --> EC["estagioController.js"]
+ER["instituicaoRoutes.js"] --> EC["instituicaoController.js"]
 IR["inscricaoRoutes.js"] --> IC["inscricaoController.js"]
 MR["muralRoutes.js"] --> MC["muralController.js"]
-EC --> EM["estagio.js"]
+EC --> EM["instituicao.js"]
 IC --> IM["inscricao.js"]
 MC --> MM["mural.js"]
 EC --> AM["auth.js"]
@@ -305,13 +305,13 @@ MC --> DB
 ```
 
 **Diagram sources**
-- [estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
+- [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L20)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js](file://src/routers/muralRoutes.js#L1-L23)
-- [estagioController.js](file://src/controllers/estagioController.js#L1-L98)
+- [instituicaoController.js](file://src/controllers/instituicaoController.js#L1-L98)
 - [inscricaoController.js](file://src/controllers/inscricaoController.js#L1-L114)
 - [mural.js](file://src/models/mural.js#L1-L91)
-- [estagio.js](file://src/models/estagio.js#L1-L66)
+- [instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [auth.js](file://src/middleware/auth.js#L1-L137)
 - [db.js](file://src/database/db.js#L1-L15)
@@ -351,7 +351,7 @@ Operational tips:
 - [auth.js](file://src/middleware/auth.js#L31-L48)
 - [auth.js](file://src/middleware/auth.js#L100-L136)
 - [inscricao.js](file://src/models/inscricao.js#L58-L92)
-- [estagio.js](file://src/models/estagio.js#L5-L17)
+- [instituicao.js](file://src/models/instituicao.js#L5-L17)
 - [inscricao.js](file://src/models/inscricao.js#L30-L38)
 - [mural.js](file://src/models/mural.js#L42-L47)
 

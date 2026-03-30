@@ -11,11 +11,11 @@
 - [public/edit-turma.js](file://public/edit-turma.js)
 - [public/view-turma.js](file://public/view-turma.js)
 - [src/database/db.js](file://src/database/db.js)
-- [src/models/estagio.js](file://src/models/estagio.js)
+- [src/models/instituicao.js](file://src/models/instituicao.js)
 - [src/models/inscricao.js](file://src/models/inscricao.js)
 - [src/models/estagiario.js](file://src/models/estagiario.js)
 - [src/models/aluno.js](file://src/models/aluno.js)
-- [src/models/docente.js](file://src/models/docente.js)
+- [src/models/professor.js](file://src/models/professor.js)
 - [src/models/atividades.js](file://src/models/atividades.js)
 - [public/inscricoes.html](file://public/inscricoes.html)
 - [public/inscricoes.js](file://public/inscricoes.js)
@@ -106,7 +106,7 @@ M --> DB
 - Academic tracking:
   - Atividades: list, get by id, create, update, delete; linked to estagiários and alunos.
   - Aluno: create, find by registro, list, get by id, get estagiarios, get inscricoes, update, delete; deletion guarded by referential integrity.
-  - Docente: create, list/search, get by id, update, delete, list estagiários by docente.
+  - Docente: create, list/search, get by id, update, delete, list estagiários by professor.
 
 Validation highlights:
 - Unique registration number for alunos.
@@ -117,12 +117,12 @@ Validation highlights:
 - [src/models/turma.js](file://src/models/turma.js#L1-L39)
 - [src/controllers/turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [src/models/atividades.js](file://src/models/atividades.js#L1-L57)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 
 ## Architecture Overview
 The backend uses Express with modular routing, controllers, and models. The database is accessed via a MariaDB connection pool. The frontend pages communicate with the backend through REST endpoints.
@@ -240,7 +240,7 @@ JS-->>Page : "Render table"
 - [public/inscricoes.html](file://public/inscricoes.html#L1-L57)
 - [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 
 **Section sources**
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
@@ -280,11 +280,11 @@ Cap --> End
 - [src/models/estagiario.js](file://src/models/estagiario.js#L130-L183)
 
 **Section sources**
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [src/models/atividades.js](file://src/models/atividades.js#L1-L57)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 
 ### Scheduling and Capacity Coordination
 - Mural periods:
@@ -312,14 +312,14 @@ Inscrip-->>Student : "Success"
 - [src/models/inscricao.js](file://src/models/inscricao.js#L58-L74)
 
 **Section sources**
-- [src/models/estagio.js](file://src/models/estagio.js#L53-L62)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L53-L62)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L58-L92)
 - [src/models/turma.js](file://src/models/turma.js#L1-L39)
 
 ### Relationship Management with Students and Professors
-- Estagiário links alunos, docentes (professors), supervisores, instituicoes, and turmas.
+- Estagiário links alunos, professores, supervisores, instituicoes, and turmas.
 - Aluno provides estagiarios and inscricoes for academic history.
-- Docente lists estagiários under supervision.
+- Professores lists estagiários under supervision.
 - Atividades ties estagiários to daily activity logs.
 
 ```mermaid
@@ -335,8 +335,8 @@ class Estagiario {
 +findByProfessorId(professor_id)
 +getNextNivel(aluno_id)
 }
-class Docente {
-+findEstagiariosByDocenteId(docenteId)
+class Professor {
++findEstagiariosByProfessorId(professorId)
 }
 class Atividades {
 +findAll(req)
@@ -350,13 +350,13 @@ Estagiario --> Atividades : "logs activities"
 **Diagram sources**
 - [src/models/aluno.js](file://src/models/aluno.js#L54-L115)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L81-L128)
-- [src/models/docente.js](file://src/models/docente.js#L50-L68)
+- [src/models/professor.js](file://src/models/professor.js#L50-L68)
 - [src/models/atividades.js](file://src/models/atividades.js#L5-L32)
 
 **Section sources**
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/models/atividades.js](file://src/models/atividades.js#L1-L57)
 
 ## Dependency Analysis
@@ -370,11 +370,11 @@ graph LR
 TurmaRoutes["turmaRoutes.js"] --> TurmaController["turmaController.js"]
 TurmaController --> TurmaModel["turma.js"]
 TurmaModel --> DBPool["db.js"]
-EstagioModel["estagio.js"] --> DBPool
+EstagioModel["instituicao.js"] --> DBPool
 InscricaoModel["inscricao.js"] --> DBPool
 EstagiarioModel["estagiario.js"] --> DBPool
 AlunoModel["aluno.js"] --> DBPool
-DocenteModel["docente.js"] --> DBPool
+ProfessorModel["professor.js"] --> DBPool
 AtividadesModel["atividades.js"] --> DBPool
 ```
 
@@ -383,11 +383,11 @@ AtividadesModel["atividades.js"] --> DBPool
 - [src/controllers/turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [src/models/turma.js](file://src/models/turma.js#L1-L39)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/professor.js](file://src/models/professor.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/models/atividades.js](file://src/models/atividades.js#L1-L57)
 
 **Section sources**
@@ -395,11 +395,11 @@ AtividadesModel["atividades.js"] --> DBPool
 - [src/controllers/turmaController.js](file://src/controllers/turmaController.js#L1-L67)
 - [src/models/turma.js](file://src/models/turma.js#L1-L39)
 - [src/database/db.js](file://src/database/db.js#L1-L15)
-- [src/models/estagio.js](file://src/models/estagio.js#L1-L66)
+- [src/models/instituicao.js](file://src/models/instituicao.js#L1-L66)
 - [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/models/atividades.js](file://src/models/atividades.js#L1-L57)
 
 ## Performance Considerations

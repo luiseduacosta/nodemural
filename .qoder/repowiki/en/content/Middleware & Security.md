@@ -8,7 +8,7 @@
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
 - [src/models/user.js](file://src/models/user.js)
 - [src/models/inscricao.js](file://src/models/inscricao.js)
@@ -52,7 +52,7 @@ AC["src/controllers/authController.js"]
 end
 subgraph "Domain Routers"
 AL["src/routers/alunoRoutes.js"]
-DO["src/routers/docenteRoutes.js"]
+DO["src/routers/professorRoutes.js"]
 SU["src/routers/supervisorRoutes.js"]
 IN["src/routers/inscricaoRoutes.js"]
 end
@@ -80,7 +80,7 @@ IN --> IM
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 - [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [src/models/user.js](file://src/models/user.js#L1-L146)
@@ -314,14 +314,14 @@ Patterns demonstrated across routers:
 Examples:
 - Auth routes: [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
 - Aluno routes: [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L23)
-- Docente routes: [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
+- Docente routes: [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
 - Supervisor routes: [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
 - Inscricao routes: [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)
 
 **Section sources**
 - [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L23)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)
 
