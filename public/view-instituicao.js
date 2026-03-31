@@ -25,6 +25,13 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch instituicao');
         }
 
+        const formatDateForInput = (dateValue) => {
+            if (!dateValue) return '';
+            const date = new Date(dateValue);
+            if (Number.isNaN(date.getTime())) return '';
+            return date.toISOString().split('T')[0];
+        };
+
         const instituicao = await response.json();
 
         // Populate the view fields
@@ -32,7 +39,7 @@ $(document).ready(async function () {
         document.getElementById('view-instituicao').textContent = instituicao.instituicao;
         document.getElementById('view-area').textContent = instituicao.area_nome || 'Não definida';
         document.getElementById('view-cnpj').textContent = instituicao.cnpj;
-        document.getElementById('view-beneficio').textContent = instituicao.beneficio || 'Sem dados';
+        document.getElementById('view-beneficios').textContent = instituicao.beneficios || 'Sem dados';
         document.getElementById('view-natureza').textContent = instituicao.natureza || 'Sem dados';
         document.getElementById('view-email').textContent = instituicao.email || 'Sem dados';
         document.getElementById('view-url').textContent = instituicao.url || 'Sem dados';
@@ -43,8 +50,8 @@ $(document).ready(async function () {
         document.getElementById('view-telefone').textContent = instituicao.telefone || 'Sem dados';
         document.getElementById('view-fim_de_semana').textContent = instituicao.fim_de_semana || 'Sem dados';
         document.getElementById('view-convenio').textContent = instituicao.convenio || 'Sem dados';
-        document.getElementById('view-expira').textContent = instituicao.expira || 'Sem dados';
-        document.getElementById('view-seguro').textContent = instituicao.seguro || 'Sem dados';
+        document.getElementById('view-expira').textContent = formatDateForInput(instituicao.expira) || 'Sem dados';
+        document.getElementById('view-seguro').textContent = instituicao.seguro == '0' ? 'Não' : instituicao.seguro == '1' ? 'Sim' : '';
         document.getElementById('view-observacoes').textContent = instituicao.observacoes || 'Sem dados';
 
         // Store the ID for edit function

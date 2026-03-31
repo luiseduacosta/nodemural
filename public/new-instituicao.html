@@ -20,7 +20,7 @@
             <div class="card-body">
                 <form id="newInstituicaoForm">
                     <div class="mb-3">
-                        <label class="form-label">Instituição</label>
+                        <label class="form-label">Instituição (SIGLA - NOME)</label>
                         <input type="text" class="form-control" id="instituicao" required>
                     </div>
                     <div class="mb-3">
@@ -46,9 +46,17 @@
                         <input type="text" class="form-control" id="email">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="telefone">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">URL</label>
                         <input type="text" class="form-control" id="url">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-control" id="cep">
+                    </div>                    
                     <div class="mb-3">
                         <label class="form-label">Endereço</label>
                         <input type="text" class="form-control" id="endereco">
@@ -61,34 +69,41 @@
                         <label class="form-label">Municipio</label>
                         <input type="text" class="form-control" id="municipio">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">CEP</label>
-                        <input type="text" class="form-control" id="cep">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Telefone</label>
-                        <input type="text" class="form-control" id="telefone">
-                    </div>
+                    
                     <div class="mb-3">
                         <label class="form-label">Fim de Semana</label>
-                        <input type="text" class="form-control" id="fim_de_semana">
+                        <select class="form-control" id="fim_de_semana">
+                            <option value="">Selecione se tem fim de semana...</option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Parcialmente</option>
+                        </select>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Convenio</label>
+                        <label class="form-label">Convênio</label>
                         <input type="text" class="form-control" id="convenio">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Expira</label>
-                        <input type="text" class="form-control" id="expira">
+                        <input type="date" class="form-control" id="expira">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Seguro</label>
-                        <input type="text" class="form-control" id="seguro">
+                        <select class="form-control" id="seguro">
+                            <option value="">Selecione se tem seguro...</option>
+                            <option value="0">Não</option>
+                            <option value="1">Sim</option>
+                        </select>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Observações</label>
                         <input type="text" class="form-control" id="observacoes">
                     </div>
+
                     <div class="mt-4">
                         <a href="instituicao.html" class="btn btn-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Salvar</button>

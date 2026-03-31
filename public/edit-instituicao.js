@@ -21,6 +21,13 @@ $(document).ready(async function () {
     // Load areas first
     await loadAreas();
 
+    const formatDateForInput = (dateValue) => {
+        if (!dateValue) return '';
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return '';
+        return date.toISOString().split('T')[0];
+    };
+
     async function loadAreas() {
         try {
             const response = await authenticatedFetch('/areas');
@@ -48,14 +55,24 @@ $(document).ready(async function () {
             }
 
             const instituicao = await response.json();
-            document.getElementById('instituicao').value = instituicao.instituicao;
-            document.getElementById('cnpj').value = instituicao.cnpj;
-            document.getElementById('beneficio').value = instituicao.beneficio || '';
-            document.getElementById('instituicaoId').value = instituicao.id;
-
-            if (instituicao.area_id) {
-                document.getElementById('area_id').value = instituicao.area_id;
-            }
+            document.getElementById('instituicaoId').value = instituicao.id || null;
+            document.getElementById('instituicao').value = instituicao.instituicao || null;
+            document.getElementById('cnpj').value = instituicao.cnpj || null;
+            document.getElementById('beneficios').value = instituicao.beneficios || null;
+            document.getElementById('area_id').value = instituicao.area_id || null;
+            document.getElementById('natureza').value = instituicao.natureza || null;
+            document.getElementById('email').value = instituicao.email || null;
+            document.getElementById('telefone').value = instituicao.telefone || null;
+            document.getElementById('url').value = instituicao.url || null;
+            document.getElementById('cep').value = instituicao.cep || null;
+            document.getElementById('endereco').value = instituicao.endereco || null;
+            document.getElementById('bairro').value = instituicao.bairro || null;
+            document.getElementById('municipio').value = instituicao.municipio || null;
+            document.getElementById('fim_de_semana').value = instituicao.fim_de_semana || null;
+            document.getElementById('convenio').value = instituicao.convenio || null;
+            document.getElementById('expira').value = formatDateForInput(instituicao.expira) || null;
+            document.getElementById('seguro').value = instituicao.seguro || null;
+            document.getElementById('observacoes').value = instituicao.observacoes || null;
 
             // Store the ID for view function
             window.currentInstituicaoId = id;
@@ -81,9 +98,23 @@ $(document).ready(async function () {
         e.preventDefault();
         const instituicao = {
             instituicao: document.getElementById('instituicao').value,
-            cnpj: document.getElementById('cnpj').value,
-            beneficio: document.getElementById('beneficio').value,
-            area_id: document.getElementById('area_id').value || null
+            cnpj: document.getElementById('cnpj').value || '',
+            beneficios: document.getElementById('beneficios').value || null,
+            area_id: document.getElementById('area_id').value || null,
+            natureza: document.getElementById('natureza').value || null,
+            url: document.getElementById('url').value || null,
+            email: document.getElementById('email').value || null,
+            telefone: document.getElementById('telefone').value || null,
+            cep: document.getElementById('cep').value || null,
+            endereco: document.getElementById('endereco').value || null,
+            bairro: document.getElementById('bairro').value || '',
+            municipio: document.getElementById('municipio').value || '',
+            fim_de_semana: document.getElementById('fim_de_semana').value || '',
+            convenio: document.getElementById('convenio').value || null,
+            expira: document.getElementById('expira').value || null,
+            seguro: document.getElementById('seguro').value || null,
+            observacoes: document.getElementById('observacoes').value || null,
+            // Add other fields as needed
         };
 
         const id = document.getElementById('instituicaoId').value;

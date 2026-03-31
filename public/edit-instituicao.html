@@ -29,8 +29,8 @@
                         <input type="text" class="form-control" id="cnpj">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Benefício</label>
-                        <input type="text" class="form-control" id="beneficio">
+                        <label class="form-label">Benefícios</label>
+                        <input type="text" class="form-control" id="beneficios">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Área</label>
@@ -47,8 +47,16 @@
                         <input type="text" class="form-control" id="email">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="telefone">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">URL</label>
                         <input type="text" class="form-control" id="url">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-control" id="cep">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Endereço</label>
@@ -63,19 +71,16 @@
                         <input type="text" class="form-control" id="municipio">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">CEP</label>
-                        <input type="text" class="form-control" id="cep">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Telefone</label>
-                        <input type="text" class="form-control" id="telefone">
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Fim de Semana</label>
-                        <input type="text" class="form-control" id="fim_de_semana">
+                        <select class="form-select" id="fim_de_semana">
+                            <option value="">Selecione o fim de semana...</option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Parcialmente</option>
+                        </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Convenio</label>
+                        <label class="form-label">Nº do Convênio</label>
                         <input type="text" class="form-control" id="convenio">
                     </div>
                     <div class="mb-3">
@@ -84,7 +89,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Seguro</label>
-                        <input type="text" class="form-control" id="seguro">
+                        <select class="form-select" id="seguro">
+                            <option value="">Selecione se tem seguro...</option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Observações</label>
@@ -109,3 +118,5 @@
 </body>
 
 </html>
+
+</html

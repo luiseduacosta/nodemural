@@ -22,20 +22,27 @@ $(document).ready(async function () {
             { data: 'instituicao', render: function (data, type, row) { return `<a href="view-instituicao.html?id=${row.id}">${row.instituicao}</a>` } },
             { data: 'area_nome', defaultContent: '<em>Não definida</em>' },
             { data: 'cnpj' },
-            { data: 'beneficio', defaultContent: '' },
-            { data: 'natureza', defaultContent: '' },
-            { data: 'email', defaultContent: '' },
-            { data: 'url', defaultContent: '' },
-            { data: 'endereco', defaultContent: '' },
-            { data: 'bairro', defaultContent: '' },
-            { data: 'municipio', defaultContent: '' },
-            { data: 'cep', defaultContent: '' },
-            { data: 'telefone', defaultContent: '' },
-            { data: 'fim_de_semana', defaultContent: '' },
+            { data: 'beneficios', defaultContent: '' },
+            { data: 'fim_de_semana', render: function (data, type, row) {
+                if (row.fim_de_semana == '0') return 'Não';
+                if (row.fim_de_semana == '1') return 'Sim';
+                if (row.fim_de_semana == '2') return 'Parcial';
+                return '';
+            }},
             { data: 'convenio', defaultContent: '' },
-            { data: 'expira', defaultContent: '' },
-            { data: 'seguro', defaultContent: '' },
-            { data: 'observacoes', defaultContent: '' },
+            { data: 'expira', render: function (data, type) {
+                if (!data) return type === 'display' ? '' : 0;
+                const time = new Date(data).getTime();
+                if (type === 'display') {
+                    return new Date(time).toLocaleDateString('pt-BR');
+                }
+                return time;
+            }},
+            { data: 'seguro', render: function (data, type, row) {
+                if (row.seguro == '0') return 'Não';
+                if (row.seguro == '1') return 'Sim';
+                return '';
+            }},
             {
                 data: null,
                 render: function (data, type, row) {

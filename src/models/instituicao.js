@@ -19,11 +19,12 @@ const Instituicao = {
 
     async create(instituicao, cnpj, natureza, email, beneficios, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes) {
         const result = await pool.query(
-            'INSERT INTO instituicoes (instituicao, cnpj, natureza, email, area_id, beneficios, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO instituicoes (instituicao, cnpj, natureza, email, area_id, beneficios, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [instituicao, cnpj, natureza, email, area_id, beneficios, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes]
         );
         return { id: Number(result.insertId), instituicao, cnpj, natureza, email, area_id, beneficios, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes };
     },
+    
     async update(id, instituicao, cnpj, natureza, email, beneficios, area_id, url, endereco, bairro, municipio, cep, telefone, fim_de_semana, convenio, expira, seguro, observacoes) {
         const result = await pool.query(
             'UPDATE instituicoes SET instituicao = ?, cnpj = ?, natureza = ?, email = ?, area_id = ?, beneficios = ?, url = ?, endereco = ?, bairro = ?, municipio = ?, cep = ?, telefone = ?, fim_de_semana = ?, convenio = ?, expira = ?, seguro = ?, observacoes = ? WHERE id = ?',

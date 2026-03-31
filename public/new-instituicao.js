@@ -11,9 +11,11 @@ $(document).ready(async function () {
     const form = document.getElementById('newInstituicaoForm');
 
     // Input Masks
-    $('#cep').inputmask('99999-999');
-    $('#cnpj').inputmask('99.999.999/9999-99');
-    $('#telefone').inputmask('(99) 9999-9999');
+    if ($.fn.inputmask) {
+        $('#cep').inputmask('99999-999');
+        $('#cnpj').inputmask('99.999.999/9999-99');
+        $('#telefone').inputmask('(99) 9999-9999');
+    }
 
     // Load areas
     loadAreas();
@@ -46,29 +48,30 @@ $(document).ready(async function () {
             natureza: document.getElementById('natureza').value,
             email: document.getElementById('email').value,
             beneficios: document.getElementById('beneficios').value,
-            area_id: document.getElementById('area_id').value,
+            area_id: document.getElementById('area_id').value || null,
             url: document.getElementById('url').value,
             endereco: document.getElementById('endereco').value,
             bairro: document.getElementById('bairro').value,
             municipio: document.getElementById('municipio').value,
             cep: document.getElementById('cep').value,
             telefone: document.getElementById('telefone').value,
-            fim_de_semana: document.getElementById('fim_de_semana').value,
-            convenio: document.getElementById('convenio').value,
-            expira: document.getElementById('expira').value,
-            seguro: document.getElementById('seguro').value,
+            fim_de_semana: document.getElementById('fim_de_semana').value || null,
+            convenio: document.getElementById('convenio').value || null,
+            expira: document.getElementById('expira').value || null,
+            seguro: document.getElementById('seguro').value || null,
             observacoes: document.getElementById('observacoes').value
         };
 
         try {
-            const response = await authenticatedFetch('/instituicao', {
+            const response = await authenticatedFetch('/instituicoes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(instituicao)
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create instituicao');
+                const errorBody = await response.json().catch(() => null);
+                throw new Error(errorBody?.error || 'Failed to create instituicao');
             }
 
             const result = await response.json();
