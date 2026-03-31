@@ -25,11 +25,17 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch instituicao');
         }
 
-        const formatDateForInput = (dateValue) => {
+        const formatDateForBR = (dateValue) => {
             if (!dateValue) return '';
-            const date = new Date(dateValue);
-            if (Number.isNaN(date.getTime())) return '';
-            return date.toISOString().split('T')[0];
+            try {
+                // Ensure it handles YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss.000Z
+                const datePart = dateValue.split('T')[0];
+                const [year, month, day] = datePart.split('-');
+                if (!year || !month || !day) return '';
+                return `${day}/${month}/${year}`;
+            } catch(e) {
+                return '';
+            }
         };
 
         const instituicao = await response.json();
@@ -47,11 +53,18 @@ $(document).ready(async function () {
         document.getElementById('view-bairro').textContent = instituicao.bairro || 'Sem dados';
         document.getElementById('view-municipio').textContent = instituicao.municipio || 'Sem dados';
         document.getElementById('view-cep').textContent = instituicao.cep || 'Sem dados';
+        const formatFimDeSemana = (val) => {
+            if (val == '0') return 'Não';
+            if (val == '1') return 'Sim';
+            if (val == '2') return 'Parcialmente';
+            return 'Sem dados';
+        };
+
         document.getElementById('view-telefone').textContent = instituicao.telefone || 'Sem dados';
-        document.getElementById('view-fim_de_semana').textContent = instituicao.fim_de_semana || 'Sem dados';
+        document.getElementById('view-fim_de_semana').textContent = formatFimDeSemana(instituicao.fim_de_semana);
         document.getElementById('view-convenio').textContent = instituicao.convenio || 'Sem dados';
-        document.getElementById('view-expira').textContent = formatDateForInput(instituicao.expira) || 'Sem dados';
-        document.getElementById('view-seguro').textContent = instituicao.seguro == '0' ? 'Não' : instituicao.seguro == '1' ? 'Sim' : '';
+        document.getElementById('view-expira').textContent = formatDateForBR(instituicao.expira) || 'Sem dados';
+        document.getElementById('view-seguro').textContent = instituicao.seguro == '0' ? 'Não' : instituicao.seguro == '1' ? 'Sim' : 'Sem dados';
         document.getElementById('view-observacoes').textContent = instituicao.observacoes || 'Sem dados';
 
         // Store the ID for edit function

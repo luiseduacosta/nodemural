@@ -96,7 +96,6 @@ async function setupDatabase() {
                 telefone VARCHAR(20),
                 beneficios TEXT DEFAULT NULL,
                 fim_de_semana BOOLEAN DEFAULT FALSE,
-                local_inscricao set(0,1) DEFAULT 0,
                 convenio VARCHAR(255),
                 expira DATE,
                 seguro VARCHAR(255),

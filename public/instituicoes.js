@@ -32,11 +32,17 @@ $(document).ready(async function () {
             { data: 'convenio', defaultContent: '' },
             { data: 'expira', render: function (data, type) {
                 if (!data) return type === 'display' ? '' : 0;
-                const time = new Date(data).getTime();
                 if (type === 'display') {
-                    return new Date(time).toLocaleDateString('pt-BR');
+                    try {
+                        const datePart = data.split('T')[0];
+                        const parts = datePart.split('-');
+                        if (parts.length === 3) {
+                            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                        }
+                    } catch(e) {}
                 }
-                return time;
+                const time = new Date(data).getTime();
+                return Number.isNaN(time) ? 0 : time;
             }},
             { data: 'seguro', render: function (data, type, row) {
                 if (row.seguro == '0') return 'Não';

@@ -14,7 +14,10 @@ $(document).ready(async function () {
     if ($.fn.inputmask) {
         $('#cep').inputmask('99999-999');
         $('#cnpj').inputmask('99.999.999/9999-99');
-        $('#telefone').inputmask('(99) 9999-9999');
+        $('#telefone').inputmask({
+            mask: ["(99) 9999-9999", "(99) 99999-9999"],
+            keepStatic: true
+        });
     }
 
     // Load areas
