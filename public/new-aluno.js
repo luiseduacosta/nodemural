@@ -21,7 +21,7 @@ $(document).ready(async function () {
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
     $('#nascimento').inputmask('99/99/9999');
-    $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#ingresso').inputmask('9999-[1-2]');  // Simplified mask for Ingresso
     $('#telefone').inputmask({
         mask: ["(99) 9999.9999", "(99) 99999.9999"],
         keepStatic: true
@@ -36,6 +36,30 @@ $(document).ready(async function () {
         element: document.getElementById('observacoes'),
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
     });
+
+    await loadTurnos();
+
+    async function loadTurnos() {
+        try {
+            const response = await fetch('/turnos', {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
+            if (!response.ok) return;
+            const turnos = await response.json();
+            const select = document.getElementById('turno_id');
+            if (!select) return;
+            turnos.forEach(turno => {
+                const option = document.createElement('option');
+                option.value = String(turno.id);
+                option.textContent = turno.turno;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading turnos:', error);
+        }
+    }
 
     // Form Submission
     $('#newAlunoForm').on('submit', async function (e) {
@@ -53,6 +77,9 @@ $(document).ready(async function () {
 
         // Add EasyMDE value
         formData.observacoes = observacoesMDE.value();
+        if (formData.nascimento === '') {
+            formData.nascimento = null;
+        }
 
         try {
             const response = await fetch('/alunos', {

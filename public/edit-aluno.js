@@ -23,7 +23,7 @@ $(document).ready(async function () {
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
     $('#nascimento').inputmask('99/99/9999');
-    $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#ingresso').inputmask('9999[-9]');
     $('#telefone').inputmask({
         mask: ["(99) 9999.9999", "(99) 99999.9999"],
         keepStatic: true
@@ -38,6 +38,8 @@ $(document).ready(async function () {
         element: document.getElementById('observacoes'),
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
     });
+
+    await loadTurnos();
 
     // Load Aluno
     if (id) {
@@ -60,6 +62,9 @@ $(document).ready(async function () {
 
         // Add EasyMDE value
         formData.observacoes = observacoesMDE.value();
+        if (formData.nascimento === '') {
+            formData.nascimento = null;
+        }
 
         try {
             const url = id ? `/alunos/${id}` : '/alunos';
@@ -144,6 +149,24 @@ $(document).ready(async function () {
         }
     }
 
+    async function loadTurnos() {
+        try {
+            const response = await authenticatedFetch('/turnos');
+            if (!response.ok) return;
+            const turnos = await response.json();
+            const select = document.getElementById('turno_id');
+            if (!select) return;
+            turnos.forEach(turno => {
+                const option = document.createElement('option');
+                option.value = String(turno.id);
+                option.textContent = turno.turno;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading turnos:', error);
+        }
+    }
+
     // Custom Validation
     function validateForm() {
         let isValid = true;
@@ -182,41 +205,30 @@ $(document).ready(async function () {
             $('#cpf').removeClass('is-invalid');
             isValid = true;
         }
-
-        // Ingresso: 4 digit year, trace, 1 digit (0, 1 or 2)
-        const ingresso = $('#ingresso').val();
-        const ingressoRegex = /^\d{4}-[0-2]$/;
+ 
+        // Ingresso: YYYY or YYYY-0/1/2 (0 when half-year is unknown)
+        const ingresso = String($('#ingresso').val() || '').trim();
+        const ingressoRegex = /^\d{4}(-[0-2])?$/;
+        const anoIngresso = ingresso.length >= 4 ? parseInt(ingresso.slice(0, 4), 10) : NaN;
 
         // The position 1 and 2 of the registro added to 20 is equal to the year of ingresso
         // Registro needs to be equal to 9 digits
         const registro = $('#registro').val();
         if (registro.length === 9) {
             const anoRegistro = parseInt('20' + registro.substring(1, 2));
-            const anoIngresso = parseInt(ingresso.substring(0, 4));
-            if (anoRegistro !== anoIngresso) {
+            if (!ingressoRegex.test(ingresso) || Number.isNaN(anoIngresso) || anoRegistro !== anoIngresso) {
                 $('#ingresso').addClass('is-invalid');
                 isValid = false;
             } else {
                 $('#ingresso').removeClass('is-invalid');
-                isValid = true;
-            }
-            // If registro is 8 digits the year of the ingresso is equal to '19' + positions 0 and 1
-            if (ingresso && !ingressoRegex.test(ingresso)) {
-                $('#ingresso').addClass('is-invalid');
-                isValid = false;
-            } else {
-                $('#ingresso').removeClass('is-invalid');
-                isValid = true;
             }
         } else if (registro.length === 8) {
             const anoRegistro = parseInt('19' + registro.substring(0, 2));
-            const anoIngresso = parseInt(ingresso.substring(0, 4));
-            if (anoRegistro !== anoIngresso) {
+            if (!ingressoRegex.test(ingresso) || Number.isNaN(anoIngresso) || anoRegistro !== anoIngresso) {
                 $('#ingresso').addClass('is-invalid');
                 isValid = false;
             } else {
                 $('#ingresso').removeClass('is-invalid');
-                isValid = true;
             }
         } else {
             $('#ingresso').addClass('is-invalid');
@@ -228,7 +240,6 @@ $(document).ready(async function () {
             isValid = false;
         } else {
             $('#ingresso').removeClass('is-invalid');
-            isValid = true;
         }
 
         // Telefone format: (99) 9999.9999
@@ -244,7 +255,7 @@ $(document).ready(async function () {
 
         // Celular format: (99) 99999.9999
         const celular = $('#celular').val();
-        const celularRegex = /^\([0-9]{2}\)\s[0-9]{5}\.[0-9]{4}$/;
+        const celularRegex = /^\([0-9]{2}\)\s[0-9]{4,5}\.[0-9]{4}$/;
         if (celular && !celularRegex.test(celular)) {
             $('#celular').addClass('is-invalid');
             isValid = false;

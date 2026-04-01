@@ -28,8 +28,9 @@ async function setupDatabase() {
                 nome VARCHAR(255) NOT NULL,
                 nomesocial VARCHAR(255),
                 ingresso VARCHAR(6),
-                turno VARCHAR(20),
-                registro VARCHAR(50) UNIQUE,
+                turno VARCHAR(20) NULL COMMENT 'DEPRECATED: Turno of the internship',
+                turno_id INT NULL,
+                registro VARCHAR(9) UNIQUE,
                 telefone VARCHAR(15),
                 celular VARCHAR(15),
                 email VARCHAR(255),
@@ -38,9 +39,9 @@ async function setupDatabase() {
                 orgao VARCHAR(30),
                 nascimento DATE,
                 cep VARCHAR(9),
-                endereco VARCHAR(255),
-                municipio VARCHAR(100),
-                bairro VARCHAR(100),
+                endereco VARCHAR(50),
+                municipio VARCHAR(30),
+                bairro VARCHAR(30),
                 observacoes TEXT
             )`,
 
@@ -211,8 +212,8 @@ async function setupDatabase() {
             // 14. respostas (responses are the answers of the supervisor to the questions: what the supervisor evaluates about the intern)
             `CREATE TABLE IF NOT EXISTS respostas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                questionario_id INT,
-                estagiario_id INT,
+                questionario_id INT NOT NULL,
+                estagiario_id INT NOT NULL,
                 response JSON,
                 created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -248,6 +249,12 @@ async function setupDatabase() {
                 supervisor_id INT NOT NULL,
                 instituicao_id INT NOT NULL,
                 PRIMARY KEY (supervisor_id, instituicao_id)
+            )`,
+
+            // 18. Turno (turn of the internship)
+            `CREATE TABLE IF NOT EXISTS turnos (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                turno VARCHAR(10) NOT NULL
             )`
         ];
 

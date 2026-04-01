@@ -7,17 +7,18 @@ const Aluno = {
         const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
         return rows[0];
     },
-    async create(nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
+    async create(nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
         if (await this.verifyRegistro(registro)) {
             console.log('Registro já em uso');
             throw new Error('Registro já em uso');
         }
         const result = await pool.query(
-            'INSERT INTO alunos (nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes]
+            'INSERT INTO alunos (nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes]
         );
-        return { id: Number(result.insertId), nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes };
+        return { id: Number(result.insertId), nome, nomesocial, ingresso, turno_id };
     },
+
 
     // Find aluno by registro. There is only one aluno per registro
     async findByRegistro(registro) {
@@ -26,7 +27,7 @@ const Aluno = {
     },
 
     async findAll(req) {
-        let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos';
+        let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, turno, turno_id, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos';
         let params = [];
         if (req && req.query && req.query.search) {
             query += " WHERE nome LIKE ? OR nomesocial LIKE ? OR registro LIKE ? OR email LIKE ?";
@@ -34,7 +35,11 @@ const Aluno = {
             params = [searchTerm, searchTerm, searchTerm, searchTerm];
         }
 
-        query += ' ORDER BY nome ASC';
+        if (req && req.query && req.query.sort) {
+            query += ` ORDER BY ${req.query.sort}`;
+        } else {
+            query += ' ORDER BY nome ASC';
+        }
 
         const rows = await pool.query(query, params);
         return rows;
@@ -58,7 +63,7 @@ const Aluno = {
                 e.ajuste2020 as ajuste2020,
                 e.nivel as nivel, 
                 e.periodo as periodo, 
-                a.turno as turno,
+                COALESCE(t.turno, a.turno) as turno,
                 e.instituicao_id as instituicao_id,
                 e.professor_id as professor_id,
                 e.supervisor_id as supervisor_id,
@@ -67,6 +72,7 @@ const Aluno = {
                 i.instituicao as instituicao_nome
             FROM estagiarios as e 
             JOIN alunos as a ON e.aluno_id = a.id 
+            LEFT JOIN turnos as t ON a.turno_id = t.id
             LEFT JOIN professores as d ON e.professor_id = d.id
             LEFT JOIN supervisores as s ON e.supervisor_id = s.id
             LEFT JOIN instituicoes as i ON e.instituicao_id = i.id
@@ -97,10 +103,11 @@ const Aluno = {
         return rows;
     },
 
-    async update(id, nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
+    // Update aluno by id
+    async update(id, nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
         const result = await pool.query(
-            'UPDATE alunos SET nome = ?, nomesocial = ?, ingresso = ?, turno = ?, registro = ?, telefone = ?, celular = ?, email = ?, cpf = ?, identidade = ?, orgao = ?, nascimento = ?, cep = ?, endereco = ?, municipio = ?, bairro = ?, observacoes = ? WHERE id = ?',
-            [nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, id]
+            'UPDATE alunos SET nome = ?, nomesocial = ?, ingresso = ?, turno_id = ?, registro = ?, telefone = ?, celular = ?, email = ?, cpf = ?, identidade = ?, orgao = ?, nascimento = ?, cep = ?, endereco = ?, municipio = ?, bairro = ?, observacoes = ? WHERE id = ?',
+            [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, id]
         );
         return result.affectedRows > 0;
     },

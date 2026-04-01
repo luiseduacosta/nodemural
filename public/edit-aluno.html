@@ -8,12 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.css"
+        rel="stylesheet">
 </head>
 
 <body>
 
-<div class="container mt-2">
+    <div class="container mt-2">
 
         <div id="menu-container"></div>
 
@@ -48,11 +49,9 @@
             </div>
 
             <div class="col-md-4">
-                <label for="turno" class="form-label">Turno</label>
-                <select class="form-control" id="turno" name="turno" required>
-                    <option value="diurno">Diurno</option>
-                    <option value="noturno">Noturno</option>
-                    <option value="ambos">Diurno/Noturno</option>
+                <label for="turno_id" class="form-label">Turno</label>
+                <select class="form-control" id="turno_id" name="turno_id" required>
+                    <option value="">Selecione um turno</option>
                 </select>
                 <div class="invalid-feedback">Selecione um turno.</div>
             </div>

@@ -49,9 +49,16 @@ $(document).ready(async function () {
             throw new Error('Aluno não encontrado');
         }
 
-        // Format the date
-        const datanascimento = new Date(aluno.nascimento);
-        const datanascimentoFormatada = datanascimento.toLocaleDateString('pt-BR');
+        let datanascimentoFormatada = '';
+        if (aluno.nascimento) {
+            const nascimentoStr = String(aluno.nascimento);
+            const dateOnly = nascimentoStr.match(/^(\d{4}-\d{2}-\d{2})/);
+            const dateForParse = dateOnly ? `${dateOnly[1]}T00:00:00` : aluno.nascimento;
+            const parsed = new Date(dateForParse);
+            if (!Number.isNaN(parsed.getTime())) {
+                datanascimentoFormatada = parsed.toLocaleDateString('pt-BR');
+            }
+        }
 
         // Populate the view fields
         document.getElementById('view-id').textContent = aluno.id;
@@ -59,7 +66,7 @@ $(document).ready(async function () {
         document.getElementById('view-registro').textContent = aluno.registro;
         document.getElementById('view-email').textContent = aluno.email;
         document.getElementById('view-ingresso').textContent = aluno.ingresso;
-        document.getElementById('view-turno').textContent = aluno.turno;
+        document.getElementById('view-turno').textContent = await resolveTurnoLabel(aluno);
         document.getElementById('view-telefone').textContent = aluno.telefone;
         document.getElementById('view-celular').textContent = aluno.celular;
         document.getElementById('view-cpf').textContent = aluno.cpf;
@@ -164,6 +171,24 @@ $(document).ready(async function () {
         console.error('Error loading aluno:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
         window.location.href = 'alunos.html';
+    }
+
+    async function resolveTurnoLabel(aluno) {
+        const turnoId = aluno?.turno_id;
+        if (turnoId === null || turnoId === undefined || String(turnoId).trim() === '' || String(turnoId).trim() === '0') {
+            return aluno?.turno || '';
+        }
+        try {
+            const response = await authenticatedFetch('/turnos');
+            if (!response.ok) {
+                return aluno?.turno || '';
+            }
+            const turnos = await response.json();
+            const match = turnos.find(t => String(t.id) === String(turnoId));
+            return match?.turno || aluno?.turno || '';
+        } catch (error) {
+            return aluno?.turno || '';
+        }
     }
 });
 

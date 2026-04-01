@@ -21,9 +21,16 @@ import turmaRoutes from "./routers/turmaRoutes.js";
 import areaRoutes from "./routers/areaRoutes.js";
 import configuracaoRoutes from "./routers/configuracaoRoutes.js";
 import respostaRoutes from "./routers/respostaRoutes.js";
+import turnoRoutes from "./routers/turnoRoutes.js";
+
 import * as estagiarioController from "./controllers/estagiarioController.js";
 import * as inscricaoController from "./controllers/inscricaoController.js";
 import * as alunoController from "./controllers/alunoController.js";
+import * as turnoController from "./controllers/turnoController.js";
+import * as supervisorController from "./controllers/supervisorController.js";
+import * as professorController from "./controllers/professorController.js";
+import * as instituicaoController from "./controllers/instituicaoController.js";
+import * as areaController from "./controllers/areaController.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,6 +58,7 @@ app.use("/turmaestagios", turmaRoutes);
 app.use("/configuracoes", configuracaoRoutes);
 app.use("/respostas", respostaRoutes);
 app.use("/areas", areaRoutes);
+app.use("/turnos", turnoRoutes);
 
 // --- INDEX ENDPOINTS ---
 app.get("/", (req, res) => {
