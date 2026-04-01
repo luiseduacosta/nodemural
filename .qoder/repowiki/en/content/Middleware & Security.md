@@ -75,20 +75,20 @@ IN --> IM
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
-- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
-- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
-- [src/models/user.js](file://src/models/user.js)
-- [src/models/inscricao.js](file://src/models/inscricao.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
+- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 
 **Section sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md)
+- [src/server.js](file://src/server.js#L31-L54)
+- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L1-L312)
 
 ## Core Components
 - JWT Verification Middleware: extracts and validates the Authorization header token, populates req.user, and handles token expiration and invalid token errors.
@@ -99,17 +99,17 @@ IN --> IM
 - Inscricao Model: encapsulates registration queries and business validations around uniqueness and updates.
 
 Key implementation references:
-- JWT verification and RBAC: [src/middleware/auth.js](file://src/middleware/auth.js)
-- Ownership checks: [src/middleware/auth.js](file://src/middleware/auth.js)
-- Authentication controller: [src/controllers/authController.js](file://src/controllers/authController.js)
-- User model: [src/models/user.js](file://src/models/user.js)
-- Inscricao model: [src/models/inscricao.js](file://src/models/inscricao.js)
+- JWT verification and RBAC: [src/middleware/auth.js](file://src/middleware/auth.js#L5-L48)
+- Ownership checks: [src/middleware/auth.js](file://src/middleware/auth.js#L76-L98), [src/middleware/auth.js](file://src/middleware/auth.js#L100-L136)
+- Authentication controller: [src/controllers/authController.js](file://src/controllers/authController.js#L5-L74), [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127), [src/controllers/authController.js](file://src/controllers/authController.js#L129-L157)
+- User model: [src/models/user.js](file://src/models/user.js#L7-L34), [src/models/user.js](file://src/models/user.js#L36-L60), [src/models/user.js](file://src/models/user.js#L101-L104), [src/models/user.js](file://src/models/user.js#L106-L142)
+- Inscricao model: [src/models/inscricao.js](file://src/models/inscricao.js#L58-L74), [src/models/inscricao.js](file://src/models/inscricao.js#L76-L92)
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
-- [src/models/inscricao.js](file://src/models/inscricao.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L136)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L5-L157)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [src/models/inscricao.js](file://src/models/inscricao.js#L1-L104)
 
 ## Architecture Overview
 The security architecture follows a layered middleware pattern:
@@ -146,18 +146,18 @@ CTRL-->>C : "200 OK {user}"
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L36-L60)
 
 **Section sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L36-L60)
 
 ## Detailed Component Analysis
 
@@ -187,10 +187,10 @@ Next --> End
 ```
 
 **Diagram sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
 
 ### Role-Based Access Control (RBAC)
 Responsibilities:
@@ -210,10 +210,10 @@ NextRBAC --> EndRBAC
 ```
 
 **Diagram sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
 
 ### Ownership Enforcement
 Responsibilities:
@@ -254,12 +254,14 @@ AllowIns --> EndIns
 ```
 
 **Diagram sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/inscricao.js](file://src/models/inscricao.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L76-L98)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L100-L136)
+- [src/models/inscricao.js](file://src/models/inscricao.js#L30-L38)
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/inscricao.js](file://src/models/inscricao.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L76-L98)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L100-L136)
+- [src/models/inscricao.js](file://src/models/inscricao.js#L30-L38)
 
 ### Authentication Controller and Input Validation
 Responsibilities:
@@ -293,12 +295,14 @@ Sign --> LogOK["Reply 200 OK {token,user}"]
 ```
 
 **Diagram sources**
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L5-L74)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L101-L104)
 
 **Section sources**
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L5-L74)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L101-L104)
 
 ### Route-Level Security Patterns
 Patterns demonstrated across routers:
@@ -308,29 +312,29 @@ Patterns demonstrated across routers:
 - Ownership-scoped endpoints: require verifyToken, checkRole, and checkOwnership or checkInscricaoOwnership
 
 Examples:
-- Auth routes: [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- Aluno routes: [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- Professor routes: [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
-- Supervisor routes: [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
-- Inscricao routes: [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
+- Auth routes: [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
+- Aluno routes: [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L23)
+- Docente routes: [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
+- Supervisor routes: [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
+- Inscricao routes: [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
-- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
-- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
+- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L23)
+- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L11-L17)
+- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
+- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)
 
 ### Database Schema and Initialization
 - auth_users table supports unique email, hashed password storage, role enumeration, soft delete flag, and timestamps
 - Initialization script creates the table if it does not exist
 
 References:
-- Table definition and initialization: [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- Table definition and initialization: [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
 - Roles and permissions overview: [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L194-L202)
 
 **Section sources**
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L194-L202)
 
 ## Dependency Analysis
@@ -354,15 +358,15 @@ S["src/server.js"] --> E
 
 **Diagram sources**
 - [package.json](file://package.json#L22-L30)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/server.js](file://src/server.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L2)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L3)
+- [src/server.js](file://src/server.js#L2-L6)
 
 **Section sources**
 - [package.json](file://package.json#L22-L30)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/server.js](file://src/server.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L2)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L3)
+- [src/server.js](file://src/server.js#L2-L6)
 
 ## Performance Considerations
 - Token verification cost: minimal overhead; cache decoded claims in memory for short-lived sessions if needed

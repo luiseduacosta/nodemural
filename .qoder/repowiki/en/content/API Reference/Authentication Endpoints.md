@@ -84,16 +84,16 @@ F4 --> |"authenticatedFetch"| R
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
-- [public/login.js](file://public/login.js)
-- [public/register.js](file://public/register.js)
-- [public/auth-profile.js](file://public/auth-profile.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
+- [public/login.js](file://public/login.js#L1-L62)
+- [public/register.js](file://public/register.js#L1-L127)
+- [public/auth-profile.js](file://public/auth-profile.js#L1-L29)
+- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 
 **Section sources**
 - [src/server.js](file://src/server.js#L31-L54)
@@ -107,11 +107,11 @@ F4 --> |"authenticatedFetch"| R
 - Frontend utilities: Manage token storage, protected requests, and redirection logic.
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 
 ## Architecture Overview
 The authentication flow integrates frontend and backend components:
@@ -152,12 +152,12 @@ Ctrl-->>FE : "User"
 ```
 
 **Diagram sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
-- [public/login.js](file://public/login.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L17)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L145)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
+- [src/models/user.js](file://src/models/user.js#L36-L60)
+- [public/login.js](file://public/login.js#L31-L61)
+- [public/auth-utils.js](file://public/auth-utils.js#L45-L54)
 
 ## Detailed Component Analysis
 
@@ -194,8 +194,8 @@ Security considerations:
 - Role assignment defaults to "aluno" unless explicitly provided by an admin
 
 **Section sources**
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L6-L74)
+- [src/models/user.js](file://src/models/user.js#L7-L34)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L70-L93)
 
 #### POST /auth/login
@@ -223,8 +223,8 @@ Security considerations:
 - JWT secret and expiry configured via environment variables
 
 **Section sources**
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L101-L104)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L95-L116)
 
 #### GET /auth/profile
@@ -245,9 +245,9 @@ Security considerations:
 - Accessible only to authenticated users
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L13-L14)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L129-L145)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L5-L29)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L136-L152)
 
 #### GET /auth/me
@@ -260,8 +260,8 @@ Security considerations:
 Note: This endpoint is useful for frontend to quickly display user info without hitting the profile endpoint.
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L10-L11)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L50-L74)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L118-L134)
 
 #### GET /auth/users (Admin Only)
@@ -274,9 +274,9 @@ Note: This endpoint is useful for frontend to quickly display user info without 
   - 500 Internal Server Error: General server error
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L16-L17)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
+- [src/models/user.js](file://src/models/user.js#L106-L116)
 
 ### JWT Token Generation, Expiration, and Refresh
 - Token signing: HS256 using JWT_SECRET from environment variables
@@ -290,8 +290,8 @@ Best practices:
 - Implement token refresh mechanism if needed (current implementation relies on re-login)
 
 **Section sources**
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L98-L109)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L14-L28)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L243-L252)
 
 ### Authentication Middleware Requirements
@@ -313,10 +313,10 @@ Attach --> Next["Call next()"]
 ```
 
 **Diagram sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 
 ### Role-Based Access Patterns
 - Roles: admin, supervisor, docente, aluno
@@ -332,7 +332,7 @@ Permissions matrix:
 
 **Section sources**
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L194-L202)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
 
 ### Data Models and Database Schema
 - auth_users table includes:
@@ -359,11 +359,11 @@ timestamp atualizado_em
 ```
 
 **Diagram sources**
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L11-L22)
 
 **Section sources**
-- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js)
-- [src/models/user.js](file://src/models/user.js)
+- [src/database/setupAuthUsers.js](file://src/database/setupAuthUsers.js#L1-L38)
+- [src/models/user.js](file://src/models/user.js#L36-L60)
 
 ### Frontend Integration Examples
 - Login flow:
@@ -398,15 +398,15 @@ L->>L : "Redirect based on role"
 ```
 
 **Diagram sources**
-- [public/login.js](file://public/login.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/models/user.js](file://src/models/user.js)
+- [public/login.js](file://public/login.js#L31-L61)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L76-L127)
+- [src/models/user.js](file://src/models/user.js#L36-L60)
 
 **Section sources**
-- [public/login.js](file://public/login.js)
-- [public/register.js](file://public/register.js)
-- [public/auth-profile.js](file://public/auth-profile.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [public/login.js](file://public/login.js#L1-L62)
+- [public/register.js](file://public/register.js#L98-L127)
+- [public/auth-profile.js](file://public/auth-profile.js#L1-L29)
+- [public/auth-utils.js](file://public/auth-utils.js#L45-L54)
 
 ## Dependency Analysis
 - Server registers routes and middleware globally
@@ -429,23 +429,23 @@ FrontendUtils["public/auth-utils.js"] --> Routes
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
-- [public/login.js](file://public/login.js)
-- [public/register.js](file://public/register.js)
-- [public/auth-profile.js](file://public/auth-profile.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [public/login.js](file://public/login.js#L1-L62)
+- [public/register.js](file://public/register.js#L1-L127)
+- [public/auth-profile.js](file://public/auth-profile.js#L1-L29)
+- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 
 **Section sources**
-- [src/server.js](file://src/server.js#L31-L62)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
-- [src/models/user.js](file://src/models/user.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/server.js](file://src/server.js#L31-L54)
+- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L20)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L1-L157)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
+- [src/models/user.js](file://src/models/user.js#L1-L146)
+- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
 
 ## Performance Considerations
 - Password hashing uses bcrypt with a salt round of 10, balancing security and performance
@@ -479,8 +479,8 @@ Recommendations:
 
 **Section sources**
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L10-L27)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L22-L28)
 
 ## Conclusion
 The authentication system provides a secure, role-based access control mechanism with clear separation of concerns across server, routing, controller, middleware, and model layers. JWT tokens are generated with configurable expiration and enforced via middleware. The frontend utilities streamline token management and protected requests. Following the documented patterns ensures consistent security and usability across the application.
@@ -495,5 +495,5 @@ The authentication system provides a secure, role-based access control mechanism
 **Section sources**
 - [README.md](file://README.md#L18-L28)
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L243-L252)
-- [src/controllers/authController.js](file://src/controllers/authController.js)
-- [src/middleware/auth.js](file://src/middleware/auth.js)
+- [src/controllers/authController.js](file://src/controllers/authController.js#L106-L109)
+- [src/middleware/auth.js](file://src/middleware/auth.js#L14-L17)
