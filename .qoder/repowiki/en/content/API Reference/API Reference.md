@@ -22,13 +22,24 @@
 - [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js)
 - [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js)
 - [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js)
+- [src/routers/turnoRoutes.js](file://src/routers/turnoRoutes.js)
 - [src/controllers/authController.js](file://src/controllers/authController.js)
 - [src/controllers/professorController.js](file://src/controllers/professorController.js)
 - [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js)
+- [src/controllers/turnoController.js](file://src/controllers/turnoController.js)
 - [src/models/user.js](file://src/models/user.js)
 - [src/models/professor.js](file://src/models/professor.js)
 - [src/models/instituicao.js](file://src/models/instituicao.js)
+- [src/models/turno.js](file://src/models/turno.js)
+- [src/models/aluno.js](file://src/models/aluno.js)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive Turnos (shifts) management endpoints documentation
+- Enhanced Student (alunos) endpoints with improved error handling for turno_id field
+- Updated database schema documentation to include turnos table structure
+- Added migration script documentation for backward compatibility with legacy turno field
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -67,6 +78,7 @@ Server --> TurmaRoutes["/turmaestagios<br/>src/routers/turmaRoutes.js"]
 Server --> AreaRoutes["/areas<br/>src/routers/areaRoutes.js"]
 Server --> RespostaRoutes["/respostas<br/>src/routers/respostaRoutes.js"]
 Server --> ConfiguracaoRoutes["/configuracoes<br/>src/routers/configuracaoRoutes.js"]
+Server --> TurnoRoutes["/turnos<br/>src/routers/turnoRoutes.js"]
 Server --> Nested["Nested Routes"]
 Nested --> NestSup["/supervisores/:id/estagiarios"]
 Nested --> NestProf["/professores/:id/estagiarios"]
@@ -78,26 +90,27 @@ Nested --> NestInst2["/instituicoes/:id/mural"]
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L37-L53)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L22)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L23)
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L1-L21)
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L1-L20)
-- [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
-- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L1-L21)
-- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
-- [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js#L1-L16)
-- [src/routers/questaoRoutes.js](file://src/routers/questaoRoutes.js#L1-L17)
-- [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L1-L20)
-- [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js#L1-L18)
-- [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L1-L18)
-- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L1-L18)
-- [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js#L1-L54)
-- [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js#L1-L18)
+- [src/server.js:37-61](file://src/server.js#L37-L61)
+- [src/routers/authRoutes.js:1-22](file://src/routers/authRoutes.js#L1-L22)
+- [src/routers/alunoRoutes.js:1-25](file://src/routers/alunoRoutes.js#L1-L25)
+- [src/routers/professorRoutes.js:1-23](file://src/routers/professorRoutes.js#L1-L23)
+- [src/routers/instituicaoRoutes.js:1-21](file://src/routers/instituicaoRoutes.js#L1-L21)
+- [src/routers/estagioRoutes.js:1-20](file://src/routers/estagioRoutes.js#L1-L20)
+- [src/routers/estagiarioRoutes.js:1-21](file://src/routers/estagiarioRoutes.js#L1-L21)
+- [src/routers/inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
+- [src/routers/supervisorRoutes.js:1-27](file://src/routers/supervisorRoutes.js#L1-L27)
+- [src/routers/questionarioRoutes.js:1-16](file://src/routers/questionarioRoutes.js#L1-L16)
+- [src/routers/questaoRoutes.js:1-17](file://src/routers/questaoRoutes.js#L1-L17)
+- [src/routers/atividadesRoutes.js:1-20](file://src/routers/atividadesRoutes.js#L1-L20)
+- [src/routers/visitaRoutes.js:1-18](file://src/routers/visitaRoutes.js#L1-L18)
+- [src/routers/turmaRoutes.js:1-18](file://src/routers/turmaRoutes.js#L1-L18)
+- [src/routers/areaRoutes.js:1-18](file://src/routers/areaRoutes.js#L1-L18)
+- [src/routers/respostaRoutes.js:1-54](file://src/routers/respostaRoutes.js#L1-L54)
+- [src/routers/configuracaoRoutes.js:1-18](file://src/routers/configuracaoRoutes.js#L1-L18)
+- [src/routers/turnoRoutes.js:1-15](file://src/routers/turnoRoutes.js#L1-L15)
 
 **Section sources**
-- [src/server.js](file://src/server.js#L31-L73)
+- [src/server.js:31-70](file://src/server.js#L31-L70)
 
 ## Core Components
 - Authentication and Authorization
@@ -109,20 +122,27 @@ Nested --> NestInst2["/instituicoes/:id/mural"]
   - JSON body parsing enabled globally and per-route where applicable.
 - Nested Routes
   - Relationship endpoints for supervisors, professors, students, institutions, and mural posts.
+- Turno Management System
+  - Dedicated turnos table with administrative management capabilities.
+  - Backward compatibility with legacy turno field in alunos table.
+  - Migration script for automatic data conversion.
 
 Key behaviors:
 - Protected endpoints require a valid, non-expired JWT.
 - Admin role grants broad access; other roles may be restricted by ownership or role middleware.
 - Some endpoints enforce ownership checks for specific resources.
 - Entity-based authentication allows users to be associated with specific entities (aluno, professor, supervisor).
+- Turno system supports diurno, noturno, ambos, and integral shifts with proper validation.
 
 **Section sources**
-- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L32-L48)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L77-L98)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L100-L136)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
-- [src/server.js](file://src/server.js#L34-L35)
+- [src/middleware/auth.js:6-29](file://src/middleware/auth.js#L6-L29)
+- [src/middleware/auth.js:32-48](file://src/middleware/auth.js#L32-L48)
+- [src/middleware/auth.js:77-98](file://src/middleware/auth.js#L77-L98)
+- [src/middleware/auth.js:100-136](file://src/middleware/auth.js#L100-L136)
+- [AUTH_GUIDE.md:289-300](file://AUTH_GUIDE.md#L289-L300)
+- [src/server.js:34-35](file://src/server.js#L34-L35)
+- [src/models/turno.js:1-44](file://src/models/turno.js#L1-L44)
+- [scripts/backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77)
 
 ## Architecture Overview
 The API follows a layered architecture:
@@ -150,11 +170,11 @@ end
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L37-L53)
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L1-L22)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L32-L48)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L77-L98)
+- [src/server.js:37-61](file://src/server.js#L37-L61)
+- [src/routers/authRoutes.js:1-22](file://src/routers/authRoutes.js#L1-L22)
+- [src/middleware/auth.js:6-29](file://src/middleware/auth.js#L6-L29)
+- [src/middleware/auth.js:32-48](file://src/middleware/auth.js#L32-L48)
+- [src/middleware/auth.js:77-98](file://src/middleware/auth.js#L77-L98)
 
 ## Detailed Component Analysis
 
@@ -210,12 +230,12 @@ Security Notes:
 **Updated** Enhanced authentication endpoints now include comprehensive user management with entity-based updates and improved role handling.
 
 **Section sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L21)
-- [src/controllers/authController.js](file://src/controllers/authController.js#L5-L260)
-- [src/models/user.js](file://src/models/user.js#L6-L185)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L66-L161)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L194-L202)
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
+- [src/routers/authRoutes.js:8-21](file://src/routers/authRoutes.js#L8-L21)
+- [src/controllers/authController.js:5-260](file://src/controllers/authController.js#L5-L260)
+- [src/models/user.js:6-185](file://src/models/user.js#L6-L185)
+- [AUTH_GUIDE.md:66-161](file://AUTH_GUIDE.md#L66-L161)
+- [AUTH_GUIDE.md:194-202](file://AUTH_GUIDE.md#L194-L202)
+- [AUTH_GUIDE.md:289-300](file://AUTH_GUIDE.md#L289-L300)
 
 ### Professors (professores)
 - Base Path: /professores
@@ -264,9 +284,9 @@ Professor Fields:
 **Updated** Added comprehensive professor management with full CRUD operations and enhanced authentication with ownership checks.
 
 **Section sources**
-- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L11-L21)
-- [src/controllers/professorController.js](file://src/controllers/professorController.js#L4-L100)
-- [src/models/professor.js](file://src/models/professor.js#L4-L86)
+- [src/routers/professorRoutes.js:11-21](file://src/routers/professorRoutes.js#L11-L21)
+- [src/controllers/professorController.js:4-100](file://src/controllers/professorController.js#L4-L100)
+- [src/models/professor.js:4-86](file://src/models/professor.js#L4-L86)
 
 ### Institutions (instituicoes)
 - Base Path: /instituicoes
@@ -315,9 +335,9 @@ Institution Fields:
 **New** Added comprehensive institutional management with full CRUD operations and relationship endpoints.
 
 **Section sources**
-- [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L11-L19)
-- [src/controllers/instituicaoController.js](file://src/controllers/instituicaoController.js#L3-L95)
-- [src/models/instituicao.js](file://src/models/instituicao.js#L4-L66)
+- [src/routers/instituicaoRoutes.js:11-19](file://src/routers/instituicaoRoutes.js#L11-L19)
+- [src/controllers/instituicaoController.js:3-95](file://src/controllers/instituicaoController.js#L3-L95)
+- [src/models/instituicao.js:4-66](file://src/models/instituicao.js#L4-L66)
 
 ### Students (alunos)
 - Base Path: /alunos
@@ -350,27 +370,37 @@ Institution Fields:
   - POST /alunos
     - Description: Create aluno (admin or aluno).
     - Auth: Bearer token; admin or aluno (ownership).
-    - Request: JSON alumno data.
+    - Request: JSON alumno data with enhanced validation including turno_id field.
     - Response: Created aluno object.
-    - Errors: 400 validation, 401/403, 500 server error.
+    - Errors: 400 validation (including turno_id validation), 401/403, 500 server error.
   - PUT /alunos/:id
     - Description: Update aluno (admin or aluno; ownership required).
     - Auth: Bearer token; admin or aluno (ownership).
-    - Request: JSON alumno data.
+    - Request: JSON alumno data with enhanced validation including turno_id field.
     - Response: Updated aluno object.
-    - Errors: 400 validation, 401/403, 404 not found, 500 server error.
+    - Errors: 400 validation (including turno_id validation), 401/403, 404 not found, 500 server error.
   - DELETE /alunos/:id
     - Description: Delete aluno (admin only).
     - Auth: Bearer token; admin.
     - Response: Deletion result.
     - Errors: 401/403, 404 not found, 500 server error.
 
-Nested Routes
-- /alunos/:id/estagiarios → [src/server.js](file://src/server.js#L60)
+Enhanced Error Handling for turno_id Field:
+- Validation ensures turno_id references existing turnos table entries
+- Backward compatibility maintained with legacy turno field
+- Migration script automatically converts old turno values to new turno_id format
+
+Student Fields:
+- nome, nomesocial, ingresso, turno_id (NEW: references turnos table), registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes
+
+**Updated** Enhanced student management with improved error handling for turno_id field and backward compatibility with legacy turno system.
 
 **Section sources**
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L11-L24)
+- [src/routers/alunoRoutes.js:11-24](file://src/routers/alunoRoutes.js#L11-L24)
 - [src/server.js](file://src/server.js#L60)
+- [src/models/aluno.js:10-20](file://src/models/aluno.js#L10-L20)
+- [src/models/aluno.js:107-113](file://src/models/aluno.js#L107-L113)
+- [scripts/backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77)
 
 ### Internships (estagios)
 - Base Path: /estagios
@@ -417,7 +447,7 @@ Nested Routes
 - /estagios/:id/estagiarios → [src/server.js](file://src/server.js#L59)
 
 **Section sources**
-- [src/routers/estagioRoutes.js](file://src/routers/estagioRoutes.js#L10-L17)
+- [src/routers/estagioRoutes.js:10-17](file://src/routers/estagioRoutes.js#L10-L17)
 - [src/server.js](file://src/server.js#L59)
 
 ### Interns (estagiarios)
@@ -467,7 +497,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L10-L18)
+- [src/routers/estagiarioRoutes.js:10-18](file://src/routers/estagiarioRoutes.js#L10-L18)
 
 ### Enrollments (inscricoes)
 - Base Path: /inscricoes
@@ -515,8 +545,8 @@ Nested Routes
 - /alunos/:id/inscricoes → [src/server.js](file://src/server.js#L64)
 
 **Section sources**
-- [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L11-L18)
-- [src/server.js](file://src/server.js#L62-L64)
+- [src/routers/inscricaoRoutes.js:11-18](file://src/routers/inscricaoRoutes.js#L11-L18)
+- [src/server.js:62-64](file://src/server.js#L62-L64)
 
 ### Supervisors (supervisores)
 - Base Path: /supervisores
@@ -569,7 +599,7 @@ Nested Routes
 - /supervisores/:id/estagiarios → [src/server.js](file://src/server.js#L57)
 
 **Section sources**
-- [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L12-L24)
+- [src/routers/supervisorRoutes.js:12-24](file://src/routers/supervisorRoutes.js#L12-L24)
 - [src/server.js](file://src/server.js#L57)
 
 ### Questionnaires (questionarios)
@@ -604,7 +634,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/questionarioRoutes.js](file://src/routers/questionarioRoutes.js#L9-L14)
+- [src/routers/questionarioRoutes.js:9-14](file://src/routers/questionarioRoutes.js#L9-L14)
 
 ### Questions (questoes)
 - Base Path: /questoes
@@ -638,7 +668,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/questaoRoutes.js](file://src/routers/questaoRoutes.js#L10-L15)
+- [src/routers/questaoRoutes.js:10-15](file://src/routers/questaoRoutes.js#L10-L15)
 
 ### Activities (atividades)
 - Base Path: /atividades
@@ -678,7 +708,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/atividadesRoutes.js](file://src/routers/atividadesRoutes.js#L10-L17)
+- [src/routers/atividadesRoutes.js:10-17](file://src/routers/atividadesRoutes.js#L10-L17)
 
 ### Visits (visitas)
 - Base Path: /visitas
@@ -712,7 +742,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/visitaRoutes.js](file://src/routers/visitaRoutes.js#L10-L15)
+- [src/routers/visitaRoutes.js:10-15](file://src/routers/visitaRoutes.js#L10-L15)
 
 ### Classes (turmas)
 - Base Path: /turmaestagios
@@ -746,7 +776,7 @@ Nested Routes
     - Errors: 404 not found, 500 server error.
 
 **Section sources**
-- [src/routers/turmaRoutes.js](file://src/routers/turmaRoutes.js#L10-L15)
+- [src/routers/turmaRoutes.js:10-15](file://src/routers/turmaRoutes.js#L10-L15)
 
 ### Areas (areas)
 - Base Path: /areas
@@ -782,7 +812,58 @@ Nested Routes
 **New** Added area management functionality for institutional categorization.
 
 **Section sources**
-- [src/routers/areaRoutes.js](file://src/routers/areaRoutes.js#L10-L16)
+- [src/routers/areaRoutes.js:10-16](file://src/routers/areaRoutes.js#L10-L16)
+
+### Turnos (Shifts) - NEW
+- Base Path: /turnos
+- Methods and Paths
+  - GET /turnos
+    - Description: List all turnos (authenticated).
+    - Auth: Bearer token; requires authentication.
+    - Response: Array of turnos with id and turno fields.
+    - Errors: 401 unauthorized, 500 server error.
+  - GET /turnos/:id
+    - Description: Retrieve turno by ID (authenticated).
+    - Auth: Bearer token; requires authentication.
+    - Response: Single turno object with id and turno fields.
+    - Errors: 401 unauthorized, 404 not found, 500 server error.
+  - POST /turnos
+    - Description: Create turno (admin only).
+    - Auth: Bearer token; admin role.
+    - Request: JSON { turno: string } where turno is one of: diurno, noturno, ambos, integral.
+    - Response: Created turno object with id and turno fields.
+    - Errors: 400 validation (missing turno), 401/403, 500 server error.
+  - PUT /turnos/:id
+    - Description: Update turno (admin only).
+    - Auth: Bearer token; admin role.
+    - Request: JSON { turno: string } where turno is one of: diurno, noturno, ambos, integral.
+    - Response: Updated turno object with id and turno fields.
+    - Errors: 400 validation (missing turno), 401/403, 404 not found, 500 server error.
+  - DELETE /turnos/:id
+    - Description: Delete turno (admin only).
+    - Auth: Bearer token; admin role.
+    - Response: Success message with deletion confirmation.
+    - Errors: 401/403, 404 not found, 500 server error.
+
+Turno Values:
+- diurno: Day shift
+- noturno: Night shift  
+- ambos: Both shifts
+- integral: Full-time program
+
+Integration with Students:
+- Students reference turnos via turno_id foreign key
+- Legacy turno field maintained for backward compatibility
+- Automatic migration script converts old values to new system
+
+**New** Added comprehensive turnos management system with full CRUD operations and integration with student enrollment system.
+
+**Section sources**
+- [src/routers/turnoRoutes.js:9-13](file://src/routers/turnoRoutes.js#L9-L13)
+- [src/controllers/turnoController.js:3-71](file://src/controllers/turnoController.js#L3-L71)
+- [src/models/turno.js:3-44](file://src/models/turno.js#L3-L44)
+- [src/database/setupFullDatabase.js:254-258](file://src/database/setupFullDatabase.js#L254-L258)
+- [scripts/backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77)
 
 ### Responses (respostas)
 - Base Path: /respostas
@@ -853,7 +934,7 @@ Nested Routes
 **New** Added comprehensive response management for questionnaire completion tracking.
 
 **Section sources**
-- [src/routers/respostaRoutes.js](file://src/routers/respostaRoutes.js#L25-L52)
+- [src/routers/respostaRoutes.js:25-52](file://src/routers/respostaRoutes.js#L25-L52)
 
 ### Settings (configuracoes)
 - Base Path: /configuracoes
@@ -878,7 +959,7 @@ Nested Routes
 Note: The configuracao routes do not currently apply role middleware in the route definition; ensure appropriate protection in production.
 
 **Section sources**
-- [src/routers/configuracaoRoutes.js](file://src/routers/configuracaoRoutes.js#L11-L16)
+- [src/routers/configuracaoRoutes.js:11-16](file://src/routers/configuracaoRoutes.js#L11-L16)
 
 ### Responses, Errors, and Status Codes
 Common patterns:
@@ -895,13 +976,18 @@ Examples of error messages:
 - "Token expirado"
 - "Acesso negado. Permissão insuficiente."
 - "Acesso negado. Você só pode acessar ou editar seus próprios dados."
+- "Turno is required" (for turnos endpoints)
+- "Turno not found" (for turnos endpoints)
+
+**Updated** Enhanced error handling includes specific messages for turnos management operations.
 
 **Section sources**
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L10-L29)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L38-L47)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L95-L98)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L129-L131)
+- [AUTH_GUIDE.md:289-300](file://AUTH_GUIDE.md#L289-L300)
+- [src/middleware/auth.js:10-29](file://src/middleware/auth.js#L10-L29)
+- [src/middleware/auth.js:38-47](file://src/middleware/auth.js#L38-L47)
+- [src/middleware/auth.js:95-98](file://src/middleware/auth.js#L95-L98)
+- [src/middleware/auth.js:129-131](file://src/middleware/auth.js#L129-L131)
+- [src/controllers/turnoController.js:30-32](file://src/controllers/turnoController.js#L30-L32)
 
 ### Authentication and Authorization Flow
 ```mermaid
@@ -926,10 +1012,10 @@ end
 ```
 
 **Diagram sources**
-- [src/routers/authRoutes.js](file://src/routers/authRoutes.js#L8-L14)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L32-L48)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L77-L98)
+- [src/routers/authRoutes.js:8-14](file://src/routers/authRoutes.js#L8-L14)
+- [src/middleware/auth.js:6-29](file://src/middleware/auth.js#L6-L29)
+- [src/middleware/auth.js:32-48](file://src/middleware/auth.js#L32-L48)
+- [src/middleware/auth.js:77-98](file://src/middleware/auth.js#L77-L98)
 
 ## Dependency Analysis
 - Route-to-Middleware Dependencies
@@ -940,6 +1026,10 @@ end
   - Each route group imports and invokes a controller module.
 - Server-to-Route Dependencies
   - The server mounts route groups under their respective prefixes and registers nested routes.
+- Turno System Dependencies
+  - Students depend on turnos table via turno_id foreign key.
+  - Turno routes require admin role for create/update/delete operations.
+  - Migration script maintains backward compatibility with legacy turno field.
 
 ```mermaid
 graph LR
@@ -958,30 +1048,34 @@ Server --> TR["turmaRoutes.js"]
 Server --> AIR["areaRoutes.js"]
 Server --> RR["respostaRoutes.js"]
 Server --> CR["configuracaoRoutes.js"]
+Server --> TUR["turnoRoutes.js"]
 AR --> AMW["auth.js (verifyToken, checkRole, checkOwnership)"]
 PR --> PMW["auth.js (verifyToken, checkRole, checkOwnership)"]
 IR --> IMW["auth.js (verifyToken, checkRole)"]
 SR --> SMW["auth.js (verifyToken, checkRole, checkOwnership)"]
 IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
+TUR --> TMW["auth.js (verifyToken, checkRole)"]
 ```
 
 **Diagram sources**
-- [src/server.js](file://src/server.js#L37-L53)
+- [src/server.js:37-61](file://src/server.js#L37-L61)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
 - [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
 - [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L4)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
+- [src/routers/turnoRoutes.js](file://src/routers/turnoRoutes.js#L3)
+- [src/middleware/auth.js:6-29](file://src/middleware/auth.js#L6-L29)
 
 **Section sources**
-- [src/server.js](file://src/server.js#L37-L53)
+- [src/server.js:37-61](file://src/server.js#L37-L61)
 - [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L4)
 - [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L5)
 - [src/routers/instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js#L4)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L5)
 - [src/routers/inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js#L4)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L6-L29)
+- [src/routers/turnoRoutes.js](file://src/routers/turnoRoutes.js#L3)
+- [src/middleware/auth.js:6-29](file://src/middleware/auth.js#L6-L29)
 
 ## Performance Considerations
 - Rate Limiting
@@ -995,7 +1089,10 @@ IR --> IMW["auth.js (verifyRole, checkInscricaoOwnership)"]
 - Payload Size
   - Validate and limit JSON payload sizes to mitigate memory pressure.
 - Caching
-  - Cache read-heavy lists (e.g., questionarios, questoes, instituicoes) with appropriate invalidation.
+  - Cache read-heavy lists (e.g., questionarios, questoes, instituicoes, turnos) with appropriate invalidation.
+- Turno System Optimization
+  - Turno table is small and frequently accessed; consider caching for high-traffic scenarios.
+  - Index on turno column for efficient lookups.
 
 ## Troubleshooting Guide
 Common Issues and Fixes
@@ -1009,20 +1106,29 @@ Common Issues and Fixes
   - Confirm user role and ownership requirements for the endpoint.
   - Admin privileges override role restrictions.
   - For entity-based endpoints, ensure entidade_id matches user's entity.
+  - Turno management requires admin role.
 - 404 Resource Not Found
   - Verify IDs and nested route parameters.
+  - Check that turno_id references existing turnos table entries.
 - 500 Internal Server Error
   - Check server logs and database connectivity.
   - Validate request payloads against model expectations.
+  - Verify turnos table exists and is properly populated.
+- Turno Migration Issues
+  - Ensure migration script has been executed if encountering legacy turno field issues.
+  - Verify turnos table contains expected shift values.
+
+**Updated** Added troubleshooting guidance for turnos management and migration issues.
 
 **Section sources**
-- [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L289-L300)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L10-L29)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L38-L47)
-- [src/middleware/auth.js](file://src/middleware/auth.js#L95-L98)
+- [AUTH_GUIDE.md:289-300](file://AUTH_GUIDE.md#L289-L300)
+- [src/middleware/auth.js:10-29](file://src/middleware/auth.js#L10-L29)
+- [src/middleware/auth.js:38-47](file://src/middleware/auth.js#L38-L47)
+- [src/middleware/auth.js:95-98](file://src/middleware/auth.js#L95-L98)
+- [scripts/backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77)
 
 ## Conclusion
-This API reference documents all REST endpoints, their authentication and authorization requirements, nested routes, and error handling patterns. The recent additions include comprehensive institutional management, professor management, and enhanced authentication endpoints with entity-based user management. Apply the provided middleware consistently, secure tokens properly, and consider rate limiting and CORS for production readiness.
+This API reference documents all REST endpoints, their authentication and authorization requirements, nested routes, and error handling patterns. The recent additions include comprehensive institutional management, professor management, enhanced authentication endpoints with entity-based user management, and the new turnos management system. The turnos system provides structured shift management with backward compatibility and automatic migration support. Apply the provided middleware consistently, secure tokens properly, and consider rate limiting and CORS for production readiness.
 
 ## Appendices
 
@@ -1045,6 +1151,11 @@ This API reference documents all REST endpoints, their authentication and author
   - GET /instituicoes/:id
   - PUT /instituicoes/:id (admin)
   - DELETE /instituicoes/:id (admin)
+  - POST /turnos with { turno: "diurno" | "noturno" | "ambos" | "integral" } (admin only)
+  - GET /turnos
+  - GET /turnos/:id
+  - PUT /turnos/:id (admin only)
+  - DELETE /turnos/:id (admin only)
 - Relationship Endpoints
   - GET /alunos/:id/inscricoes
   - GET /supervisores/:id/estagiarios
@@ -1059,8 +1170,28 @@ This API reference documents all REST endpoints, their authentication and author
   - Attach Authorization header to all authenticated requests.
   - Handle token refresh or re-login on 401 responses.
   - Implement entity-based navigation for different user roles.
+  - Integrate turnos dropdown in student forms using /turnos endpoint.
 - Backend
   - Centralize middleware usage in route definitions.
   - Log and monitor 401/403 occurrences for misuse detection.
   - Validate inputs and sanitize outputs.
   - Implement proper error handling for entity-based operations.
+  - Ensure turnos table is properly seeded with shift values.
+  - Execute migration script to convert legacy turno data to new system.
+
+### Database Schema Overview
+- Turnos Table Structure
+  - id: INT AUTO_INCREMENT PRIMARY KEY
+  - turno: VARCHAR(10) NOT NULL (values: diurno, noturno, ambos, integral)
+- Alunos Table Enhancement
+  - turno_id: INT NULL (foreign key to turnos.id)
+  - Legacy turno field maintained for backward compatibility
+- Migration Process
+  - Automatic conversion from legacy turno values to turno_id references
+  - Supports diurno, noturno, ambos, integral mappings
+  - Preserves existing data integrity during transition
+
+**Section sources**
+- [src/database/setupFullDatabase.js:254-258](file://src/database/setupFullDatabase.js#L254-L258)
+- [src/models/aluno.js](file://src/models/aluno.js#L32)
+- [scripts/backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77)

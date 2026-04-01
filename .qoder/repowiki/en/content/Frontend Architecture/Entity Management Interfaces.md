@@ -3,22 +3,31 @@
 <cite>
 **Referenced Files in This Document**
 - [public/alunos.js](file://public/alunos.js)
-- [public/docentes.js](file://public/docentes.js)
-- [public/estagiarios.js](file://public/estagiarios.js)
-- [public/turmas.js](file://public/turmas.js)
-- [public/inscricoes.js](file://public/inscricoes.js)
-- [public/visitas.js](file://public/visitas.js)
-- [public/questionarios.js](file://public/questionarios.js)
-- [public/respostas.js](file://public/respostas.js)
-- [public/mural.js](file://public/mural.js)
-- [public/auth-utils.js](file://public/auth-utils.js)
-- [public/new-aluno.js](file://public/new-aluno.js)
 - [public/edit-aluno.js](file://public/edit-aluno.js)
+- [public/new-aluno.js](file://public/new-aluno.js)
 - [public/view-aluno.js](file://public/view-aluno.js)
-- [src/controllers/alunoController.js](file://src/controllers/alunoController.js)
-- [src/controllers/estagiarioController.js](file://src/controllers/estagiarioController.js)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js)
+- [public/turnos.js](file://public/turnos.js)
+- [public/turnos.html](file://public/turnos.html)
+- [public/edit-turno.js](file://public/edit-turno.js)
+- [public/edit-turno.html](file://public/edit-turno.html)
+- [public/new-turno.js](file://public/new-turno.js)
+- [public/new-turno.html](file://public/new-turno.html)
+- [public/view-turno.js](file://public/view-turno.js)
+- [public/view-turno.html](file://public/view-turno.html)
+- [public/instituicoes.js](file://public/instituicoes.js)
+- [public/auth-utils.js](file://public/auth-utils.js)
+- [src/controllers/turnoController.js](file://src/controllers/turnoController.js)
+- [src/models/turno.js](file://src/models/turno.js)
+- [src/routers/turnoRoutes.js](file://src/routers/turnoRoutes.js)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive documentation for the new turnos management system
+- Updated student management interfaces to integrate turnos functionality
+- Enhanced form validation patterns with improved error messaging
+- Documented DataTables configurations with better internationalization support
+- Added new CRUD operations for turnos entity with proper authentication and authorization
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -33,31 +42,33 @@
 10. [Appendices](#appendices)
 
 ## Introduction
-This document describes the JavaScript architecture for NodeMural’s entity management interfaces. It focuses on how client-side pages implement CRUD operations, form handling, validation, and table management for entities such as alunos, docentes, estagiarios, turmas, inscricoes, visitas, questionarios, respostas, and mural. It also documents shared patterns across interfaces, including AJAX and fetch usage, authentication and authorization checks, error handling, user feedback, and DataTables integration for filtering, sorting, and pagination. Finally, it provides guidelines for adding new entity interfaces while maintaining consistency and optimizing performance for large datasets.
+This document describes the JavaScript architecture for NodeMural's entity management interfaces. It focuses on how client-side pages implement CRUD operations, form handling, validation, and table management for entities such as alunos, docentes, estagiarios, turmas, inscricoes, visitas, questionarios, respostas, mural, and turnos. The turnos management system provides comprehensive scheduling capabilities integrated with student enrollment processes. It also documents shared patterns across interfaces, including AJAX and fetch usage, authentication and authorization checks, error handling, user feedback, and DataTables integration for filtering, sorting, and pagination. Finally, it provides guidelines for adding new entity interfaces while maintaining consistency and optimizing performance for large datasets.
 
 ## Project Structure
 The entity management interfaces are organized into pairs of HTML pages and corresponding JavaScript files under public/. Each pair typically consists of:
 - A listing page (e.g., alunos.html with alunos.js) that renders a DataTable and handles bulk actions.
 - An edit/new page (e.g., edit-aluno.html with edit-aluno.js and new-aluno.html with new-aluno.js) that manage creation and updates via forms.
 - A view page (e.g., view-aluno.html with view-aluno.js) that displays entity details and related records.
+- **New**: Turnos management system with dedicated CRUD interface for shift/scheduling management.
 
 Common utilities reside in public/auth-utils.js, providing authentication helpers and an authenticated fetch wrapper.
 
 ```mermaid
 graph TB
-subgraph "Public Pages"
+subgraph "Student Management"
 A1["alunos.html<br/>alunos.js"]
 A2["edit-aluno.html<br/>edit-aluno.js"]
 A3["new-aluno.html<br/>new-aluno.js"]
 A4["view-aluno.html<br/>view-aluno.js"]
-D1["docentes.html<br/>docentes.js"]
-E1["estagiarios.html<br/>estagiarios.js"]
-T1["turmas.html<br/>turmas.js"]
-I1["inscricoes.html<br/>inscricoes.js"]
-V1["visitas.html<br/>visitas.js"]
-Q1["questionarios.html<br/>questionarios.js"]
-R1["respostas.html<br/>respostas.js"]
-M1["mural.html<br/>mural.js"]
+end
+subgraph "Turnos Management"
+T1["turnos.html<br/>turnos.js"]
+T2["edit-turno.html<br/>edit-turno.js"]
+T3["new-turno.html<br/>new-turno.js"]
+T4["view-turno.html<br/>view-turno.js"]
+end
+subgraph "Institution Management"
+I1["instituicoes.html<br/>instituicoes.js"]
 end
 subgraph "Utilities"
 U1["auth-utils.js"]
@@ -66,292 +77,247 @@ A1 --> U1
 A2 --> U1
 A3 --> U1
 A4 --> U1
-D1 --> U1
-E1 --> U1
 T1 --> U1
+T2 --> U1
+T3 --> U1
+T4 --> U1
 I1 --> U1
-V1 --> U1
-Q1 --> U1
-R1 --> U1
-M1 --> U1
 ```
 
 **Diagram sources**
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
-- [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
-- [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
-- [public/turmas.js](file://public/turmas.js#L1-L56)
-- [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
-- [public/visitas.js](file://public/visitas.js#L1-L59)
-- [public/questionarios.js](file://public/questionarios.js#L1-L65)
-- [public/respostas.js](file://public/respostas.js#L1-L122)
-- [public/mural.js](file://public/mural.js#L1-L157)
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
+- [public/alunos.js:1-69](file://public/alunos.js#L1-L69)
+- [public/edit-aluno.js:1-270](file://public/edit-aluno.js#L1-L270)
+- [public/new-aluno.js:1-212](file://public/new-aluno.js#L1-L212)
+- [public/view-aluno.js:1-192](file://public/view-aluno.js#L1-L192)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/edit-turno.js:1-62](file://public/edit-turno.js#L1-L62)
+- [public/new-turno.js:1-38](file://public/new-turno.js#L1-L38)
+- [public/view-turno.js:1-54](file://public/view-turno.js#L1-L54)
+- [public/instituicoes.js:1-82](file://public/instituicoes.js#L1-L82)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
 
 **Section sources**
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
+- [public/alunos.js:1-69](file://public/alunos.js#L1-L69)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
 
 ## Core Components
 - Authentication utilities: centralized helpers for login state, tokens, roles, and authenticated fetch requests.
-- DataTables integration: responsive, searchable, sortable, and paginated tables with localized labels.
-- Form handling: input masks, custom validation, serialization, and submission via fetch.
+- DataTables integration: responsive, searchable, sortable, and paginated tables with localized labels and improved error handling.
+- Form handling: input masks, custom validation, serialization, and submission via fetch with comprehensive error messaging.
 - CRUD orchestration: listing pages trigger DELETE actions; edit/new pages submit CREATE/UPDATE; view pages show related records.
+- **New**: Turnos integration: students can now be associated with specific shifts during enrollment and management.
 
 Key patterns:
 - Access control: pages check token and roles before rendering or performing operations.
 - Authorization: edit/update/delete often restrict to admins or owners.
 - Data loading: fetch or AJAX endpoints supply JSON; DataTables renders rows.
-- User feedback: alerts and console logs; confirm dialogs for destructive actions.
+- User feedback: enhanced alerts and console logs with specific error messages; confirm dialogs for destructive actions.
+- **Enhanced**: Form validation now includes turnos selection with proper dropdown population and validation.
 
 **Section sources**
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
-- [public/turmas.js](file://public/turmas.js#L1-L56)
-- [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
-- [public/visitas.js](file://public/visitas.js#L1-L59)
-- [public/questionarios.js](file://public/questionarios.js#L1-L65)
-- [public/respostas.js](file://public/respostas.js#L1-L122)
-- [public/mural.js](file://public/mural.js#L1-L157)
-- [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
-- [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
-- [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
+- [public/alunos.js:1-69](file://public/alunos.js#L1-L69)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/edit-aluno.js:152-168](file://public/edit-aluno.js#L152-L168)
+- [public/new-aluno.js:42-62](file://public/new-aluno.js#L42-L62)
 
 ## Architecture Overview
-The frontend follows a consistent pattern:
+The frontend follows a consistent pattern with enhanced error handling and validation:
 - On load, pages validate authentication and roles.
 - DataTables initializes with an ajax source pointing to server endpoints.
 - Columns may include action buttons (Edit/Delete) and links to view pages.
 - Filtering and sorting are handled client-side by DataTables; server endpoints support query parameters for advanced filtering.
-- Forms use input masks and custom validators; submissions leverage authenticated fetch.
+- Forms use input masks and custom validators; submissions leverage authenticated fetch with comprehensive error handling.
+- **New**: Turnos management provides dedicated CRUD operations with proper internationalization support.
 
 ```mermaid
 sequenceDiagram
 participant U as "User"
-participant P as "Page Script (e.g., alunos.js)"
+participant P as "Page Script (e.g., turnos.js)"
 participant DT as "DataTables"
-participant S as "Server Endpoint (/alunos)"
+participant S as "Server Endpoint (/turnos)"
 participant AU as "auth-utils.js"
-U->>P : "Open alunos.html"
+U->>P : "Open turnos.html"
 P->>AU : "Check token and roles"
 P->>DT : "Initialize DataTable with ajax url"
-DT->>S : "GET /alunos"
-S-->>DT : "JSON array of alunos"
+DT->>S : "GET /turnos"
+S-->>DT : "JSON array of turnos"
 DT-->>U : "Render table with actions"
 U->>P : "Click Delete"
-P->>S : "DELETE /alunos/{id}"
+P->>S : "DELETE /turnos/{id}"
 S-->>P : "200 OK"
 P->>DT : "Reload ajax"
-DT->>S : "GET /alunos"
+DT->>S : "GET /turnos"
 S-->>DT : "Updated data"
 DT-->>U : "Refreshed table"
 ```
 
 **Diagram sources**
-- [public/alunos.js](file://public/alunos.js#L20-L70)
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
+- [public/turnos.js:3-34](file://public/turnos.js#L3-L34)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
 
 **Section sources**
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
 
 ## Detailed Component Analysis
 
-### Alunos Interface
-- Listing: alunos.js initializes a DataTable, sets ordering, and loads data from /alunos. It adds action buttons to edit or delete entries and uses confirm dialogs for deletions. Authorization checks ensure only authorized users can access and modify.
-- Editing/New: edit-aluno.js supports both create and update modes based on presence of id; it loads existing data, applies input masks, validates, and submits via authenticated fetch.
-- Creation: new-aluno.js provides similar validation and submission flow for creating new alunos.
-- Viewing: view-aluno.js enforces role-based visibility of actions and loads related inscricoes and estagiarios.
+### Turnos Management System
+The turnos management system provides comprehensive shift/scheduling capabilities integrated with student enrollment processes.
+
+#### Turnos Listing Interface
+- **Enhanced**: turnos.js initializes a DataTable with improved internationalization support using Brazilian Portuguese localization.
+- **New**: Supports admin-only access with proper role checking.
+- **Enhanced**: Includes action buttons for edit and delete operations with proper confirmation dialogs.
+- **Improved**: Uses authenticatedFetch for all operations with comprehensive error handling.
+
+#### Turnos CRUD Operations
+- **New**: edit-turno.js supports update mode with form validation and error handling.
+- **New**: new-turno.js provides creation functionality with proper validation.
+- **New**: view-turno.js displays turnos details with edit and delete capabilities.
 
 ```mermaid
 sequenceDiagram
 participant U as "User"
-participant EA as "edit-aluno.js"
+participant ET as "edit-turno.js"
 participant AU as "auth-utils.js"
 participant API as "Server"
-U->>EA : "Submit edit form"
-EA->>EA : "validateForm()"
-EA->>AU : "authenticatedFetch(url, options)"
+U->>ET : "Submit edit form"
+ET->>ET : "validateForm()"
+ET->>AU : "authenticatedFetch(url, options)"
 AU->>API : "Fetch with Authorization header"
 API-->>AU : "Response"
-AU-->>EA : "Response"
-EA->>U : "Redirect on success or alert on error"
+AU-->>ET : "Response"
+ET->>U : "Redirect on success or alert on error"
 ```
 
 **Diagram sources**
-- [public/edit-aluno.js](file://public/edit-aluno.js#L32-L67)
-- [public/auth-utils.js](file://public/auth-utils.js#L45-L54)
+- [public/edit-turno.js:19-46](file://public/edit-turno.js#L19-L46)
+- [public/auth-utils.js:45-54](file://public/auth-utils.js#L45-L54)
 
 **Section sources**
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
-- [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
-- [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/edit-turno.js:1-62](file://public/edit-turno.js#L1-L62)
+- [public/new-turno.js:1-38](file://public/new-turno.js#L1-L38)
+- [public/view-turno.js:1-54](file://public/view-turno.js#L1-L54)
 
-### Docentes Interface
-- Listing: docentes.js initializes a DataTable with columns for name, siape, email, phone, department, and actions. Deletion uses fetch with error handling and reloads the table.
-- Access control: requires token and role admin or docente.
+### Student Management Integration
+Student management interfaces have been enhanced to integrate with the turnos system.
 
-```mermaid
-flowchart TD
-Start(["Delete Click"]) --> Confirm{"Confirm?"}
-Confirm --> |No| End(["Abort"])
-Confirm --> |Yes| Call["fetch('/docentes/{id}', {method:'DELETE'})"]
-Call --> Ok{"response.ok?"}
-Ok --> |Yes| Reload["table.ajax.reload()"] --> End2(["Done"])
-Ok --> |No| Err["console.error + alert"] --> End2
-```
+#### Enhanced Form Handling
+- **Updated**: edit-aluno.js now includes turnos dropdown population with proper error handling.
+- **Updated**: new-aluno.js includes turnos dropdown population using fetch with authentication.
+- **Enhanced**: Form validation includes turnos selection validation.
 
-**Diagram sources**
-- [public/docentes.js](file://public/docentes.js#L44-L57)
-
-**Section sources**
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-
-### Estagiarios Interface
-- Advanced filtering: estagiarios.js adds per-column search inputs and a period filter. It loads distinct periods and default period from configuration, then reloads the table accordingly.
-- Listing: initializes DataTable with columns for aluno, professor, institution, supervisor, period, level, and actions.
-- Deletion: uses fetch with error handling and reloads the table.
+#### Turnos Integration Features
+- **New**: Students can be associated with specific turns during enrollment.
+- **Enhanced**: Turnos dropdown is populated dynamically from server endpoints.
+- **Improved**: Error handling for turnos loading failures.
 
 ```mermaid
 sequenceDiagram
 participant U as "User"
-participant ES as "estagiarios.js"
+participant NA as "new-aluno.js"
 participant API as "Server"
-ES->>API : "GET /estagiarios/periodos"
-API-->>ES : "Periods"
-ES->>API : "GET /configuracoes"
-API-->>ES : "Default period"
-ES->>ES : "Populate select and set default"
-ES->>API : "GET /estagiarios?periodo=..."
-API-->>ES : "Filtered estagiarios"
+NA->>API : "GET /turnos"
+API-->>NA : "Turnos list"
+NA->>NA : "Populate dropdown"
+U->>NA : "Submit form"
+NA->>API : "POST /alunos"
+API-->>NA : "Student created"
+NA->>U : "Redirect to view"
 ```
 
 **Diagram sources**
-- [public/estagiarios.js](file://public/estagiarios.js#L76-L121)
+- [public/new-aluno.js:42-62](file://public/new-aluno.js#L42-L62)
+- [public/edit-aluno.js:152-168](file://public/edit-aluno.js#L152-L168)
 
 **Section sources**
-- [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
+- [public/edit-aluno.js:152-168](file://public/edit-aluno.js#L152-L168)
+- [public/new-aluno.js:42-62](file://public/new-aluno.js#L42-L62)
+- [public/view-aluno.js:1-192](file://public/view-aluno.js#L1-L192)
 
-### Turmas Interface
-- Listing: turmas.js initializes a DataTable for areas and exposes Edit/Delete actions. Access restricted to admin.
+### Institutional Management
+Institution management continues to provide comprehensive CRUD operations with enhanced DataTables integration.
 
-**Section sources**
-- [public/turmas.js](file://public/turmas.js#L1-L56)
-
-### Inscricoes Interface
-- Filtering: inscricoes.js loads distinct periods and applies a default period from configuration. It reloads the table when the filter changes.
-- Listing: renders inscricoes with formatted dates and action buttons.
-
-**Section sources**
-- [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
-
-### Visitas Interface
-- Listing: visitas.js supports optional institution filtering via query parameter and renders a responsive table with action buttons.
+#### Enhanced DataTables Configuration
+- **Updated**: instituicoes.js includes improved column rendering with better data formatting.
+- **Enhanced**: Support for boolean values display (sim/não) and date formatting.
+- **Improved**: Better error handling and user feedback mechanisms.
 
 **Section sources**
-- [public/visitas.js](file://public/visitas.js#L1-L59)
+- [public/instituicoes.js:1-82](file://public/instituicoes.js#L1-L82)
 
-### Questionarios Interface
-- Listing: questionarios.js renders a table of questionarios with action buttons including viewing questions and answers, editing, and deleting. Deletion uses jQuery AJAX with success/error callbacks.
+### Backend Integration (Context)
+The turnos management system includes comprehensive backend support:
 
-**Section sources**
-- [public/questionarios.js](file://public/questionarios.js#L1-L65)
+#### Controller Implementation
+- **New**: turnoController.js provides full CRUD operations for turnos management.
+- **Enhanced**: Proper error handling and validation for all operations.
+- **Improved**: Support for complex queries and data manipulation.
 
-### Respostas Interface
-- Filtering and listing: respostas.js loads supervisors for filtering, supports optional questionario-specific queries, and renders a table of responses with counts and dates. Deletion uses jQuery AJAX with feedback.
+#### Model Layer
+- **New**: turno.js implements database operations with proper SQL injection prevention.
+- **Enhanced**: Support for ordering and filtering operations.
 
-**Section sources**
-- [public/respostas.js](file://public/respostas.js#L1-L122)
-
-### Mural Interface
-- Filtering and permissions: mural.js loads periods and a default period, hides admin-only controls for non-admins, and reloads the table on filter change. Deletion uses fetch with error handling.
-
-**Section sources**
-- [public/mural.js](file://public/mural.js#L1-L157)
-
-### Backend Controllers and Routes (Context)
-- alunoController.js defines endpoints for creating, retrieving, updating, and deleting alunos, including related endpoints for inscricoes and estagiarios.
-- estagiarioController.js provides endpoints for listing estagiarios with filters, retrieving distinct periods, and managing estagiario records.
-- alunoRoutes.js defines route protection and ownership checks for aluno endpoints.
+#### Route Protection
+- **New**: turnoRoutes.js provides secure routing with proper middleware.
+- **Enhanced**: Role-based access control for administrative operations.
 
 **Section sources**
-- [src/controllers/alunoController.js](file://src/controllers/alunoController.js#L1-L114)
-- [src/controllers/estagiarioController.js](file://src/controllers/estagiarioController.js#L1-L133)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
+- [src/controllers/turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
+- [src/models/turno.js:1-45](file://src/models/turno.js#L1-L45)
+- [src/routers/turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
 
 ## Dependency Analysis
 The client-side scripts depend on:
 - auth-utils.js for authentication and authorization checks and for authenticated fetch.
-- DataTables CDN for UI and interaction features.
+- DataTables CDN for UI and interaction features with enhanced internationalization.
 - Server endpoints returning JSON arrays or objects for table rendering and form operations.
+- **New**: Turnos API endpoints for shift/scheduling management.
 
 ```mermaid
 graph LR
 AU["auth-utils.js"] --> AL["alunos.js"]
-AU --> ED["edit-aluno.js"]
-AU --> NE["new-aluno.js"]
-AU --> VI["view-aluno.js"]
-AU --> DO["docentes.js"]
-AU --> ES["estagiarios.js"]
-AU --> TU["turmas.js"]
-AU --> IN["inscricoes.js"]
-AU --> VI2["visitas.js"]
-AU --> QU["questionarios.js"]
-AU --> RE["respostas.js"]
-AU --> MU["mural.js"]
+AU --> ET["edit-turno.js"]
+AU --> NT["new-turno.js"]
+AU --> VT["view-turno.js"]
+AU --> IN["instituicoes.js"]
 AL --> DT["DataTables CDN"]
-DO --> DT
-ES --> DT
-TU --> DT
+ET --> DT
+NT --> DT
+VT --> DT
 IN --> DT
-VI2 --> DT
-QU --> DT
-RE --> DT
-MU --> DT
+AL --> TURNOS["/turnos API"]
+ET --> TURNOS
+NT --> TURNOS
+VT --> TURNOS
 ```
 
 **Diagram sources**
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
-- [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
-- [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
-- [public/turmas.js](file://public/turmas.js#L1-L56)
-- [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
-- [public/visitas.js](file://public/visitas.js#L1-L59)
-- [public/questionarios.js](file://public/questionarios.js#L1-L65)
-- [public/respostas.js](file://public/respostas.js#L1-L122)
-- [public/mural.js](file://public/mural.js#L1-L157)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
+- [public/alunos.js:1-69](file://public/alunos.js#L1-L69)
+- [public/edit-turno.js:1-62](file://public/edit-turno.js#L1-L62)
+- [public/new-turno.js:1-38](file://public/new-turno.js#L1-L38)
+- [public/view-turno.js:1-54](file://public/view-turno.js#L1-L54)
+- [public/instituicoes.js:1-82](file://public/instituicoes.js#L1-L82)
 
 **Section sources**
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/docentes.js](file://public/docentes.js#L1-L59)
-- [public/estagiarios.js](file://public/estagiarios.js#L1-L142)
-- [public/turmas.js](file://public/turmas.js#L1-L56)
-- [public/inscricoes.js](file://public/inscricoes.js#L1-L100)
-- [public/visitas.js](file://public/visitas.js#L1-L59)
-- [public/questionarios.js](file://public/questionarios.js#L1-L65)
-- [public/respostas.js](file://public/respostas.js#L1-L122)
-- [public/mural.js](file://public/mural.js#L1-L157)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
+- [public/alunos.js:1-69](file://public/alunos.js#L1-L69)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/instituicoes.js:1-82](file://public/instituicoes.js#L1-L82)
 
 ## Performance Considerations
 - Prefer server-side filtering and pagination: pass query parameters (e.g., periodo) to reduce payload sizes.
-- Use DataTables’ built-in ordering and searching to minimize client-side work; avoid unnecessary DOM manipulations.
+- Use DataTables' built-in ordering and searching to minimize client-side work; avoid unnecessary DOM manipulations.
 - Minimize repeated fetches: reuse authenticatedFetch and avoid redundant reloads.
+- **Enhanced**: Implement caching strategies for frequently accessed turnos data.
 - Optimize images and assets; defer non-critical resources.
 - For large datasets, consider virtual scrolling or server-side processing in DataTables if needed.
-- Cache small, static dropdowns (e.g., periods) locally to avoid repeated network calls.
-
-[No sources needed since this section provides general guidance]
+- Cache small, static dropdowns (e.g., periods, turnos) locally to avoid repeated network calls.
+- **New**: Implement lazy loading for turnos dropdowns to improve initial page load performance.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -360,23 +326,19 @@ Common issues and resolutions:
 - Form validation failures: inspect console logs and ensure masks and regex validations are applied before submission.
 - Deletion errors: confirm dialog precedes AJAX/fetch; handle non-OK responses with alerts and reload the table.
 - DataTables not rendering: verify ajax url, dataSrc, and language settings; ensure DataTables CDN is loaded.
+- **New**: Turnos loading failures: check network connectivity and server availability for /turnos endpoint.
+- **New**: Authentication errors with turnos: verify token validity and admin role assignment.
+- **Enhanced**: Improved error messages: turnos-related errors now provide more specific feedback for debugging.
 
 **Section sources**
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
-- [public/alunos.js](file://public/alunos.js#L52-L68)
-- [public/docentes.js](file://public/docentes.js#L44-L57)
-- [public/estagiarios.js](file://public/estagiarios.js#L123-L140)
-- [public/turmas.js](file://public/turmas.js#L41-L54)
-- [public/inscricoes.js](file://public/inscricoes.js#L92-L98)
-- [public/visitas.js](file://public/visitas.js#L52-L57)
-- [public/questionarios.js](file://public/questionarios.js#L49-L63)
-- [public/respostas.js](file://public/respostas.js#L104-L120)
-- [public/mural.js](file://public/mural.js#L142-L155)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
+- [public/turnos.js:36-49](file://public/turnos.js#L36-L49)
+- [public/edit-turno.js:42-46](file://public/edit-turno.js#L42-L46)
+- [public/new-turno.js:32-36](file://public/new-turno.js#L32-L36)
+- [public/view-turno.js:35-52](file://public/view-turno.js#L35-L52)
 
 ## Conclusion
-NodeMural’s entity management interfaces follow a consistent, modular architecture. Authentication utilities centralize access control, DataTables provide robust UI, and form handlers encapsulate validation and submission. By adhering to these patterns—role checks, authenticated requests, consistent CRUD flows, and user feedback—you can reliably extend the system with new entities while maintaining performance and usability.
-
-[No sources needed since this section summarizes without analyzing specific files]
+NodeMural's entity management interfaces follow a consistent, modular architecture with enhanced functionality through the new turnos management system. Authentication utilities centralize access control, DataTables provide robust UI with improved internationalization, and form handlers encapsulate validation and submission with comprehensive error handling. The integration of turnos functionality enhances student management capabilities while maintaining performance and usability. By adhering to these patterns—role checks, authenticated requests, consistent CRUD flows, and user feedback—you can reliably extend the system with new entities while maintaining performance and usability.
 
 ## Appendices
 
@@ -390,26 +352,30 @@ NodeMural’s entity management interfaces follow a consistent, modular architec
   - Initialize DataTable with ajax pointing to the entity endpoint.
   - Add action buttons (Edit/Delete) and links to view pages.
   - Apply filters if applicable (e.g., select-based period filter).
+  - **Enhanced**: Include proper internationalization support for DataTables.
 - Implement edit-entity.js:
   - Require token and roles.
   - Apply input masks and custom validation.
   - Serialize form data and submit via authenticatedFetch (POST/PUT).
   - Redirect to view or listing on success.
+  - **Enhanced**: Implement comprehensive error handling and user feedback.
 - Implement view-entity.js (optional):
   - Enforce role-based visibility of actions.
   - Load related records and render them.
 - Backend alignment:
   - Ensure server routes exist and apply appropriate middleware (verifyToken, checkRole, checkOwnership).
   - Controllers expose endpoints for listing, retrieval, creation, update, and deletion.
+  - **New**: Implement proper validation and error handling for new endpoints.
 - Testing:
   - Verify access control, filtering, sorting, and deletion flows.
   - Test error scenarios and user feedback.
+  - **Enhanced**: Test internationalization and error message clarity.
 
 **Section sources**
-- [public/auth-utils.js](file://public/auth-utils.js#L1-L88)
-- [public/alunos.js](file://public/alunos.js#L1-L70)
-- [public/edit-aluno.js](file://public/edit-aluno.js#L1-L194)
-- [public/new-aluno.js](file://public/new-aluno.js#L1-L136)
-- [public/view-aluno.js](file://public/view-aluno.js#L1-L192)
-- [src/routers/alunoRoutes.js](file://src/routers/alunoRoutes.js#L1-L25)
-- [src/controllers/alunoController.js](file://src/controllers/alunoController.js#L1-L114)
+- [public/auth-utils.js:1-88](file://public/auth-utils.js#L1-L88)
+- [public/turnos.js:1-51](file://public/turnos.js#L1-L51)
+- [public/edit-turno.js:1-62](file://public/edit-turno.js#L1-L62)
+- [public/new-turno.js:1-38](file://public/new-turno.js#L1-L38)
+- [public/view-turno.js:1-54](file://public/view-turno.js#L1-L54)
+- [src/routers/turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
+- [src/controllers/turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
