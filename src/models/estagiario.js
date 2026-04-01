@@ -11,12 +11,13 @@ const Estagiario = {
 
     async findAllEstagiario(periodo = null, aluno_id = null) {  
         let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
-                    a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
+                    a.nome as aluno_nome, a.registro as aluno_registro, COALESCE(t.turno, a.turno) as aluno_turno,
                     d.nome as professor_nome,
                     s.nome as supervisor_nome, s.cress as supervisor_cress,
                     i.instituicao as instituicao_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
+                    LEFT JOIN turnos t ON a.turno_id = t.id
                     LEFT JOIN professores d ON e.professor_id = d.id
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
                     LEFT JOIN instituicoes i ON e.instituicao_id = i.id`;
@@ -46,13 +47,14 @@ const Estagiario = {
     async findByIdEstagiario(id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
-                      a.nome as aluno_nome, a.registro as aluno_registro, a.turno as aluno_turno,
+                      a.nome as aluno_nome, a.registro as aluno_registro, COALESCE(t.turno, a.turno) as aluno_turno,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome,
                       s.cress as supervisor_cress,
                       i.instituicao as instituicao_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
+                      LEFT JOIN turnos t ON a.turno_id = t.id
                       LEFT JOIN professores d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
@@ -115,12 +117,13 @@ const Estagiario = {
                       e.ajuste2020 as estagiario_ajuste2020,
                       a.nome as aluno_nome, 
                       a.registro as aluno_registro, 
-                      a.turno as aluno_turno,
+                      COALESCE(t.turno, a.turno) as aluno_turno,
                       i.instituicao as instituicao_nome,
                       d.nome as professor_nome,
                       s.nome as supervisor_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
+                      LEFT JOIN turnos t ON a.turno_id = t.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       LEFT JOIN professores d ON e.professor_id = d.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
