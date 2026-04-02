@@ -29,6 +29,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label">Registro</label>
+                        <input type="number" class="form-control" id="registro" readonly>
+                        <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o aluno</small>
+                    </div>
+                    
+                    <div class="mb-3">
                         <label class="form-label">Instituição/Vaga</label>
                         <select class="form-select" id="muralestagio_id" required>
                             <option value="">Selecione a instituição...</option>
@@ -39,17 +45,13 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Período</label>
                             <input type="text" class="form-control" id="periodo" required pattern="\d{4}-[12]">
+                            <small class="text-muted">Formato: AAAA-S (ex: 2024-1)</small>
                         </div>
+                        
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Data da Inscrição</label>
                             <input type="date" class="form-control" id="data" required>
                         </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Registro</label>
-                        <input type="number" class="form-control" id="registro" readonly>
-                        <small class="text-muted">Este campo será preenchido automaticamente ao selecionar o aluno</small>
                     </div>
 
                     <div class="mt-4">

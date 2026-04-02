@@ -1,5 +1,5 @@
 // src/public/edit-inscricao.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -12,7 +12,7 @@ $(document).ready(async function () {
 
     // Load alunos for the dropdown
     try {
-        const response = await fetch('/alunos');
+        const response = await authenticatedFetch('/alunos');
         const alunos = await response.json();
         const select = document.getElementById('aluno_id');
 
@@ -72,7 +72,7 @@ $(document).ready(async function () {
     // Define editInscricao function
     const editInscricao = async (id) => {
         try {
-            const response = await fetch(`/inscricoes/${id}`);
+            const response = await authenticatedFetch(`/inscricoes/${id}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch inscricao');
             }
@@ -111,6 +111,7 @@ $(document).ready(async function () {
         window.location.href = 'inscricoes.html';
     }
 
+    // Submit form
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -119,13 +120,14 @@ $(document).ready(async function () {
             muralestagio_id: document.getElementById('muralestagio_id').value,
             periodo: document.getElementById('periodo').value,
             data: document.getElementById('data').value,
-            registro: document.getElementById('registro').value || 0
+            registro: document.getElementById('registro').value || 0,
+            timestamp: new Date().toISOString()
         };
 
         const id = document.getElementById('inscricaoId').value;
 
         try {
-            const response = await fetch(`/inscricoes/${id}`, {
+            const response = await authenticatedFetch(`/inscricoes/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inscricao)

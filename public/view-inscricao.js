@@ -8,6 +8,7 @@ $(document).ready(async function () {
         return;
     }
 
+    // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     if (!id) {

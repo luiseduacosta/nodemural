@@ -43,44 +43,6 @@ $(document).ready(async function () {
         }
     }
 
-    // 2.1. Load Complementos
-    async function loadComplementos(targetId = null) {
-        try {
-            const res = await authenticatedFetch('/complementos');
-            if (res.ok) {
-                const complementos = await res.json();
-                const select = document.getElementById('complemento_id');
-                select.innerHTML = '<option value="">Selecione modalidade de estágio</option>';
-                complementos.forEach(comp => {
-                    const option = new Option(comp.periodo_especial, comp.id);
-                    if (targetId && comp.id == targetId) option.selected = true;
-                    select.add(option);
-                });
-            }
-        } catch (error) {
-            console.error('Error loading complementos:', error);
-        }
-    }
-
-    // 2.2. Turnos 
-    async function loadTurnos(targetId = null) {
-        try {
-            const res = await authenticatedFetch('/turnos');
-            if (res.ok) {
-                const turnos = await res.json();
-                const select = document.getElementById('turno_id');
-                select.innerHTML = '<option value="">Selecione um turno</option>';
-                turnos.forEach(turno => {
-                    const option = new Option(turno.turno, turno.id);
-                    if (targetId && turno.id == targetId) option.selected = true;
-                    select.add(option);
-                });
-            }
-        } catch (error) {
-            console.error('Error loading turnos:', error);
-        }
-    }
-
     // 3. Initial Data Load (Dropdowns)
     async function loadInitialData() {
         try {
@@ -114,9 +76,6 @@ $(document).ready(async function () {
                 professores.forEach(doc => select.add(new Option(doc.nome, doc.id)));
             }
 
-            await loadTurnos();
-            await loadComplementos();
-
             // After dropdowns are ready, load the specific estagiario data
             await loadEstagiarioData();
 
@@ -145,16 +104,8 @@ $(document).ready(async function () {
             document.getElementById('periodo').value = estagiario.periodo;
             document.getElementById('nivel').value = estagiario.nivel;
             document.getElementById('ajuste2020').value = estagiario.ajuste2020 || 0;
-            document.getElementById('turno_id').value = estagiario.turno_id || '';            
             document.getElementById('tc').checked = String(estagiario.tc) === '1' || estagiario.tc === true;
-            // Format date to yyyy-MM-dd for HTML date input
-            if (estagiario.tc_solicitacao) {
-                const date = new Date(estagiario.tc_solicitacao);
-                const formattedDate = date.toISOString().split('T')[0]; // Extracts yyyy-MM-dd
-                document.getElementById('tc_solicitacao').value = formattedDate;
-            } else {
-                document.getElementById('tc_solicitacao').value = '';
-            }
+            document.getElementById('tc_solicitacao').value = estagiario.tc_solicitacao || '';
             document.getElementById('complemento_id').value = estagiario.complemento_id || '';
             document.getElementById('benetransporte').checked = String(estagiario.benetransporte) === '1' || estagiario.benetransporte === true;
             document.getElementById('benealimentacao').checked = String(estagiario.benealimentacao) === '1' || estagiario.benealimentacao === true;
@@ -233,7 +184,6 @@ $(document).ready(async function () {
             periodo: document.getElementById('periodo').value,
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value || 0,
-            turno_id: document.getElementById('turno_id').value || null,
             tc: document.getElementById('tc').checked ? 1 : 0,
             tc_solicitacao: document.getElementById('tc_solicitacao').value || null,
             complemento_id: document.getElementById('complemento_id').value || null,

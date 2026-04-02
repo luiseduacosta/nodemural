@@ -55,7 +55,7 @@ const Inscricao = {
         return rows;
     },
 
-    async create(registro, aluno_id, muralestagio_id, data, periodo) {
+    async create(registro, aluno_id, muralestagio_id, data, periodo, timestamp) {
         // Check if student already registered for this mural
         const existing = await pool.query(
             'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
@@ -67,14 +67,14 @@ const Inscricao = {
         }
 
         const result = await pool.query(
-            'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo) VALUES (?, ?, ?, ?, ?)',
-            [registro, aluno_id, muralestagio_id, data, periodo]
+            'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo, timestamp) VALUES (?, ?, ?, ?, ?, ?)',
+            [registro, aluno_id, muralestagio_id, data, periodo, timestamp]
         );
-        return { id: Number(result.insertId), registro, aluno_id, muralestagio_id, data, periodo };
+        return { id: Number(result.insertId), registro, aluno_id, muralestagio_id, data, periodo, timestamp };
     },
 
-    async update(id, registro, aluno_id, muralestagio_id, data, periodo) {
-        // Check if another student (not this one) is already registered for this mural
+    async update(id, registro, aluno_id, muralestagio_id, data, periodo, timestamp) {
+        // Check if this student is already registered for this mural
         const existing = await pool.query(
             'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND id != ?',
             [aluno_id, muralestagio_id, id]
@@ -85,8 +85,8 @@ const Inscricao = {
         }
 
         const result = await pool.query(
-            'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ? WHERE id = ?',
-            [registro, aluno_id, muralestagio_id, data, periodo, id]
+            'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ?, timestamp = ? WHERE id = ?',
+            [registro, aluno_id, muralestagio_id, data, periodo, timestamp, id]
         );
         return result.affectedRows > 0;
     },
