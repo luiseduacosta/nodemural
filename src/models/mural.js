@@ -54,12 +54,12 @@ const Mural = {
         );
         return rows;
     },
-    async create(instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, professor_id, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, datafax, local_inscricao, email) {
+    async create(instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email) {
         const result = await pool.query(
             `INSERT INTO mural_estagios (instituicao_id, instituicao, convenio, vagas, beneficios,
              final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao,
              horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email]
         );
         return { id: Number(result.insertId), instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email };

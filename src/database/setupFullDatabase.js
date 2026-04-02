@@ -98,7 +98,7 @@ async function setupDatabase() {
                 fim_de_semana BOOLEAN DEFAULT FALSE,
                 convenio VARCHAR(15),
                 expira DATE,
-                seguro VARCHAR(255),
+                seguro CHAR(1) NOT NULL DEFAULT '0' COMMENT '0=Não, 1=Sim',
                 observacoes TEXT
             )`,
 
@@ -127,7 +127,7 @@ async function setupDatabase() {
                 forma_selecao char(1) NOT NULL DEFAULT '0',
                 contato TEXT,
                 periodo VARCHAR(6) NOT NULL COMMENT 'value = configuracoes.mural_estagio_periodo',
-                local_inscricao char(1) COMMENT '0=Instituição, 1=Coordenação de Estágio',
+                local_inscricao char(1) NOT NULL DEFAULT '0' COMMENT '0=Instituição, 1=Coordenação de Estágio',
                 email VARCHAR(255),
                 outras TEXT
             )`,

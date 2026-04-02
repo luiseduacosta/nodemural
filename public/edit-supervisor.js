@@ -33,11 +33,11 @@ $(document).ready(async function () {
             }
 
             const supervisor = await response.json();
+            document.getElementById('supervisorId').value = supervisor.id;
             document.getElementById('nome').value = supervisor.nome;
             document.getElementById('email').value = supervisor.email || '';
             document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
-            document.getElementById('supervisorId').value = supervisor.id;
             document.getElementById('regiao').value = supervisor.regiao || '';
             document.getElementById('cpf').value = supervisor.cpf || '';
             document.getElementById('escola').value = supervisor.escola || '';
@@ -72,15 +72,15 @@ $(document).ready(async function () {
         e.preventDefault();
         const supervisor = {
             nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value || '',
+            email: document.getElementById('email').value || null,
             celular: document.getElementById('celular').value || null,
-            cress: document.getElementById('cress').value,
-            regiao: document.getElementById('regiao').value || '',
-            cpf: document.getElementById('cpf').value || '',
-            escola: document.getElementById('escola').value || '',
-            ano_formacao: document.getElementById('ano_formacao').value || '',
-            cargo: document.getElementById('cargo').value || '',
-            observacoes: document.getElementById('observacoes').value || ''
+            cress: document.getElementById('cress').value || null,
+            regiao: document.getElementById('regiao').value || null,
+            cpf: document.getElementById('cpf').value || null,
+            escola: document.getElementById('escola').value || null,
+            ano_formacao: document.getElementById('ano_formacao').value || null,
+            cargo: document.getElementById('cargo').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         const id = document.getElementById('supervisorId').value;
