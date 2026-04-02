@@ -8,6 +8,15 @@ $(document).ready(async function () {
         return;
     }
 
+    // Catch ID parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (!id) {
+        alert('ID not provided');
+        window.location.href = 'mural.html';
+        return;
+    }
+    
     const form = document.getElementById('editMuralForm');
 
     // Initialize EasyMDE
@@ -17,33 +26,17 @@ $(document).ready(async function () {
     // Load instituições for the dropdown
     try {
         const response = await authenticatedFetch('/instituicoes');
-        const estagios = await response.json();
+        const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
 
-        instituicoes.forEach(estagio => {
+        instituicoes.forEach(instituicao => {
             const option = document.createElement('option');
             option.value = instituicao.id;
             option.textContent = instituicao.instituicao;
             select.appendChild(option);
         });
     } catch (error) {
-        console.error('Error loading estagios:', error);
-    }
-
-    // Load turmas for the dropdown
-    try {
-        const response = await authenticatedFetch('/turmaestagios');
-        const turmas = await response.json();
-        const select = document.getElementById('turmaestagio_id');
-
-        turmas.forEach(turma => {
-            const option = document.createElement('option');
-            option.value = turma.id;
-            option.textContent = turma.turma;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading turmas:', error);
+        console.error('Error loading instituicoes:', error);
     }
 
     // Define editMural function first
@@ -55,7 +48,7 @@ $(document).ready(async function () {
             }
 
             const mural = await response.json();
-
+            console.log(mural);
             // Helper to format date for input
             const formatDateForInput = (date) => {
                 if (!date) return '';
@@ -63,29 +56,26 @@ $(document).ready(async function () {
             };
 
             document.getElementById('instituicao_id').value = mural.instituicao_id || '';
-            document.getElementById('periodo').value = mural.periodo || '';
-            document.getElementById('vagas').value = mural.vagas;
+            document.getElementById('instituicao').value = mural.instituicao || '';
             document.getElementById('convenio').value = mural.convenio;
-            document.getElementById('carga_horaria').value = mural.carga_horaria || '';
-            document.getElementById('final_de_semana').value = mural.final_de_semana || '';
-            document.getElementById('horario').value = mural.horario || '';
+            document.getElementById('vagas').value = mural.vagas;
             document.getElementById('beneficios').value = mural.beneficios || '';
-            document.getElementById('professor_id').value = mural.professor_id || '';
-            document.getElementById('turmaestagio_id').value = mural.turmaestagio_id || '';
+            document.getElementById('final_de_semana').value = mural.final_de_semana || '';
+            document.getElementById('carga_horaria').value = mural.carga_horaria || '';
 
             // Set EasyMDE values
             requisitosMDE.value(mural.requisitos || '');
 
-            document.getElementById('data_inscricao').value = formatDateForInput(mural.data_inscricao);
+            document.getElementById('horario').value = mural.horario || '';
             document.getElementById('data_selecao').value = formatDateForInput(mural.data_selecao);
+            document.getElementById('data_inscricao').value = formatDateForInput(mural.data_inscricao);
             document.getElementById('horario_selecao').value = mural.horario_selecao || '';
             document.getElementById('local_selecao').value = mural.local_selecao || '';
             document.getElementById('forma_selecao').value = mural.forma_selecao || '';
+            document.getElementById('contato').value = mural.contato || '';            
+            document.getElementById('periodo').value = mural.periodo || '';
             document.getElementById('local_inscricao').value = mural.local_inscricao;
-            document.getElementById('contato').value = mural.contato || '';
             document.getElementById('email').value = mural.email || '';
-            document.getElementById('datafax').value = formatDateForInput(mural.datafax || '');
-            document.getElementById('outras').value = mural.outras || '';
 
             // Set EasyMDE value for outras
             outrasMDE.value(mural.outras || '');
@@ -100,12 +90,9 @@ $(document).ready(async function () {
         }
     };
 
-    // Get the ID from the URL query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const editId = urlParams.get('id');
-
-    if (editId) {
-        await editMural(editId);
+    // Get the ID from the URL query parameter (already extracted above)
+    if (id) {
+        await editMural(id);
     } else {
         alert('ID não fornecido');
         window.location.href = 'mural.html';
@@ -117,26 +104,22 @@ $(document).ready(async function () {
         const mural = {
             instituicao_id: document.getElementById('instituicao_id').value || null,
             instituicao: document.getElementById('instituicao_id').selectedOptions[0].text,
-            periodo: document.getElementById('periodo').value,
-            vagas: document.getElementById('vagas').value,
             convenio: document.getElementById('convenio').value,
-            carga_horaria: document.getElementById('carga_horaria').value || null,
-            final_de_semana: document.getElementById('final_de_semana').value || null,
-            horario: document.getElementById('horario').value || null,
+            vagas: document.getElementById('vagas').value,
             beneficios: document.getElementById('beneficios').value || null,
+            final_de_semana: document.getElementById('final_de_semana').value || null,
+            carga_horaria: document.getElementById('carga_horaria').value || null,
             requisitos: requisitosMDE.value() || null,
-
-            data_inscricao: document.getElementById('data_inscricao').value || null,
+            horario: document.getElementById('horario').value || null,
             data_selecao: document.getElementById('data_selecao').value || null,
+            data_inscricao: document.getElementById('data_inscricao').value || null,
             horario_selecao: document.getElementById('horario_selecao').value || null,
             local_selecao: document.getElementById('local_selecao').value || null,
             forma_selecao: document.getElementById('forma_selecao').value || null,
-            local_inscricao: document.getElementById('local_inscricao').value,
             contato: document.getElementById('contato').value || null,
+            periodo: document.getElementById('periodo').value,
+            local_inscricao: document.getElementById('local_inscricao').value,
             email: document.getElementById('email').value || null,
-            professor_id: document.getElementById('professor_id').value || null,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
-            datafax: document.getElementById('datafax').value || null,
             outras: outrasMDE.value() || null
         };
 

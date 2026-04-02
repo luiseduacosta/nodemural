@@ -61,21 +61,23 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = mural.id;
         document.getElementById('view-periodo').textContent = mural.periodo || 'N/A';
         document.getElementById('view-instituicao').textContent = mural.instituicao;
-        // Se não estiver logado, não pode ver o link do estágio
-        document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-instituicao.html?id=${mural.instituicao_id}`;
+        if (mural.instituicao_id) {
+            // Se não estiver logado, não pode ver o link do estágio
+            document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-instituicao.html?id=${mural.instituicao_id}`;
+        }
         document.getElementById('view-vagas').textContent = mural.vagas;
         document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
-        document.getElementById('view-cargaHoraria').textContent = mural.cargaHoraria || 'N/A';
+        document.getElementById('view-carga_horaria').textContent = mural.cargaHoraria || 'N/A';
         document.getElementById('view-final_de_semana').textContent = mural.final_de_semana === 'S' ? 'Sim' : (mural.final_de_semana === 'N' ? 'Não' : 'N/A');
-        document.getElementById('view-horario').textContent = formatHorario(mural.horario);
+        document.getElementById('view-horario').textContent = formatHorario(mural.horario) || 'N/A';
         document.getElementById('view-beneficios').textContent = mural.beneficios || 'N/A';
         document.getElementById('view-requisitos').innerHTML = mural.requisitos ? marked.parse(mural.requisitos) : 'N/A';
-        document.getElementById('view-dataInscricao').textContent = formatDate(mural.dataInscricao);
-        document.getElementById('view-dataSelecao').textContent = formatDate(mural.dataSelecao);
-        document.getElementById('view-horarioSelecao').textContent = mural.horarioSelecao || 'N/A';
-        document.getElementById('view-localSelecao').textContent = mural.localSelecao || 'N/A';
-        document.getElementById('view-formaSelecao').textContent = formatFormaSelecao(mural.formaSelecao);
-        document.getElementById('view-localInscricao').textContent = formatLocalInscricao(mural.localInscricao);
+        document.getElementById('view-data_inscricao').textContent = formatDate(mural.data_inscricao);
+        document.getElementById('view-data_selecao').textContent = formatDate(mural.data_selecao);
+        document.getElementById('view-horario_selecao').textContent = mural.horario_selecao || 'N/A';
+        document.getElementById('view-local_selecao').textContent = mural.local_selecao || 'N/A';
+        document.getElementById('view-forma_selecao').textContent = formatFormaSelecao(mural.forma_selecao);
+        document.getElementById('view-local_inscricao').textContent = formatLocalInscricao(mural.local_inscricao);
         document.getElementById('view-contato').textContent = mural.contato || 'N/A';
         document.getElementById('view-email').textContent = mural.email || 'N/A';
         document.getElementById('view-outras').innerHTML = mural.outras ? marked.parse(mural.outras) : 'N/A';
@@ -95,7 +97,7 @@ $(document).ready(async function () {
         }
 
         // Hide button if today is after dataInscricao
-        const dataInscricaoText = document.getElementById('view-dataInscricao').textContent;
+        const dataInscricaoText = document.getElementById('view-data_inscricao').textContent;
         const dataInscricao = new Date(dataInscricaoText.split('/').reverse().join('-')); // Convert DD/MM/YYYY to YYYY-MM-DD
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Reset time to compare dates only

@@ -47,22 +47,6 @@ $(document).ready(async function () {
         console.error('Error loading instituições:', error);
     }
 
-    // Load turmas for the dropdown
-    try {
-        const response = await authenticatedFetch('/turmas');
-        const turmas = await response.json();
-        const select = document.getElementById('turmaestagio_id');
-
-        turmas.forEach(turma => {
-            const option = document.createElement('option');
-            option.value = turma.id;
-            option.textContent = turma.turma;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading turmas:', error);
-    }
-
     // Load default mural_periodo_atual from the configuration table and put de value in the periodo input. It has only one row.
     try {
         const response = await authenticatedFetch('/configuracoes');
@@ -80,26 +64,22 @@ $(document).ready(async function () {
         const mural = {
             instituicao_id: document.getElementById('instituicao_id').value || null,
             instituicao: document.getElementById('instituicao_id').selectedOptions[0].text,
-            periodo: document.getElementById('periodo').value,
-            vagas: document.getElementById('vagas').value,
             convenio: document.getElementById('convenio').value,
-            carga_horaria: document.getElementById('carga_horaria').value || null,
-            final_de_semana: document.getElementById('final_de_semana').value || null,
-            horario: document.getElementById('horario').value || null,
+            vagas: document.getElementById('vagas').value,
             beneficios: document.getElementById('beneficios').value || null,
+            final_de_semana: document.getElementById('final_de_semana').value || null,
+            carga_horaria: document.getElementById('carga_horaria').value || null,
             requisitos: requisitosMDE.value() || null,
-
-            data_inscricao: document.getElementById('data_inscricao').value || null,
+            horario: document.getElementById('horario').value || null,
             data_selecao: document.getElementById('data_selecao').value || null,
+            data_inscricao: document.getElementById('data_inscricao').value || null,
             horario_selecao: document.getElementById('horario_selecao').value || null,
             local_selecao: document.getElementById('local_selecao').value || null,
             forma_selecao: document.getElementById('forma_selecao').value || null,
-            local_inscricao: document.getElementById('local_inscricao').value || null,
             contato: document.getElementById('contato').value || null,
+            periodo: document.getElementById('periodo').value,
+            local_inscricao: document.getElementById('local_inscricao').value || null,
             email: document.getElementById('email').value || null,
-            professor_id: document.getElementById('professor_id').value || null,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
-            datafax: document.getElementById('datafax').value || null,
             outras: outrasMDE.value() || null
         };
 

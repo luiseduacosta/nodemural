@@ -112,7 +112,7 @@ async function setupDatabase() {
             `CREATE TABLE IF NOT EXISTS mural_estagios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao_id INT NOT NULL,
-                instituicao VARCHAR(255) NOT NULL,
+                instituicao VARCHAR(255) NOT NULL COMMENT 'value = instituicoes.instituicao',
                 convenio char(1) NOT NULL DEFAULT '0',
                 vagas INT DEFAULT NULL,
                 beneficios TEXT DEFAULT NULL,
@@ -123,11 +123,10 @@ async function setupDatabase() {
                 data_selecao DATE,
                 horario_selecao TIME,
                 data_inscricao DATE,
-                horario_inscricao TIME,
                 local_selecao VARCHAR(255),
                 forma_selecao char(1) NOT NULL DEFAULT '0',
                 contato TEXT,
-                periodo VARCHAR(6) NOT NULL,
+                periodo VARCHAR(6) NOT NULL COMMENT 'value = configuracoes.mural_estagio_periodo',
                 local_inscricao char(1) COMMENT '0=Instituição, 1=Coordenação de Estágio',
                 email VARCHAR(255),
                 outras TEXT
