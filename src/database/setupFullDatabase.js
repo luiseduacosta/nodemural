@@ -28,7 +28,6 @@ async function setupDatabase() {
                 nome VARCHAR(255) NOT NULL,
                 nomesocial VARCHAR(255),
                 ingresso VARCHAR(6),
-                turno VARCHAR(20) NULL COMMENT 'DEPRECATED: Turno of the internship',
                 turno_id INT NULL,
                 registro VARCHAR(9) UNIQUE,
                 telefone VARCHAR(15),
@@ -59,7 +58,7 @@ async function setupDatabase() {
                 curriculolattes VARCHAR(16) COMMENT 'Lattes ID = 16 characters of numbers',
                 atualizacaolattes DATE,
                 dataingresso DATE,
-                departamento VARCHAR(100),
+                departamento VARCHAR(30),
                 dataegresso DATE,
                 motivoegresso TEXT,
                 observacoes TEXT
@@ -90,14 +89,14 @@ async function setupDatabase() {
                 natureza VARCHAR(50) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 url VARCHAR(255) NOT NULL,
-                endereco VARCHAR(255),
-                bairro VARCHAR(100),
-                municipio VARCHAR(100),
+                endereco VARCHAR(50),
+                bairro VARCHAR(30),
+                municipio VARCHAR(30),
                 cep VARCHAR(9),
                 telefone VARCHAR(20),
                 beneficios TEXT DEFAULT NULL,
                 fim_de_semana BOOLEAN DEFAULT FALSE,
-                convenio VARCHAR(255),
+                convenio VARCHAR(15),
                 expira DATE,
                 seguro VARCHAR(255),
                 observacoes TEXT
@@ -151,26 +150,26 @@ async function setupDatabase() {
                 aluno_id INT NOT NULL,
                 registro VARCHAR(9) NOT NULL,
                 nivel CHAR(1) NOT NULL,
+                periodo VARCHAR(6) NOT NULL,
                 tc CHAR(1) DEFAULT NULL,
                 tc_solicitacao DATE DEFAULT NULL,
-                professor_id INT NULL,
-                supervisor_id INT NULL,
                 instituicao_id INT NOT NULL,
-                periodo VARCHAR(6) NOT NULL,
+                supervisor_id INT NULL,
+                professor_id INT NULL,
                 nota DECIMAL(10,2) DEFAULT NULL,
                 ch smallint DEFAULT NULL,
                 ajuste2020 BOOLEAN DEFAULT FALSE,
                 complemento_id INT NULL,
-                benetransporte tinyint DEFAULT NULL,
-                benealimentacao tinyint DEFAULT NULL,
-                benebolsa VARCHAR(5) DEFAULT NULL,
+                benetransporte tinyint DEFAULT NULL COMMENT '0=Não, 1=Sim',
+                benealimentacao tinyint DEFAULT NULL COMMENT '0=Não, 1=Sim',
+                benebolsa VARCHAR(5) DEFAULT NULL COMMENT 'Velue in money of Brasil R$',
                 observacoes TEXT
             )`,
 
             // 10. turma_estagios (groups of students for each professor by period)
             `CREATE TABLE IF NOT EXISTS turma_estagios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                area VARCHAR(70) NOT NULL
+                area VARCHAR(30) NOT NULL
             )`,
 
             // 11. folhadeatividades (internship activity sheet fill by the intern)
@@ -181,7 +180,7 @@ async function setupDatabase() {
                 inicio TIME,
                 final TIME,
                 horario TIME,
-                atividade varchar(100) NOT NULL,
+                atividade varchar(50) NOT NULL,
                 periodo VARCHAR(6) NOT NULL
             )`,
 
@@ -193,7 +192,7 @@ async function setupDatabase() {
                 created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 is_active BOOLEAN DEFAULT TRUE,
-                category VARCHAR(100),
+                category VARCHAR(30),
                 target_user_type VARCHAR(50)
             )`,
 

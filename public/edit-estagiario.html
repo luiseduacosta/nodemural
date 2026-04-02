@@ -82,6 +82,49 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="turno_id" class="form-label">Turno</label>
+                            <select class="form-select" id="turno_id" name="turno_id" readonly>
+                                <option value="">Selecione um turno</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="tc_solicitacao" class="form-label">Data de solicitação do TC</label>
+                            <input type="date" class="form-control" id="tc_solicitacao" name="tc_solicitacao">
+                            <div id="menssagem_tc_solicitacao"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="tc" class="form-label">Termo de Compromisso Entregue</label>
+                            <input type="checkbox" class="form-check-input" id="tc" name="tc">
+                            <div id="menssagem_tc"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="complemento_id" class="form-label">Complemento</label>
+                            <select class="form-select" id="complemento_id" name="complemento_id">
+                                <option value="">Selecione uma modalidade de estágio</option>
+                            </select>
+                        </div>    
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="benetransporte" class="form-label">Benefício de transporte</label>
+                            <input type="checkbox" class="form-check-input" id="benetransporte" name="benetransporte">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="benealimentacao" class="form-label">Benefício de alimentação</label>
+                            <input type="checkbox" class="form-check-input" id="benealimentacao" name="benealimentacao">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="benebolsa" class="form-label">Benefício de bolsa (valor em R$)</label>
+                            <input type="text" class="form-control" id="benebolsa" name="benebolsa" placeholder="ex: 1200">
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="observacoes" class="form-label">Observações</label>
                         <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>

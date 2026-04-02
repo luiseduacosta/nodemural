@@ -10,20 +10,41 @@ const Estagiario = {
     },
 
     async findAllEstagiario(periodo = null, aluno_id = null) {  
-        let query = `SELECT e.id as id, e.periodo as periodo, e.nivel as nivel,
-                    a.nome as aluno_nome, a.registro as aluno_registro, COALESCE(t.turno, a.turno) as aluno_turno,
-                    d.nome as professor_nome,
-                    s.nome as supervisor_nome, s.cress as supervisor_cress,
-                    i.instituicao as instituicao_nome
+        let query = `SELECT e.id as id, 
+                    a.id as aluno_id, 
+                    a.nome as aluno_nome, 
+                    a.registro as aluno_registro, 
+                    COALESCE(t.turno, a.turno) as aluno_turno, 
+                    e.nivel as nivel,
+                    e.periodo as periodo,
+                    e.tc as estagiario_tc, 
+                    e.tc_solicitacao as estagiario_tc_solicitacao, 
+                    i.id as instituicao_id, 
+                    i.instituicao as instituicao_nome, 
+                    s.id as supervisor_id, 
+                    s.nome as supervisor_nome,
+                    s.cress as supervisor_cress, 
+                    s.regiao as supervisor_regiao, 
+                    p.nome as professor_nome, 
+                    p.id as professor_id, 
+                    e.nota as estagiario_nota, 
+                    e.ch as estagiario_cargahoraria, 
+                    e.ajuste2020 as estagiario_ajuste2020, 
+                    e.benetransporte as estagiario_benetransporte, 
+                    e.benealimentacao as estagiario_benealimentacao, 
+                    e.benebolsa as estagiario_benebolsa, 
+                    e.observacoes as estagiario_observacoes,
+                    c.periodo_especial as complemento_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
                     LEFT JOIN turnos t ON a.turno_id = t.id
-                    LEFT JOIN professores d ON e.professor_id = d.id
+                    LEFT JOIN professores p ON e.professor_id = p.id
                     LEFT JOIN supervisores s ON e.supervisor_id = s.id
-                    LEFT JOIN instituicoes i ON e.instituicao_id = i.id`;
+                    LEFT JOIN instituicoes i ON e.instituicao_id = i.id
+                    LEFT JOIN complementos c ON e.complemento_id = c.id`;
 
-        let params = [];
-        let conditions = [];
+        const params = [];
+        const conditions = [];
 
         if (periodo) {
             conditions.push('e.periodo = ?');
@@ -47,38 +68,47 @@ const Estagiario = {
     async findByIdEstagiario(id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
-                      a.nome as aluno_nome, a.registro as aluno_registro, COALESCE(t.turno, a.turno) as aluno_turno,
-                      d.nome as professor_nome,
+                      e.benealimentacao as estagiario_benealimentacao,
+                      e.benetransporte as estagiario_benetransporte,
+                      e.benebolsa as estagiario_benebolsa,
+                      e.observacoes as estagiario_observacoes,
+                      a.nome as aluno_nome, 
+                      a.registro as aluno_registro, 
+                      COALESCE(t.turno, a.turno) as aluno_turno,
+                      p.nome as professor_nome,
                       s.nome as supervisor_nome,
                       s.cress as supervisor_cress,
-                      i.instituicao as instituicao_nome
+                      s.regiao as supervisor_regiao,
+                      i.instituicao as instituicao_nome,
+                      c.periodo_especial as complemento_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
                       LEFT JOIN turnos t ON a.turno_id = t.id
-                      LEFT JOIN professores d ON e.professor_id = d.id
+                      LEFT JOIN professores p ON e.professor_id = p.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
-                      WHERE e.id = ?`;
-        const rows = await pool.query(query, [id]);
+                      LEFT JOIN complementos c ON e.complemento_id = c.id`;
+        const rows = await pool.query(query + ' WHERE e.id = ?', [id]);
+        if (rows.length === 0) return null;
         return rows[0];
     },
 
-    async createEstagiario(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes) {
+    async createEstagiario(aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, tc = null, tc_solicitacao = null, complemento_id = null, benetransporte = null, benealimentacao = null, benebolsa = null) {
         const result = await pool.query(
             `INSERT INTO estagiarios (aluno_id, registro, professor_id, supervisor_id, instituicao_id,
-             periodo, nivel, ajuste2020, observacoes)
-             VALUES (?, (SELECT registro FROM alunos WHERE id = ?), ?, ?, ?, ?, ?, ?, ?)`,
-            [aluno_id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes]
+             periodo, nivel, ajuste2020, tc, tc_solicitacao, complemento_id, benetransporte, benealimentacao, benebolsa, observacoes)
+             VALUES (?, (SELECT registro FROM alunos WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [aluno_id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, tc, tc_solicitacao, complemento_id, benetransporte, benealimentacao, benebolsa, observacoes]
         );
-        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes };
+        return { id: Number(result.insertId), aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, tc, tc_solicitacao, complemento_id, benetransporte, benealimentacao, benebolsa, observacoes };
     },
 
-    async updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes) {
+    async updateEstagiario(id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, tc = null, tc_solicitacao = null, complemento_id = null, benetransporte = null, benealimentacao = null, benebolsa = null) {
         const result = await pool.query(
-            `UPDATE estagiarios SET aluno_id = ?, professor_id = ?, supervisor_id = ?,
-             instituicao_id = ?, periodo = ?, nivel = ?, ajuste2020 = ?,
-             observacoes = ? WHERE id = ?`,
-            [aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, observacoes, id] 
+            `UPDATE estagiarios SET aluno_id = ?, registro = (SELECT registro FROM alunos WHERE id = ?), professor_id = ?, supervisor_id = ?,
+             instituicao_id = ?, periodo = ?, nivel = ?, ajuste2020 = ?, tc = ?, tc_solicitacao = ?, complemento_id = ?,
+             benetransporte = ?, benealimentacao = ?, benebolsa = ?, observacoes = ? WHERE id = ?`,
+            [aluno_id, aluno_id, professor_id, supervisor_id, instituicao_id, periodo, nivel, ajuste2020, tc, tc_solicitacao, complemento_id, benetransporte, benealimentacao, benebolsa, observacoes, id] 
         );
         return result.affectedRows > 0;
     },
@@ -115,18 +145,23 @@ const Estagiario = {
     async findByAlunoIdEstagiario(aluno_id) {
         const query = `SELECT e.*,
                       e.ajuste2020 as estagiario_ajuste2020,
+                      e.benealimentacao as estagiario_benealimentacao,
+                      e.benetransporte as estagiario_benetransporte,
+                      e.benebolsa as estagiario_benebolsa,
+                      e.observacoes as estagiario_observacoes,
                       a.nome as aluno_nome, 
                       a.registro as aluno_registro, 
                       COALESCE(t.turno, a.turno) as aluno_turno,
-                      i.instituicao as instituicao_nome,
-                      d.nome as professor_nome,
-                      s.nome as supervisor_nome
+                      p.nome as professor_nome,
+                      s.nome as supervisor_nome,
+                      c.periodo_especial as complemento_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
                       LEFT JOIN turnos t ON a.turno_id = t.id
                       LEFT JOIN instituicoes i ON e.instituicao_id = i.id
-                      LEFT JOIN professores d ON e.professor_id = d.id
+                      LEFT JOIN professores p ON e.professor_id = p.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
+                      LEFT JOIN complementos c ON e.complemento_id = c.id
                       WHERE e.aluno_id = ?
                       ORDER BY e.periodo DESC, e.nivel ASC`;
         const rows = await pool.query(query, [aluno_id]);
@@ -210,15 +245,15 @@ const Estagiario = {
                 'SELECT MAX(nivel) as max_nivel FROM estagiarios WHERE aluno_id = ? AND nivel < 9',
                 [aluno_id]
             );
-            const maxNivel = nivelRows[0].max_nivel;
+            const maxNivel = Number(nivelRows[0]?.max_nivel);
 
             let nextNivel = 1;
-            if (nivel !== null) {
-                const maxNivelNum = Number(nivel);
+            const baseNivel = !Number.isNaN(maxNivel) && maxNivel > 0 ? maxNivel : Number(nivel);
+            if (!Number.isNaN(baseNivel)) {
                 const maxAllowed = ajuste2020 == 0 ? 4 : 3;
 
-                if (maxNivelNum < maxAllowed) {
-                    nextNivel = maxNivelNum + 1;
+                if (baseNivel < maxAllowed) {
+                    nextNivel = baseNivel + 1;
                 } else {
                     nextNivel = 9;
                 }

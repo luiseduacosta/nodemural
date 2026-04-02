@@ -58,7 +58,7 @@ export const getRespostaByEstagiarioAndQuestionario = async (req, res) => {
         const { estagiario_id, questionario_id } = req.params;
         const resposta = await Resposta.findByEstagiarioAndQuestionario(estagiario_id, questionario_id);
         if (!resposta) {
-            return res.status(404).json({ error: 'Resposta not found' });
+            return res.status(204).end();
         }
         res.status(200).json(resposta);
     } catch (error) {

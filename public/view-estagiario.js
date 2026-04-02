@@ -51,11 +51,14 @@ $(document).ready(async function () {
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';
         document.getElementById('view-supervisor').textContent = estagiario.supervisor_nome || '-';
         document.getElementById('view-periodo').textContent = estagiario.periodo || '-';
-
-        // Turno display
-        const turnoMap = { 'D': 'Diurno', 'N': 'Noturno', 'A': 'Diurno/Noturno' };
-        document.getElementById('view-turno').textContent = turnoMap[estagiario.aluno_turno] || estagiario.aluno_turno || '-';
         document.getElementById('view-ajuste2020').textContent = estagiario.ajuste2020 !== null ? estagiario.ajuste2020 : '-';
+        document.getElementById('view-turno').textContent = estagiario.aluno_turno || '-';
+        document.getElementById('view-complemento').textContent = estagiario.complemento_nome || '-';
+        document.getElementById('view-tc').textContent = estagiario.tc !== null ? (estagiario.tc ? 'Sim' : 'Não') : '-';
+        document.getElementById('view-tc-solicitado').textContent = estagiario.tc_solicitacao ? new Date(estagiario.tc_solicitacao).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '-';
+        document.getElementById('view-benetransporte').textContent = estagiario.benetransporte !== null ? (estagiario.benetransporte ? 'Sim' : 'Não') : '-';
+        document.getElementById('view-benealimentacao').textContent = estagiario.benealimentacao !== null ? (estagiario.benealimentacao ? 'Sim' : 'Não') : '-';
+        document.getElementById('view-benebolsa').textContent = estagiario.benebolsa !== null ? `R$ ${estagiario.benebolsa}` : '-';
 
         document.getElementById('view-observacoes').textContent = estagiario.observacoes || '-';
 
@@ -136,16 +139,21 @@ $(document).ready(async function () {
             const respostaResponse = await authenticatedFetch(`/respostas/estagiario/${id}/questionario/${questionario_id}`);
 
             if (respostaResponse.ok) {
-                const resposta = await respostaResponse.json();
-                existingResposta = resposta;
-                existingResponses = typeof resposta.response === 'string'
-                    ? JSON.parse(resposta.response)
-                    : resposta.response;
+                if (respostaResponse.status === 204) {
+                    $('#statusBadge').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação');
+                    $('#respostasContainer').empty();
+                } else {
+                    const resposta = await respostaResponse.json();
+                    existingResposta = resposta;
+                    existingResponses = typeof resposta.response === 'string'
+                        ? JSON.parse(resposta.response)
+                        : resposta.response;
 
-                $('#statusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Já avaliado');
-                loadQuestions();
+                    $('#statusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Já avaliado');
+                    loadQuestions();
+                }
             } else if (respostaResponse.status === 404) {
-                // Not a real error, just no evaluation yet
+                // Fallback for previous behavior
                 $('#statusBadge').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação');
                 $('#respostasContainer').empty();
             } else {

@@ -22,8 +22,10 @@ import areaRoutes from "./routers/areaRoutes.js";
 import configuracaoRoutes from "./routers/configuracaoRoutes.js";
 import respostaRoutes from "./routers/respostaRoutes.js";
 import turnoRoutes from "./routers/turnoRoutes.js";
+import complementoRoutes from "./routers/complementoRoutes.js";
 
 import * as estagiarioController from "./controllers/estagiarioController.js";
+import * as complementoController from "./controllers/complementoController.js";
 import * as inscricaoController from "./controllers/inscricaoController.js";
 import * as alunoController from "./controllers/alunoController.js";
 import * as turnoController from "./controllers/turnoController.js";
@@ -59,6 +61,7 @@ app.use("/configuracoes", configuracaoRoutes);
 app.use("/respostas", respostaRoutes);
 app.use("/areas", areaRoutes);
 app.use("/turnos", turnoRoutes);
+app.use("/complementos", complementoRoutes);
 
 // --- INDEX ENDPOINTS ---
 app.get("/", (req, res) => {
