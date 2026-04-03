@@ -19,7 +19,6 @@ const Aluno = {
         return { id: Number(result.insertId), nome, nomesocial, ingresso, turno_id };
     },
 
-
     // Find aluno by registro. There is only one aluno per registro
     async findByRegistro(registro) {
         const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
@@ -27,10 +26,12 @@ const Aluno = {
     },
 
     async findAll(req) {
-        let query = 'SELECT id, nome, nomesocial, registro, email, ingresso, turno, turno_id, telefone, celular, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes FROM alunos';
+        let query = `SELECT a.id, a.nome, a.nomesocial, a.registro, a.email, a.ingresso, t.turno AS turno, a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes
+            FROM alunos a
+            LEFT JOIN turnos t ON a.turno_id = t.id`;
         let params = [];
         if (req && req.query && req.query.search) {
-            query += " WHERE nome LIKE ? OR nomesocial LIKE ? OR registro LIKE ? OR email LIKE ?";
+            query += ' WHERE a.nome LIKE ? OR a.nomesocial LIKE ? OR a.registro LIKE ? OR a.email LIKE ?';
             const searchTerm = `%${req.query.search}%`;
             params = [searchTerm, searchTerm, searchTerm, searchTerm];
         }
@@ -38,7 +39,7 @@ const Aluno = {
         if (req && req.query && req.query.sort) {
             query += ` ORDER BY ${req.query.sort}`;
         } else {
-            query += ' ORDER BY nome ASC';
+            query += ' ORDER BY a.nome ASC';
         }
 
         const rows = await pool.query(query, params);
@@ -60,22 +61,23 @@ const Aluno = {
             `SELECT 
                 e.id as id, 
                 e.aluno_id as aluno_id, 
+                a.nome as aluno_nome,
                 e.ajuste2020 as ajuste2020,
                 e.nivel as nivel, 
                 e.periodo as periodo, 
-                COALESCE(t.turno, a.turno) as turno,
+                t.turno AS turno,
                 e.instituicao_id as instituicao_id,
+                i.instituicao as instituicao_nome,
                 e.professor_id as professor_id,
+                p.nome as professor_nome,
                 e.supervisor_id as supervisor_id,
-                d.nome as professor_nome, 
                 s.nome as supervisor_nome, 
-                i.instituicao as instituicao_nome
-            FROM estagiarios as e 
-            JOIN alunos as a ON e.aluno_id = a.id 
-            LEFT JOIN turnos as t ON a.turno_id = t.id
-            LEFT JOIN professores as d ON e.professor_id = d.id
-            LEFT JOIN supervisores as s ON e.supervisor_id = s.id
-            LEFT JOIN instituicoes as i ON e.instituicao_id = i.id
+                FROM estagiarios as e 
+                JOIN alunos as a ON e.aluno_id = a.id 
+                LEFT JOIN turnos as t ON a.turno_id = t.id
+                LEFT JOIN professores as p ON e.professor_id = p.id
+                LEFT JOIN supervisores as s ON e.supervisor_id = s.id
+                LEFT JOIN instituicoes as i ON e.instituicao_id = i.id
             WHERE e.aluno_id = ?
             ORDER BY e.periodo ASC`,
             [id]

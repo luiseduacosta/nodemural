@@ -14,7 +14,11 @@ const Estagiario = {
                     a.id as aluno_id, 
                     a.nome as aluno_nome, 
                     a.registro as aluno_registro, 
-                    COALESCE(t.turno, a.turno) as aluno_turno, 
+                    t.turno AS aluno_turno, 
+                    e.ajuste2020 as estagiario_ajuste2020,
+                    e.benealimentacao as estagiario_benealimentacao,
+                    e.benetransporte as estagiario_benetransporte,
+                    e.benebolsa as estagiario_benebolsa,
                     e.nivel as nivel,
                     e.periodo as periodo,
                     e.tc as estagiario_tc, 
@@ -29,11 +33,6 @@ const Estagiario = {
                     p.id as professor_id, 
                     e.nota as estagiario_nota, 
                     e.ch as estagiario_cargahoraria, 
-                    e.ajuste2020 as estagiario_ajuste2020, 
-                    e.benetransporte as estagiario_benetransporte, 
-                    e.benealimentacao as estagiario_benealimentacao, 
-                    e.benebolsa as estagiario_benebolsa, 
-                    e.observacoes as estagiario_observacoes,
                     c.periodo_especial as complemento_nome
                     FROM estagiarios e
                     LEFT JOIN alunos a ON e.aluno_id = a.id
@@ -67,19 +66,14 @@ const Estagiario = {
 
     async findByIdEstagiario(id) {
         const query = `SELECT e.*,
-                      e.ajuste2020 as estagiario_ajuste2020,
-                      e.benealimentacao as estagiario_benealimentacao,
-                      e.benetransporte as estagiario_benetransporte,
-                      e.benebolsa as estagiario_benebolsa,
-                      e.observacoes as estagiario_observacoes,
                       a.nome as aluno_nome, 
                       a.registro as aluno_registro, 
-                      COALESCE(t.turno, a.turno) as aluno_turno,
+                      t.turno AS aluno_turno,
                       p.nome as professor_nome,
-                      s.nome as supervisor_nome,
-                      s.cress as supervisor_cress,
-                      s.regiao as supervisor_regiao,
                       i.instituicao as instituicao_nome,
+                      s.nome as supervisor_nome,
+                      s.cress as supervisor_cress, 
+                      s.regiao as supervisor_regiao,
                       c.periodo_especial as complemento_nome
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
@@ -148,11 +142,11 @@ const Estagiario = {
                       e.benealimentacao as estagiario_benealimentacao,
                       e.benetransporte as estagiario_benetransporte,
                       e.benebolsa as estagiario_benebolsa,
-                      e.observacoes as estagiario_observacoes,
                       a.nome as aluno_nome, 
                       a.registro as aluno_registro, 
-                      COALESCE(t.turno, a.turno) as aluno_turno,
+                      t.turno AS aluno_turno,
                       p.nome as professor_nome,
+                      i.instituicao as instituicao_nome,
                       s.nome as supervisor_nome,
                       c.periodo_especial as complemento_nome
                       FROM estagiarios e
@@ -189,15 +183,19 @@ const Estagiario = {
                       a.registro as aluno_registro,
                       a.nome as aluno_nome,
                       e.supervisor_id as estagiario_supervisor_id,
-                      i.instituicao as estagiario_instituicao,
-                      s.nome as estagiario_supervisor_nome,
+                      s.id as supervisor_id,
+                      s.nome as supervisor_nome,
+                      i.id as instituicao_id,
+                      i.instituicao as instituicao_nome,
                       e.professor_id as estagiario_professor_id,
+                      p.nome as professor_nome,
+                      p.id as professor_id,
                       e.nivel as estagiario_nivel,
                       e.periodo as estagiario_periodo
                       FROM estagiarios e
                       LEFT JOIN alunos a ON e.aluno_id = a.id
-                      LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       LEFT JOIN supervisores s ON e.supervisor_id = s.id
+                      LEFT JOIN instituicoes i ON e.instituicao_id = i.id
                       WHERE e.professor_id = ?
                       ORDER BY e.periodo DESC, a.nome ASC`;
         const rows = await pool.query(query, [professor_id]);
@@ -228,8 +226,8 @@ const Estagiario = {
             return {
                 next_nivel: 1,
                 ajuste2020: 1,
-                professor_id: null,
                 supervisor_id: null,
+                professor_id: null,
                 instituicao_id: null,
                 periodo: null,
             };

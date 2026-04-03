@@ -160,3 +160,110 @@ window.deleteInscricao = async (id) => {
         window.location.href = `view-mural.html?id=${window.currentMuralId}`;
     }
 };
+
+window.imprime = async () => {
+    try {
+        const muralId = window.currentMuralId;
+        if (!muralId) {
+            throw new Error('Mural inválido');
+        }
+
+        const jsPDF = window && window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+        if (!jsPDF) {
+            throw new Error('jsPDF não carregado');
+        }
+
+        const response = await authenticatedFetch(`/mural/${muralId}/inscricoes`);
+        if (!response.ok) {
+            throw new Error('Falha ao carregar inscrições');
+        }
+        const inscricoes = await response.json();
+
+        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const marginX = 14;
+        const marginTop = 16;
+        const marginBottom = 14;
+
+        const muralPeriodoEl = document.getElementById('view-periodo');
+        const muralInstituicaoEl = document.getElementById('view-instituicao');
+        const muralPeriodo = muralPeriodoEl ? muralPeriodoEl.textContent : '';
+        const muralInstituicao = muralInstituicaoEl ? muralInstituicaoEl.textContent : '';
+
+        doc.setFontSize(14);
+        doc.text('Inscrições', marginX, marginTop);
+
+        doc.setFontSize(10);
+        doc.text(`Mural: ${muralId}`, marginX, marginTop + 6);
+        if (muralPeriodo) doc.text(`Período: ${muralPeriodo}`, marginX, marginTop + 11);
+        if (muralInstituicao) {
+            const inst = doc.splitTextToSize(`Instituição: ${muralInstituicao}`, pageWidth - marginX * 2);
+            doc.text(inst, marginX, marginTop + 16);
+        }
+
+        let y = marginTop + 26;
+        const colRegistroX = marginX;
+        const colAlunoX = marginX + 28;
+        const colDataX = pageWidth - marginX - 30;
+
+        const writeHeader = () => {
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Registro', colRegistroX, y);
+            doc.text('Aluno', colAlunoX, y);
+            doc.text('Data', colDataX, y);
+            doc.setFont('helvetica', 'normal');
+            y += 6;
+            doc.setDrawColor(180);
+            doc.line(marginX, y - 4, pageWidth - marginX, y - 4);
+        };
+
+        writeHeader();
+
+        const items = Array.isArray(inscricoes) ? inscricoes.slice() : [];
+        items.sort((a, b) => String((a && a.aluno_nome) || '').localeCompare(String((b && b.aluno_nome) || ''), 'pt-BR'));
+
+        for (const item of items) {
+            const registro = String((item && item.registro) || '');
+            const alunoNome = String((item && item.aluno_nome) || '');
+            const data = item && item.data_inscricao ? new Date(item.data_inscricao).toLocaleDateString('pt-BR') : '';
+
+            const alunoLines = doc.splitTextToSize(alunoNome, colDataX - colAlunoX - 2);
+            const lineCount = Math.max(1, alunoLines.length);
+            const rowHeight = lineCount * 5;
+
+            if (y + rowHeight > pageHeight - marginBottom) {
+                doc.addPage();
+                y = marginTop;
+                writeHeader();
+            }
+
+            doc.setFontSize(9);
+            doc.text(registro, colRegistroX, y);
+            doc.text(alunoLines, colAlunoX, y);
+            doc.text(data, colDataX, y);
+            y += rowHeight;
+        }
+
+        const now = new Date();
+        const ymd = now.toISOString().slice(0, 10);
+
+        // Put the data at the bottom of the page aligned left
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Rio de Janeiro, ${now.toLocaleDateString('pt-BR')}`, pageWidth - marginX, y + 10, { align: 'right' });
+
+        // Assinatura at the bottom of the page
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(pageWidth / 2, y + 20, 'Coordenação do Estágio', { align: 'center' });
+        doc.text(pageWidth / 2, y + 25, 'Escola de Serviço Social', { align: 'center' });
+        doc.text(pageWidth / 2, y + 30, 'UFRJ', { align: 'center' });
+
+        doc.save(`inscricoes_mural_${muralId}_${ymd}.pdf`);
+    } catch (error) {
+        console.error('Erro ao imprimir inscrições:', error);
+        alert(`Erro ao imprimir inscrições: ${error.message}`);
+    }
+};

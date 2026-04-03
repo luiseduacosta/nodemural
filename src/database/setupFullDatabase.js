@@ -143,7 +143,13 @@ async function setupDatabase() {
                 periodo VARCHAR(6) NOT NULL
             )`,
 
-            // 9. estagiarios (students for each internship. Each student can have multiple internships)
+            // 9. complementos (special academic periods; estagiarios.complemento_id)
+            `CREATE TABLE IF NOT EXISTS complementos (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                periodo_especial VARCHAR(255) NOT NULL
+            )`,
+
+            // 10. estagiarios (students for each internship. Each student can have multiple internships)
             `CREATE TABLE IF NOT EXISTS estagiarios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 aluno_id INT NOT NULL,
@@ -165,13 +171,13 @@ async function setupDatabase() {
                 observacoes TEXT
             )`,
 
-            // 10. turma_estagios (groups of students for each professor by period)
+            // 11. turma_estagios (groups of students for each professor by period)
             `CREATE TABLE IF NOT EXISTS turma_estagios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 area VARCHAR(30) NOT NULL
             )`,
 
-            // 11. folhadeatividades (internship activity sheet fill by the intern)
+            // 12. folhadeatividades (internship activity sheet fill by the intern)
             `CREATE TABLE IF NOT EXISTS folhadeatividades (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 estagiario_id INT NOT NULL,
@@ -183,7 +189,7 @@ async function setupDatabase() {
                 periodo VARCHAR(6) NOT NULL
             )`,
 
-            // 12. questionarios (questionnaires to evaluate the interns by the supervisor)
+            // 13. questionarios (questionnaires to evaluate the interns by the supervisor)
             `CREATE TABLE IF NOT EXISTS questionarios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
@@ -195,7 +201,7 @@ async function setupDatabase() {
                 target_user_type VARCHAR(50)
             )`,
 
-            // 13. questoes (questions to evaluate the interns by the supervisor)
+            // 14. questoes (questions to evaluate the interns by the supervisor)
             `CREATE TABLE IF NOT EXISTS questoes (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 questionario_id INT,
@@ -207,7 +213,7 @@ async function setupDatabase() {
                 modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )`,
 
-            // 14. respostas (responses are the answers of the supervisor to the questions: what the supervisor evaluates about the intern)
+            // 15. respostas (responses are the answers of the supervisor to the questions: what the supervisor evaluates about the intern)
             `CREATE TABLE IF NOT EXISTS respostas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 questionario_id INT NOT NULL,
@@ -217,7 +223,7 @@ async function setupDatabase() {
                 modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )`,
 
-            // 15. visitas (visit to the institution to evaluate if can receive interns)
+            // 16. visitas (visit to the institution to evaluate if can receive interns)
             `CREATE TABLE IF NOT EXISTS visitas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao_id INT NOT NULL,
@@ -228,7 +234,7 @@ async function setupDatabase() {
                 descricao TEXT NOT NULL
             )`,
 
-            // 16. configuracoes (configuration)
+            // 17. configuracoes (configuration)
             `CREATE TABLE IF NOT EXISTS configuracoes (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 instituicao varchar(255) NOT NULL DEFAULT 'ESS/UFRJ',
@@ -242,14 +248,14 @@ async function setupDatabase() {
                 periodo_calendario_academico CHAR(6) NOT NULL
             )`,
 
-            // 17. inst_super (Relationship Many-to-Many between institutions and supervisors)
+            // 18. inst_super (Relationship Many-to-Many between institutions and supervisors)
             `CREATE TABLE IF NOT EXISTS inst_super (
                 supervisor_id INT NOT NULL,
                 instituicao_id INT NOT NULL,
                 PRIMARY KEY (supervisor_id, instituicao_id)
             )`,
 
-            // 18. Turno (turn of the internship)
+            // 19. Turno (turn of the internship)
             `CREATE TABLE IF NOT EXISTS turnos (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 turno VARCHAR(10) NOT NULL

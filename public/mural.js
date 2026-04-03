@@ -34,14 +34,14 @@ $(document).ready(async function () {
             { data: 'periodo' },
             { data: 'vagas' },
             {
-                data: 'dataInscricao', render: function (data) {
+                data: 'data_inscricao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
                     return date.toLocaleDateString('pt-BR');
                 }
             },
             {
-                data: 'dataSelecao', render: function (data) {
+                data: 'data_selecao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
                     return date.toLocaleDateString('pt-BR');
