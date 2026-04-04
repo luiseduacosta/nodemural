@@ -71,7 +71,7 @@ const Aluno = {
                 e.professor_id as professor_id,
                 p.nome as professor_nome,
                 e.supervisor_id as supervisor_id,
-                s.nome as supervisor_nome, 
+                s.nome as supervisor_nome 
                 FROM estagiarios as e 
                 JOIN alunos as a ON e.aluno_id = a.id 
                 LEFT JOIN turnos as t ON a.turno_id = t.id
@@ -81,7 +81,7 @@ const Aluno = {
             WHERE e.aluno_id = ?
             ORDER BY e.periodo ASC`,
             [id]
-        );
+         );
         return rows;
     },
 

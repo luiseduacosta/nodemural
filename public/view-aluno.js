@@ -3,21 +3,25 @@ import { getToken, authenticatedFetch, getCurrentUser, hasRole } from './auth-ut
 
 const user = getCurrentUser();
 
+/**
+ * Resolves the display label for an aluno's turno (shift/period).
+ * Fetches the list of turnos from the API and returns the label matching turno_id.
+ *
+ * @param {Object} aluno - The aluno object
+ * @param {string|number} [aluno.turno_id] - The ID of the turno to look up
+ * @returns {Promise<string>} The resolved turno label, or empty string if not found
+ */
 async function resolveTurnoLabel(aluno) {
     const turnoId = aluno?.turno_id;
-    if (turnoId === null || turnoId === undefined || String(turnoId).trim() === '' || String(turnoId).trim() === '0') {
-        return aluno?.turno || '';
-    }
+    if (!turnoId || String(turnoId).trim() === '0') return '';
     try {
         const response = await authenticatedFetch('/turnos');
-        if (!response.ok) {
-            return aluno?.turno || '';
-        }
+        if (!response.ok) return '';
         const turnos = await response.json();
         const match = turnos.find(t => String(t.id) === String(turnoId));
-        return match?.turno || aluno?.turno || '';
-    } catch (error) {
-        return aluno?.turno || '';
+        return match?.turno || '';
+    } catch {
+        return '';
     }
 }
 
@@ -31,7 +35,14 @@ function parseAcademicPeriod(str) {
     return { year: parseInt(m[1], 10), sem: parseInt(m[2], 10) };
 }
 
-/** Ordinal do semestre letivo atual no curso (1 = primeiro semestre após o ingresso), usando períodos AAAA-1 / AAAA-2. */
+/*
+ * Calculates the ordinal number of the current course semester (1 = first semester after enrollment).
+ * Uses academic periods in the format AAAA-1 or AAAA-2.
+ *
+ * @param {string} ingressoStr - The enrollment period string (e.g. "2021-1")
+ * @param {string} calendarioAtualStr - The current academic calendar period string (e.g. "2023-2")
+ * @returns {number|null} The ordinal semester number, or null if it cannot be calculated
+ */
 function currentCourseSemesterOrdinal(ingressoStr, calendarioAtualStr) {
     const ing = parseAcademicPeriod(ingressoStr);
     const cur = parseAcademicPeriod(calendarioAtualStr);

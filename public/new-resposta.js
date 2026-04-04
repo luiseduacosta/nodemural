@@ -1,7 +1,8 @@
 // src/controllers/respostaController.js
 import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
-''
+
 $(document).ready(async function () {
+    let loadedQuestions = [];
 
     if (!getToken() || !hasRole(['admin', 'supervisor'])) {
         window.location.href = 'login.html';
@@ -41,9 +42,10 @@ $(document).ready(async function () {
             throw new Error('Failed to fetch estagiario');
         }
         const estagiarios = await response.json();
-        // console.log(estagiarios);
+
         // Set estagiario info. It is not a select, but a view 
         const estagiarioSelect = document.getElementById('estagiario_id');
+
         estagiarios.forEach(estagiario => {
             const option = document.createElement('option');
             option.value = estagiario.id;
@@ -85,18 +87,34 @@ $(document).ready(async function () {
     try {
         const response = await authenticatedFetch(`/respostas/estagiario/${estagiario_id}/questionario/${questionario_id}`);
         if (response.ok) {
-            alert('Este estagiário já foi avaliado para este questionário.');
-            window.location.href = `view-resposta.html?estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
-            return;
+            const text = await response.text();
+            const trimmed = String(text || '').trim();
+            if (trimmed) {
+                const parsed = JSON.parse(trimmed);
+                const data = Array.isArray(parsed) ? parsed : [parsed];
+                if (data.length > 0 && data[0] && data[0].id) {
+                    alert('Este estagiário já foi avaliado para este questionário.');
+                    window.location.href = `view-resposta.html?id=${data[0].id}`;
+                    return;
+                }
+            }
         }
     } catch (error) {
-        console.error('Error checking respostas:', error);
+        console.warn('Error checking respostas:', error);
     }
 
     // Questions loading function
     function loadQuestions() {
         // const questionario_id = $(this).val();
         const questionario_id = $('#questionario_id').val();
+        // console.log('Loading questions for questionario_id:', questionario_id);
+
+        if (!questionario_id) {
+            // console.log('No questionario_id selected');
+            $('#questionsContainer').html('<p class="text-muted">Selecione um questionário para ver as questões.</p>');
+            return;
+        }
+
         $.ajax({
             url: `/questoes?questionario_id=${questionario_id}`,
             headers: {
@@ -104,12 +122,16 @@ $(document).ready(async function () {
             },
             type: 'GET',
             success: function (questions) {
+                // console.log('Loaded questions:', questions);
+                loadedQuestions = questions;
                 renderQuestions(questions);
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                console.error('Error loading questions:', status, error);
+                console.error('Response:', xhr.responseText);
                 $('#questionsContainer').html('<p class="text-danger">Erro ao carregar questões.</p>');
                 // Oculta o formulario se houver erro
-                $(`newRespostaForm`).css('display', 'none');
+                $('#newRespostaForm').css('display', 'none');
             }
         });
     }
@@ -122,12 +144,15 @@ $(document).ready(async function () {
         const container = $('#questionsContainer');
         container.empty();
 
-        if (questions.length === 0) {
+        if (!questions || questions.length === 0) {
             container.html('<p class="text-muted">Nenhuma questão encontrada para este questionário.</p>');
             // Não mostra o formulario se não houver questões
-            $(`newRespostaForm`).css('display', 'none');
+            $('#newRespostaForm').css('display', 'none');
             return;
         }
+
+        // Show the form since we have questions
+        $('#newRespostaForm').css('display', 'block');
 
         questions.forEach((question, index) => {
             // Use avaliacao + ordem to match legacy data format
@@ -311,5 +336,89 @@ $(document).ready(async function () {
                 alert('Erro ao salvar respostas.');
             }
         });
+    });
+
+    // Add empty evaluation PDF generation
+    $('#btnImprimirVazia').on('click', function() {
+        if (!loadedQuestions || loadedQuestions.length === 0) {
+            alert('Não há questões carregadas para imprimir.');
+            return;
+        }
+
+        const jsPDF = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+        if (!jsPDF) {
+            alert('Erro: biblioteca jsPDF não carregada.');
+            return;
+        }
+
+        const doc = new jsPDF();
+        
+        let y = 20;
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        const questionarioName = $('#questionario_id option:selected').text();
+        doc.text(questionarioName || 'Avaliação do Estagiário', 105, y, { align: 'center' });
+        y += 15;
+        
+        let estagiarioName = $('#estagiario_id option:selected').text();
+        if (!estagiarioName || estagiarioName.includes('Selecione')) {
+            estagiarioName = 'Não selecionado';
+        }
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Estagiário(a): ${estagiarioName}`, 14, y);
+        y += 10;
+        
+        doc.setFontSize(10);
+        
+        loadedQuestions.forEach((q, index) => {
+            const cleanText = q.text ? q.text.replace(/<[^>]*>?/gm, '') : '';
+            const textLines = doc.splitTextToSize(`Questão ${index + 1}: ${cleanText}`, 180);
+            
+            if (y + (textLines.length * 6) + 10 > 280) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text(textLines, 14, y);
+            y += (textLines.length * 5) + 2;
+            
+            doc.setFont('helvetica', 'normal');
+            
+            if (q.type === 'radio' || q.type === 'checkbox' || q.type === 'select') {
+                const options = parseOptions(q.options);
+                for (const [val, label] of Object.entries(options)) {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.setDrawColor(0);
+                    doc.rect(16, y - 3, 3, 3);
+                    doc.text(`${label || val}`, 22, y);
+                    y += 6;
+                }
+            } else if (q.type === 'long_text' || q.type === 'long text') {
+                if (y + 30 > 280) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setDrawColor(200);
+                doc.rect(14, y, 180, 25);
+                y += 30;
+            } else {
+                if (y + 10 > 280) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setDrawColor(200);
+                doc.line(14, y + 4, 194, y + 4);
+                y += 10;
+            }
+            y += 4;
+        });
+        
+        doc.save('avaliacao_vazia.pdf');
     });
 });

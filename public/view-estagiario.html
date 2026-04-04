@@ -60,18 +60,30 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Instituição</label>
-                                <p class="form-control-plaintext" id="view-instituicao"></p>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Complemento</label>
+                                <p class="form-control-plaintext" id="view-complemento"></p>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Supervisor(a)</label>
-                                <p class="form-control-plaintext" id="view-supervisor"></p>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">TC Solicitado</label>
+                                <p class="form-control-plaintext" id="view-tc-solicitado"></p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">TC entregue</label>
+                                <p class="form-control-plaintext" id="view-tc"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Instituição</label>
+                                <p class="form-control-plaintext" id="view-instituicao"></p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Supervisor(a)</label>
+                                <p class="form-control-plaintext" id="view-supervisor"></p>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Professor(a)</label>
                                 <p class="form-control-plaintext" id="view-professor"></p>
                             </div>
@@ -97,36 +109,29 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">Complemento</label>
-                                <p class="form-control-plaintext" id="view-complemento"></p>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">TC Solicitado</label>
-                                <p class="form-control-plaintext" id="view-tc-solicitado"></p>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">TC entregue</label>
-                                <p class="form-control-plaintext" id="view-tc"></p>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Benefício transporte</label>
                                 <p class="form-control-plaintext" id="view-benetransporte"></p>
                             </div>
-
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Benefício alimentação</label>
                                 <p class="form-control-plaintext" id="view-benealimentacao"></p>
                             </div>
-
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Benefício bolsa</label>
                                 <p class="form-control-plaintext" id="view-benebolsa"></p>
                             </div>
+                        </div>
 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Nota</label>
+                                <p class="form-control-plaintext" id="view-nota"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Carga horária</label>
+                                <p class="form-control-plaintext" id="view-ch"></p>
+                            </div>
                         </div>
 
                         <div class="row mb-3">
@@ -145,7 +150,9 @@
                                 Estagiário</button>
                             <button onclick="deleteEstagiario()" class="btn btn-danger me-2" id="delete-estagiario">Excluir
                                 Estagiário</button>
-                            <button onclick="generateCertificate()" class="btn btn-info" id="btn-certificate">Certificado</button>
+                            <button onclick="generateCertificate()" class="btn btn-info" id="btn-certificate">Termo de compromisso</button>
+                            <button onclick="generateDeclaracao()" class="btn btn-info" id="btn-certificate">Imprime declaração</button>
+                            <button onclick="printAtividadesReport()" class="btn btn-outline-primary">Relatório de atividades</button>
                         </div>
                     </div>
                 </div>

@@ -201,3 +201,4 @@ $(document).ready(async function () {
     // 6. Run Initialization
     loadInitialData();
 });
+
