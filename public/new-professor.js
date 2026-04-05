@@ -20,12 +20,12 @@ $(document).ready(async function () {
     if ($.fn.inputmask) {
         $('#cpf').inputmask('999.999.999-99');
         $('#telefone').inputmask({
-            mask: ["(99) 9999.9999", "(99) 99999.9999"],
-            keepStatic: true
+            mask: ['(00) 0000.0000', '(00) 00000.0000'],
+            keepStatic: false
         });
         $('#celular').inputmask({
-            mask: ["(99) 9999.9999", "(99) 99999.9999"],
-            keepStatic: true
+            mask: ['(00) 0000.0000', '(00) 00000.0000'],
+            keepStatic: false
         });
        $('#curriculolattes').inputmask({
             mask: '[9999999999999999]',

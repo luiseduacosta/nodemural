@@ -49,6 +49,7 @@ $(document).ready(async function () {
         document.getElementById('view-id').textContent = supervisor.id;
         document.getElementById('view-nome').textContent = supervisor.nome;
         document.getElementById('view-email').textContent = supervisor.email;
+        document.getElementById('view-telefone').textContent = supervisor.telefone;
         document.getElementById('view-celular').textContent = supervisor.celular;
         document.getElementById('view-cress').textContent = supervisor.cress;
         document.getElementById('view-regiao').textContent = supervisor.regiao;

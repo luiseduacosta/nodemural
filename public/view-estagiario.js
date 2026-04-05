@@ -287,6 +287,27 @@ $(document).ready(async function () {
         window.location.href = `edit-resposta.html?estagiario_id=${id}&questionario_id=${questionario_id}`;
     };
 
+    // Delete resposta
+    window.deleteResposta = async function () {
+        if (!existingResposta) return;
+
+        if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
+            try {
+                const response = await authenticatedFetch(`/respostas/${existingResposta.id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('Avaliação excluída com sucesso!');
+                    window.location.reload();
+                } else {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Failed to delete');
+                }
+            } catch (error) {
+                console.error('Error deleting resposta:', error);
+                alert(`Erro ao excluir: ${error.message}`);
+            }
+        }
+    };
+
     // Generate Declaração de Estágio Curricular PDF
     window.generateDeclaracao = async function () {
         try {
@@ -372,7 +393,7 @@ $(document).ready(async function () {
             y += doc.getTextDimensions(body2Lines).h + 12;
 
             // Date
-            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}.`, ml, y);
+            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}.`, ml, y, { align: 'right' });
             y += 20;
 
             // Signatures — 3 columns
@@ -592,18 +613,14 @@ $(document).ready(async function () {
             doc.setFont('helvetica', 'normal');
             y += 16;
 
-            const meses = [
-                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-            ];
             const hoje = new Date();
-            const diaHoje = hoje.getDate();
-            const mesHoje = meses[hoje.getMonth()];
-            const anoHoje = hoje.getFullYear();
+            const dia = hoje.getDate();
+            const mes = hoje.toLocaleString('pt-BR', { month: 'long' });
+            const ano = hoje.getFullYear();
 
             ensureSpace(10);
             doc.setFontSize(10);
-            doc.text(`Rio de Janeiro, ${diaHoje} de ${mesHoje} de ${anoHoje}.`, marginX, y);
+            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}.`, marginX, y, { align: 'left' });
 
             const ymd = hoje.toISOString().slice(0, 10);
             doc.save(`relatorio_atividades_${id}_${ymd}.pdf`);
@@ -613,28 +630,7 @@ $(document).ready(async function () {
         }
     };
 
-    // Delete resposta
-    window.deleteResposta = async function () {
-        if (!existingResposta) return;
-
-        if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
-            try {
-                const response = await authenticatedFetch(`/respostas/${existingResposta.id}`, { method: 'DELETE' });
-                if (response.ok) {
-                    alert('Avaliação excluída com sucesso!');
-                    window.location.reload();
-                } else {
-                    const err = await response.json();
-                    throw new Error(err.error || 'Failed to delete');
-                }
-            } catch (error) {
-                console.error('Error deleting resposta:', error);
-                alert(`Erro ao excluir: ${error.message}`);
-            }
-        }
-    };
-
-    // Generate Certificate PDF
+    // Generate Termo de Compromisso PDF
     window.generateCertificate = async function () {
         try {
             const estagiarioResponse = await authenticatedFetch(`/estagiarios/${id}`);
@@ -876,9 +872,13 @@ $(document).ready(async function () {
             doc.text(margin_left, height, lines21, { maxWidth: 170, align: 'justify' });
 
             // Date
-            const today = new Date().toLocaleDateString('pt-BR');
+            const hoje = new Date();
+            const dia = hoje.getDate();
+            const mes = hoje.toLocaleString('pt-BR', { month: 'long' });
+            const ano = hoje.getFullYear();
+
             height = height + art20Height;
-            doc.text(`Rio de Janeiro, ${today}`, 135, height + 10, { align: 'left' });
+            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}`, 135, height + 10, { align: 'left' });
 
             // Assinaturas
             doc.text('Coordenação do Estágio', 65, height + 33, { align: 'right' });

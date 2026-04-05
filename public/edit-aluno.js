@@ -1,6 +1,24 @@
 // src/public/edit-aluno.js
 import { getToken, hasRole, getCurrentUser, authenticatedFetch } from './auth-utils.js';
 
+/**
+ * Telefone/celular legados: 8 ou 9 dígitos (sem DDD) assume DDD 21; 10 ou 11 dígitos mantém;
+ * demais casos retorna string vazia.
+ */
+function normalizeLegacyPhoneDigits(raw) {
+    if (raw == null || String(raw).trim() === '') {
+        return '';
+    }
+    const d = String(raw).replace(/\D/g, '');
+    if (d.length === 8 || d.length === 9) {
+        return `21${d}`;
+    }
+    if (d.length === 10 || d.length === 11) {
+        return d;
+    }
+    return '';
+}
+
 $(document).ready(async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -116,6 +134,13 @@ $(document).ready(async function () {
 
             if (!data) {
                 throw new Error('Aluno não encontrado');
+            }
+
+            if (data.telefone != null && data.telefone !== '') {
+                data.telefone = normalizeLegacyPhoneDigits(data.telefone);
+            }
+            if (data.celular != null && data.celular !== '') {
+                data.celular = normalizeLegacyPhoneDigits(data.celular);
             }
 
             // Populate form

@@ -1,6 +1,24 @@
 // src/controllers/supervisorController.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
+/**
+ * Telefone/celular legados: 8 ou 9 dígitos (sem DDD) assume DDD 21; 10 ou 11 dígitos mantém;
+ * demais casos retorna string vazia.
+ */
+function normalizeLegacyPhoneDigits(raw) {
+    if (raw == null || String(raw).trim() === '') {
+        return '';
+    }
+    const d = String(raw).replace(/\D/g, '');
+    if (d.length === 8 || d.length === 9) {
+        return `21${d}`;
+    }
+    if (d.length === 10 || d.length === 11) {
+        return d;
+    }
+    return '';
+}
+
 $(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin', 'supervisor'])) {
@@ -33,9 +51,18 @@ $(document).ready(async function () {
             }
 
             const supervisor = await response.json();
+
+            if (supervisor.telefone != null && supervisor.telefone !== '') {
+                supervisor.telefone = normalizeLegacyPhoneDigits(supervisor.telefone);
+            }
+            if (supervisor.celular != null && supervisor.celular !== '') {
+                supervisor.celular = normalizeLegacyPhoneDigits(supervisor.celular);
+            }
+
             document.getElementById('supervisorId').value = supervisor.id;
             document.getElementById('nome').value = supervisor.nome;
             document.getElementById('email').value = supervisor.email || '';
+            document.getElementById('telefone').value = supervisor.telefone || '';
             document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
             document.getElementById('regiao').value = supervisor.regiao || '';
@@ -73,6 +100,7 @@ $(document).ready(async function () {
         const supervisor = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || null,
+            telefone: document.getElementById('telefone').value || null,
             celular: document.getElementById('celular').value || null,
             cress: document.getElementById('cress').value || null,
             regiao: document.getElementById('regiao').value || null,

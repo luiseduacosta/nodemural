@@ -30,7 +30,7 @@ $(document).ready(async function () {
         }
 
         const professor = await response.json();
-        console.log(professor.curriculolattes.split('/').pop());
+
         if (!professor) {
             throw new Error('Professor(a) não encontrado');
         } 

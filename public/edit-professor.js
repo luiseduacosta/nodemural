@@ -1,6 +1,24 @@
 // src/public/edit-professor.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
+/**
+ * Telefone/celular legados: 8 ou 9 dígitos (sem DDD) assume DDD 21; 10 ou 11 dígitos mantém;
+ * demais casos retorna string vazia.
+ */
+function normalizeLegacyPhoneDigits(raw) {
+    if (raw == null || String(raw).trim() === '') {
+        return '';
+    }
+    const d = String(raw).replace(/\D/g, '');
+    if (d.length === 8 || d.length === 9) {
+        return `21${d}`;
+    }
+    if (d.length === 10 || d.length === 11) {
+        return d;
+    }
+    return '';
+}
+
 $(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin', 'professor'])) {
@@ -23,11 +41,11 @@ $(document).ready(async function () {
     $('#dataegresso').inputmask('99/99/9999');
     $('#cpf').inputmask('999.999.999-99');
     $('#telefone').inputmask({
-        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        mask: ['(99) 9999.9999', '(99) 99999.9999'],
         keepStatic: true
     });
     $('#celular').inputmask({
-        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        mask: ['(99) 9999.9999', '(99) 99999.9999'],
         keepStatic: true
     });
     // Digits 16 characters
@@ -62,6 +80,13 @@ $(document).ready(async function () {
         // Populate the form fields
         $('#professorId').val(professor.id);
 
+        if (professor.telefone != null && professor.telefone !== '') {
+            professor.telefone = normalizeLegacyPhoneDigits(professor.telefone);
+        }
+        if (professor.celular != null && professor.celular !== '') {
+            professor.celular = normalizeLegacyPhoneDigits(professor.celular);
+        }
+
         // Store original siape to detect changes
         window.oldSiape = professor.siape;
         document.getElementById('nome').value = professor.nome;
@@ -70,8 +95,8 @@ $(document).ready(async function () {
         document.getElementById('cress').value = professor.cress || null;
         document.getElementById('regiao').value = professor.regiao || null;
         document.getElementById('email').value = professor.email || null;
-        document.getElementById('celular').value = professor.celular || null;
         document.getElementById('telefone').value = professor.telefone || null;
+        document.getElementById('celular').value = professor.celular || null;
         document.getElementById('curriculolattes').value = professor.curriculolattes || null;
         document.getElementById('atualizacaolattes').value = formatDateForInput(professor.atualizacaolattes);
         document.getElementById('dataingresso').value = formatDateForInput(professor.dataingresso);

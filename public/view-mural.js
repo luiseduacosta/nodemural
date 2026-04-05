@@ -186,6 +186,11 @@ window.imprime = async () => {
         const marginTop = 16;
         const marginBottom = 14;
 
+        const hoje = new Date();
+        const dia = hoje.getDate();
+        const mes = hoje.toLocaleString('pt-BR', { month: 'long' });
+        const ano = hoje.getFullYear();
+
         const muralPeriodoEl = document.getElementById('view-periodo');
         const muralInstituicaoEl = document.getElementById('view-instituicao');
         const muralPeriodo = muralPeriodoEl ? muralPeriodoEl.textContent : '';
@@ -252,7 +257,7 @@ window.imprime = async () => {
         // Put the data at the bottom of the page aligned left
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Rio de Janeiro, ${now.toLocaleDateString('pt-BR')}`, pageWidth - marginX, y + 10, { align: 'right' });
+        doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}`, pageWidth - marginX, y + 10, { align: 'right' });
 
         // Assinatura at the bottom of the page
         doc.setFontSize(10);

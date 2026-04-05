@@ -31,6 +31,7 @@ $(document).ready(async function () {
         const supervisor = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || null,
+            telefone: document.getElementById('telefone').value || '',
             celular: document.getElementById('celular').value || '',
             cress: document.getElementById('cress').value,
             regiao: document.getElementById('regiao').value || null,
