@@ -1,6 +1,58 @@
 // src/controllers/estagiarioController.js
 import Estagiario from '../models/estagiario.js';
 
+function parsePeriodo(periodo) {
+    if (!periodo || typeof periodo !== 'string') return null;
+    const parts = periodo.split('-');
+    if (parts.length !== 2) return null;
+    const ano = Number(parts[0]);
+    const semestre = Number(parts[1]);
+    if (!Number.isFinite(ano) || !Number.isFinite(semestre)) return null;
+    if (semestre !== 1 && semestre !== 2) return null;
+    return { ano, semestre };
+}
+
+function addSemestresToPeriodo(periodo, semestresToAdd) {
+    const parsed = parsePeriodo(periodo);
+    if (!parsed) return periodo || null;
+    const total = (parsed.ano * 2) + (parsed.semestre - 1) + Number(semestresToAdd);
+    const ano = Math.floor(total / 2);
+    const semestre = (total % 2) + 1;
+    return `${ano}-${semestre}`;
+}
+
+function computeInicioFinalSeguro(nivel, periodo, ajuste2020) {
+    const parsed = parsePeriodo(periodo);
+    if (!parsed) return { inicio: periodo || null, final: periodo || null };
+
+    const niv = Number(nivel);
+    const ajuste = Number(ajuste2020);
+
+    let inicio;
+    let final;
+
+    if (niv === 9) {
+        final = periodo;
+        const back = ajuste === 0 ? 4 : 3;
+        inicio = addSemestresToPeriodo(periodo, -back);
+        return { inicio, final };
+    }
+
+    const backByLevel = Math.max(0, niv - 1);
+    inicio = addSemestresToPeriodo(periodo, -backByLevel);
+
+    if (niv === 4) {
+        final = periodo;
+    } else if (niv === 3 && ajuste === 1) {
+        final = periodo;
+    } else {
+        const lengthMinusOne = ajuste === 0 ? 3 : 2;
+        final = addSemestresToPeriodo(inicio, lengthMinusOne);
+    }
+
+    return { inicio, final };
+}
+
 // Get distinct periods
 export const getDistinctPeriodsEstagiario = async (req, res) => {
     try {
@@ -9,6 +61,133 @@ export const getDistinctPeriodsEstagiario = async (req, res) => {
     } catch (error) {
         console.error('Error fetching periods:', error);
         res.status(500).json({ error: 'Error fetching periods' });
+    }
+};
+
+export const getPlanilhaSeguroEstagiario = async (req, res) => {
+    try {
+        const periodoQuery = req.query.periodo || null;
+        const periodRows = await Estagiario.findDistinctPeriodsEstagiario();
+        const periodos = periodRows.map((p) => p.periodo);
+
+        const periodoSelecionado = periodoQuery || periodos[0] || null;
+        if (!periodoSelecionado) {
+            return res.status(200).json({ t_seguro: [], periodos, periodoSelecionado: null });
+        }
+
+        const seguroRows = await Estagiario.findPlanilhaSeguro(periodoSelecionado);
+        const t_seguro = seguroRows.map((row) => {
+            const { inicio, final } = computeInicioFinalSeguro(row.estagiario_nivel, row.estagiario_periodo, row.estagiario_ajuste2020);
+            return {
+                id: row.aluno_id,
+                nome: row.aluno_nome,
+                cpf: row.aluno_cpf,
+                nascimento: row.aluno_nascimento,
+                ajuste2020: row.estagiario_ajuste2020,
+                registro: row.aluno_registro,
+                curso: 'UFRJ/Serviço Social',
+                nivel: Number(row.estagiario_nivel) === 9 ? 'Não obrigatório' : row.estagiario_nivel,
+                periodo: row.estagiario_periodo,
+                inicio,
+                final,
+                instituicao: row.instituicao_nome
+            };
+        });
+
+        t_seguro.sort((a, b) => String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR', { sensitivity: 'base' }));
+
+        res.status(200).json({ t_seguro, periodos, periodoSelecionado });
+    } catch (error) {
+        console.error('Error fetching planilha seguro:', error);
+        res.status(500).json({ error: 'Error fetching planilha seguro' });
+    }
+};
+
+export const getPlanilhaSupervisoresEstagiario = async (req, res) => {
+    try {
+        const periodoQuery = req.query.periodo || null;
+        const periodRows = await Estagiario.findDistinctPeriodsEstagiario();
+        const periodos = periodRows.map((p) => p.periodo);
+
+        const periodoSelecionado = periodoQuery || periodos[0] || null;
+        if (!periodoSelecionado) {
+            return res.status(200).json({ rows: [], periodos, periodoSelecionado: null });
+        }
+
+        const rows = await Estagiario.findPlanilhaSupervisores(periodoSelecionado);
+
+        const normalized = rows.map((row) => ({
+            aluno_nome: row.aluno_nome,
+            instituicao: row.instituicao_nome,
+            endereco_instituicao: row.endereco_instituicao,
+            cep_instituicao: row.cep_instituicao,
+            bairro_instituicao: row.bairro_instituicao,
+            supervisor_nome: row.supervisor_nome,
+            supervisor_cress: row.supervisor_cress,
+            supervisor_regiao: row.supervisor_regiao,
+            professor_nome: row.professor_nome
+        }));
+
+        res.status(200).json({ rows: normalized, periodos, periodoSelecionado });
+    } catch (error) {
+        console.error('Error fetching planilha supervisores:', error);
+        res.status(500).json({ error: 'Error fetching planilha supervisores' });
+    }
+};
+
+export const getPlanilhaCargaHorariaEstagiario = async (req, res) => {
+    try {
+        const raw = await Estagiario.findPlanilhaCargaHoraria();
+        const byAluno = new Map();
+
+        for (const row of raw) {
+            const alunoId = row.aluno_id;
+            if (!byAluno.has(alunoId)) {
+                byAluno.set(alunoId, {
+                    aluno_id: row.aluno_id,
+                    aluno_nome: row.aluno_nome,
+                    aluno_registro: row.aluno_registro,
+                    estagiarios_count: 0,
+                    nivel1: '',
+                    nivel1_periodo: '',
+                    nivel1_ch: '',
+                    nivel2: '',
+                    nivel2_periodo: '',
+                    nivel2_ch: '',
+                    nivel3: '',
+                    nivel3_periodo: '',
+                    nivel3_ch: '',
+                    nivel4: '',
+                    nivel4_periodo: '',
+                    nivel4_ch: '',
+                    ch_total: 0
+                });
+            }
+
+            const agg = byAluno.get(alunoId);
+            agg.estagiarios_count += 1;
+
+            const ch = row.estagiario_ch === null || row.estagiario_ch === undefined ? 0 : Number(row.estagiario_ch);
+            if (!Number.isNaN(ch)) {
+                agg.ch_total += ch;
+            }
+
+            const nivel = Number(row.estagiario_nivel);
+            if (nivel >= 1 && nivel <= 4) {
+                const nivelKey = `nivel${nivel}`;
+                if (!agg[`${nivelKey}_periodo`]) {
+                    agg[nivelKey] = String(nivel);
+                    agg[`${nivelKey}_periodo`] = row.estagiario_periodo || '';
+                    agg[`${nivelKey}_ch`] = row.estagiario_ch ?? '';
+                }
+            }
+        }
+
+        const rows = Array.from(byAluno.values());
+        res.status(200).json({ rows });
+    } catch (error) {
+        console.error('Error fetching planilha carga horaria:', error);
+        res.status(500).json({ error: 'Error fetching planilha carga horaria' });
     }
 };
 

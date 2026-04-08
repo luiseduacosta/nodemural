@@ -5,9 +5,11 @@ $(document).ready(async function () {
 
     let table;
 
+    // Setup - add a text input to each footer cell
     table = $('#muralTable').DataTable({
         order: [[2, 'desc'], [1, 'asc']],
         ajax: {
+            method: 'GET',
             url: '/mural',
             data: function (d) {
                 const token = getToken();
@@ -64,6 +66,7 @@ $(document).ready(async function () {
         }
     });
 
+    // Load Periodos and Config
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods

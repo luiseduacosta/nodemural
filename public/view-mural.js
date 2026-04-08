@@ -133,6 +133,7 @@ async function loadInscricoes(currentMuralId) {
             { data: 'registro' },
             { data: 'aluno_nome' },
             {
+                className: 'text-center',
                 data: 'data_inscricao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -140,6 +141,7 @@ async function loadInscricoes(currentMuralId) {
                 }
             },
             {
+                className: 'text-center',
                 data: 'acoes', render: function (data, type, row) {
                     return `
                     <button onclick="window.location.href='view-inscricao.html?id=${row.inscricao_id}'" class="btn btn-sm btn-warning">Visualizar</button>
@@ -251,6 +253,7 @@ window.imprime = async () => {
             y += rowHeight;
         }
 
+        // Date
         const now = new Date();
         const ymd = now.toISOString().slice(0, 10);
 

@@ -10,6 +10,9 @@ router.use(express.json());
 
 // Routes
 router.get('/periodos', estagiarioController.getDistinctPeriodsEstagiario);
+router.get('/planilhaSeguro', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaSeguroEstagiario);
+router.get('/planilhaSupervisores', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaSupervisoresEstagiario);
+router.get('/planilhaCargaHoraria', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaCargaHorariaEstagiario);
 router.post('/', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.createEstagiarioEstagiario);
 router.get('/', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAllEstagiariosEstagiario);
 router.get('/aluno/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getEstagiariosByAlunoIdEstagiario);

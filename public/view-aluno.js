@@ -411,7 +411,7 @@ window.imprime = async () => {
         const mes = hoje.toLocaleString('pt-BR', { month: 'long' });
         const ano = hoje.getFullYear();
 
-        const ymd = now.toISOString().slice(0, 10);
+        const ymd = hoje.toISOString().slice(0, 10);
 
         doc.setFontSize(16);
         doc.setFont('helvetica', 'normal');

@@ -9,6 +9,66 @@ const Estagiario = {
         return rows;
     },
 
+    async findPlanilhaSeguro(periodo) {
+        const query = `SELECT 
+                    a.id as aluno_id,
+                    a.nome as aluno_nome,
+                    a.cpf as aluno_cpf,
+                    a.nascimento as aluno_nascimento,
+                    a.registro as aluno_registro,
+                    e.nivel as estagiario_nivel,
+                    e.ajuste2020 as estagiario_ajuste2020,
+                    e.periodo as estagiario_periodo,
+                    i.instituicao as instituicao_nome
+                    FROM estagiarios e
+                    LEFT JOIN alunos a ON e.aluno_id = a.id
+                    LEFT JOIN instituicoes i ON e.instituicao_id = i.id
+                    WHERE e.periodo = ?
+                    ORDER BY e.nivel ASC`;
+        const rows = await pool.query(query, [periodo]);
+        return rows;
+    },
+
+    async findPlanilhaSupervisores(periodo) {
+        const query = `SELECT
+                    a.id as aluno_id,
+                    a.registro as aluno_registro,
+                    a.nascimento as aluno_nascimento,
+                    i.instituicao as instituicao_nome,
+                    i.endereco as endereco_instituicao,
+                    i.cep as cep_instituicao,
+                    i.bairro as bairro_instituicao,
+                    s.nome as supervisor_nome,
+                    s.cress as supervisor_cress,
+                    s.regiao as supervisor_regiao,
+                    p.nome as professor_nome
+                    FROM estagiarios e
+                    LEFT JOIN alunos a ON e.aluno_id = a.id
+                    LEFT JOIN instituicoes i ON e.instituicao_id = i.id
+                    LEFT JOIN supervisores s ON e.supervisor_id = s.id
+                    LEFT JOIN professores p ON e.professor_id = p.id
+                    WHERE e.periodo = ?
+                    ORDER BY a.nome ASC`;
+        const rows = await pool.query(query, [periodo]);
+        return rows;
+    },
+
+    async findPlanilhaCargaHoraria() {
+        const query = `SELECT
+                    e.id as estagiario_id,
+                    e.aluno_id as aluno_id,
+                    a.nome as aluno_nome,
+                    a.registro as aluno_registro,
+                    e.nivel as estagiario_nivel,
+                    e.periodo as estagiario_periodo,
+                    e.ch as estagiario_ch
+                    FROM estagiarios e
+                    LEFT JOIN alunos a ON e.aluno_id = a.id
+                    ORDER BY a.nome ASC, e.nivel ASC, e.periodo DESC, e.id DESC`;
+        const rows = await pool.query(query);
+        return rows;
+    },
+
     async findAllEstagiario(periodo = null, aluno_id = null) {  
         let query = `SELECT e.id as id, 
                     a.id as aluno_id, 
