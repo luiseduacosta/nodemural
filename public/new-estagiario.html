@@ -64,13 +64,6 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <label for="turmaestagio_id" class="form-label">Turma de Estágio</label>
-                            <select class="form-select" id="turmaestagio_id" name="turmaestagio_id">
-                                <option value="">Selecione uma turma</option>
-                            </select>
-                        </div>
-
                     </div>
 
                     <div class="row mb-3">
@@ -83,21 +76,46 @@
                         </div>
 
                         <div class="col-md-3">
-                            <label for="turno" class="form-label">Turno</label>
-                            <select class="form-select" id="turno" name="turno">
-                                <option value="">Selecione um turno</option>
-                                <option value="D">Diurno</option>
-                                <option value="N">Noturno</option>
-                                <option value="A">Diurno/Noturno</option>
+                            <label for="ajuste2020" class="form-label">Ajuste 2020</label>
+                            <input type="number" class="form-control" id="ajuste2020" name="ajuste2020">
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tc" class="form-label">TC entregue</label>
+                            <input type="checkbox" class="form-check-input" id="tc" name="tc">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tc_solicitacao" class="form-label">Data do TC (solicitação)</label>
+                            <input type="date" class="form-control" id="tc_solicitacao" name="tc_solicitacao">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="complemento_id" class="form-label">Complemento</label>
+                            <select class="form-select" id="complemento_id" name="complemento_id">
+                                <option value="">Selecione um complemento</option>
                             </select>
                         </div>
- 
-                            <div class="col-md-3">
-                                <label for="ajuste2020" class="form-label">Ajuste 2020</label>
-                                <input type="number" class="form-control" id="ajuste2020" name="ajuste2020">
-                            </div>
+                        <div class="col-md-4">
+                            <label for="benetransporte" class="form-label">Benefício de transporte</label>
+                            <input type="checkbox" class="form-check-input" id="benetransporte" name="benetransporte">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="benealimentacao" class="form-label">Benefício de alimentação</label>
+                            <input type="checkbox" class="form-check-input" id="benealimentacao" name="benealimentacao">
+                        </div>
+                    </div>
 
-                   </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="benebolsa" class="form-label">Benefício de bolsa (valor em R$)</label>
+                            <input type="text" class="form-control" id="benebolsa" name="benebolsa" placeholder="ex: 1200">
+                        </div>
+                    </div>
 
                     <div class="mb-3">
                         <label for="observacoes" class="form-label">Observações</label>

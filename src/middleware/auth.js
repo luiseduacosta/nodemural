@@ -152,13 +152,18 @@ export const checkEstagiarioOwnership = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const estagiario = await Estagiario.findById(id);
+        const estagiario = await Estagiario.findByPk(id);
         if (!estagiario) {
             return res.status(404).json({ error: 'Estagiário não encontrado' });
         }
 
-        // Compare estagiario's aluno_id with user's entidade_id
-        if ( req.user.role === 'aluno' && req.user.entidade_id == estagiario.aluno_id) {
+        // Aluno can access their own estagiarios
+        if (req.user.role === 'aluno' && req.user.entidade_id == estagiario.aluno_id) {
+            return next();
+        }
+
+        // Professor can access only their own students (estagiarios where professor_id matches)
+        if (req.user.role === 'professor' && req.user.entidade_id == estagiario.professor_id) {
             return next();
         }
 
@@ -190,7 +195,7 @@ export const checkInscricaoOwnership = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const inscricao = await Inscricao.findById(id);
+        const inscricao = await Inscricao.findByIdEstagiario(id);
         if (!inscricao) {
             return res.status(404).json({ error: 'Inscrição não encontrada' });
         }

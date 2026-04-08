@@ -57,8 +57,8 @@ export const getEstagiariosBySupervisor = async (req, res) => {
 // Create a new supervisor
 export const createSupervisor = async (req, res) => {
     try {
-        const { nome, email, celular, cress } = req.body;
-        const supervisor = await Supervisor.create(nome, email, celular, cress);
+        const { nome, email, telefone, celular, cress, regiao, cpf, escola, ano_formacao, cargo, observacoes } = req.body;
+        const supervisor = await Supervisor.create(nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes);
         res.status(201).json(supervisor);
     } catch (error) {
         console.error('Error creating supervisor:', error);
@@ -70,8 +70,8 @@ export const createSupervisor = async (req, res) => {
 export const updateSupervisor = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, email, celular, cress } = req.body;
-        const success = await Supervisor.update(id, nome, email, celular, cress);
+        const { nome, email, telefone, celular, cress, regiao, cpf, escola, ano_formacao, cargo, observacoes } = req.body;
+        const success = await Supervisor.update(id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes);
         if (!success) {
             return res.status(404).json({ error: 'Supervisor not found' });
         }

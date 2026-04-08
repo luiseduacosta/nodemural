@@ -1,4 +1,3 @@
-// src/controllers/supervisorController.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(function () {
@@ -22,6 +21,7 @@ $(document).ready(function () {
             { data: 'email' },
             { data: 'celular' },
             { data: 'cress' },
+            { data: 'regiao' },
             {
                 data: null,
                 render: function (data, type, row) {

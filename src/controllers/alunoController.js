@@ -1,11 +1,33 @@
 // src/controllers/alunoController.js
 import Aluno from '../models/aluno.js';
 
+const normalizeTurnoId = (turnoId) => {
+    if (turnoId === undefined || turnoId === null) return null;
+    if (typeof turnoId === 'number') return Number.isFinite(turnoId) ? turnoId : null;
+    const parsed = parseInt(String(turnoId), 10);
+    return Number.isFinite(parsed) ? parsed : null;
+};
+
+const turnoIdFromTurno = (turno) => {
+    if (turno === undefined || turno === null) return 0;
+    const t = String(turno).trim().toLowerCase();
+    if (t === '' || t === '0') return 0;
+    if (t === 'diurno') return 1;
+    if (t === 'noturno') return 2;
+    if (t === 'ambos' || t === 'diurno/noturno') return 3;
+    if (t === 'integral') return 4;
+    return 0;
+};
+
 // Create a new aluno
 export const createAluno = async (req, res) => {
     try {
-        const { nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
-        const aluno = await Aluno.create(nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes);
+        const { nome, nomesocial, ingresso, turno, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
+
+        const normalizedTurnoId = normalizeTurnoId(turno_id);
+        const finalTurnoId = normalizedTurnoId !== null ? normalizedTurnoId : turnoIdFromTurno(turno);
+        const normalizedNascimento = typeof nascimento === 'string' && nascimento.trim() === '' ? null : nascimento;
+        const aluno = await Aluno.create(nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes);
         res.status(201).json(aluno);
     } catch (error) {
         console.error('Error creating aluno:', error);
@@ -85,8 +107,13 @@ export const getInscricoesByAlunoId = async (req, res) => {
 export const updateAluno = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
-        const aluno = await Aluno.update(id, nome, nomesocial, ingresso, turno, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes);
+        const { nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
+        const { turno } = req.body;
+
+        const normalizedTurnoId = normalizeTurnoId(turno_id);
+        const finalTurnoId = normalizedTurnoId !== null ? normalizedTurnoId : turnoIdFromTurno(turno);
+        const normalizedNascimento = typeof nascimento === 'string' && nascimento.trim() === '' ? null : nascimento;
+        const aluno = await Aluno.update(id, nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes);
         if (!aluno) {
             return res.status(404).json({ error: 'Aluno not found' });
         }

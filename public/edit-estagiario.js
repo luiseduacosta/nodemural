@@ -27,7 +27,7 @@ $(document).ready(async function () {
             return;
         }
         try {
-            const res = await authenticatedFetch(`/estagios/${instituicaoId}/supervisores`);
+            const res = await authenticatedFetch(`/instituicoes/${instituicaoId}/supervisores`);
             if (res.ok) {
                 const supervisores = await res.json();
                 const select = document.getElementById('supervisor_id');
@@ -47,11 +47,10 @@ $(document).ready(async function () {
     async function loadInitialData() {
         try {
             // Fetch dropdown options in parallel
-            const [alunoRes, instRes, docRes, turmaRes] = await Promise.all([
+            const [alunoRes, instRes, docRes] = await Promise.all([
                 authenticatedFetch('/alunos'),
-                authenticatedFetch('/estagios'),
-                authenticatedFetch('/docentes'),
-                authenticatedFetch('/turmaestagios')
+                authenticatedFetch('/instituicoes'),
+                authenticatedFetch('/professores'),
             ]);
 
             // Alunos
@@ -72,16 +71,9 @@ $(document).ready(async function () {
 
             // Professores
             if (docRes.ok) {
-                const docentes = await docRes.json();
+                const professores = await docRes.json();
                 const select = document.getElementById('professor_id');
-                docentes.forEach(doc => select.add(new Option(doc.nome, doc.id)));
-            }
-
-            // Turmas
-            if (turmaRes.ok) {
-                const turmas = await turmaRes.json();
-                const select = document.getElementById('turmaestagio_id');
-                turmas.forEach(turma => select.add(new Option(turma.area, turma.id)));
+                professores.forEach(doc => select.add(new Option(doc.nome, doc.id)));
             }
 
             // After dropdowns are ready, load the specific estagiario data
@@ -108,12 +100,16 @@ $(document).ready(async function () {
             // Populate Fields
             document.getElementById('aluno_id').value = estagiario.aluno_id;
             document.getElementById('professor_id').value = estagiario.professor_id || '';
-            document.getElementById('instituicao_id').value = estagiario.instituicao_id;
-            document.getElementById('turmaestagio_id').value = estagiario.turmaestagio_id || '';
+            document.getElementById('instituicao_id').value = estagiario.instituicao_id || '';
             document.getElementById('periodo').value = estagiario.periodo;
             document.getElementById('nivel').value = estagiario.nivel;
-            document.getElementById('turno').value = estagiario.turno || 'A';
             document.getElementById('ajuste2020').value = estagiario.ajuste2020 || 0;
+            document.getElementById('tc').checked = String(estagiario.tc) === '1' || estagiario.tc === true;
+            document.getElementById('tc_solicitacao').value = estagiario.tc_solicitacao || '';
+            document.getElementById('complemento_id').value = estagiario.complemento_id || '';
+            document.getElementById('benetransporte').checked = String(estagiario.benetransporte) === '1' || estagiario.benetransporte === true;
+            document.getElementById('benealimentacao').checked = String(estagiario.benealimentacao) === '1' || estagiario.benealimentacao === true;
+            document.getElementById('benebolsa').value = estagiario.benebolsa || '';
             document.getElementById('observacoes').value = estagiario.observacoes || '';
 
             // Load supervisors for the selected institution and select the correct one
@@ -124,21 +120,41 @@ $(document).ready(async function () {
             // Check Period/Level Consistency (Logic from original edit-estagiario.js)
             if (configRes.ok) {
                 const configuracoes = await configRes.json();
-                if (configuracoes.length > 0) {
-                    const currentPeriod = configuracoes[0].termo_compromisso_periodo;
+                if (configuracoes) {
+                    const currentPeriod = configuracoes.termo_compromisso_periodo;
                     const containerperiodo = document.getElementById('menssagem_periodo');
                     const containernivel = document.getElementById('menssagem_nivel');
 
-                    if (currentPeriod !== estagiario.periodo) {
-                        containerperiodo.innerHTML = `<div id="menssagem_periodo_alert" class="alert alert-warning">
-                            O período do estagiário (${estagiario.periodo}) não corresponde ao período atual do termo de compromisso ${currentPeriod}.
+                    // Compare periods
+                    if (currentPeriod < estagiario.periodo) {
+                        // ERROR: Future period - should not edit
+                        containerperiodo.innerHTML = `<div class="alert alert-danger">
+                            <strong>ERRO:</strong> Este estagiário está em um período futuro (${estagiario.periodo}). 
+                            O período atual do termo de compromisso é ${currentPeriod}. 
+                            Não é possível editar estagiários de períodos futuros.
                         </div>`;
-                        
-                        containernivel.innerHTML = `<div id="menssagem_nivel_alert" class="alert alert-warning">
-                            O nível do estagiário (${estagiario.nivel}) corresponde ao período ${estagiario.periodo}. O período atual do termo de compromisso é ${currentPeriod}.
+
+                        // Disable form submission
+                        document.querySelector('button[type="submit"]').disabled = true;
+                        document.querySelector('button[type="submit"]').classList.add('disabled');
+
+                    } else if (currentPeriod > estagiario.periodo) {
+                        // WARNING: Old period - show warning but allow edit
+                        containerperiodo.innerHTML = `<div class="alert alert-warning">
+                            <strong>ATENÇÃO:</strong> Você está editando um estagiário de período anterior (${estagiario.periodo}). 
+                            O período atual do termo de compromisso é ${currentPeriod}. 
+                            Esta edição está atualizando dados de um período passado.
                         </div>`;
+
+                        containernivel.innerHTML = `<div class="alert alert-info">
+                            O nível do estagiário é ${estagiario.nivel} correspondente ao período ${estagiario.periodo}.
+                        </div>`;
+
                     } else {
-                        containerperiodo.innerHTML = '';
+                        // CORRECT: Same period - normal edit
+                        containerperiodo.innerHTML = `<div class="alert alert-success">
+                            Editando estagiário do período atual (${currentPeriod}).
+                        </div>`;
                         containernivel.innerHTML = '';
                     }
                 }
@@ -165,11 +181,15 @@ $(document).ready(async function () {
             professor_id: document.getElementById('professor_id').value || null,
             supervisor_id: document.getElementById('supervisor_id').value || null,
             instituicao_id: document.getElementById('instituicao_id').value,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
-            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value || 0,
+            tc: document.getElementById('tc').checked ? 1 : 0,
+            tc_solicitacao: document.getElementById('tc_solicitacao').value || null,
+            complemento_id: document.getElementById('complemento_id').value || null,
+            benetransporte: document.getElementById('benetransporte').checked ? 1 : 0,
+            benealimentacao: document.getElementById('benealimentacao').checked ? 1 : 0,
+            benebolsa: String(document.getElementById('benebolsa').value || '').trim() || null,
             observacoes: document.getElementById('observacoes').value || null
         };
 

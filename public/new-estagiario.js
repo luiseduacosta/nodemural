@@ -14,17 +14,35 @@ $(document).ready(async function () {
     const roleIsAluno = hasRole('aluno');
     const currentAlunoId = getCurrentUser().entidade_id;
     const currentUserId = roleIsAluno ? currentAlunoId : urlParams.get('id');
- 
-    // 2. Initial Data Load (Dropdowns)
+
+    // 2. Helper: Load Turnos
+    async function loadTurnos() {
+        try {
+            const res = await authenticatedFetch('/turnos');
+            if (res.ok) {
+                const turnos = await res.json();
+                const select = document.getElementById('turno_id');
+                select.innerHTML = '<option value="">Selecione um turno</option>';
+                turnos.forEach(turno => {
+                    const option = new Option(turno.turno, turno.id);
+                    select.add(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading turnos:', error);
+        }
+    }
+
+    // 3. Initial Data Load (Dropdowns)
     async function loadInitialData() {
         try {
             // Fetch everything in parallel for speed
-            const [alunoRes, instRes, docRes, turmaRes, configRes] = await Promise.all([
+            const [alunoRes, instRes, docRes, configRes, complementoRes] = await Promise.all([
                 authenticatedFetch('/alunos'),
-                authenticatedFetch('/estagios'),
-                authenticatedFetch('/docentes'),
-                authenticatedFetch('/turmaestagios'),
-                authenticatedFetch('/configuracoes')
+                authenticatedFetch('/instituicoes'),
+                authenticatedFetch('/professores'),
+                authenticatedFetch('/configuracoes'),
+                authenticatedFetch('/complementos')
             ]);
 
             // Alunos
@@ -47,17 +65,20 @@ $(document).ready(async function () {
 
             // Professores
             if (docRes.ok) {
-                const docentes = await docRes.json();
+                const professores = await docRes.json();
                 const select = document.getElementById('professor_id');
-                docentes.forEach(doc => select.add(new Option(doc.nome, doc.id)));
+                professores.forEach(doc => select.add(new Option(doc.nome, doc.id)));
             }
 
-            // Turmas
-            if (turmaRes.ok) {
-                const turmas = await turmaRes.json();
-                const select = document.getElementById('turmaestagio_id');
-                turmas.forEach(turma => select.add(new Option(turma.area, turma.id)));
+            // Complementos
+            if (complementoRes.ok) {
+                const complementos = await complementoRes.json();
+                const select = document.getElementById('complemento_id');
+                complementos.forEach(comp => select.add(new Option(comp.periodo_especial, comp.id)));
             }
+
+            // Load Turnos
+            await loadTurnos();
 
             // Default Period
             if (configRes.ok) {
@@ -80,7 +101,7 @@ $(document).ready(async function () {
     async function loadSupervisores(instituicaoId, targetId = null) {
         if (!instituicaoId) return;
         try {
-            const res = await authenticatedFetch(`/estagios/${instituicaoId}/supervisores`);
+            const res = await authenticatedFetch(`/instituicoes/${instituicaoId}/supervisores`);
             if (res.ok) {
                 const supervisores = await res.json();
                 const select = document.getElementById('supervisor_id');
@@ -111,7 +132,6 @@ $(document).ready(async function () {
 
                 if (data.instituicao_id) document.getElementById('instituicao_id').value = data.instituicao_id;
                 if (data.professor_id) document.getElementById('professor_id').value = data.professor_id;
-                if (data.turmaestagio_id) document.getElementById('turmaestagio_id').value = data.turmaestagio_id;
 
                 // Trigger supervisor load for this institution
                 if (data.instituicao_id) {
@@ -119,16 +139,7 @@ $(document).ready(async function () {
                 }
             }
 
-            // Also get basic aluno info for the turno
-            const alunoRes = await authenticatedFetch(`/alunos/${alunoId}`);
-            if (alunoRes.ok) {
-                const aluno = await alunoRes.json();
-                if (aluno.turno) {
-                    document.getElementById('turno').value = aluno.turno.charAt(0).toUpperCase();
-                } else if (!document.getElementById('turno').value) {
-                    document.getElementById('turno').value = 'A';
-                }
-            }
+            // Note: turno field removed as it's not present in the HTML form
         } catch (error) {
             console.error('Error loading student history:', error);
         }
@@ -143,16 +154,27 @@ $(document).ready(async function () {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const tcEl = document.getElementById('tc');
+        const tcSolicitacaoEl = document.getElementById('tc_solicitacao');
+        const beneTransporteEl = document.getElementById('benetransporte');
+        const beneAlimentacaoEl = document.getElementById('benealimentacao');
+        const beneBolsaEl = document.getElementById('benebolsa');
+
         const estagiario = {
             aluno_id: document.getElementById('aluno_id').value,
-            professor_id: document.getElementById('professor_id').value,
+            professor_id: document.getElementById('professor_id').value || null,
             supervisor_id: document.getElementById('supervisor_id').value || null,
             instituicao_id: document.getElementById('instituicao_id').value,
-            turmaestagio_id: document.getElementById('turmaestagio_id').value || null,
             periodo: document.getElementById('periodo').value,
-            turno: document.getElementById('turno').value || 'A',
             nivel: document.getElementById('nivel').value,
             ajuste2020: document.getElementById('ajuste2020').value || 0,
+            tc: tcEl?.checked ? 1 : 0,
+            // Format date to yyyy-MM-dd for HTML date input consistency
+            tc_solicitacao: tcSolicitacaoEl?.value ? tcSolicitacaoEl.value.split('T')[0] : null,
+            complemento_id: document.getElementById('complemento_id').value || null,
+            benetransporte: beneTransporteEl?.checked ? 1 : 0,
+            benealimentacao: beneAlimentacaoEl?.checked ? 1 : 0,
+            benebolsa: String(beneBolsaEl?.value || '').trim() || null,
             observacoes: document.getElementById('observacoes').value || null
         };
 
@@ -179,3 +201,4 @@ $(document).ready(async function () {
     // 6. Run Initialization
     loadInitialData();
 });
+

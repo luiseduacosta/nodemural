@@ -13,14 +13,13 @@ $(document).ready(async function () {
     // Get instituicao_id from URL if present
     const urlParams = new URLSearchParams(window.location.search);
     const instituicaoId = urlParams.get('instituicao_id');
-
     // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('data').value = today;
 
     // Load instituições for the dropdown
     try {
-        const response = await fetch('/estagio');
+        const response = await authenticatedFetch('/instituicoes');
         const instituicoes = await response.json();
         const select = document.getElementById('instituicao_id');
 
@@ -50,7 +49,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch('/visitas', {
+            const response = await authenticatedFetch('/visitas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(visita)

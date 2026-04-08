@@ -6,7 +6,7 @@ const Inscricao = {
         let query = `SELECT i.*, a.nome as aluno_nome, m.instituicao
                     FROM inscricoes i
                     LEFT JOIN alunos a ON i.aluno_id = a.id
-                    LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id`;
+                    LEFT JOIN mural_estagios m ON i.muralestagio_id = m.id`;
         let params = [];
 
         if (periodo) {
@@ -27,17 +27,17 @@ const Inscricao = {
         return rows;
     },
 
-    async findById(id) {
+    async findByIdInscricao(id) {
         const query = `SELECT i.*, a.nome as aluno_nome, a.email as aluno_email, m.instituicao
                       FROM inscricoes i
                       LEFT JOIN alunos a ON i.aluno_id = a.id
-                      LEFT JOIN mural_estagio m ON i.muralestagio_id = m.id
+                      LEFT JOIN mural_estagios m ON i.muralestagio_id = m.id
                       WHERE i.id = ?`;
         const rows = await pool.query(query, [id]);
         return rows[0];
     },
 
-    async findByAlunoAndMural(aluno_id, muralestagio_id) {
+    async findByAlunoAndMuralInscricao(aluno_id, muralestagio_id) {
         const rows = await pool.query(
             'SELECT * FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? LIMIT 1',
             [aluno_id, muralestagio_id]
@@ -45,7 +45,7 @@ const Inscricao = {
         return rows;
     },
 
-    async findByMuralId(mural_id) {
+    async findByMuralIdInscricao(mural_id) {
         const query = `SELECT i.*, a.nome as aluno_nome, a.email as aluno_email, a.registro as aluno_registro
                       FROM inscricoes i
                       LEFT JOIN alunos a ON i.aluno_id = a.id
@@ -55,7 +55,7 @@ const Inscricao = {
         return rows;
     },
 
-    async create(registro, aluno_id, muralestagio_id, data, periodo) {
+    async create(registro, aluno_id, muralestagio_id, data, periodo, timestamp) {
         // Check if student already registered for this mural
         const existing = await pool.query(
             'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
@@ -67,17 +67,17 @@ const Inscricao = {
         }
 
         const result = await pool.query(
-            'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo) VALUES (?, ?, ?, ?, ?)',
-            [registro, aluno_id, muralestagio_id, data, periodo]
+            'INSERT INTO inscricoes (registro, aluno_id, muralestagio_id, data, periodo, timestamp) VALUES (?, ?, ?, ?, ?, ?)',
+            [registro, aluno_id, muralestagio_id, data, periodo, timestamp]
         );
-        return { id: Number(result.insertId), registro, aluno_id, muralestagio_id, data, periodo };
+        return { id: Number(result.insertId), registro, aluno_id, muralestagio_id, data, periodo, timestamp };
     },
 
-    async update(id, registro, aluno_id, muralestagio_id, data, periodo) {
-        // Check if another student already registered for this mural in this period
+    async update(id, registro, aluno_id, muralestagio_id, data, periodo, timestamp) {
+        // Check if this student is already registered for this mural
         const existing = await pool.query(
-            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ?',
-            [aluno_id, muralestagio_id]
+            'SELECT id FROM inscricoes WHERE aluno_id = ? AND muralestagio_id = ? AND id != ?',
+            [aluno_id, muralestagio_id, id]
         );
 
         if (existing.length > 0) {
@@ -85,13 +85,13 @@ const Inscricao = {
         }
 
         const result = await pool.query(
-            'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ? WHERE id = ?',
-            [registro, aluno_id, muralestagio_id, data, periodo, id]
+            'UPDATE inscricoes SET registro = ?, aluno_id = ?, muralestagio_id = ?, data = ?, periodo = ?, timestamp = ? WHERE id = ?',
+            [registro, aluno_id, muralestagio_id, data, periodo, timestamp, id]
         );
         return result.affectedRows > 0;
     },
 
-    async delete(id) {
+    async deleteInscricao(id) {
         const result = await pool.query(
             'DELETE FROM inscricoes WHERE id = ?',
             [id]

@@ -18,10 +18,10 @@ Your application now has JWT-based authentication and role-based access control 
 - New `auth_users` table created with:
   - Email (unique)
   - Hashed password (using bcryptjs)
-  - Roles: admin, supervisor, docente, aluno
+  - Roles: admin, supervisor, professor, aluno
   - Nome
-  - Identificacao (a numer: registro from aluno, siape from docente ou cress from supervisor)
-  - entidade_id (id from aluno, docente ou supervisor)
+  - Identificacao (a numer: registro from aluno, siape from professor ou cress from supervisor)
+  - entidade_id (id from aluno, professor ou supervisor)
   - Soft delete (ativo field)
 
 **Setup file:** [src/database/setupAuthUsers.js](src/database/setupAuthUsers.js)
@@ -197,7 +197,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:3333/auth/profile
 |------|-------------|
 | **admin** | Full access to all endpoints |
 | **supervisor** | Can manage estagiarios, view inscriptions |
-| **docente** | Can manage alunos, atividades |
+| **professor** | Can manage alunos, atividades |
 | **aluno** | Can view own data, view mural |
 
 ---
@@ -218,8 +218,8 @@ import { verifyToken, checkRole } from '../middleware/auth.js';
 // Authentication required
 router.post('/', verifyToken, controller.create);
 
-// Role-based access (admin or docente only)
-router.post('/', verifyToken, checkRole(['admin', 'docente']), controller.create);
+// Role-based access (admin or professor only)
+router.post('/', verifyToken, checkRole(['admin', 'professor']), controller.create);
 
 // Admin only
 router.delete('/:id', verifyToken, checkRole(['admin']), controller.delete);

@@ -8,11 +8,11 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
-// Routes
+// Routes - All authenticated users can view, only admin can modify
 router.get('/', verifyToken, turmaController.getAllTurmas);
 router.get('/:id', verifyToken, turmaController.getTurmaById);
 router.post('/', verifyToken, checkRole(['admin']), turmaController.createTurma);
 router.put('/:id', verifyToken, checkRole(['admin']), turmaController.updateTurma);
-router.delete('/:id', verifyToken, checkRole(['admin']),turmaController.deleteTurma);
+router.delete('/:id', verifyToken, checkRole(['admin']), turmaController.deleteTurma);
 
 export default router;

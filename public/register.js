@@ -1,5 +1,4 @@
-// src/public/register.js
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole } from './auth-utils.js';
 
 function isAuthenticated() {
   return getToken() && hasRole(['admin']);
@@ -10,7 +9,7 @@ const form = document.getElementById('registerForm');
 const msg = document.getElementById('message');
 
 // Se role for aluno, identificacao deve ser DRE
-// Se role for docente, identificacao deve ser SIAPE
+// Se role for professor, identificacao deve ser SIAPE
 // Se role for supervisor, identificacao deve ser CRESS
 const roleSelect = document.getElementById('role');
 const identificacaoInput = document.getElementById('identificacao');
@@ -18,7 +17,7 @@ const identificacaoInput = document.getElementById('identificacao');
 roleSelect.addEventListener('change', () => {
   if (roleSelect.value === 'aluno') {
     identificacaoInput.placeholder = 'DRE';
-  } else if (roleSelect.value === 'docente') {
+  } else if (roleSelect.value === 'professor') {
     identificacaoInput.placeholder = 'SIAPE';
   } else if (roleSelect.value === 'supervisor') {
     identificacaoInput.placeholder = 'CRESS';
@@ -29,8 +28,8 @@ identificacaoInput.addEventListener('change', () => {
   console.log("role: " + roleSelect.value + " identificacao: " + identificacaoInput.value);
   if (roleSelect.value === 'aluno') {
     checkAluno(identificacaoInput.value);
-  } else if (roleSelect.value === 'docente') {
-    checkDocente(identificacaoInput.value);
+  } else if (roleSelect.value === 'professor') {
+    checkProfessor(identificacaoInput.value);
   } else if (roleSelect.value === 'supervisor') {
     checkSupervisor(identificacaoInput.value);
   }
@@ -44,33 +43,33 @@ async function checkAluno(identificacao) {
     })
     const data = await res.json();
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Aluno cadastrado. Ok!.';
-      document.getElementById('entidade_id').value = data[0]?.id;
+      msg.style.color = 'green';
+      msg.textContent = 'Aluno(a) encontrado(a) no sistema. Pode prosseguir com o registro.';
+      document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Aluno precisa ser cadastrado no sistema de gestão de alunos.";
+    msg.style.color = 'red';
+    msg.textContent = "Aluno(a) precisa ser cadastrado(a) primeiro no sistema de gestão de pessoas.";
   }
 }
 
-// Verificar se o docente tem um registro
-async function checkDocente(identificacao) {
+// Verificar se o professor tem um registro
+async function checkProfessor(identificacao) {
   try {
-    const res = await fetch('/docentes/siape/' + identificacao, {
+    const res = await fetch('/professores/siape/' + identificacao, {
       method: 'GET',
     })
     const data = await res.json();
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Docente já registrado.';
-      document.getElementById('entidade_id').value = data[0]?.id;
+      msg.style.color = 'green';
+      msg.textContent = 'Professor encontrado(a) no sistema. Pode prosseguir com o registro.';
+      document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Docente precisa ser cadastrado no sistema de gestão de docentes.";
+    msg.style.color = 'red';
+    msg.textContent = "Professor precisa ser cadastrado(a) primeiro no sistema de gestão de professores.";
   }
 }
 
@@ -83,14 +82,14 @@ async function checkSupervisor(identificacao) {
     const data = await res.json();
     console.log(data.id);
     if (res.ok) {
-      msg.style.color = 'red';
-      msg.textContent = 'Supervisor já registrado.';
+      msg.style.color = 'green';
+      msg.textContent = 'Supervisor(a) encontrado(a) no sistema. Pode prosseguir com o registro.';
       document.getElementById('entidade_id').value = data.id;
     }
     return data;
   } catch (err) {
-    msg.style.color = 'green';
-    msg.textContent = "Supervisor precisa ser cadastrado no sistema de gestão de supervisores.";
+    msg.style.color = 'red';
+    msg.textContent = "Supervisor(a) precisa ser cadastrado(a) primeiro no sistema de gestão de supervisores.";
   }
 }
 
@@ -101,7 +100,7 @@ form.addEventListener('submit', async (e) => {
   const nome = document.getElementById('nome').value.trim();
   const role = document.getElementById('role').value.trim();
   const identificacao = document.getElementById('identificacao').value.trim();
-  const entidade_id = document.getElementById('entidade_id').value.trim();
+  const entidade_id = document.getElementById('entidade_id').value.trim() || null;
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('passwordConfirm').value;
@@ -113,6 +112,7 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ nome, role, identificacao, entidade_id, email, password, passwordConfirm })
     });
     const data = await res.json();
+    console.log(data);
     if (!res.ok) throw new Error(data.error || 'Erro ao registrar');
     msg.style.color = 'green';
     msg.textContent = 'Registrado com sucesso. Redirecionando...';

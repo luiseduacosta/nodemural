@@ -1,5 +1,5 @@
 // src/public/new-supervisor.js
-import { getToken, hasRole, authenticatedFetch, getCurrentUser } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch, getCurrentUser, updateAuthSession } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -17,6 +17,12 @@ $(document).ready(async function () {
         document.getElementById('cress').value = currentUser.identificacao;
     }
 
+    $('#telefone').inputmask('(99) 9999-9999');
+    $('#celular').inputmask({
+        mask: ["(99) 9999-9999", "(99) 99999-9999"],
+        keepStatic: true
+    });
+
     const form = document.getElementById('newSupervisorForm');
 
     form.addEventListener('submit', async (e) => {
@@ -25,45 +31,64 @@ $(document).ready(async function () {
         const supervisor = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value || null,
+            telefone: document.getElementById('telefone').value || '',
             celular: document.getElementById('celular').value || '',
-            cress: document.getElementById('cress').value
+            cress: document.getElementById('cress').value,
+            regiao: document.getElementById('regiao').value || null,
+            cpf: document.getElementById('cpf').value || null,
+            escola: document.getElementById('escola').value || null,
+            ano_formacao: document.getElementById('ano_formacao').value || null,
+            cargo: document.getElementById('cargo').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         try {
+            // Verificar se o(a) supervisor(a) já existe. If yes abort the creation. Can't have two supervisors with the same CRESS.
+            const existingSupervisor = await authenticatedFetch(`/supervisores/cress/${supervisor.cress}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (existingSupervisor.ok) {
+                throw new Error('CRESS do(a) supervisor(a) já existe');
+            }
             const response = await authenticatedFetch('/supervisores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(supervisor)
             });
-            
             if (!response.ok) {
-                throw new Error('Failed to create supervisor');
+                throw new Error('Falha ao criar supervisor');
             }
-
             const result = await response.json();
-            const newId = result.id;
+            const newId = result.id || (result.user && result.user.entidade_id);
+
+            // If result contains user and token, update the session
+            if (result.user && result.token) {
+                updateAuthSession(result.user, result.token);
+            }
 
             // Update user.entidade_id if user role is 'supervisor'
             if (currentUser && currentUser.role === 'supervisor') {
-                // If entidade_id exists, it must match the new supervisor id
-                if (currentUser.entidade_id && currentUser.entidade_id !== newId) {
-                    alert('Erro: ID da entidade não corresponde ao supervisor criado.');
-                    return;
-                }
                 const userResponse = await authenticatedFetch(`/auth/users/${currentUser.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ entidade_id: newId })
                 });
-                if (!userResponse.ok) {
-                    console.error('Failed to update user entidade_id');
+
+                if (userResponse.ok) {
+                    const updateData = await userResponse.json();
+                    if (updateData.user && updateData.token) {
+                        updateAuthSession(updateData.user, updateData.token);
+                    }
+                } else {
+                    throw new Error('Falha ao atualizar entidade_id do usuário');
                 }
             }
 
             // Redirect to view page with the new ID
-            window.location.href = `view-supervisor.html?id=${newId}`;
+            const supervisorId = newId;
+            window.location.href = `view-supervisor.html?id=${supervisorId}`;
         } catch (error) {
-            console.error('Error creating supervisor:', error);
             alert(`Erro ao criar supervisor: ${error.message}`);
         }
     });

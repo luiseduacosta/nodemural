@@ -1,6 +1,24 @@
 // src/controllers/supervisorController.js
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
+/**
+ * Telefone/celular legados: 8 ou 9 dígitos (sem DDD) assume DDD 21; 10 ou 11 dígitos mantém;
+ * demais casos retorna string vazia.
+ */
+function normalizeLegacyPhoneDigits(raw) {
+    if (raw == null || String(raw).trim() === '') {
+        return '';
+    }
+    const d = String(raw).replace(/\D/g, '');
+    if (d.length === 8 || d.length === 9) {
+        return `21${d}`;
+    }
+    if (d.length === 10 || d.length === 11) {
+        return d;
+    }
+    return '';
+}
+
 $(document).ready(async function () {
 
     if (!getToken() || !hasRole(['admin', 'supervisor'])) {
@@ -8,6 +26,20 @@ $(document).ready(async function () {
         return;
     }
 
+    // Input Masks
+    $('#cpf').inputmask('999.999.999-99');
+    $('#email').inputmask('email');
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#ano_formacao').inputmask('9999');
+
+    // Form submission
     const form = document.getElementById('editSupervisorForm');
 
     // Define editSupervisor function first
@@ -19,11 +51,29 @@ $(document).ready(async function () {
             }
 
             const supervisor = await response.json();
+
+            if (supervisor.telefone != null && supervisor.telefone !== '') {
+                supervisor.telefone = normalizeLegacyPhoneDigits(supervisor.telefone);
+            }
+            if (supervisor.celular != null && supervisor.celular !== '') {
+                supervisor.celular = normalizeLegacyPhoneDigits(supervisor.celular);
+            }
+
+            document.getElementById('supervisorId').value = supervisor.id;
             document.getElementById('nome').value = supervisor.nome;
             document.getElementById('email').value = supervisor.email || '';
+            document.getElementById('telefone').value = supervisor.telefone || '';
             document.getElementById('celular').value = supervisor.celular || '';
             document.getElementById('cress').value = supervisor.cress;
-            document.getElementById('supervisorId').value = supervisor.id;
+            document.getElementById('regiao').value = supervisor.regiao || '';
+            document.getElementById('cpf').value = supervisor.cpf || '';
+            document.getElementById('escola').value = supervisor.escola || '';
+            document.getElementById('ano_formacao').value = supervisor.ano_formacao || '';
+            document.getElementById('cargo').value = supervisor.cargo || '';
+            document.getElementById('observacoes').value = supervisor.observacoes || '';
+
+            // Store original cress to detect changes
+            window.oldCress = supervisor.cress;
 
             // Store the ID for view function
             window.currentSupervisorId = id;
@@ -49,9 +99,16 @@ $(document).ready(async function () {
         e.preventDefault();
         const supervisor = {
             nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value || '',
+            email: document.getElementById('email').value || null,
+            telefone: document.getElementById('telefone').value || null,
             celular: document.getElementById('celular').value || null,
-            cress: document.getElementById('cress').value
+            cress: document.getElementById('cress').value || null,
+            regiao: document.getElementById('regiao').value || null,
+            cpf: document.getElementById('cpf').value || null,
+            escola: document.getElementById('escola').value || null,
+            ano_formacao: document.getElementById('ano_formacao').value || null,
+            cargo: document.getElementById('cargo').value || null,
+            observacoes: document.getElementById('observacoes').value || null
         };
 
         const id = document.getElementById('supervisorId').value;
@@ -63,6 +120,16 @@ $(document).ready(async function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(supervisor)
         });
+
+        // if edit changes the field CRESS, update the identificacao field in the users table too
+        if (supervisor.cress !== window.oldCress) {
+            await authenticatedFetch(`/auth/users/entity/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identificacao: supervisor.cress })
+            });
+            window.oldCress = supervisor.cress; // Update for subsequent submits
+        }
 
         if (!response.ok) {
             const error = await response.json();

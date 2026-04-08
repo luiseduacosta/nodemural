@@ -1,9 +1,9 @@
 // src/controllers/alunoController.js
-import { getToken, hasRole, getCurrentUser } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser, updateAuthSession } from './auth-utils.js';
 
 $(document).ready(async function () {
 
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
         return;
     }
@@ -11,8 +11,7 @@ $(document).ready(async function () {
     const currentUser = getCurrentUser();
 
     // If the user is a aluno, pre-fill the form with their own data
-    if (hasRole('aluno')) {
-        const currentUser = getCurrentUser();
+    if (hasRole(['aluno'])) {
         document.getElementById('nome').value = currentUser.nome;
         document.getElementById('registro').value = currentUser.identificacao;
         document.getElementById('email').value = currentUser.email;
@@ -21,8 +20,46 @@ $(document).ready(async function () {
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
-    $('#nascimento').inputmask('99-99-9999');
-    $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#nascimento').inputmask('99/99/9999');
+    $('#ingresso').inputmask('9999-[1-2]');  // Simplified mask for Ingresso
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+
+    // Initialize EasyMDE for observacoes field
+    const observacoesMDE = new EasyMDE({ 
+        element: document.getElementById('observacoes'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
+
+    await loadTurnos();
+
+    async function loadTurnos() {
+        try {
+            const response = await fetch('/turnos', {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
+            if (!response.ok) return;
+            const turnos = await response.json();
+            const select = document.getElementById('turno_id');
+            if (!select) return;
+            turnos.forEach(turno => {
+                const option = document.createElement('option');
+                option.value = String(turno.id);
+                option.textContent = turno.turno;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading turnos:', error);
+        }
+    }
 
     // Form Submission
     $('#newAlunoForm').on('submit', async function (e) {
@@ -32,29 +69,33 @@ $(document).ready(async function () {
             return;
         }
 
+        // Serialize form data
         const formData = {};
         $(this).serializeArray().forEach(item => {
             formData[item.name] = item.value;
         });
 
+        // Add EasyMDE value
+        formData.observacoes = observacoesMDE.value();
+        if (formData.nascimento === '') {
+            formData.nascimento = null;
+        }
+
         try {
             const response = await fetch('/alunos', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
                 },
                 body: JSON.stringify(formData)
             });
 
+            // if edit changes the field registro, update the identificacao field in the users table too
             if (response.ok) {
                 const data = await response.json();
                 // Check if user is aluno and needs entidade_id update
-                if (currentUser && currentUser.role === 'aluno') {
-                    // If entidade_id exists, it must match the new aluno id
-                    if (currentUser.entidade_id && currentUser.entidade_id !== data.id) {
-                        alert('Erro: ID da entidade não corresponde ao aluno criado.');
-                        return;
-                    }
+                if (hasRole('aluno') && currentUser && currentUser.entidade_id !== data.id) {
                     // Update user.entidade_id with the new aluno id
                     const userResponse = await fetch(`/auth/users/${currentUser.id}`, {
                         method: 'PUT',
@@ -64,7 +105,13 @@ $(document).ready(async function () {
                         },
                         body: JSON.stringify({ entidade_id: data.id })
                     });
-                    if (!userResponse.ok) {
+
+                    if (userResponse.ok) {
+                        const updateData = await userResponse.json();
+                        if (updateData.user && updateData.token) {
+                            updateAuthSession(updateData.user, updateData.token);
+                        }
+                    } else {
                         console.error('Failed to update user entidade_id');
                     }
                 }

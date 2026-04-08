@@ -1,4 +1,3 @@
-// src/public/atividades.js
 import { getToken, hasRole, getCurrentUser, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
@@ -8,10 +7,8 @@ $(document).ready(async function () {
         window.location.href = 'login.html';
         return;
     } else {
-        if (hasRole(['aluno']) && !user.admin) { // Check if it's ONLY an aluno
-            // In most cases, students should go to their own aluno view, 
-            // but if they got here, we might want to let them see their activities.
-            // However, the original code redirected them. Let's keep it but make it safer.
+        if (hasRole(['aluno'])) {
+            // Students should view their own aluno page
             if (!user.entidade_id) {
                 console.error("Aluno without entidade_id");
             } else {
@@ -23,7 +20,7 @@ $(document).ready(async function () {
 
     const tableConfig = {
         responsive: true,
-        order: [[1, 'asc'], [2, 'asc']], // Order by Date DESC, then Start Time ASC
+        order: [[2, 'desc'], [3, 'asc']], // Order by Date DESC, then Start Time ASC
         ajax: {
             url: '/atividades',
             beforeSend: function (xhr) {
@@ -69,8 +66,16 @@ $(document).ready(async function () {
 
     window.deleteAtividade = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta atividade?')) {
-            await authenticatedFetch(`/atividades/${id}`, { method: 'DELETE' });
-            table.ajax.reload();
+            try {
+                const response = await authenticatedFetch(`/atividades/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Erro ao excluir atividade');
+                }
+                table.ajax.reload();
+            } catch (error) {
+                console.error('Error deleting atividade:', error);
+                alert('Erro ao excluir atividade');
+            }
         }
     };
 });

@@ -45,7 +45,10 @@ export const updateTurma = async (req, res) => {
         const { id } = req.params;
         const { area } = req.body;
 
-        await Turma.update(id, area);
+        const success = await Turma.update(id, area);
+        if (!success) {
+            return res.status(404).json({ error: 'Turma de estágio not found' });
+        }
         res.status(204).end();
     } catch (error) {
         console.error('Error updating turma:', error);
@@ -57,7 +60,10 @@ export const updateTurma = async (req, res) => {
 export const deleteTurma = async (req, res) => {
     try {
         const { id } = req.params;
-        await Turma.delete(id);
+        const success = await Turma.delete(id);
+        if (!success) {
+            return res.status(404).json({ error: 'Turma de estágio not found' });
+        }
         res.status(204).end();
     } catch (error) {
         console.error('Error deleting turma:', error);

@@ -1,4 +1,3 @@
-//
 import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {

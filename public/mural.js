@@ -1,4 +1,3 @@
-// src/routes/muralRoutes.js
 import { getToken, isAdmin, hasRole, authenticatedFetch } from './auth-utils.js';
 
 // Everybody can access to the display of this page for the current periodo stored in the config
@@ -6,13 +5,15 @@ $(document).ready(async function () {
 
     let table;
 
+    // Setup - add a text input to each footer cell
     table = $('#muralTable').DataTable({
         order: [[2, 'desc'], [1, 'asc']],
         ajax: {
+            method: 'GET',
             url: '/mural',
             data: function (d) {
                 const token = getToken();
-                if (token && hasRole('admin', 'docente', 'supervisor')) {
+                if (token && hasRole(['admin', 'professor', 'supervisor'])) {
                     const periodo = $('#periodoFilter').val();
                     if (periodo && periodo != 'Todos') {
                         d.periodo = periodo;
@@ -35,14 +36,14 @@ $(document).ready(async function () {
             { data: 'periodo' },
             { data: 'vagas' },
             {
-                data: 'dataInscricao', render: function (data) {
+                data: 'data_inscricao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
                     return date.toLocaleDateString('pt-BR');
                 }
             },
             {
-                data: 'dataSelecao', render: function (data) {
+                data: 'data_selecao', render: function (data) {
                     if (!data) return '';
                     const date = new Date(data);
                     return date.toLocaleDateString('pt-BR');
@@ -65,6 +66,7 @@ $(document).ready(async function () {
         }
     });
 
+    // Load Periodos and Config
     async function loadFilters() {
         try {
             // 1. Get Distinct Periods
@@ -102,15 +104,6 @@ $(document).ready(async function () {
                 select.append(option);
             });
 
-            // If there is not a default period, select the first one
-            if (periodos.length > 0 && !select.val()) {
-                const option = document.createElement("option");
-                option.value = periodos[0].periodo;
-                option.text = periodos[0].periodo;
-                option.selected = true;
-                select.append(option);
-            }
-
             // Reload table with the new default filter
             table.ajax.reload();
 
@@ -142,7 +135,7 @@ $(document).ready(async function () {
     window.deleteMural = async (id) => {
         if (confirm('Tem certeza que deseja excluir este mural?')) {
             try {
-                const response = await fetch(`/ mural / ${id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/mural/${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete mural');
                 }

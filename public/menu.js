@@ -28,18 +28,38 @@ $(document).ready(async function () {
       // Remove login/register links if already logged in
       switch (user.role) {
         case 'admin':
+          const loginLinksAdmin = navbarNav.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+          loginLinksAdmin.forEach(link => link.parentElement.remove());
           break;
         case 'aluno':
-          const loginLinksAluno = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
+          const loginLinksAluno = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="professores.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="instituicoes.html"], a[href="areas.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
           loginLinksAluno.forEach(link => link.parentElement.remove());
+          // Change the label of the alunos.html link
+          const muralLink = navbarNav.querySelector('a[href="alunos.html"]');
+          if (muralLink) {
+            muralLink.textContent = 'Meus dados';
+            muralLink.href = '/view-aluno.html?id=' + user.entidade_id;
+          }
           break;
-        case 'docente':
-          const loginLinksDocente = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
-          loginLinksDocente.forEach(link => link.parentElement.remove());
+        case 'professor':
+          const loginLinksProfessor = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="instituicoes.html"], a[href="areas.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"]');
+          loginLinksProfessor.forEach(link => link.parentElement.remove());
+          // Change the label of the professores.html link
+          const professoresLink = navbarNav.querySelector('a[href="professores.html"]');
+          if (professoresLink) {
+            professoresLink.textContent = 'Meus alunos';
+            professoresLink.href = '/view-professor.html?id=' + user.entidade_id;
+          }
           break;
         case 'supervisor':
-          const loginLinksSupervisor = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="view-configuracoes.html"]');
+          const loginLinksSupervisor = navbarNav.querySelectorAll('a[href="#"], a[href="login.html"], a[href="register.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="professores.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="instituicoes.html"], a[href="areas.html"], a[href="visitas.html"], a[href="view-configuracoes.html"]');
           loginLinksSupervisor.forEach(link => link.parentElement.remove());
+          // Change the label of the supervisores.html link
+          const supervisoresLink = navbarNav.querySelector('a[href="supervisores.html"]');
+          if (supervisoresLink) {
+            supervisoresLink.textContent = 'Meus estagiarios';
+            supervisoresLink.href = '/view-supervisor.html?id=' + user.entidade_id;
+          }
           break;
         default:
           break;
@@ -67,7 +87,7 @@ $(document).ready(async function () {
       });
     } else {
       // Only show login/register links if not logged in
-      const loginLinks = navbarNav.querySelectorAll('a[href="#"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="docentes.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="estagios.html"], a[href="areainstituicoes.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"], a[href="register.html"]');
+      const loginLinks = navbarNav.querySelectorAll('a[href="#"], a[href="mural.html"], a[href="alunos.html"], a[href="estagiarios.html"], a[href="turmas.html"], a[href="professores.html"], a[href="atividades.html"], a[href="questionarios.html"], a[href="instituicoes.html"], a[href="areas.html"], a[href="visitas.html"], a[href="supervisores.html"], a[href="view-configuracoes.html"], a[href="register.html"]');
       // Put the login link on the right side of the navbar
       const loginLink = navbarNav.querySelector('a[href="login.html"]');
       if (loginLink) {

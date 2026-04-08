@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Instituição</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-2">
+
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">Nova Instituição</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="newInstituicaoForm">
+                    <div class="mb-3">
+                        <label class="form-label">Instituição (SIGLA - NOME)</label>
+                        <input type="text" class="form-control" id="instituicao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">CNPJ</label>
+                        <input type="text" class="form-control" id="cnpj" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Benefícios</label>
+                        <input type="text" class="form-control" id="beneficios">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Área</label>
+                        <select class="form-select" id="area_id">
+                            <option value="">Selecione uma área...</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Natureza</label>
+                        <input type="text" class="form-control" id="natureza">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" id="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-control" id="telefone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL</label>
+                        <input type="text" class="form-control" id="url">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-control" id="cep">
+                    </div>                    
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="endereco">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bairro</label>
+                        <input type="text" class="form-control" id="bairro">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Municipio</label>
+                        <input type="text" class="form-control" id="municipio">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Fim de Semana</label>
+                        <select class="form-control" id="fim_de_semana">
+                            <option value="">Selecione se tem fim de semana...</option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Parcialmente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Convênio</label>
+                        <input type="text" class="form-control" id="convenio">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Expira</label>
+                        <input type="date" class="form-control" id="expira">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Seguro</label>
+                        <select class="form-control" id="seguro">
+                            <option value="">Selecione se tem seguro...</option>
+                            <option value="0">Não</option>
+                            <option value="1">Sim</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <input type="text" class="form-control" id="observacoes">
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="instituicao.html" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js" type="module"></script>
+    <script src="new-instituicao.js" type="module"></script>
+
+</body>
+
+</html>

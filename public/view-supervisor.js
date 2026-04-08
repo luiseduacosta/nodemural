@@ -18,21 +18,46 @@ $(document).ready(async function () {
         return;
     }
 
+    const currentUser = getCurrentUser();
+    const isAdmin = hasRole(['admin']);
+    const isSupervisor = hasRole(['supervisor']);
+    const isOwner = currentUser.entidade_id == id;
+
+    if (!isAdmin && !isSupervisor && !isOwner) {
+        window.location.href = 'supervisores.html';
+        return;
+    }
+
+    // Hide new supervisor button if not admin
+    if (!isAdmin) {
+        document.getElementById('btn_new-supervisor').style.display = 'none';
+    }
+
+    // Hide edit button if not admin or owner
+    if (!isAdmin && !isOwner) {
+        document.getElementById('btn_edit_supervisor').style.display = 'none';
+    }
+
     // Fetch the supervisor data
     try {
         const response = await authenticatedFetch(`/supervisores/${id}`);
         if (!response.ok) {
-            throw new Error('Failed to fetch supervisor');
+            throw new Error('Falha ao buscar supervisor');
         }
-
         const supervisor = await response.json();
-
         // Populate the view fields
         document.getElementById('view-id').textContent = supervisor.id;
         document.getElementById('view-nome').textContent = supervisor.nome;
         document.getElementById('view-email').textContent = supervisor.email;
+        document.getElementById('view-telefone').textContent = supervisor.telefone;
         document.getElementById('view-celular').textContent = supervisor.celular;
         document.getElementById('view-cress').textContent = supervisor.cress;
+        document.getElementById('view-regiao').textContent = supervisor.regiao;
+        document.getElementById('view-cpf').textContent = supervisor.cpf;
+        document.getElementById('view-escola').textContent = supervisor.escola;
+        document.getElementById('view-ano_formacao').textContent = supervisor.ano_formacao;
+        document.getElementById('view-cargo').textContent = supervisor.cargo;
+        document.getElementById('view-observacoes').textContent = supervisor.observacoes;
 
         // Store the ID for edit function
         window.currentSupervisorId = id;
@@ -46,7 +71,6 @@ $(document).ready(async function () {
         // Load estagiários for this supervisor
         loadEstagiarios(id);
     } catch (error) {
-        console.error('Error loading supervisor:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
         window.location.href = 'supervisores.html';
     }
@@ -80,7 +104,7 @@ async function loadInstituicoes(supervisorId) {
 
 async function loadAllInstituicoes() {
     try {
-        const response = await authenticatedFetch('/estagios');
+        const response = await authenticatedFetch('/instituicoes');
         if (!response.ok) {
             throw new Error('Failed to fetch all instituições');
         }

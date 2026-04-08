@@ -60,51 +60,82 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Instituição</label>
-                                <p class="form-control-plaintext" id="view-instituicao"></p>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Complemento</label>
+                                <p class="form-control-plaintext" id="view-complemento"></p>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Supervisor(a)</label>
-                                <p class="form-control-plaintext" id="view-supervisor"></p>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">TC Solicitado</label>
+                                <p class="form-control-plaintext" id="view-tc-solicitado"></p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">TC entregue</label>
+                                <p class="form-control-plaintext" id="view-tc"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Instituição</label>
+                                <p class="form-control-plaintext" id="view-instituicao"></p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Supervisor(a)</label>
+                                <p class="form-control-plaintext" id="view-supervisor"></p>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Professor(a)</label>
                                 <p class="form-control-plaintext" id="view-professor"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Nível</label>
                                 <p class="form-control-plaintext" id="view-nivel"></p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Período</label>
                                 <p class="form-control-plaintext" id="view-periodo"></p>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Turma de Estágio</label>
-                                <p class="form-control-plaintext" id="view-turma"></p>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Turno</label>
                                 <p class="form-control-plaintext" id="view-turno"></p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Ajuste 2020</label>
                                 <p class="form-control-plaintext" id="view-ajuste2020"></p>
                             </div>
                         </div>
 
                         <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Benefício transporte</label>
+                                <p class="form-control-plaintext" id="view-benetransporte"></p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Benefício alimentação</label>
+                                <p class="form-control-plaintext" id="view-benealimentacao"></p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Benefício bolsa</label>
+                                <p class="form-control-plaintext" id="view-benebolsa"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <div class="col-md-6">
+                                <label class="form-label fw-bold">Nota</label>
+                                <p class="form-control-plaintext" id="view-nota"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Carga horária</label>
+                                <p class="form-control-plaintext" id="view-ch"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Observações</label>
                                     <p class="form-control-plaintext" id="view-observacoes"></p>
@@ -112,13 +143,16 @@
                             </div>
                         </div>
 
-                        <div class="mt-4">
-                            <a href="estagiarios.html" class="btn btn-secondary" id="back-button">Voltar</a>
-                            <a href="#" class="btn btn-success" id="new-atividade">Nova Atividade</a>
-                            <button onclick="editEstagiario()" class="btn btn-warning" id="edit-estagiario">Editar
+                        <div class="mt-4 d-flex justify-content-start">
+                            <a href="estagiarios.html" class="btn btn-secondary me-1" id="back-button">Voltar</a>
+                            <a href="#" class="btn btn-success me-1" id="new-atividade">Nova Atividade</a>
+                            <button onclick="editEstagiario()" class="btn btn-warning me-1" id="edit-estagiario">Editar
                                 Estagiário</button>
-                            <button onclick="deleteEstagiario()" class="btn btn-danger" id="delete-estagiario">Excluir
+                            <button onclick="deleteEstagiario()" class="btn btn-danger me-1" id="delete-estagiario">Excluir
                                 Estagiário</button>
+                            <button onclick="generateCertificate()" class="btn btn-info me-1" id="btn-certificate">Termo de compromisso</button>
+                            <button onclick="generateDeclaracao()" class="btn btn-primary me-1" id="btn-certificate">Imprime declaração</button>
+                            <button onclick="printAtividadesReport()" class="btn btn-outline-primary">Relatório de atividades</button>
                         </div>
                     </div>
                 </div>
@@ -152,12 +186,26 @@
 
             <!-- Respostas TAB -->
             <div class="tab-pane fade" id="respostas" role="tabpanel" aria-labelledby="respostas-tab">
+    
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h2 id="questionarioTitle" class="card-title">Carregando...</h2>
+                        <h2 id="estagiario_nota_ch" class="card-title">Avaliação do(a) professor(a)</h2>
                         <p class="card-text">
-                            <strong>Aluno:</strong> <span id="alunoNome"></span><br>
-                            <strong>Supervisor:</strong> <span id="supervisorNome"></span>
+                            <strong>Professor(a):</strong> <span id="view-professorNome"></span>
+                        </p>
+                        <p>
+                            <strong>Carga horária:</strong> <span id="view-ch"></span><br>
+                            <strong>Nota:</strong> <span id="view-nota"></span>
+                        </p>
+                        <span id="statusAvaliacaoProfessor" class="badge bg-secondary"></span>
+                    </div>
+                </div>
+        
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h2 id="questionarioTitle" class="card-title">Avaliação do(a) supervisor(a)</h2>
+                        <p class="card-text">
+                            <strong>Supervisor(a):</strong> <span id="supervisorNome"></span>
                         </p>
                         <span id="statusBadge" class="badge bg-secondary"></span>
                     </div>
@@ -177,6 +225,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="menu.js" type="module"></script>
     <script src="view-estagiario.js" type="module"></script>
 

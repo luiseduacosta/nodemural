@@ -85,3 +85,17 @@ export function requireLogin(redirectTo = window.location.href) {
     window.location.href = `/login.html?redirect=${encodeURIComponent(redirectTo)}`;
   }
 }
+
+/**
+ * Update the stored user and token in localStorage
+ * @param {object} user - The updated user object
+ * @param {string} token - The new JWT token
+ */
+export function updateAuthSession(user, token) {
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+  if (token) {
+    localStorage.setItem('token', token);
+  }
+}

@@ -12,9 +12,9 @@ router.use(express.json());
 router.get('/periodos', inscricaoController.getDistinctPeriods);
 router.post('/', verifyToken, checkRole(['admin', 'aluno']), inscricaoController.createInscricao);
 router.get('/', verifyToken, checkRole(['admin', 'aluno']), inscricaoController.getAllInscricoes);
-router.get('/:aluno_id/:muralestagio_id', verifyToken, checkRole(['aluno', 'admin']), inscricaoController.getInscricoesByAlunoAndMural);
-router.get('/:id', verifyToken, checkRole(['admin', 'aluno']), checkInscricaoOwnership, inscricaoController.getInscricaoById);
+router.get('/:aluno_id/:muralestagio_id', verifyToken, checkRole(['aluno', 'admin']), inscricaoController.getInscricoesByAlunoAndMuralInscricao);
+router.get('/:id', verifyToken, checkRole(['admin', 'aluno']), checkInscricaoOwnership, inscricaoController.getInscricaoByIdInscricao);
 router.put('/:id', verifyToken, checkRole(['admin']), inscricaoController.updateInscricao);
-router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkInscricaoOwnership, inscricaoController.deleteInscricao);
+router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkInscricaoOwnership, inscricaoController.deleteInscricaoInscricao);
 
 export default router;

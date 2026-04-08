@@ -9,14 +9,17 @@ const router = express.Router();
 router.use(express.json());
 
 // Routes
-router.get('/periodos', estagiarioController.getDistinctPeriods);
-router.post('/', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.createEstagiario);
-router.get('/', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAllEstagiarios);
-router.get('/aluno/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getEstagiariosByAlunoId);
-router.get('/:id/next-nivel', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getNextNivel);
-router.get('/:id/atividades', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAtividadesByEstagiarioId);
-router.get('/:id', estagiarioController.getEstagiarioById);
-router.put('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.updateEstagiario);
-router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.deleteEstagiario);
+router.get('/periodos', estagiarioController.getDistinctPeriodsEstagiario);
+router.get('/planilhaSeguro', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaSeguroEstagiario);
+router.get('/planilhaSupervisores', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaSupervisoresEstagiario);
+router.get('/planilhaCargaHoraria', verifyToken, checkRole(['admin']), estagiarioController.getPlanilhaCargaHorariaEstagiario);
+router.post('/', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.createEstagiarioEstagiario);
+router.get('/', verifyToken, checkRole(['admin', 'aluno', 'supervisor']), estagiarioController.getAllEstagiariosEstagiario);
+router.get('/aluno/:id', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getEstagiariosByAlunoIdEstagiario);
+router.get('/:id/next-nivel', verifyToken, checkRole(['admin', 'aluno']), estagiarioController.getNextNivelEstagiario);
+router.get('/:id/atividades', verifyToken, checkRole(['admin', 'aluno', 'professor', 'supervisor']), estagiarioController.getAtividadesByEstagiarioIdEstagiario);
+router.get('/:id', verifyToken, checkRole(['admin', 'aluno', 'professor', 'supervisor']), estagiarioController.getEstagiarioByIdEstagiario);
+router.put('/:id', verifyToken, checkRole(['admin', 'aluno', 'professor']), checkEstagiarioOwnership, estagiarioController.updateEstagiarioEstagiario);
+router.delete('/:id', verifyToken, checkRole(['admin', 'aluno']), checkEstagiarioOwnership, estagiarioController.deleteEstagiarioEstagiario);
 
 export default router;

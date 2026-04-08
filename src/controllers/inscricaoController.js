@@ -25,10 +25,10 @@ export const getDistinctPeriods = async (req, res) => {
 };
 
 // Get inscricao by ID
-export const getInscricaoById = async (req, res) => {
+export const getInscricaoByIdInscricao = async (req, res) => {
     try {
         const { id } = req.params;
-        const inscricao = await Inscricao.findById(id);
+        const inscricao = await Inscricao.findByIdInscricao(id);
         if (!inscricao) {
             return res.status(404).json({ error: 'Inscricao not found' });
         }
@@ -40,10 +40,10 @@ export const getInscricaoById = async (req, res) => {
 };
 
 // Get inscricoes by aluno ID and mural ID
-export const getInscricoesByAlunoAndMural = async (req, res) => {
+export const getInscricoesByAlunoAndMuralInscricao = async (req, res) => {
     try {
         const { aluno_id, muralestagio_id } = req.params;
-        const inscricoes = await Inscricao.findByAlunoAndMural(aluno_id, muralestagio_id);
+        const inscricoes = await Inscricao.findByAlunoAndMuralInscricao(aluno_id, muralestagio_id);
         res.status(200).json(inscricoes);
     } catch (error) {
         console.error('Error fetching inscricoes:', error);
@@ -52,10 +52,10 @@ export const getInscricoesByAlunoAndMural = async (req, res) => {
 };
 
 // Get inscricoes by mural ID
-export const getInscricoesByMuralId = async (req, res) => {
+export const getInscricoesByMuralIdInscricao = async (req, res) => {
     try {
         const { mural_id } = req.params;
-        const inscricoes = await Inscricao.findByMuralId(mural_id);
+        const inscricoes = await Inscricao.findByMuralIdInscricao(mural_id);
         res.status(200).json(inscricoes);
     } catch (error) {
         console.error('Error fetching inscricoes:', error);
@@ -98,10 +98,10 @@ export const updateInscricao = async (req, res) => {
 };
 
 // Delete an inscricao
-export const deleteInscricao = async (req, res) => {
+export const deleteInscricaoInscricao = async (req, res) => {
     try {
         const { id } = req.params;
-        const success = await Inscricao.delete(id);
+        const success = await Inscricao.deleteInscricao(id);
         if (!success) {
             return res.status(404).json({ error: 'Inscricao not found' });
         }

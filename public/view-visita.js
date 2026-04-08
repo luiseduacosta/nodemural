@@ -1,5 +1,5 @@
 // src/public/view-visita.js
-import { getToken, hasRole } from './auth-utils.js';
+import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
 
@@ -18,7 +18,7 @@ $(document).ready(async function () {
     }
 
     try {
-        const response = await fetch(`/visitas/${id}`);
+        const response = await authenticatedFetch(`/visitas/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch visitas');
         }
@@ -31,7 +31,7 @@ $(document).ready(async function () {
         };
 
         document.getElementById('view-id').textContent = visita.id;
-        document.getElementById('view-instituicao').textContent = visita.instituicao || 'N/A';
+        document.getElementById('view-instituicao').textContent = visita.instituicao_nome || 'N/A';
         document.getElementById('view-data').textContent = formatDate(visita.data);
         document.getElementById('view-responsavel').textContent = visita.responsavel;
         document.getElementById('view-motivo').textContent = visita.motivo;
@@ -53,7 +53,7 @@ window.editRecord = function () {
 window.deleteRecord = async function () {
     if (confirm('Tem certeza que deseja excluir esta visita?')) {
         try {
-            const response = await fetch(`/visitas/${window.currentVisitaId}`, { method: 'DELETE' });
+            const response = await authenticatedFetch(`/visitas/${window.currentVisitaId}`, { method: 'DELETE' });
             if (response.ok) {
                 window.location.href = 'visitas.html';
             } else {

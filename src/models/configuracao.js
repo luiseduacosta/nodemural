@@ -3,13 +3,13 @@ import pool from '../database/db.js';
 
 const Configuracao = {
     async findAll(req) {
-        let query = `SELECT * FROM configuracoes limit 1`;
+        let query = `SELECT * FROM configuracoes LIMIT 1`;
         const rows = await pool.query(query);
         return rows[0];
     },
 
     async findById(id) {
-        const query = "SELECT * FROM configuracoes limit 1 WHERE id = ?";
+        const query = "SELECT * FROM configuracoes WHERE id = ? LIMIT 1";
         const rows = await pool.query(query, [id]);
         return rows[0];
     },

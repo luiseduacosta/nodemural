@@ -8,6 +8,10 @@ const router = express.Router();
 // Middleware
 router.use(express.json());
 
+// Public routes (no auth required) - needed for registration
+router.get('/registro/:registro', alunoController.getAlunoByRegistro);
+router.get('/:id', alunoController.getAlunoById);
+
 // Protected routes - require authentication
 router.get('/', verifyToken, alunoController.getAllAlunos);
 router.get('/:id/estagiarios', verifyToken, alunoController.getEstagiariosByAlunoId);

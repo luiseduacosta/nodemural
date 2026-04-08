@@ -1,19 +1,38 @@
 // src/public/edit-aluno.js
 import { getToken, hasRole, getCurrentUser, authenticatedFetch } from './auth-utils.js';
 
+/**
+ * Telefone/celular legados: 8 ou 9 dígitos (sem DDD) assume DDD 21; 10 ou 11 dígitos mantém;
+ * demais casos retorna string vazia.
+ */
+function normalizeLegacyPhoneDigits(raw) {
+    if (raw == null || String(raw).trim() === '') {
+        return '';
+    }
+    const d = String(raw).replace(/\D/g, '');
+    if (d.length === 8 || d.length === 9) {
+        return `21${d}`;
+    }
+    if (d.length === 10 || d.length === 11) {
+        return d;
+    }
+    return '';
+}
+
 $(document).ready(async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
+    if (!getToken() || !hasRole(['admin'])) {
         window.location.href = 'login.html';
         return;
     }
 
     const user = getCurrentUser();
-    // If user is aluno, they can only edit their own record
-    if (user.role === 'aluno' && user.entidade_id != id) {
+    // If user is admin or the self aluno, they can only edit their own record
+    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
+        alert('Você não tem permissão para editar este aluno.');
         window.location.href = 'mural.html';
         return;
     }
@@ -21,9 +40,26 @@ $(document).ready(async function () {
     // Input Masks
     $('#cep').inputmask('99999-999');
     $('#cpf').inputmask('999.999.999-99');
-    $('#nascimento').inputmask('99-99-9999');
-    $('#ingresso').inputmask('9999-9'); // Simplified mask for Ingresso
+    $('#nascimento').inputmask('99/99/9999');
+    $('#ingresso').inputmask('9999[-9]');
+    $('#telefone').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
+    $('#celular').inputmask({
+        mask: ["(99) 9999.9999", "(99) 99999.9999"],
+        keepStatic: true
+    });
 
+    // Initialize EasyMDE for observacoes field
+    const observacoesMDE = new EasyMDE({ 
+        element: document.getElementById('observacoes'),
+        toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+    });
+
+    await loadTurnos();
+
+    // Load Aluno
     if (id) {
         loadAluno(id);
     }
@@ -42,6 +78,12 @@ $(document).ready(async function () {
             // console.log(item.name, item.value);
         });
 
+        // Add EasyMDE value
+        formData.observacoes = observacoesMDE.value();
+        if (formData.nascimento === '') {
+            formData.nascimento = null;
+        }
+
         try {
             const url = id ? `/alunos/${id}` : '/alunos';
             const method = id ? 'PUT' : 'POST';
@@ -53,6 +95,17 @@ $(document).ready(async function () {
                 },
                 body: JSON.stringify(formData)
             });
+
+            // if edit changes the field registro, update the identificacao field in the users table too
+            if (formData.registro !== window.oldRegistro) {
+                await authenticatedFetch(`/auth/users/entity/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identificacao: formData.registro })
+                });
+                window.oldRegistro = formData.registro; // Update for subsequent submits
+            }
+
             if (response.ok) {
                 // Redirect to view page after successful save
                 window.location.href = 'view-aluno.html?id=' + id;
@@ -83,7 +136,12 @@ $(document).ready(async function () {
                 throw new Error('Aluno não encontrado');
             }
 
-            console.log('Loading aluno data:', data);
+            if (data.telefone != null && data.telefone !== '') {
+                data.telefone = normalizeLegacyPhoneDigits(data.telefone);
+            }
+            if (data.celular != null && data.celular !== '') {
+                data.celular = normalizeLegacyPhoneDigits(data.celular);
+            }
 
             // Populate form
             Object.keys(data).forEach(key => {
@@ -102,9 +160,35 @@ $(document).ready(async function () {
                 }
             });
             $('#id').val(data.id); // Ensure ID is set
+
+            // Set EasyMDE value
+            if (data.observacoes) {
+                observacoesMDE.value(data.observacoes);
+            }
+
+            // Store original registro to detect changes
+            window.oldRegistro = data.registro;
         } catch (error) {
             console.error('Error loading aluno:', error);
             alert('Erro ao carregar dados do aluno: ' + error.message);
+        }
+    }
+
+    async function loadTurnos() {
+        try {
+            const response = await authenticatedFetch('/turnos');
+            if (!response.ok) return;
+            const turnos = await response.json();
+            const select = document.getElementById('turno_id');
+            if (!select) return;
+            turnos.forEach(turno => {
+                const option = document.createElement('option');
+                option.value = String(turno.id);
+                option.textContent = turno.turno;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading turnos:', error);
         }
     }
 
@@ -146,34 +230,30 @@ $(document).ready(async function () {
             $('#cpf').removeClass('is-invalid');
             isValid = true;
         }
-
-        // Ingresso: 4 digit year, trace, 1 digit (0, 1 or 2)
-        const ingresso = $('#ingresso').val();
-        const ingressoRegex = /^\d{4}-[0-2]$/;
+ 
+        // Ingresso: YYYY or YYYY-0/1/2 (0 when half-year is unknown)
+        const ingresso = String($('#ingresso').val() || '').trim();
+        const ingressoRegex = /^\d{4}(-[0-2])?$/;
+        const anoIngresso = ingresso.length >= 4 ? parseInt(ingresso.slice(0, 4), 10) : NaN;
 
         // The position 1 and 2 of the registro added to 20 is equal to the year of ingresso
         // Registro needs to be equal to 9 digits
         const registro = $('#registro').val();
         if (registro.length === 9) {
             const anoRegistro = parseInt('20' + registro.substring(1, 2));
-            const anoIngresso = parseInt(ingresso.substring(0, 4));
-            if (anoRegistro !== anoIngresso) {
+            if (!ingressoRegex.test(ingresso) || Number.isNaN(anoIngresso) || anoRegistro !== anoIngresso) {
                 $('#ingresso').addClass('is-invalid');
                 isValid = false;
             } else {
                 $('#ingresso').removeClass('is-invalid');
-                isValid = true;
             }
-            // If registro is 8 digits the year of the ingresso is equal to '19' + positions 0 and 1
         } else if (registro.length === 8) {
             const anoRegistro = parseInt('19' + registro.substring(0, 2));
-            const anoIngresso = parseInt(ingresso.substring(0, 4));
-            if (anoRegistro !== anoIngresso) {
+            if (!ingressoRegex.test(ingresso) || Number.isNaN(anoIngresso) || anoRegistro !== anoIngresso) {
                 $('#ingresso').addClass('is-invalid');
                 isValid = false;
             } else {
                 $('#ingresso').removeClass('is-invalid');
-                isValid = true;
             }
         } else {
             $('#ingresso').addClass('is-invalid');
@@ -185,6 +265,27 @@ $(document).ready(async function () {
             isValid = false;
         } else {
             $('#ingresso').removeClass('is-invalid');
+        }
+
+        // Telefone format: (99) 9999.9999
+        const telefone = $('#telefone').val();
+        const telefoneRegex = /^\([0-9]{2}\)\s[0-9]{4,5}\.[0-9]{4}$/;
+        if (telefone && !telefoneRegex.test(telefone)) {
+            $('#telefone').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#telefone').removeClass('is-invalid');
+            isValid = true;
+        }
+
+        // Celular format: (99) 99999.9999
+        const celular = $('#celular').val();
+        const celularRegex = /^\([0-9]{2}\)\s[0-9]{4,5}\.[0-9]{4}$/;
+        if (celular && !celularRegex.test(celular)) {
+            $('#celular').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#celular').removeClass('is-invalid');
             isValid = true;
         }
 

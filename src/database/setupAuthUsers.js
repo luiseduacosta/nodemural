@@ -14,7 +14,7 @@ async function setupAuthUsersTable() {
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
-                role ENUM('admin', 'supervisor', 'docente', 'aluno') DEFAULT 'aluno',
+                role ENUM('admin', 'supervisor', 'professor', 'aluno') DEFAULT 'aluno',
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
