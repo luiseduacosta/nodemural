@@ -18,4 +18,10 @@ router.put('/users/entity/:entidade_id', verifyToken, authController.updateUserB
 // Admin only routes
 router.get('/users', verifyToken, checkRole(['admin']), authController.getAllUsers);
 
+// Impersonation routes (admin only)
+router.post('/admin/impersonate/:userId', verifyToken, checkRole(['admin']), authController.startImpersonation);
+router.post('/admin/stop-impersonate', verifyToken, authController.stopImpersonation);
+router.get('/admin/impersonations/history', verifyToken, checkRole(['admin']), authController.getImpersonationHistory);
+router.get('/admin/impersonations/active', verifyToken, checkRole(['admin']), authController.getActiveImpersonations);
+
 export default router;

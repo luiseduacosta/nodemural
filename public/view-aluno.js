@@ -2,7 +2,6 @@
 import { getToken, authenticatedFetch, getCurrentUser, hasRole } from './auth-utils.js';
 
 const user = getCurrentUser();
-
 /**
  * Resolves the display label for an aluno's turno (shift/period).
  * Fetches the list of turnos from the API and returns the label matching turno_id.
@@ -56,12 +55,6 @@ function currentCourseSemesterOrdinal(ingressoStr, calendarioAtualStr) {
 
 $(document).ready(async function () {
 
-    // Se não estiver logado ou não for admin ou aluno, redireciona para o login
-    if (!getToken() || !hasRole(['admin'])) {
-        window.location.href = 'login.html';
-        return;
-    }
-
     // Get the ID from the URL query parameter with the id of the aluno
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -71,8 +64,10 @@ $(document).ready(async function () {
         return;
     }
 
+    const user = getCurrentUser();
+
     // If the user is an aluno and the id is not his, redirect to the mural
-    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
+    if (hasRole(['aluno']) && user.entidade_id != id) {
         alert('Você não tem permissão para visualizar este aluno');
         window.location.href = 'mural.html';
         return;

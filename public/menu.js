@@ -1,5 +1,6 @@
 // Top Menu
 import { isLoggedIn, getCurrentUser, logout } from './auth-utils.js';
+import { showImpersonationBanner } from './impersonation-utils.js';
 
 $(document).ready(async function () {
   // Função para carregar o menu
@@ -11,6 +12,9 @@ $(document).ready(async function () {
 
       // Add auth status and user info
       updateAuthUI();
+      
+      // Show impersonation banner if active
+      showImpersonationBanner();
     } catch (error) {
       console.error('Erro ao carregar o menu:', error);
     }

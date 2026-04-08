@@ -1,6 +1,7 @@
 // src/controllers/authController.js
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
+import Impersonation from '../models/impersonation.js';
 
 // Register a new user
 export const register = async (req, res) => {
@@ -255,5 +256,139 @@ export const updateUserByEntityId = async (req, res) => {
     } catch (error) {
         console.error('Update user by entity error:', error);
         res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
+};
+
+// Start impersonation (admin only)
+export const startImpersonation = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const adminId = req.user.id;
+
+        // Validate user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        // Admin cannot impersonate themselves
+        if (parseInt(userId) === adminId) {
+            return res.status(400).json({ error: 'Não é possível impersonar a si mesmo' });
+        }
+
+        // Optional: Prevent impersonating other admins (security measure)
+        if (user.role === 'admin') {
+            return res.status(403).json({ error: 'Não é possível impersonar outro administrador' });
+        }
+
+        // Create impersonation record
+        await Impersonation.create(adminId, userId);
+
+        // Generate JWT token for impersonated user
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+                nome: user.nome,
+                role: user.role,
+                entidade_id: user.entidade_id,
+                isImpersonating: true,
+                originalAdminId: adminId
+            },
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production',
+            { expiresIn: process.env.JWT_EXPIRY || '7d' }
+        );
+
+        res.status(200).json({
+            message: `Agora impersonando como ${user.nome}`,
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                nome: user.nome,
+                identificacao: user.identificacao,
+                role: user.role,
+                entidade_id: user.entidade_id,
+                isImpersonating: true,
+                originalAdminId: adminId
+            }
+        });
+
+    } catch (error) {
+        console.error('Start impersonation error:', error);
+        res.status(500).json({ error: 'Erro ao iniciar impersonação' });
+    }
+};
+
+// Stop impersonation
+export const stopImpersonation = async (req, res) => {
+    try {
+        const adminId = req.user.originalAdminId;
+
+        if (!adminId) {
+            return res.status(400).json({ error: 'Não está impersonando ninguém' });
+        }
+
+        // End impersonation session
+        await Impersonation.end(adminId);
+
+        // Get admin user info
+        const admin = await User.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin não encontrado' });
+        }
+
+        // Generate new JWT token for admin
+        const token = jwt.sign(
+            {
+                id: admin.id,
+                email: admin.email,
+                nome: admin.nome,
+                role: admin.role,
+                entidade_id: admin.entidade_id
+            },
+            process.env.JWT_SECRET || 'your_jwt_secret_key_change_this_in_production',
+            { expiresIn: process.env.JWT_EXPIRY || '7d' }
+        );
+
+        res.status(200).json({
+            message: 'Retornado à conta de administrador',
+            token,
+            user: {
+                id: admin.id,
+                email: admin.email,
+                nome: admin.nome,
+                identificacao: admin.identificacao,
+                role: admin.role,
+                entidade_id: admin.entidade_id
+            }
+        });
+
+    } catch (error) {
+        console.error('Stop impersonation error:', error);
+        res.status(500).json({ error: 'Erro ao parar impersonação' });
+    }
+};
+
+// Get impersonation history (admin only)
+export const getImpersonationHistory = async (req, res) => {
+    try {
+        const { limit } = req.query;
+        const history = await Impersonation.getHistory(req.user.id, parseInt(limit) || 50);
+        res.status(200).json(history);
+    } catch (error) {
+        console.error('Get impersonation history error:', error);
+        res.status(500).json({ error: 'Erro ao buscar histórico de impersonação' });
+    }
+};
+
+// Get all active impersonations (super admin only)
+export const getActiveImpersonations = async (req, res) => {
+    try {
+        const activeImpersonations = await Impersonation.getAllActive();
+        res.status(200).json(activeImpersonations);
+    } catch (error) {
+        console.error('Get active impersonations error:', error);
+        res.status(500).json({ error: 'Erro ao buscar impersonações ativas' });
     }
 };
