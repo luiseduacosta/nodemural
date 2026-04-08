@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Impersonation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div id="menu-container"></div>
+
+        <h1 class="mb-4">🎭 Test Impersonation Feature</h1>
+
+        <div class="alert alert-info">
+            <strong>ℹ️ Info:</strong> This page demonstrates the impersonation feature. 
+            Only admins can see the "Impersonar" buttons next to users.
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Users List</h5>
+            </div>
+            <div class="card-body">
+                <div id="usersContainer">
+                    <p class="text-muted">Loading users...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Your Impersonation History</h5>
+            </div>
+            <div class="card-body">
+                <div id="historyContainer">
+                    <p class="text-muted">Loading history...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="menu.js" type="module"></script>
+    <script src="test-impersonation.js" type="module"></script>
+</body>
+
+</html>
