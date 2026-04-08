@@ -117,6 +117,9 @@ export const getPlanilhaSupervisoresEstagiario = async (req, res) => {
         const rows = await Estagiario.findPlanilhaSupervisores(periodoSelecionado);
 
         const normalized = rows.map((row) => ({
+            aluno_id: row.aluno_id,
+            aluno_registro: row.aluno_registro,
+            aluno_nascimento: row.aluno_nascimento,
             aluno_nome: row.aluno_nome,
             instituicao: row.instituicao_nome,
             endereco_instituicao: row.endereco_instituicao,
