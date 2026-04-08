@@ -34,6 +34,7 @@ const Estagiario = {
                     a.id as aluno_id,
                     a.registro as aluno_registro,
                     a.nascimento as aluno_nascimento,
+                    a.nome as aluno_nome,
                     i.instituicao as instituicao_nome,
                     i.endereco as endereco_instituicao,
                     i.cep as cep_instituicao,

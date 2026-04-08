@@ -13,9 +13,9 @@ $(document).ready(async function () {
         const date = new Date(dateStr);
         if (Number.isNaN(date.getTime())) return String(dateStr);
 
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const yyyy = String(date.getFullYear());
+        const dd = String(date.getUTCDate()).padStart(2, '0');
+        const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const yyyy = String(date.getUTCFullYear());
         return `${dd}/${mm}/${yyyy}`;
     }
 
