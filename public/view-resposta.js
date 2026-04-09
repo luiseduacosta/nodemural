@@ -26,13 +26,21 @@ $(document).ready(async function () {
         }
     }
 
-    // Hide edit/delete buttons for aluno
-    if (hasRole(['aluno'])) {
-        $('button:contains("Editar")').hide();
-        $('button:contains("Excluir")').hide();
+    // Configure button visibility based on role
+    const isAdmin = hasRole(['admin']);
+    const isSupervisor = hasRole(['supervisor']);
+    const isAluno = hasRole(['aluno']);
+
+    if (isAluno) {
+        // Aluno cannot edit or delete
+        $('#btnEditar, #btnExcluir').hide();
+    } else if (isSupervisor || isAdmin) {
+        // Supervisor and Admin can edit and delete
+        $('#btnEditar, #btnExcluir').show();
     }
 
     let existingResponses = {};
+    let respostaId = null;
     // Load existing respostas
     let existingResponsesObj;
     // Load existing respostas
@@ -43,7 +51,10 @@ $(document).ready(async function () {
                 'Authorization': `Bearer ${getToken()}`
             },
             type: 'GET',
+            dataType: 'json',
             success: function (data) {
+
+                respostaId = data.id;
 
                 document.getElementById('alunoNome').textContent = data.aluno_nome;
                 document.getElementById('supervisorNome').textContent = data.supervisor_nome;
@@ -51,7 +62,6 @@ $(document).ready(async function () {
                 document.getElementById('modifiedData').innerHTML = (new Date(data.modified)).toLocaleDateString('pt-BR');
 
                 existingResponses = data.response || {};
-                // console.log(existingResponses);
                 existingResponsesObj = JSON.parse(existingResponses);
                 for (const [key, value] of Object.entries(existingResponsesObj)) {
                     const container = $('#respostasContainer');
@@ -197,6 +207,36 @@ $(document).ready(async function () {
         doc.text('Supervisor(a)', 105, y + 6, { align: 'center' });
 
         doc.save('avaliacao_preenchida.pdf');
+    });
+
+    // Edit Button Action
+    $('#btnEditar').on('click', function () {
+        if (!respostaId) return;
+        window.location.href = `edit-resposta.html?id=${respostaId}&estagiario_id=${estagiario_id}&questionario_id=${questionario_id}`;
+    });
+
+    // Delete Button Action
+    $('#btnExcluir').on('click', function () {
+        if (!respostaId) return;
+
+        if (confirm('Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita.')) {
+            $.ajax({
+                url: `/respostas/${respostaId}`,
+                type: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                success: function () {
+                    alert('Avaliação excluída com sucesso.');
+                    // Redirect back to estagiario page
+                    window.location.href = 'view-estagiario.html?id=' + estagiario_id;
+                },
+                error: function (xhr) {
+                    alert('Erro ao excluir avaliação.');
+                    console.error('Delete error:', xhr.responseText);
+                }
+            });
+        }
     });
 
 });

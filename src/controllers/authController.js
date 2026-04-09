@@ -265,6 +265,12 @@ export const startImpersonation = async (req, res) => {
         const { userId } = req.params;
         const adminId = req.user.id;
 
+        // Verify admin exists (prevents foreign key errors with stale tokens)
+        const admin = await User.findById(adminId);
+        if (!admin) {
+            return res.status(401).json({ error: 'Administrador não encontrado. Sessão expirada, faça login novamente.' });
+        }
+
         // Validate user exists
         const user = await User.findById(userId);
         if (!user) {

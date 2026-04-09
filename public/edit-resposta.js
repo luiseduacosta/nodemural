@@ -21,6 +21,7 @@ $(document).ready(async function () {
 
     let existingResposta = null;
     let existingResponses = {};
+    let loadedQuestions = [];
 
     // Load questionario info
     $.ajax({
@@ -80,6 +81,7 @@ $(document).ready(async function () {
                 'Authorization': `Bearer ${getToken()}`
             },
             success: function (questions) {
+                loadedQuestions = questions;
                 renderQuestions(questions);
             },
             error: function () {
@@ -101,7 +103,8 @@ $(document).ready(async function () {
         questions.forEach((question, index) => {
             // Use avaliacao + ordem to match legacy data format
             const questionKey = `avaliacao${question.ordem || question.id}`;
-            const existingValue = existingResponses[questionKey] || '';
+            const respData = existingResponses[questionKey];
+            const existingValue = (respData && respData.valor !== undefined) ? respData.valor : (respData || '');
 
             let inputHtml = '';
 
@@ -163,7 +166,15 @@ $(document).ready(async function () {
         let options = parseOptions(question.options);
         let selectedValues = [];
         try {
-            selectedValues = Array.isArray(existingValue) ? existingValue : JSON.parse(existingValue || '[]');
+            if (typeof existingValue === 'string') {
+                if (existingValue.startsWith('[')) {
+                    selectedValues = JSON.parse(existingValue);
+                } else {
+                    selectedValues = existingValue.split(',').map(s => s.trim()).filter(s => s);
+                }
+            } else if (Array.isArray(existingValue)) {
+                selectedValues = existingValue;
+            }
         } catch { selectedValues = []; }
 
         let html = '';
@@ -236,34 +247,56 @@ $(document).ready(async function () {
         const formData = {};
         const form = this;
 
-        // Collect all form data
-        $(form).find('input, textarea, select').each(function () {
-            const name = $(this).attr('name');
-            if (!name) return;
+        // Collect all form data using loadedQuestions to get question texts and options
+        loadedQuestions.forEach(question => {
+            const questionKey = `avaliacao${question.ordem || question.id}`;
+            const inputElement = $(form).find(`[name="${questionKey}"]`);
+            if (inputElement.length === 0) return;
 
-            if ($(this).attr('type') === 'radio') {
-                if ($(this).is(':checked')) {
-                    formData[name] = $(this).val();
+            let valor = null;
+            let texto_valor = null;
+
+            if (question.type === 'radio') {
+                const checked = inputElement.filter(':checked');
+                if (checked.length) {
+                    valor = checked.val();
+                    const options = parseOptions(question.options);
+                    texto_valor = options[valor] || valor;
                 }
-            } else if ($(this).attr('type') === 'checkbox') {
-                if (!formData[name]) formData[name] = [];
-                if ($(this).is(':checked')) {
-                    formData[name].push($(this).val());
+            } else if (question.type === 'checkbox') {
+                const checked = inputElement.filter(':checked');
+                if (checked.length) {
+                    const valuesArr = [];
+                    const textsArr = [];
+                    const options = parseOptions(question.options);
+                    checked.each(function() {
+                        const val = $(this).val();
+                        valuesArr.push(val);
+                        textsArr.push(options[val] || val);
+                    });
+                    valor = valuesArr.join(', ');
+                    texto_valor = textsArr.join(', ');
+                }
+            } else if (question.type === 'select') {
+                const selected = inputElement.find('option:selected');
+                if (selected.length && selected.val() !== "") {
+                    valor = selected.val();
+                    texto_valor = selected.text();
                 }
             } else {
-                formData[name] = $(this).val();
+                valor = inputElement.val();
+                texto_valor = valor;
+            }
+
+            // Only add if the user provided an answer
+            if (valor !== null && valor !== undefined && valor !== "") {
+                formData[questionKey] = {
+                    pergunta: question.text,
+                    valor: valor,
+                    texto_valor: texto_valor
+                };
             }
         });
-
-        // Convert checkbox arrays to JSON strings
-        for (const key in formData) {
-            if (Array.isArray(formData[key])) {
-                formData[key] = JSON.stringify(formData[key]);
-            }
-        }
-
-        console.log(existingResponses);
-        console.log(formData);
 
         // Create payload
         const payload = {

@@ -14,6 +14,8 @@ async function setupAuthUsersTable() {
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
+                identificacao VARCHAR(50) COMMENT 'DRE, SIAPE, CRESS',
+                entidade_id INT COMMENT 'Instituicao ID for alunos, Professor ID for professores',
                 role ENUM('admin', 'supervisor', 'professor', 'aluno') DEFAULT 'aluno',
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

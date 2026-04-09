@@ -46,6 +46,7 @@ $(document).ready(async function () {
         // Set estagiario info. It is not a select, but a view 
         const estagiarioSelect = document.getElementById('estagiario_id');
 
+        // Make the estagiarios selectable
         estagiarios.forEach(estagiario => {
             const option = document.createElement('option');
             option.value = estagiario.id;
@@ -282,31 +283,56 @@ $(document).ready(async function () {
         const formData = {};
         const form = this;
 
-        // Collect all form data
-        $(form).find('input, textarea, select').each(function () {
-            const name = $(this).attr('name');
-            if (!name) return;
+        // Collect all form data using loadedQuestions to get question texts and options
+        loadedQuestions.forEach(question => {
+            const questionKey = `avaliacao${question.ordem || question.id}`;
+            const inputElement = $(form).find(`[name="${questionKey}"]`);
+            if (inputElement.length === 0) return;
 
-            if ($(this).attr('type') === 'radio') {
-                if ($(this).is(':checked')) {
-                    formData[name] = $(this).val();
+            let valor = null;
+            let texto_valor = null;
+
+            if (question.type === 'radio') {
+                const checked = inputElement.filter(':checked');
+                if (checked.length) {
+                    valor = checked.val();
+                    const options = parseOptions(question.options);
+                    texto_valor = options[valor] || valor;
                 }
-            } else if ($(this).attr('type') === 'checkbox') {
-                if (!formData[name]) formData[name] = [];
-                if ($(this).is(':checked')) {
-                    formData[name].push($(this).val());
+            } else if (question.type === 'checkbox') {
+                const checked = inputElement.filter(':checked');
+                if (checked.length) {
+                    const valuesArr = [];
+                    const textsArr = [];
+                    const options = parseOptions(question.options);
+                    checked.each(function() {
+                        const val = $(this).val();
+                        valuesArr.push(val);
+                        textsArr.push(options[val] || val);
+                    });
+                    valor = valuesArr.join(', ');
+                    texto_valor = textsArr.join(', ');
+                }
+            } else if (question.type === 'select') {
+                const selected = inputElement.find('option:selected');
+                if (selected.length && selected.val() !== "") {
+                    valor = selected.val();
+                    texto_valor = selected.text();
                 }
             } else {
-                formData[name] = $(this).val();
+                valor = inputElement.val();
+                texto_valor = valor;
+            }
+
+            // Only add if the user provided an answer
+            if (valor !== null && valor !== undefined && valor !== "") {
+                formData[questionKey] = {
+                    pergunta: question.text,
+                    valor: valor,
+                    texto_valor: texto_valor
+                };
             }
         });
-
-        // Convert checkbox arrays to JSON strings
-        for (const key in formData) {
-            if (Array.isArray(formData[key])) {
-                formData[key] = JSON.stringify(formData[key]);
-            }
-        }
 
         const questionario_id = $('#questionario_id').val();
         const estagiario_id = $('#estagiario_id').val();
@@ -316,8 +342,6 @@ $(document).ready(async function () {
             estagiario_id: estagiario_id,
             response: formData
         };
-
-        console.log(payload);
 
         // Create new
         $.ajax({
@@ -339,7 +363,7 @@ $(document).ready(async function () {
     });
 
     // Add empty evaluation PDF generation
-    $('#btnImprimirVazia').on('click', function() {
+    $('#btnImprimirVazia').on('click', function () {
         if (!loadedQuestions || loadedQuestions.length === 0) {
             alert('Não há questões carregadas para imprimir.');
             return;
@@ -352,41 +376,41 @@ $(document).ready(async function () {
         }
 
         const doc = new jsPDF();
-        
+
         let y = 20;
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         const questionarioName = $('#questionario_id option:selected').text();
         doc.text(questionarioName || 'Avaliação do Estagiário', 105, y, { align: 'center' });
         y += 15;
-        
+
         let estagiarioName = $('#estagiario_id option:selected').text();
         if (!estagiarioName || estagiarioName.includes('Selecione')) {
             estagiarioName = 'Não selecionado';
         }
-        
+
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.text(`Estagiário(a): ${estagiarioName}`, 14, y);
         y += 10;
-        
+
         doc.setFontSize(10);
-        
+
         loadedQuestions.forEach((q, index) => {
             const cleanText = q.text ? q.text.replace(/<[^>]*>?/gm, '') : '';
             const textLines = doc.splitTextToSize(`Questão ${index + 1}: ${cleanText}`, 180);
-            
+
             if (y + (textLines.length * 6) + 10 > 280) {
                 doc.addPage();
                 y = 20;
             }
-            
+
             doc.setFont('helvetica', 'bold');
             doc.text(textLines, 14, y);
             y += (textLines.length * 5) + 2;
-            
+
             doc.setFont('helvetica', 'normal');
-            
+
             if (q.type === 'radio' || q.type === 'checkbox' || q.type === 'select') {
                 const options = parseOptions(q.options);
                 for (const [val, label] of Object.entries(options)) {
@@ -418,7 +442,7 @@ $(document).ready(async function () {
             }
             y += 4;
         });
-        
+
         doc.save('avaliacao_vazia.pdf');
     });
 });
