@@ -195,7 +195,7 @@ export const checkInscricaoOwnership = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const inscricao = await Inscricao.findByIdEstagiario(id);
+        const inscricao = await Inscricao.findByIdInscricao(id);
         if (!inscricao) {
             return res.status(404).json({ error: 'Inscrição não encontrada' });
         }

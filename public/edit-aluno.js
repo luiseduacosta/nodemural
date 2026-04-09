@@ -24,14 +24,18 @@ $(document).ready(async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
 
-    if (!getToken() || !hasRole(['admin'])) {
+    if (!getToken()) {
         window.location.href = 'login.html';
         return;
     }
 
     const user = getCurrentUser();
-    // If user is admin or the self aluno, they can only edit their own record
-    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
+    
+    // Check permissions: Admin OR Aluno (own profile only)
+    const isAdmin = hasRole(['admin']);
+    const isOwnProfile = hasRole(['aluno']) && user.entidade_id == id;
+    
+    if (!isAdmin && !isOwnProfile) {
         alert('Você não tem permissão para editar este aluno.');
         window.location.href = 'mural.html';
         return;

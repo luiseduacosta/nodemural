@@ -14,7 +14,7 @@ router.get('/cress/:cress', supervisorController.getSupervisorByCress);
 
 // Protected routes
 router.get('/', verifyToken, supervisorController.getAllSupervisores);
-router.get('/:id', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.getSupervisorById);
+router.get('/:id', verifyToken, checkRole(['admin', 'supervisor', 'aluno']), supervisorController.getSupervisorById);
 router.put('/:id', verifyToken, checkRole(['admin', 'supervisor']), checkOwnership, supervisorController.updateSupervisor);
 
 // Specialized routes

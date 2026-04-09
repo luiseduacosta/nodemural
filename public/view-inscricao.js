@@ -1,12 +1,7 @@
 // src/public/view-inscricao.js 
-import { getToken, hasRole, authenticatedFetch } from './auth-utils.js';
+import { getToken, hasRole, getCurrentUser, authenticatedFetch } from './auth-utils.js';
 
 $(document).ready(async function () {
-
-    if (!getToken() || !hasRole(['admin', 'aluno'])) {
-        window.location.href = 'login.html';
-        return;
-    }
 
     // Get the ID from the URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
@@ -17,11 +12,18 @@ $(document).ready(async function () {
         return;
     }
 
+    if (!getToken()) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
     try {
         const response = await authenticatedFetch(`/inscricoes/${id}`);
 
         if (!response.ok) {
-            if (response.status === 403) {
+            if (response.status === 401) {
+                throw new Error('Não autenticado. Faça login novamente.');
+            } else if (response.status === 403) {
                 throw new Error('Você não tem permissão para visualizar esta inscrição.');
             }
             throw new Error('Falha ao carregar inscrição.');
@@ -51,6 +53,26 @@ $(document).ready(async function () {
         document.getElementById('view-timestamp').textContent = formatDateTime(inscricao.timestamp);
 
         window.currentInscricaoId = id;
+        
+        // Configure button visibility based on role
+        const user = getCurrentUser();
+        const isAdmin = hasRole(['admin']);
+        const isAluno = hasRole(['aluno']);
+        
+        if (isAdmin) {
+            // Admin can edit and delete
+            document.getElementById('edit-button').style.display = 'inline';
+            document.getElementById('delete-button').style.display = 'inline';
+        } else if (isAluno) {
+            // Aluno can only delete their own inscricoes
+            document.getElementById('edit-button').style.display = 'none';
+            document.getElementById('delete-button').style.display = 'inline';
+        } else {
+            // Other roles cannot edit or delete
+            document.getElementById('edit-button').style.display = 'none';
+            document.getElementById('delete-button').style.display = 'none';
+        }
+        
     } catch (error) {
         console.error('Error loading inscricao:', error);
         alert(`Erro ao carregar dados: ${error.message}`);
@@ -58,28 +80,35 @@ $(document).ready(async function () {
     }
 });
 
-if (hasRole('admin')) {
-    document.getElementById('edit-button').style.display = 'inline';
-    document.getElementById('delete-button').style.display = 'inline';
-} else if (hasRole('aluno')) {
-    // Only show delete button for aluno
-    document.getElementById('edit-button').style.display = 'none';
-    document.getElementById('delete-button').style.display = 'inline';
-}
-
+// Function to redirect to edit mode (admin only)
 window.editRecord = function () {
+    if (!hasRole(['admin'])) {
+        alert('Você não tem permissão para editar esta inscrição.');
+        return;
+    }
     window.location.href = `edit-inscricao.html?id=${window.currentInscricaoId}`;
 };
 
+// Function to delete inscricao (admin or aluno owner)
 window.deleteRecord = async function () {
+    if (!hasRole(['admin']) && !hasRole(['aluno'])) {
+        alert('Você não tem permissão para excluir esta inscrição.');
+        return;
+    }
+    
     if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
         try {
             const response = await authenticatedFetch(`/inscricoes/${window.currentInscricaoId}`, { method: 'DELETE' });
             if (response.ok) {
                 window.location.href = 'inscricoes.html';
             } else {
+                if (response.status === 401) {
+                    throw new Error('Não autenticado. Faça login novamente.');
+                } else if (response.status === 403) {
+                    throw new Error('Você não tem permissão para excluir esta inscrição.');
+                }
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to delete inscricao');
+                throw new Error(errorData.error || 'Falha ao excluir inscrição');
             }
         } catch (error) {
             console.error('Error deleting inscricao:', error);

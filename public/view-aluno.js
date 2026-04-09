@@ -78,11 +78,27 @@ $(document).ready(async function () {
         }
     }
 
-    // Hide the edit and new-estagiario buttons if it not the own aluno
-    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != id)) {
-        document.getElementById('btnAluno-editar').classList.add('d-none');
+    // Configure button visibility based on roles and permissions
+    const isAdmin = hasRole(['admin']);
+    const isAluno = hasRole(['aluno']);
+    const isOwnProfile = isAluno && user.entidade_id == id;
+    
+    // Hide both buttons by default
+    document.getElementById('btnAluno-editar').classList.add('d-none');
+    document.getElementById('btnAluno-estagios').classList.add('d-none');
+    
+    // Show buttons based on permissions
+    if (isAdmin) {
+        // Admin can see both buttons
+        document.getElementById('btnAluno-editar').classList.remove('d-none');
+        document.getElementById('btnAluno-estagios').classList.remove('d-none');
+    } else if (isOwnProfile) {
+        // Aluno can only see edit button for their own profile
+        document.getElementById('btnAluno-editar').classList.remove('d-none');
+        // Hide estagios button for alunos (they can't access estagiario functionality)
         document.getElementById('btnAluno-estagios').classList.add('d-none');
     }
+    // For all other cases, buttons remain hidden
 
     // Fetch the aluno data
     try {
@@ -271,8 +287,11 @@ window.checkEstagiarioPeriodo = async () => {
 // Function to redirect to edit mode
 window.editRecord = function () {
     const user = getCurrentUser();
-    // Check if user is admin or aluno and is the owner
-    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != window.currentAlunoId)) {
+    // Check if user is admin OR if user is aluno and is the owner
+    const isAdmin = hasRole(['admin']);
+    const isOwnProfile = hasRole(['aluno']) && user.entidade_id == window.currentAlunoId;
+    
+    if (!isAdmin && !isOwnProfile) {
         alert('Você não tem permissão para editar este aluno.');
         return;
     }
@@ -282,8 +301,8 @@ window.editRecord = function () {
 // Function to delete aluno
 window.deleteRecord = async function () {
     const user = getCurrentUser();
-    // Check if user is admin or aluno and is the owner
-    if (!hasRole(['admin']) || (hasRole(['aluno']) && user.entidade_id != window.currentAlunoId)) {
+    // Only admin can delete
+    if (!hasRole(['admin'])) {
         alert('Você não tem permissão para excluir este aluno.');
         return;
     }

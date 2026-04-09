@@ -26,3 +26,8 @@ if (user) {
 } else {
   window.location.href = '/login.html';
 }
+
+document.getElementById('impersonateButton').addEventListener('click', () => {
+  window.location.href = '/impersonation.html';
+});
+

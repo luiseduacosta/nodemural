@@ -30,11 +30,10 @@ $(document).ready(async function () {
             const option = document.createElement('option');
             option.value = aluno.id;
             option.textContent = `${aluno.registro} - ${aluno.nome}`;
-            if (user.role == 'aluno' && aluno.id == user.entidade_id) {
+            if (user.role == 'aluno' && (aluno.id == user.entidade_id)) {
                 option.selected = true;
-                document.getElementById('registro').value = aluno.registro;
-                // Disable the select element
                 document.getElementById('aluno_id').disabled = true;
+                document.getElementById('registro').value = aluno.registro;
             }
             select.appendChild(option);
         });
@@ -46,8 +45,6 @@ $(document).ready(async function () {
     try {
         const response = await authenticatedFetch('/mural');
         if (response.status === 401) {
-            // allow anonymous behavior if necessary or redirect
-            // in this case redirect to login
             alert('Faça login para ver os murais.');
             window.location.href = '/login.html';
             return;
@@ -59,14 +56,14 @@ $(document).ready(async function () {
         const muralestagios = await response.json();
         const select = document.getElementById('muralestagio_id');
 
-        muralinstituicoes.forEach(muralestagio => {
-            // console.log('muralestagio:', muralestagio);
+        muralestagios.forEach(muralestagio => {
             const option = document.createElement('option');
-            option.value = muralinstituicao.id;
-            option.textContent = `${muralinstituicao.periodo} - ${muralinstituicao.instituicao}`;
-            if (muralinstituicao.id == muralEstagioId) {
+            option.value = muralestagio.id;
+            option.textContent = `${muralestagio.periodo} - ${muralestagio.instituicao}`;
+            if (muralestagio.id == muralEstagioId) {
                 option.selected = true;
-                document.getElementById('periodo').value = muralinstituicao.periodo;
+                document.getElementById('muralestagio_id').disabled = true;
+                document.getElementById('periodo').value = muralestagio.periodo;
             }
             select.appendChild(option);
         });
@@ -113,8 +110,8 @@ $(document).ready(async function () {
             // aluno_id: user.entidade_id,
             aluno_id: user.entidade_id ? user.entidade_id : document.getElementById('aluno_id').value,
             muralestagio_id: document.getElementById('muralestagio_id').value,
-            periodo: document.getElementById('periodo').value,
             data: document.getElementById('data').value,
+            periodo: document.getElementById('periodo').value,
             registro: document.getElementById('registro').value
         };
 

@@ -51,7 +51,7 @@ $(document).ready(async function () {
         document.getElementById('view-professor').textContent = estagiario.professor_nome || '-';
         document.getElementById('view-supervisor').textContent = estagiario.supervisor_nome || '-';
         document.getElementById('view-periodo').textContent = estagiario.periodo || '-';
-        document.getElementById('view-ajuste2020').textContent = estagiario.ajuste2020 !== null ? estagiario.ajuste2020 : '-';
+        document.getElementById('view-ajuste2020').textContent = estagiario.ajuste2020 !== null ? (estagiario.ajuste2020 == '1' ? 'Sim' : 'Não') : '-';
         document.getElementById('view-turno').textContent = estagiario.aluno_turno || '-';
         document.getElementById('view-complemento').textContent = estagiario.complemento_nome || '-';
         document.getElementById('view-tc').textContent = estagiario.tc !== null ? (estagiario.tc ? 'Sim' : 'Não') : '-';
@@ -72,12 +72,6 @@ $(document).ready(async function () {
         // Hide delete buttons if user is not Admin
         if (!isAdmin()) {
             document.getElementById('delete-estagiario').style.display = 'none';
-        }
-
-        // Show edit button if user is admin or the user is the same as the estagiario
-        if (isAdmin() || (getCurrentUser().role === 'aluno' && getCurrentUser().entidade_id === currentAlunoId)) {
-            document.getElementById('edit-estagiario').style.display = 'block';
-        } else {
             document.getElementById('edit-estagiario').style.display = 'none';
         }
 
@@ -169,8 +163,8 @@ $(document).ready(async function () {
         if (estagiarioDetailsResponse.ok) {
             const estagiarioDetails = await estagiarioDetailsResponse.json();
             document.getElementById('view-professorNome').textContent = estagiarioDetails.professor_nome !== null ? estagiarioDetails.professor_nome : '-';
-            document.getElementById('view-nota').textContent = estagiarioDetails.nota !== null ? estagiarioDetails.nota : '-';
-            document.getElementById('view-ch').textContent = estagiarioDetails.ch !== null ? estagiarioDetails.ch : '-';
+            document.getElementById('view-respostaNota').textContent = estagiarioDetails.nota !== null ? estagiarioDetails.nota : '-';
+            document.getElementById('view-respostaCh').textContent = estagiarioDetails.ch !== null ? estagiarioDetails.ch : '-';
         } else {
             $('#statusAvaliacaoProfessor').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Sem avaliação professor');
         }
@@ -393,13 +387,13 @@ $(document).ready(async function () {
             y += doc.getTextDimensions(body2Lines).h + 12;
 
             // Date
-            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}.`, ml, y, { align: 'right' });
+            doc.text(`Rio de Janeiro, ${dia} de ${mes} de ${ano}.`, ml, y, { align: 'left' });
             y += 20;
 
             // Signatures — 3 columns
             const col1 = ml;
-            const col2 = 105;
-            const col3 = 150;
+            const col2 = 100;
+            const col3 = 130;
 
             doc.text('Coordenação de Estágio', col1, y);
             doc.text(nome, col2, y, { align: 'center' });
