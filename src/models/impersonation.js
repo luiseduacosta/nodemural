@@ -34,7 +34,7 @@ const Impersonation = {
             const rows = await pool.query(
                 `SELECT i.*, u.email as admin_email, u.nome as admin_name
                  FROM impersonations i
-                 JOIN auth_users u ON i.admin_id = u.id
+                 JOIN users u ON i.admin_id = u.id
                  WHERE i.admin_id = ? AND i.is_active = TRUE
                  ORDER BY i.started_at DESC
                  LIMIT 1`,
@@ -52,7 +52,7 @@ const Impersonation = {
             const rows = await pool.query(
                 `SELECT i.*, u.email as impersonated_email, u.nome as impersonated_name, u.role as impersonated_role
                  FROM impersonations i
-                 JOIN auth_users u ON i.impersonated_user_id = u.id
+                 JOIN users u ON i.impersonated_user_id = u.id
                  WHERE i.impersonated_user_id = ? AND i.is_active = TRUE
                  ORDER BY i.started_at DESC
                  LIMIT 1`,
@@ -86,8 +86,8 @@ const Impersonation = {
                         imp_user.email as impersonated_email, imp_user.nome as impersonated_name, imp_user.role as impersonated_role,
                         TIMESTAMPDIFF(MINUTE, i.started_at, COALESCE(i.ended_at, NOW())) as duration_minutes
                  FROM impersonations i
-                 JOIN auth_users admin_user ON i.admin_id = admin_user.id
-                 JOIN auth_users imp_user ON i.impersonated_user_id = imp_user.id
+                 JOIN users admin_user ON i.admin_id = admin_user.id
+                 JOIN users imp_user ON i.impersonated_user_id = imp_user.id
                  WHERE i.admin_id = ?
                  ORDER BY i.started_at DESC
                  LIMIT ?`,
@@ -108,8 +108,8 @@ const Impersonation = {
                         imp_user.email as impersonated_email, imp_user.nome as impersonated_name, imp_user.role as impersonated_role,
                         TIMESTAMPDIFF(MINUTE, i.started_at, NOW()) as duration_minutes
                  FROM impersonations i
-                 JOIN auth_users admin_user ON i.admin_id = admin_user.id
-                 JOIN auth_users imp_user ON i.impersonated_user_id = imp_user.id
+                 JOIN users admin_user ON i.admin_id = admin_user.id
+                 JOIN users imp_user ON i.impersonated_user_id = imp_user.id
                  WHERE i.is_active = TRUE
                  ORDER BY i.started_at DESC`
             );

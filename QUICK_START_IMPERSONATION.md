@@ -118,8 +118,8 @@ SELECT
     imp_user.nome as impersonated_name,
     TIMESTAMPDIFF(MINUTE, i.started_at, COALESCE(i.ended_at, NOW())) as duration_minutes
 FROM impersonations i
-JOIN auth_users admin ON i.admin_id = admin.id
-JOIN auth_users imp_user ON i.impersonated_user_id = imp_user.id
+JOIN users admin ON i.admin_id = admin.id
+JOIN users imp_user ON i.impersonated_user_id = imp_user.id
 ORDER BY i.started_at DESC
 LIMIT 50;
 ```
@@ -134,7 +134,7 @@ LIMIT 50;
 3. Verify `menu.js` is loaded on the page
 
 ### Getting Permission Errors?
-1. Confirm your role is 'admin' in auth_users table
+1. Confirm your role is 'admin' in users table
 2. Make sure you're not trying to impersonate another admin
 3. Check that your token is valid
 

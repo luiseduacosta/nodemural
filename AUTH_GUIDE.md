@@ -15,7 +15,7 @@ Your application now has JWT-based authentication and role-based access control 
 **File:** [.env](.env)
 
 ### 2. **Database** ✅
-- New `auth_users` table created with:
+- New `users` table created with:
   - Email (unique)
   - Hashed password (using bcryptjs)
   - Roles: admin, supervisor, professor, aluno
@@ -235,7 +235,7 @@ router.delete('/:id', verifyToken, checkRole(['admin']), controller.delete);
 | [src/controllers/authController.js](src/controllers/authController.js) | Auth business logic |
 | [src/middleware/auth.js](src/middleware/auth.js) | JWT verification & role checking |
 | [src/routers/authRoutes.js](src/routers/authRoutes.js) | Auth endpoints |
-| [src/database/setupAuthUsers.js](src/database/setupAuthUsers.js) | Create auth_users table |
+| [src/database/setupAuthUsers.js](src/database/setupAuthUsers.js) | Create users table |
 | [.env](.env) | Configuration (add to .gitignore) |
 
 ---

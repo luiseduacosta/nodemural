@@ -322,8 +322,8 @@ Supervision data is derived from the professor's supervised students with enhanc
 
 ```mermaid
 flowchart TD
-Start(["Load Professor Details"]) --> FetchDocente["Fetch professor by ID"]
-FetchDocente --> FetchEstagiarios["Fetch supervised students by professor ID with grades"]
+Start(["Load Professor Details"]) --> FetchProfessor["Fetch professor by ID"]
+FetchProfessor --> FetchEstagiarios["Fetch supervised students by professor ID with grades"]
 FetchEstagiarios --> RenderTable["Render student table with grade management interface"]
 RenderTable --> GradeInterface["Interactive grade management interface"]
 GradeInterface --> UpdateGrades["Real-time grade and workload updates"]

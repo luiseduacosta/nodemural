@@ -16,7 +16,7 @@ const User = {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             const result = await pool.query(
-                'INSERT INTO auth_users (email, password, nome, identificacao, role, entidade_id) VALUES (?, ?, ?, ?, ?, ?)',
+                'INSERT INTO users (email, password, nome, identificacao, role, entidade_id) VALUES (?, ?, ?, ?, ?, ?)',
                 [email, hashedPassword, nome, identificacao, role, entidade_id]
             );
 
@@ -37,7 +37,7 @@ const User = {
     async findByEmail(email) {
         try {
             const rows = await pool.query(
-                'SELECT * FROM auth_users WHERE email = ? AND ativo = TRUE',
+                'SELECT * FROM users WHERE email = ? AND ativo = TRUE',
                 [email]
             );
             return rows[0] || null;
@@ -50,7 +50,7 @@ const User = {
     async findById(id) {
         try {
             const rows = await pool.query(
-                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM auth_users WHERE id = ? AND ativo = TRUE',
+                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM users WHERE id = ? AND ativo = TRUE',
                 [id]
             );
             return rows[0] || null;
@@ -85,11 +85,11 @@ const User = {
         }
     },
 
-    // First find role and entidade_id in 'auth_users' table with the id, if it exists then with the value of role find into either table 'alunos', 'professores' or 'supervisores' with the value of entidade_id
+    // First find role and entidade_id in 'users' table with the id, if it exists then with the value of role find into either table 'alunos', 'professores' or 'supervisores' with the value of entidade_id
     async findByEntidadeId(entidade_id) {
         try {
             const rows = await pool.query(
-                'SELECT * FROM auth_users WHERE role IN ("aluno", "professor", "supervisor") AND entidade_id = ? AND ativo = TRUE',
+                'SELECT * FROM users WHERE role IN ("aluno", "professor", "supervisor") AND entidade_id = ? AND ativo = TRUE',
                 [entidade_id]
             );
             return rows[0] || null;
@@ -107,7 +107,7 @@ const User = {
     async findAll() {
         try {
             const rows = await pool.query(
-                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM auth_users WHERE ativo = TRUE ORDER BY nome ASC'
+                'SELECT id, email, nome, identificacao, role, entidade_id, ativo, criado_em FROM users WHERE ativo = TRUE ORDER BY nome ASC'
             );
             return rows;
         } catch (error) {
@@ -119,7 +119,7 @@ const User = {
     async deactivate(id) {
         try {
             const result = await pool.query(
-                'UPDATE auth_users SET ativo = FALSE WHERE id = ?',
+                'UPDATE users SET ativo = FALSE WHERE id = ?',
                 [id]
             );
             return result.affectedRows > 0;
@@ -132,7 +132,7 @@ const User = {
     async updateRole(id, role) {
         try {
             const result = await pool.query(
-                'UPDATE auth_users SET role = ? WHERE id = ?',
+                'UPDATE users SET role = ? WHERE id = ?',
                 [role, id]
             );
             return result.affectedRows > 0;
@@ -171,7 +171,7 @@ const User = {
             if (fields.length === 0) return false;
 
             values.push(id);
-            const query = `UPDATE auth_users SET ${fields.join(', ')} WHERE id = ?`;
+            const query = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
 
             const result = await pool.query(query, values);
             return result.affectedRows > 0;

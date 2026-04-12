@@ -4,7 +4,7 @@
 **Referenced Files in This Document**
 - [user.js](file://src/models/user.js)
 - [aluno.js](file://src/models/aluno.js)
-- [docente.js](file://src/models/docente.js)
+- [professor.js](file://src/models/professor.js)
 - [supervisor.js](file://src/models/supervisor.js)
 - [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
 - [db.js](file://src/database/db.js)
@@ -29,31 +29,31 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
-This document describes the core user management data models in NodeMural, focusing on the aluno (student), docente (professor), supervisor, and user authentication entities. It explains field definitions, data types, validation rules, business constraints, primary keys, unique constraints, and relationship patterns. It also documents authentication fields, role-based access control (RBAC), profile management, validation patterns, password hashing, and security considerations. Finally, it covers user lifecycle management, account status handling, and access control patterns.
+This document describes the core user management data models in NodeMural, focusing on the aluno (student), professor, supervisor, and user authentication entities. It explains field definitions, data types, validation rules, business constraints, primary keys, unique constraints, and relationship patterns. It also documents authentication fields, role-based access control (RBAC), profile management, validation patterns, password hashing, and security considerations. Finally, it covers user lifecycle management, account status handling, and access control patterns.
 
 ## Project Structure
 The user management system centers around:
 - A central authentication model that stores credentials and roles
-- Separate domain entities (aluno, docente, supervisor) linked via foreign keys
+- Separate domain entities (aluno, professor, supervisor) linked via foreign keys
 - Middleware enforcing JWT-based authentication and RBAC
 - Controllers orchestrating registration, login, and profile retrieval
-- Database initialization scripts creating the auth_users table
+- Database initialization scripts creating the users table
 
 ```mermaid
 graph TB
 subgraph "Models"
 U["user.js"]
 A["aluno.js"]
-D["docente.js"]
+D["professor.js"]
 S["supervisor.js"]
 E["estagiario.js"]
 I["inscricao.js"]
 J["estagio.js"]
 end
 subgraph "Database"
-AU["auth_users"]
+AU["users"]
 AL["alunos"]
-DOC["docentes"]
+DOC["professores"]
 SUP["supervisores"]
 INSTSUP["inst_super"]
 EST["estagio"]
@@ -105,7 +105,7 @@ SETUP --> DB
 ## Core Components
 This section defines the core entities and their attributes, constraints, and relationships.
 
-- auth_users (authentication and identity)
+- users (authentication and identity)
   - Fields: id (auto-increment primary key), email (unique), password, nome, role (ENUM: admin, supervisor, docente, aluno), ativo (boolean), criado_em, atualizado_em
   - Unique constraints: email
   - Business constraints: role defaults to aluno; ativo enables soft-deletion; timestamps track creation/update
@@ -115,19 +115,19 @@ This section defines the core entities and their attributes, constraints, and re
   - Fields: id (primary key), nome, nomesocial, ingresso, turno, registro (unique), telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes
   - Unique constraints: registro
   - Business constraints: registro must be unique; deletion guarded by dependent estagiarios and inscricoes checks
-  - Relationship: one-to-one with auth_users via entidade_id when role = aluno; one-to-many with estagiarios and inscricoes
+  - Relationship: one-to-one with users via entidade_id when role = aluno; one-to-many with estagiarios and inscricoes
 
 - docentes (faculty/professor entity)
   - Fields: id (primary key), nome, cpf, siape (unique), datanascimento, localnascimento, sexo, telefone, celular, email, curriculolattes, atualizacaolattes, formacaoprofissional, universidadedegraduacao, anoformacao, dataingresso, departamento, dataegresso, motivoegresso, observacoes
   - Unique constraints: siape
   - Business constraints: none enforced at model level; deletion allowed but affects estagio joins
-  - Relationship: one-to-one with auth_users via entidade_id when role = docente; manages estagiarios
+  - Relationship: one-to-one with users via entidade_id when role = docente; manages estagiarios
 
 - supervisores (supervisor entity)
   - Fields: id (primary key), nome, email, celular, cress (unique)
   - Unique constraints: cress
   - Business constraints: deletion cascades to inst_super before removing supervisor
-  - Relationship: many-to-many with estagio via inst_super; one-to-one with auth_users via entidade_id when role = supervisor
+  - Relationship: many-to-many with estagio via inst_super; one-to-one with users via entidade_id when role = supervisor
 
 - estagiarios (internship assignment)
   - Fields: id (primary key), aluno_id, professor_id, supervisor_id, instituicao_id, turmaestagio_id, periodo, turno, nivel, observacoes, ajuste2020
@@ -160,7 +160,7 @@ The authentication and user lifecycle are implemented as follows:
 - Passwords are hashed using bcrypt before storage
 - JWT tokens encode user identity and role
 - Middleware enforces token presence and role checks
-- The user model bridges auth_users with role-specific entities via entidade_id
+- The user model bridges users with role-specific entities via entidade_id
 
 ```mermaid
 sequenceDiagram
@@ -173,13 +173,13 @@ Client->>Ctrl : "POST /auth/register"
 Ctrl->>Ctrl : "Validate inputs"
 Ctrl->>UserModel : "create(email, password, nome, identificacao, role, entidade_id)"
 UserModel->>UserModel : "bcrypt.hash(password)"
-UserModel->>DB : "INSERT INTO auth_users"
+UserModel->>DB : "INSERT INTO users"
 DB-->>UserModel : "insertId"
 UserModel-->>Ctrl : "{id, email, nome, identificacao, role, entidade_id}"
 Ctrl-->>Client : "201 Created + user"
 Client->>Ctrl : "POST /auth/login"
 Ctrl->>UserModel : "findByEmail(email)"
-UserModel->>DB : "SELECT * FROM auth_users WHERE email=?"
+UserModel->>DB : "SELECT * FROM users WHERE email=?"
 DB-->>UserModel : "user row"
 UserModel-->>Ctrl : "user"
 Ctrl->>UserModel : "verifyPassword(plain, hash)"
@@ -201,7 +201,7 @@ Ctrl-->>Client : "200 OK + token + user"
 
 ## Detailed Component Analysis
 
-### User Model (auth_users)
+### User Model (users)
 - Responsibilities
   - Create users with hashed passwords
   - Lookup by email/ID with active status filter

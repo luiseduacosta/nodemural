@@ -1,6 +1,6 @@
 // src/database/setupAuthUsers.js
-// This script creates the auth_users table for authentication
-// Run this once to initialize the auth_users table
+// This script creates the users table for authentication
+// Run this once to initialize the users table
 import pool from './db.js';
 
 async function setupAuthUsersTable() {
@@ -9,7 +9,7 @@ async function setupAuthUsersTable() {
         conn = await pool.getConnection();
         
         const query = `
-            CREATE TABLE IF NOT EXISTS auth_users (
+            CREATE TABLE IF NOT EXISTS users (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
@@ -24,10 +24,10 @@ async function setupAuthUsersTable() {
         `;
         
         await conn.query(query);
-        console.log('✅ Auth users table created or already exists');
+        console.log('✅ Users table created or already exists');
         
     } catch (error) {
-        console.error('❌ Error creating auth_users table:', error);
+        console.error('❌ Error creating users table:', error);
     } finally {
         if (conn) {
             await conn.release();

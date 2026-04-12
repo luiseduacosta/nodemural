@@ -331,7 +331,7 @@ Common issues and resolutions:
 - [AUTH_GUIDE.md](file://AUTH_GUIDE.md#L1-L312)
 
 ## Database Schema Changes
-- Initialize auth_users via src/database/setupAuthUsers.js
+- Initialize users via src/database/setupAuthUsers.js
 - Use environment variables for DB configuration
 - Apply migrations or manual DDL for new tables; keep schema changes backward compatible when possible
 - Update models to reflect schema changes and add validation where appropriate

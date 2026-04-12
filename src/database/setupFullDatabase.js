@@ -86,15 +86,15 @@ async function setupDatabase() {
                 outras TEXT
             )`,
 
-            // 7. auth_users (users of the system. Can be admin, supervisor, professor or aluno)
-            `CREATE TABLE IF NOT EXISTS auth_users (
+            // 7. users (users of the system. Can be admin, supervisor, professor or aluno)
+            `CREATE TABLE IF NOT EXISTS users (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 nome VARCHAR(255) NOT NULL,
-                identificacao VARCHAR(50),
-                role ENUM('admin', 'supervisor', 'professor', 'aluno') DEFAULT 'aluno',
-                entidade_id INT,
+                identificacao VARCHAR(50) COMMENT 'DRE, SIAPE, CRESS',
+                role ENUM('admin', 'aluno', 'professor', 'supervisor') DEFAULT 'aluno',
+                entidade_id INT COMMENT 'alunoId, professorId, supervisorId',
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

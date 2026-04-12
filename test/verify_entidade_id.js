@@ -37,7 +37,7 @@ async function runTests() {
         console.log('--- Model Tests Passed ---');
 
         // CLEANUP
-        await pool.query('DELETE FROM auth_users WHERE id = ?', [user.id]);
+        await pool.query('DELETE FROM users WHERE id = ?', [user.id]);
         console.log('Test user cleaned up');
 
     } catch (error) {

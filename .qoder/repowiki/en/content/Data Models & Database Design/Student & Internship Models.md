@@ -16,6 +16,7 @@
 - [inscricaoController.js](file://src/controllers/inscricaoController.js)
 - [muralController.js](file://src/controllers/muralController.js)
 - [turnoController.js](file://src/controllers/turnoController.js)
+- [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js)
 - [instituicaoRoutes.js](file://src/routers/instituicaoRoutes.js)
 - [estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js)
 - [inscricaoRoutes.js](file://src/routers/inscricaoRoutes.js)
@@ -24,17 +25,22 @@
 - [db.js](file://src/database/db.js)
 - [setupFullDatabase.js](file://src/database/setupFullDatabase.js)
 - [backfill_alunos_turno_id.py](file://scripts/backfill_alunos_turno_id.py)
+- [planilha-seguro.js](file://public/planilha-seguro.js)
+- [planilha-supervisores.js](file://public/planilha-supervisores.js)
+- [planilha-carga-horaria.js](file://public/planilha-carga-horaria.js)
+- [planilha-seguro.html](file://public/planilha-seguro.html)
+- [planilha-supervisores.html](file://public/planilha-supervisores.html)
+- [planilha-carga-horaria.html](file://public/planilha-carga-horaria.html)
 </cite>
 
 ## Update Summary
 **Changes Made**
-- Integrated turnos management system with existing student and internship models
-- Enhanced aluno model with LEFT JOIN operations for backward compatibility
-- Updated estagiario model to properly display shift information
-- Added comprehensive turnos table with predefined shift options
-- Implemented data migration script for backward compatibility
-- Added turnos CRUD operations with admin-only access
-- Enhanced student enrollment with shift assignment capabilities
+- Enhanced estagiario model with new planilha data retrieval methods
+- Added three specialized planilha endpoints: seguro, supervisores, and carga horária
+- Implemented query optimization for planilha data through dedicated SQL methods
+- Added comprehensive frontend interfaces for planilha data visualization
+- Enhanced estagiario partial update capabilities for grade and workload management
+- Improved query performance through optimized LEFT JOIN operations and aggregation logic
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -50,22 +56,20 @@
 ## Introduction
 This document describes the data models and workflows for NodeMural's student and internship management domain. It focuses on five primary entities:
 - instituicao: an institution offering internship opportunities
-- estagiario: a student's participation record in internships with enhanced grade management and supervision tracking
+- estagiario: a student's participation record in internships with enhanced grade management, supervision tracking, and comprehensive planilha data retrieval
 - inscricao: a student's application to a public listing (mural)
 - mural: a public listing of internship opportunities
-- turno: a new shift management system for student enrollment and internship scheduling
+- turno: a shift management system for student enrollment and internship scheduling
 
-The system has been enhanced with a comprehensive turnos management system that provides shift-based organization for student internships. The turno model enables administrators to categorize students by shift (diurno, noturno, ambos, integral) and ensures backward compatibility through LEFT JOIN operations in existing queries.
-
-**Updated** The turnos system introduces shift-based organization alongside existing institutional data management. The system maintains backward compatibility by preserving the deprecated `turno` column in the alunos table while introducing the new `turno_id` foreign key relationship. This enhancement enables more sophisticated scheduling and reporting capabilities for internship programs.
+**Updated** The system has been significantly enhanced with comprehensive planilha (spreadsheet) data retrieval capabilities. The estagiario model now includes three specialized methods for generating administrative reports: seguro (insurance coverage), supervisores (supervisor assignments), and carga horária (workload tracking). These enhancements provide administrators with powerful tools for managing internship programs while maintaining backward compatibility with existing functionality.
 
 ## Project Structure
-The system follows a layered architecture with enhanced turnos management:
-- Models encapsulate database interactions and business queries
-- Controllers expose REST endpoints and handle request/response
-- Routers define endpoint routes and apply middleware (authentication and role checks)
-- Database pool manages connections to MariaDB
-- Turnos system provides shift-based categorization for student enrollment
+The system follows a layered architecture with enhanced planilha management capabilities:
+- Models encapsulate database interactions, business queries, and specialized planilha data retrieval
+- Controllers expose REST endpoints for planilha generation and handle request/response
+- Routers define endpoint routes with role-based access control (admin-only for planilha endpoints)
+- Database pool manages connections to MariaDB with optimized query execution
+- Frontend interfaces provide interactive dashboards for planilha data visualization
 
 ```mermaid
 graph TB
@@ -75,6 +79,9 @@ R2["estagiarioRoutes.js"]
 R3["inscricaoRoutes.js"]
 R4["muralRoutes.js"]
 R5["turnoRoutes.js"]
+P1["planilha-seguro.html/js"]
+P2["planilha-supervisores.html/js"]
+P3["planilha-carga-horaria.html/js"]
 end
 subgraph "Controllers"
 C1["instituicaoController.js"]
@@ -102,6 +109,9 @@ R2 --> C2 --> M2
 R3 --> C3 --> M3
 R4 --> C4 --> M4
 R5 --> C5 --> MT
+C2 --> P1
+C2 --> P2
+C2 --> P3
 M1 --> DB
 M2 --> DB
 M3 --> DB
@@ -115,20 +125,23 @@ MAT --> DB
 
 **Diagram sources**
 - [instituicaoRoutes.js:1-21](file://src/routers/instituicaoRoutes.js#L1-L21)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js:1-23](file://src/routers/muralRoutes.js#L1-L23)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
+- [planilha-seguro.js:1-120](file://public/planilha-seguro.js#L1-L120)
+- [planilha-supervisores.js:1-103](file://public/planilha-supervisores.js#L1-L103)
+- [planilha-carga-horaria.js:1-85](file://public/planilha-carga-horaria.js#L1-L85)
 - [instituicaoController.js:1-95](file://src/controllers/instituicaoController.js#L1-L95)
-- [estagiarioController.js:1-155](file://src/controllers/estagiarioController.js#L1-L155)
+- [estagiarioController.js:1-337](file://src/controllers/estagiarioController.js#L1-L337)
 - [inscricaoController.js:1-114](file://src/controllers/inscricaoController.js#L1-L114)
 - [muralController.js:1-101](file://src/controllers/muralController.js#L1-L101)
 - [turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
 - [instituicao.js:1-66](file://src/models/instituicao.js#L1-L66)
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
-- [aluno.js:1-137](file://src/models/aluno.js#L1-L137)
+- [aluno.js:1-139](file://src/models/aluno.js#L1-L139)
 - [turno.js:1-45](file://src/models/turno.js#L1-L45)
 - [supervisor.js:1-103](file://src/models/supervisor.js#L1-L103)
 - [professor.js:1-86](file://src/models/professor.js#L1-L86)
@@ -137,14 +150,14 @@ MAT --> DB
 
 **Section sources**
 - [instituicaoRoutes.js:1-21](file://src/routers/instituicaoRoutes.js#L1-L21)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js:1-23](file://src/routers/muralRoutes.js#L1-L23)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 
 ## Core Components
-This section defines the five core entities and their responsibilities, with enhanced turnos integration.
+This section defines the five core entities and their responsibilities, with enhanced planilha integration.
 
 - instituicao (institution)
   - Purpose: Stores institutional data for organizations offering internships
@@ -153,10 +166,10 @@ This section defines the five core entities and their responsibilities, with enh
   - Business constraints: Supports linking supervisors via junction table and retrieving listings per institution
 
 - estagiario (internship participant)
-  - Purpose: Tracks a student's participation in internships across periods and levels with enhanced grade management and shift integration
-  - Key responsibilities: CRUD operations, period filtering, lookup by student, supervisor, or professor, compute next level, grade and workload management, activity tracking, shift-aware queries
+  - Purpose: Tracks a student's participation in internships across periods and levels with enhanced grade management, supervision tracking, and comprehensive planilha data retrieval
+  - Key responsibilities: CRUD operations, period filtering, lookup by student, supervisor, or professor, compute next level, grade and workload management, activity tracking, shift-aware queries, specialized planilha data generation
   - Representative fields: student, professor, supervisor, institution, class group, period, shift, level, observations, grade (nota), workload hours (ch), adjustment factor (ajuste2020)
-  - Business constraints: Next level computation considers adjustment factor and caps at predefined limits; supports partial updates for grade and workload; integrates with activity tracking system; shift information displayed via LEFT JOIN with turnos table
+  - Business constraints: Next level computation considers adjustment factor and caps at predefined limits; supports partial updates for grade and workload; integrates with activity tracking system; shift information displayed via LEFT JOIN with turnos table; provides specialized planilha data through dedicated query methods
 
 - inscricao (application)
   - Purpose: Records student applications to public listings (mural)
@@ -176,38 +189,41 @@ This section defines the five core entities and their responsibilities, with enh
   - Representative fields: shift identifier, shift name (diurno, noturno, ambos, integral)
   - Business constraints: Predefined shift options with unique identifiers; supports LEFT JOIN operations for backward compatibility
 
-**Updated** The turno model provides comprehensive shift management capabilities with predefined shift categories. The system maintains backward compatibility by preserving the deprecated `turno` column while introducing the new `turno_id` foreign key relationship. This dual approach ensures smooth migration and continued functionality across all existing queries.
+**Updated** The estagiario model now includes comprehensive planilha data retrieval capabilities through three specialized methods: findPlanilhaSeguro for insurance coverage reports, findPlanilhaSupervisores for supervisor assignment tracking, and findPlanilhaCargaHoraria for workload aggregation. These methods optimize query performance and provide structured data formats suitable for administrative reporting.
 
 **Section sources**
 - [instituicao.js:1-66](file://src/models/instituicao.js#L1-L66)
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
 - [turno.js:1-45](file://src/models/turno.js#L1-L45)
 
 ## Architecture Overview
-The system exposes REST endpoints grouped by entity with enhanced turnos management. Authentication and role checks are applied at the router layer. Controllers delegate to models, which execute SQL against the MariaDB pool.
+The system exposes REST endpoints grouped by entity with enhanced planilha management. Authentication and role checks are applied at the router layer. Controllers delegate to models, which execute SQL against the MariaDB pool. Planilha endpoints are protected and provide specialized data formats for administrative reporting.
 
 ```mermaid
 sequenceDiagram
 participant Client as "Client"
-participant Router as "turnoRoutes.js"
-participant Ctrl as "turnoController.js"
-participant Model as "turno.js"
+participant Router as "estagiarioRoutes.js"
+participant Ctrl as "estagiarioController.js"
+participant Model as "estagiario.js"
 participant DB as "db.js"
-Client->>Router : POST /turnos
-Router->>Ctrl : createTurno(turno)
-Ctrl->>Model : create(turno)
-Model->>DB : INSERT turnos
-DB-->>Model : insertId
-Model-->>Ctrl : {id, turno}
-Ctrl-->>Client : 201 Created
+Client->>Router : GET /estagiarios/planilhaSeguro?periodo=2024-1
+Router->>Ctrl : getPlanilhaSeguroEstagiario()
+Ctrl->>Model : findDistinctPeriodsEstagiario()
+Model->>DB : SELECT DISTINCT periodo FROM estagiarios
+DB-->>Model : periodos[]
+Model->>Model : findPlanilhaSeguro(periodo)
+Model->>DB : SELECT alunos e instituicoes data
+DB-->>Model : seguroRows[]
+Model->>Ctrl : computeInicioFinalSeguro() + normalize
+Ctrl-->>Client : JSON {t_seguro, periodos, periodoSelecionado}
 ```
 
 **Diagram sources**
-- [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
-- [turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
-- [turno.js:1-45](file://src/models/turno.js#L1-L45)
+- [estagiarioRoutes.js:13-15](file://src/routers/estagiarioRoutes.js#L13-L15)
+- [estagiarioController.js:67-104](file://src/controllers/estagiarioController.js#L67-L104)
+- [estagiario.js:12-30](file://src/models/estagiario.js#L12-L30)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 
 ## Detailed Component Analysis
@@ -255,9 +271,11 @@ Ctrl-->>Client : 201 Created
   - CRUD operations
   - Lookup by student, supervisor, or professor
   - Compute next level based on adjustment factor and current level
-  - Grade and workload management (new)
-  - Activity tracking integration (new)
+  - Grade and workload management (enhanced)
+  - Activity tracking integration (enhanced)
   - Shift-aware queries with LEFT JOIN compatibility
+  - **NEW**: Specialized planilha data retrieval methods
+  - **Enhanced**: Partial update capabilities for grade and workload only
 
 - Data fields and types
   - student (integer)
@@ -279,17 +297,18 @@ Ctrl-->>Client : 201 Created
   - Grade and workload fields support partial updates only
   - Academic progression rules integrate with grade-based workflows
   - **Enhanced**: Shift information displayed using COALESCE(t.turno, a.turno) for backward compatibility
+  - **NEW**: Planilha data methods optimized for administrative reporting with LEFT JOIN operations
 
 - Academic progression
   - The next level calculation ensures progression rules align with institutional policies
   - Adjustment factor (ajuste2020) influences maximum allowable level progression
 
-**Updated** Enhanced estagiario model now provides comprehensive grade management capabilities with dedicated fields for academic performance tracking and integrated supervision monitoring. The model supports partial updates for grade and workload data, enabling granular control over student academic records. The LEFT JOIN operations ensure backward compatibility by displaying shift information even when turno_id is null.
+**Updated** Enhanced estagiario model now provides comprehensive grade management capabilities with dedicated fields for academic performance tracking and integrated supervision monitoring. The model supports partial updates for grade and workload data, enabling granular control over student academic records. The LEFT JOIN operations ensure backward compatibility by displaying shift information even when turno_id is null. Additionally, three specialized planilha methods provide optimized data retrieval for administrative reporting.
 
 **Section sources**
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
-- [estagiarioController.js:1-155](file://src/controllers/estagiarioController.js#L1-L155)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
+- [estagiarioController.js:1-337](file://src/controllers/estagiarioController.js#L1-L337)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 
 ### inscricao (Application)
 - Responsibilities
@@ -389,8 +408,31 @@ Ctrl-->>Client : 201 Created
 - [turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
 
+### Planilha Data Retrieval Methods
+**New** The estagiario model now includes three specialized planilha data retrieval methods designed for administrative reporting:
+
+- findPlanilhaSeguro(periodo)
+  - Purpose: Generate insurance coverage report for administrative purposes
+  - Returns: Structured data including student personal information, academic level, period range, and institution details
+  - Optimizations: Uses LEFT JOIN operations to ensure backward compatibility with deprecated turno column
+  - Data processing: Computes start and end periods based on academic level and adjustment factor
+
+- findPlanilhaSupervisores(periodo)
+  - Purpose: Track supervisor assignments and institutional placements
+  - Returns: Comprehensive supervisor and professor assignment data with institutional addresses
+  - Optimizations: Aggregates supervisor, professor, and institutional information in single query
+
+- findPlanilhaCargaHoraria()
+  - Purpose: Aggregate workload data across all students and academic levels
+  - Returns: Grouped data by student with level-specific period and workload information
+  - Optimizations: Uses Map-based aggregation for efficient data processing and grouping
+
+**Section sources**
+- [estagiario.js:12-71](file://src/models/estagiario.js#L12-L71)
+- [estagiarioController.js:67-195](file://src/controllers/estagiarioController.js#L67-L195)
+
 ### Entity Relationship Diagram
-The following ER diagram maps the core entities and their relationships as implemented in the codebase, including the new turnos integration.
+The following ER diagram maps the core entities and their relationships as implemented in the codebase, including the new planilha integration and turnos enhancement.
 
 ```mermaid
 erDiagram
@@ -502,6 +544,12 @@ TURNOS {
 int id PK
 string turno
 }
+PLANILHAS {
+string tipo
+string periodo
+json dados
+datetime geracao
+}
 ALUNO ||--o{ INSCRICOES : "applies to"
 ALUNO ||--o{ ESTAGIARIOS : "participates in"
 PROFESSOR ||--o{ ESTAGIARIOS : "advises"
@@ -513,16 +561,16 @@ ESTAGIARIOS ||--o{ FOLHA_DE_ATIVIDADES : "tracks activities"
 ALUNO }|--|| TURNOS : "assigned to"
 ```
 
-**Updated** Enhanced ER diagram now includes the new turnos table and its relationships with alunos and estagiarios. The diagram shows how shift information flows from turnos to alunos and is then displayed in estagiarios queries via LEFT JOIN operations, ensuring backward compatibility while enabling shift-based organization.
+**Updated** Enhanced ER diagram now includes the new planilha data retrieval methods and their integration with the estagiarios table. The diagram shows how specialized query methods provide optimized data access for administrative reporting while maintaining backward compatibility with existing functionality.
 
 **Diagram sources**
-- [aluno.js:1-137](file://src/models/aluno.js#L1-L137)
+- [aluno.js:1-139](file://src/models/aluno.js#L1-L139)
 - [professor.js:1-86](file://src/models/professor.js#L1-L86)
 - [supervisor.js:1-103](file://src/models/supervisor.js#L1-L103)
 - [instituicao.js:1-66](file://src/models/instituicao.js#L1-L66)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [atividades.js:1-57](file://src/models/atividades.js#L1-L57)
 - [turno.js:1-45](file://src/models/turno.js#L1-L45)
 
@@ -542,13 +590,14 @@ ALUNO }|--|| TURNOS : "assigned to"
   - estagiario tracks levels and computes the next level based on adjustment factors and caps
   - **NEW**: Grade and workload data support grade-based academic progression workflows
   - **Enhanced**: Shift information integration enables shift-based academic tracking and reporting
+  - **NEW**: Planilha data methods provide administrative insights into academic progression patterns
 
-**Updated** Enhanced academic progression now integrates with grade management capabilities and shift-based organization. The system supports shift-aware academic workflows, allowing for more sophisticated academic tracking and progression based on both performance metrics and shift categorization.
+**Updated** Enhanced academic progression now integrates with grade management capabilities, shift-based organization, and comprehensive administrative reporting through planilha data methods. The system supports shift-aware academic workflows and provides administrators with detailed insights into student progression patterns.
 
 **Section sources**
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 
 ### Data Validation and Business Constraints
 - Academic requirements
@@ -576,35 +625,44 @@ ALUNO }|--|| TURNOS : "assigned to"
   - Data migration script ensures smooth transition from deprecated turno column
   - COALESCE function handles null turno_id gracefully
 
-**Updated** Added comprehensive validation rules for the new grade management fields and enhanced turnos integration. The system now supports backward compatibility through LEFT JOIN operations and includes automated data migration capabilities.
+- **NEW**: Planilha data validation
+  - Period filtering ensures data consistency across planilha reports
+  - Specialized query methods prevent N+1 query problems
+  - Data normalization ensures consistent format across different report types
+
+**Updated** Added comprehensive validation rules for the new grade management fields, enhanced turnos integration, and new planilha data retrieval methods. The system now supports backward compatibility through LEFT JOIN operations, automated data migration, and optimized query execution for administrative reporting.
 
 **Section sources**
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
-- [aluno.js:1-137](file://src/models/aluno.js#L1-L137)
+- [aluno.js:1-139](file://src/models/aluno.js#L1-L139)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
+- [estagiario.js:171-193](file://src/models/estagiario.js#L171-L193)
 - [setupFullDatabase.js:148-168](file://src/database/setupFullDatabase.js#L148-L168)
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 
 ### Public Visibility Controls and Access Restrictions
 - Roles and permissions
-  - Admin: full CRUD on listings; create/update/delete on listings; administrative oversight; full access to turnos management
+  - Admin: full CRUD on listings; create/update/delete on listings; administrative oversight; full access to turnos management; access to all planilha reports
   - Student: can view listings and apply; ownership-checked for read/update/delete of own applications
   - **NEW**: Students can now access their own estagiario records for grade and activity monitoring
   - **Enhanced**: Turnos management restricted to admin role for security and consistency
+  - **NEW**: Planilha endpoints require admin role for security and sensitive data access
   - Others: restricted access based on role checks
 
 - Implementation details
-  - Router-level middleware enforces authentication and role checks for inscricao, mural, and turno endpoints
+  - Router-level middleware enforces authentication and role checks for inscricao, mural, turno, and planilha endpoints
   - Ownership verification ensures students can only manage their own applications
-  - **NEW**: Turnos endpoints include admin-only access restrictions
+  - **NEW**: Planilha endpoints include admin-only access restrictions
   - **Enhanced**: estagiario endpoints include role-based access for supervisors and professors
+  - **NEW**: Planilha data methods are protected by role-based access control
 
-**Updated** Enhanced access controls now include comprehensive supervision and professor access to estagiario records for academic oversight and grade management. Turnos management is restricted to admin role to maintain data integrity and prevent unauthorized shift modifications.
+**Updated** Enhanced access controls now include comprehensive supervision and professor access to estagiario records for academic oversight, grade management, and administrative reporting. Turnos management and planilha data access are restricted to admin role to maintain data integrity and protect sensitive academic information.
 
 **Section sources**
+- [estagiarioRoutes.js:13-15](file://src/routers/estagiarioRoutes.js#L13-L15)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js:1-23](file://src/routers/muralRoutes.js#L1-L23)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
 
 ### Turno Integration Features
@@ -630,8 +688,34 @@ ALUNO }|--|| TURNOS : "assigned to"
 - [estagiario.js:12-45](file://src/models/estagiario.js#L12-L45)
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 
+### Planilha Data Visualization Interfaces
+**New** Three comprehensive frontend interfaces provide interactive dashboards for planilha data visualization:
+
+- Planilha Seguro (seguro.html/js)
+  - Displays insurance coverage reports with filtering by academic period
+  - Shows student personal information, academic levels, and institutional affiliations
+  - Provides period-based filtering for historical data analysis
+
+- Planilha Supervisores (supervisores.html/js)
+  - Tracks supervisor assignments and institutional placements
+  - Displays comprehensive supervisor and professor assignment data
+  - Includes institutional address information for administrative coordination
+
+- Planilha Carga Horária (carga-horaria.html/js)
+  - Aggregates workload data across all students and academic levels
+  - Groups data by student with level-specific period and workload information
+  - Provides total workload calculations and academic progression tracking
+
+**Section sources**
+- [planilha-seguro.html:1-57](file://public/planilha-seguro.html#L1-L57)
+- [planilha-seguro.js:1-120](file://public/planilha-seguro.js#L1-L120)
+- [planilha-supervisores.html:1-53](file://public/planilha-supervisores.html#L1-L53)
+- [planilha-supervisores.js:1-103](file://public/planilha-supervisores.js#L1-L103)
+- [planilha-carga-horaria.html:1-50](file://public/planilha-carga-horaria.html#L1-L50)
+- [planilha-carga-horaria.js:1-85](file://public/planilha-carga-horaria.js#L1-L85)
+
 ## Dependency Analysis
-The following diagram shows dependencies among controllers, models, and routers, including the new turnos system.
+The following diagram shows dependencies among controllers, models, routers, and the new planilha interfaces.
 
 ```mermaid
 graph LR
@@ -640,6 +724,9 @@ R2["estagiarioRoutes.js"] --> C2["estagiarioController.js"]
 R3["inscricaoRoutes.js"] --> C3["inscricaoController.js"]
 R4["muralRoutes.js"] --> C4["muralController.js"]
 R5["turnoRoutes.js"] --> C5["turnoController.js"]
+P1["planilha-seguro.js"] --> C2
+P2["planilha-supervisores.js"] --> C2
+P3["planilha-carga-horaria.js"] --> C2
 C1 --> M1["instituicao.js"]
 C2 --> M2["estagiario.js"]
 C3 --> M3["inscricao.js"]
@@ -650,21 +737,27 @@ M2 --> DB
 M3 --> DB
 M4 --> DB
 MT --> DB
+P1 --> DB
+P2 --> DB
+P3 --> DB
 ```
 
 **Diagram sources**
 - [instituicaoRoutes.js:1-21](file://src/routers/instituicaoRoutes.js#L1-L21)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js:1-23](file://src/routers/muralRoutes.js#L1-L23)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
+- [planilha-seguro.js:1-120](file://public/planilha-seguro.js#L1-L120)
+- [planilha-supervisores.js:1-103](file://public/planilha-supervisores.js#L1-L103)
+- [planilha-carga-horaria.js:1-85](file://public/planilha-carga-horaria.js#L1-L85)
 - [instituicaoController.js:1-95](file://src/controllers/instituicaoController.js#L1-L95)
-- [estagiarioController.js:1-155](file://src/controllers/estagiarioController.js#L1-L155)
+- [estagiarioController.js:1-337](file://src/controllers/estagiarioController.js#L1-L337)
 - [inscricaoController.js:1-114](file://src/controllers/inscricaoController.js#L1-L114)
 - [muralController.js:1-101](file://src/controllers/muralController.js#L1-L101)
 - [turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
 - [instituicao.js:1-66](file://src/models/instituicao.js#L1-L66)
-- [estagiario.js:1-240](file://src/models/estagiario.js#L1-L240)
+- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [inscricao.js:1-104](file://src/models/inscricao.js#L1-L104)
 - [mural.js:1-91](file://src/models/mural.js#L1-L91)
 - [turno.js:1-45](file://src/models/turno.js#L1-L45)
@@ -672,7 +765,7 @@ MT --> DB
 
 **Section sources**
 - [instituicaoRoutes.js:1-21](file://src/routers/instituicaoRoutes.js#L1-L21)
-- [estagiarioRoutes.js:1-23](file://src/routers/estagiarioRoutes.js#L1-L23)
+- [estagiarioRoutes.js:1-26](file://src/routers/estagiarioRoutes.js#L1-L26)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
 - [muralRoutes.js:1-23](file://src/routers/muralRoutes.js#L1-L23)
 - [turnoRoutes.js:1-16](file://src/routers/turnoRoutes.js#L1-L16)
@@ -684,17 +777,24 @@ MT --> DB
   - Add indexes on instituicoes.area_id, instituicoes.id for supervisor and listing lookups
   - **NEW**: Add indexes on estagiarios.nota, estagiarios.ch, estagiarios.ajuste2020 for grade-based queries
   - **Enhanced**: Add indexes on alunos.turno_id, turnos.id for shift-based queries and JOIN operations
+  - **NEW**: Add indexes on estagiarios.periodo for planilha data filtering and optimization
 - Query optimization
   - Prefer selective queries with WHERE clauses and ORDER BY clauses aligned with indexes
   - Avoid unnecessary JOINs when only IDs are required
   - **NEW**: Optimize grade and workload queries with appropriate indexing strategies
   - **Enhanced**: Optimize LEFT JOIN operations for backward compatibility while maintaining performance
+  - **NEW**: Specialized planilha queries use optimized JOIN patterns and aggregation functions
+  - **NEW**: Period-based filtering optimizes planilha data retrieval performance
 - Connection pooling
   - Use the existing MariaDB pool; tune pool limits according to deployment needs
 - **Enhanced**: Turno query optimization
   - LEFT JOIN operations optimized for backward compatibility
   - COALESCE function performance considerations for shift display
   - Data migration script performance for large datasets
+- **NEW**: Planilha query optimization
+  - Dedicated query methods minimize N+1 query problems
+  - Map-based aggregation reduces memory overhead for large datasets
+  - Specialized JOIN patterns optimize administrative reporting queries
 
 ## Troubleshooting Guide
 - Duplicate application errors
@@ -730,24 +830,37 @@ MT --> DB
   - Cause: Missing admin role or authentication issues
   - Resolution: Ensure admin authentication and verify role-based access controls
 
-**Updated** Added troubleshooting guidance for the new grade management, supervision tracking, and turnos integration features. Enhanced guidance covers backward compatibility issues and data migration concerns.
+- **NEW**: Planilha data issues
+  - Symptom: Empty planilha results or slow loading times
+  - Cause: Missing period parameter or insufficient data
+  - Resolution: Verify period filtering, check database connectivity, ensure sufficient planilha data exists
+  - Symptom: Planilha endpoint access denied
+  - Cause: Missing admin role or authentication issues
+  - Resolution: Ensure admin authentication and verify role-based access controls
+  - Symptom: Planilha data formatting errors
+  - Cause: Missing or malformed data in database
+  - Resolution: Verify data integrity in estagiarios table, check for NULL values in required fields
+
+**Updated** Added troubleshooting guidance for the new grade management, supervision tracking, turnos integration, and comprehensive planilha data retrieval features. Enhanced guidance covers backward compatibility issues, data migration concerns, and administrative reporting access controls.
 
 **Section sources**
 - [inscricaoController.js:1-114](file://src/controllers/inscricaoController.js#L1-L114)
-- [aluno.js:1-137](file://src/models/aluno.js#L1-L137)
+- [aluno.js:1-139](file://src/models/aluno.js#L1-L139)
 - [inscricaoRoutes.js:1-21](file://src/routers/inscricaoRoutes.js#L1-L21)
-- [estagiarioController.js:1-155](file://src/controllers/estagiarioController.js#L1-L155)
+- [estagiarioController.js:1-337](file://src/controllers/estagiarioController.js#L1-L337)
 - [turnoController.js:1-72](file://src/controllers/turnoController.js#L1-L72)
 
 ## Conclusion
 NodeMural's student and internship management models provide a solid foundation for managing institutions, listings, applications, and student participation. The code enforces key business rules such as duplicate application prevention, student deletion safeguards, and admin-only modifications for listings.
 
-**Updated** The integration of the turnos management system significantly enhances the platform's capabilities by introducing shift-based organization for student enrollment and internship scheduling. The system maintains full backward compatibility through LEFT JOIN operations and automated data migration, ensuring smooth transition from deprecated shift handling to the new turnos table structure.
+**Updated** The integration of comprehensive planilha data retrieval methods significantly enhances the platform's administrative capabilities. The three specialized methods (findPlanilhaSeguro, findPlanilhaSupervisores, findPlanilhaCargaHoraria) provide optimized data access for insurance coverage tracking, supervisor assignment monitoring, and workload aggregation. These enhancements maintain full backward compatibility while introducing powerful administrative reporting features.
 
-The enhanced estagiario model significantly improves the system's academic supervision capabilities through comprehensive grade management integration, enhanced supervision tracking, and expanded student internship data handling. These improvements enable more sophisticated academic workflows, better performance monitoring, and enhanced collaboration between students, supervisors, and professors. The addition of activity tracking through the folhadeatividades integration provides a complete solution for managing student internship experiences from application through completion.
+The enhanced estagiario model significantly improves the system's academic supervision capabilities through comprehensive grade management integration, enhanced supervision tracking, expanded student internship data handling, and specialized planilha data retrieval methods. These improvements enable more sophisticated academic workflows, better performance monitoring, enhanced collaboration between students, supervisors, and professors, and comprehensive administrative reporting capabilities.
+
+The addition of three interactive frontend interfaces (planilha-seguro, planilha-supervisores, planilha-carga-horaria) provides administrators with powerful tools for managing internship programs through intuitive dashboards and filtering capabilities. The role-based access control ensures that sensitive academic data is protected while providing appropriate access to authorized users.
 
 The turnos system introduces comprehensive shift management capabilities with predefined shift categories (diurno, noturno, ambos, integral), supporting automated data migration and backward compatibility through COALESCE functions in LEFT JOIN operations. This enhancement enables shift-aware academic tracking, more sophisticated scheduling capabilities, and improved reporting functionality.
 
 While some areas—such as application status transitions, academic requirement validation, and automatic capacity updates—are not implemented in the provided code, the existing structure supports extending these capabilities with minimal architectural changes. The enhanced model architecture provides a robust foundation for future academic management features while maintaining backward compatibility with existing functionality.
 
-The addition of turnos management, combined with the existing grade management and supervision tracking enhancements, positions NodeMural as a comprehensive platform for modern internship and academic management workflows, supporting both traditional institutional requirements and evolving educational needs.
+The comprehensive planilha data retrieval system, combined with the existing grade management, supervision tracking, and turnos integration, positions NodeMural as a complete platform for modern internship and academic management workflows, supporting both traditional institutional requirements and evolving educational needs through enhanced administrative reporting and data visualization capabilities.

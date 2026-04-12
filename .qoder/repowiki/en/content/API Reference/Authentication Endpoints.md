@@ -64,7 +64,7 @@ subgraph "Models"
 U["src/models/user.js"]
 end
 subgraph "Database"
-DB["MariaDB auth_users table"]
+DB["MariaDB users table"]
 end
 subgraph "Frontend"
 F1["public/login.js"]
@@ -132,7 +132,7 @@ Note over FE : "POST /auth/login"
 FE->>API : "POST /auth/login {email,password}"
 API->>Ctrl : "login()"
 Ctrl->>Model : "findByEmail(email)"
-Model->>DB : "SELECT * FROM auth_users WHERE email=?"
+Model->>DB : "SELECT * FROM users WHERE email=?"
 DB-->>Model : "User row"
 Model-->>Ctrl : "User"
 Ctrl->>Ctrl : "verifyPassword(password, hash)"
@@ -145,7 +145,7 @@ MW->>MW : "jwt.verify(token)"
 MW-->>API : "req.user"
 API->>Ctrl : "getProfile()"
 Ctrl->>Model : "findById(userId)"
-Model->>DB : "SELECT * FROM auth_users WHERE id=?"
+Model->>DB : "SELECT * FROM users WHERE id=?"
 DB-->>Model : "User row"
 Model-->>Ctrl : "User"
 Ctrl-->>FE : "User"
@@ -319,7 +319,7 @@ Attach --> Next["Call next()"]
 - [src/middleware/auth.js](file://src/middleware/auth.js#L1-L137)
 
 ### Role-Based Access Patterns
-- Roles: admin, supervisor, docente, aluno
+- Roles: admin, supervisor, professor, aluno
 - Admin-only: GET /auth/users
 - Protected: GET /auth/profile
 - Ownership: Additional middleware ensures users can only access their own records
@@ -327,7 +327,7 @@ Attach --> Next["Call next()"]
 Permissions matrix:
 - admin: Full access
 - supervisor: Manage estagiarios, view inscriptions
-- docente: Manage alunos, atividades
+- professor: Manage alunos, atividades
 - aluno: View own data, view mural
 
 **Section sources**
@@ -335,12 +335,12 @@ Permissions matrix:
 - [src/middleware/auth.js](file://src/middleware/auth.js#L31-L48)
 
 ### Data Models and Database Schema
-- auth_users table includes:
+- users table includes:
   - id (auto-increment primary key)
   - email (unique)
   - password (hashed)
   - nome
-  - role (enum: admin, supervisor, docente, aluno)
+  - role (enum: admin, supervisor, professor, aluno)
   - ativo (boolean, soft delete)
   - timestamps
 
@@ -386,7 +386,7 @@ participant DB as "MariaDB"
 L->>R : "POST /auth/login {email,password}"
 R->>C : "login()"
 C->>U : "findByEmail(email)"
-U->>DB : "SELECT * FROM auth_users WHERE email=?"
+U->>DB : "SELECT * FROM users WHERE email=?"
 DB-->>U : "User row"
 U-->>C : "User"
 C->>C : "verifyPassword(password, hash)"

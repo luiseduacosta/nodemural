@@ -2,9 +2,9 @@
 
 <cite>
 **Referenced Files in This Document**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js)
-- [src/models/docente.js](file://src/models/docente.js)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js)
+- [src/models/professor.js](file://src/models/professor.js)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js)
 - [src/controllers/supervisorController.js](file://src/controllers/supervisorController.js)
 - [src/models/supervisor.js](file://src/models/supervisor.js)
@@ -47,19 +47,19 @@ The backend follows a layered architecture:
 ```mermaid
 graph TB
 subgraph "HTTP Layer"
-DR["docenteRoutes.js"]
+DR["professorRoutes.js"]
 SR["supervisorRoutes.js"]
 AIR["areaInstituicaoRoutes.js"]
 ER["estagiarioRoutes.js"]
 end
 subgraph "Controllers"
-DC["docenteController.js"]
+DC["professorController.js"]
 SC["supervisorController.js"]
 AIC["areaInstituicaoController.js"]
 EC["estagiarioController.js"]
 end
 subgraph "Models"
-DM["docente.js"]
+DM["professor.js"]
 SM["supervisor.js"]
 AIM["areaInstituicao.js"]
 EM["estagiario.js"]
@@ -89,15 +89,15 @@ EM --> DB
 ```
 
 **Diagram sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
 - [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
 - [src/controllers/supervisorController.js](file://src/controllers/supervisorController.js#L1-L112)
 - [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
 - [src/controllers/estagiarioController.js](file://src/controllers/estagiarioController.js#L1-L133)
-- [src/models/docente.js](file://src/models/docente.js#L1-L72)
+- [src/models/professor.js](file://src/models/professor.js#L1-L72)
 - [src/models/supervisor.js](file://src/models/supervisor.js#L1-L77)
 - [src/models/areaInstituicao.js](file://src/models/areaInstituicao.js#L1-L45)
 - [src/models/estagiario.js](file://src/models/estagiario.js#L1-L187)
@@ -105,7 +105,7 @@ EM --> DB
 - [src/database/db.js](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L1-L20)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L1-L20)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L1-L27)
 - [src/routers/areaInstituicaoRoutes.js](file://src/routers/areaInstituicaoRoutes.js#L1-L13)
 - [src/routers/estagiarioRoutes.js](file://src/routers/estagiarioRoutes.js#L1-L21)
@@ -129,7 +129,7 @@ EM --> DB
 
 **Section sources**
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L98)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L1-L85)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L1-L85)
 - [src/controllers/supervisorController.js](file://src/controllers/supervisorController.js#L1-L112)
 - [src/controllers/areaInstituicaoController.js](file://src/controllers/areaInstituicaoController.js#L1-L77)
 - [src/controllers/estagiarioController.js](file://src/controllers/estagiarioController.js#L1-L133)
@@ -161,16 +161,16 @@ R-->>C : HTTP Response
 
 **Diagram sources**
 - [src/middleware/auth.js](file://src/middleware/auth.js#L6-L98)
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js#L12-L17)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js#L12-L17)
 - [src/routers/supervisorRoutes.js](file://src/routers/supervisorRoutes.js#L13-L24)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js#L17-L41)
-- [src/models/docente.js](file://src/models/docente.js#L13-L42)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js#L17-L41)
+- [src/models/professor.js](file://src/models/professor.js#L13-L42)
 - [src/database/db.js](file://src/database/db.js#L5-L13)
 
 ## Detailed Component Analysis
 
 ### Professor Endpoints
-- Base path: /docentes
+- Base path: /professores
 - List professors with optional search query parameter.
 - Retrieve a professor by ID.
 - Relationship endpoint to list students (internships) under a professor.

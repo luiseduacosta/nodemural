@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS impersonations (
     started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ended_at TIMESTAMP NULL,
     is_active BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (admin_id) REFERENCES auth_users(id) ON DELETE CASCADE,
-    FOREIGN KEY (impersonated_user_id) REFERENCES auth_users(id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (impersonated_user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_admin_active (admin_id, is_active),
     INDEX idx_impersonated_active (impersonated_user_id, is_active)
 );

@@ -170,7 +170,7 @@ end
 - [src/controllers/alunoController.js](file://src/controllers/alunoController.js#L1-L114)
 - [src/models/aluno.js](file://src/models/aluno.js#L1-L146)
 
-### Professors (Docentes)
+### Professors (Professores)
 CRUD operations:
 - Create, Read (by ID), Update, Delete supported via dedicated controller and router.
 
@@ -179,8 +179,8 @@ Business logic highlights:
 - No explicit validation logic shown in controller; model responsibilities align with other entities.
 
 **Section sources**
-- [src/routers/docenteRoutes.js](file://src/routers/docenteRoutes.js)
-- [src/controllers/docenteController.js](file://src/controllers/docenteController.js)
+- [src/routers/professorRoutes.js](file://src/routers/professorRoutes.js)
+- [src/controllers/professorController.js](file://src/controllers/professorController.js)
 
 ### Supervisors (Supervisores)
 CRUD operations:
