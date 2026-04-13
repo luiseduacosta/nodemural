@@ -59,6 +59,8 @@ $(document).ready(async function () {
         document.getElementById('view-benetransporte').textContent = estagiario.benetransporte !== null ? (estagiario.benetransporte ? 'Sim' : 'Não') : '-';
         document.getElementById('view-benealimentacao').textContent = estagiario.benealimentacao !== null ? (estagiario.benealimentacao ? 'Sim' : 'Não') : '-';
         document.getElementById('view-benebolsa').textContent = estagiario.benebolsa !== null ? `R$ ${estagiario.benebolsa}` : '-';
+        document.getElementById('view-nota').textContent = estagiario.nota || '-';
+        document.getElementById('view-ch').textContent = estagiario.ch || '-';
 
         document.getElementById('view-observacoes').textContent = estagiario.observacoes || '-';
 
@@ -75,6 +77,20 @@ $(document).ready(async function () {
             document.getElementById('edit-estagiario').style.display = 'none';
         }
 
+        const isSupervisor = () => hasRole(['supervisor']);
+        const isProfessor = () => hasRole(['professor']);
+        const isAluno = () => hasRole(['aluno']);
+
+        // Hide delete buttons if user is not Admin, Supervisor or Professor
+        if (isSupervisor() || isProfessor()) {
+            document.getElementById('delete-estagiario').style.display = 'none';
+            document.getElementById('edit-estagiario').style.display = 'none';
+            document.getElementById('new-atividade').style.display = 'none';
+            document.getElementById('btn-certificate').style.display = 'none';
+            document.getElementById('btn-declaracao').style.display = 'none';
+            document.getElementById('btn-atividades-report').style.display = 'none';
+        }
+
         // 2. Load Atividades
         try {
             const atividadesResponse = await authenticatedFetch(`/estagiarios/${id}/atividades`);
@@ -84,7 +100,8 @@ $(document).ready(async function () {
                 tbody.innerHTML = '';
 
                 if (!atividades || atividades.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
+                    if (isAluno()) tbody.innerHTML = '<tr><td colspan="7" class="text-center"><a class="btn btn-primary" href="new-atividade.html?estagiario_id=' + id + '">Adicionar atividade</a></td></tr>';
+                    else tbody.innerHTML = '<tr><td colspan="7" class="text-center">Sem atividades cadastradas</td></tr>';
                 } else {
                     let totalMinutes = 0;
                     atividades.forEach(atividade => {

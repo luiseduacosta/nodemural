@@ -27,7 +27,11 @@ if (user) {
   window.location.href = '/login.html';
 }
 
-document.getElementById('impersonateButton').addEventListener('click', () => {
-  window.location.href = '/impersonation.html';
-});
-
+if (user.role === 'admin') {
+  document.getElementById('impersonateButton').style.display = 'block';
+  document.getElementById('impersonateButton').addEventListener('click', () => {
+    window.location.href = '/impersonation.html';
+  });
+} else {
+  document.getElementById('impersonateButton').style.display = 'none';
+}
