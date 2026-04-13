@@ -87,18 +87,22 @@ async function setupDatabase() {
             )`,
 
             // 7. auth_users (users of the system. Can be admin, supervisor, professor or aluno)
-            `CREATE TABLE IF NOT EXISTS auth_users (
-                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                email VARCHAR(255) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
-                nome VARCHAR(255) NOT NULL,
-                identificacao VARCHAR(50),
-                role ENUM('admin', 'supervisor', 'professor', 'aluno') DEFAULT 'aluno',
-                entidade_id INT,
-                ativo BOOLEAN DEFAULT TRUE,
-                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )`,
+            `CREATE TABLE auth_users (
+                id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                email char(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+                password char(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+                categoria enum('1','2','3','4') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '2',
+                role enum('admin','aluno','professor','supervisor') NOT NULL DEFAULT 'aluno',
+                nome varchar(255) NOT NULL,
+                identificacao varchar(15) NOT NULL COMMENT 'DRE, SIAPE, CRESS',
+                entidade_id int(11) NOT NULL COMMENT 'aluno.id, professor.id, supervisor.id',
+                criado_em timestamp NOT NULL DEFAULT current_timestamp(),
+                atualizado_em timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                aluno_id int(11) DEFAULT NULL,
+                supervisor_id int(11) DEFAULT NULL,
+                professor_id int(11) DEFAULT NULL,
+                ativo tinyint(1) NOT NULL DEFAULT 1
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='users atualizada'`,
 
             // 8. Turno (turn of the student)
             `CREATE TABLE IF NOT EXISTS turnos (
