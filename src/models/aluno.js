@@ -26,9 +26,16 @@ const Aluno = {
     },
 
     async findAll(req) {
-        let query = `SELECT a.id, a.nome, a.nomesocial, a.registro, a.email, a.ingresso, t.turno AS turno, a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes
-            FROM alunos a
-            LEFT JOIN turnos t ON a.turno_id = t.id`;
+        let query = `SELECT a.id, a.nome, a.nomesocial, a.registro, a.email, a.ingresso, 
+            CASE a.turno_id 
+                WHEN 1 THEN 'Diurno'
+                WHEN 2 THEN 'Noturno'
+                WHEN 3 THEN 'Ambos'
+                WHEN 4 THEN 'Integral'
+                ELSE 'Sem turno'
+            END AS turno,
+            a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes
+            FROM alunos a`;
         let params = [];
         if (req && req.query && req.query.search) {
             query += ' WHERE a.nome LIKE ? OR a.nomesocial LIKE ? OR a.registro LIKE ? OR a.email LIKE ?';

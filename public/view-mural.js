@@ -117,6 +117,12 @@ window.editRecord = function () {
     window.location.href = `edit-mural.html?id=${window.currentMuralId}`;
 };
 
+window.deleteRecord = function () {
+    if (confirm('Tem certeza que deseja excluir este mural?: ' + window.currentMuralId)) {
+        authenticatedFetch(`/mural/${window.currentMuralId}`, { method: 'DELETE' });
+    }
+};
+
 window.inscrever = function () {
     window.location.href = `new-inscricao.html?muralestagio_id=${window.currentMuralId}`;
 };

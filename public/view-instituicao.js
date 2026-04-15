@@ -141,7 +141,7 @@ async function fetchMural(id) {
                         <td>${m.periodo}</td>
                         <td>${m.vagas}</td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-info">Ver</a>
+                            <a href="view-mural.html?id=${m.id}" class="btn btn-sm btn-info">Ver</a>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -172,7 +172,7 @@ async function fetchSupervisores(id) {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${s.id}</td>
-                        <td>${s.nome}</td>
+                        <td><a href="view-supervisor.html?id=${s.id}">${s.nome}</a></td>
                         <td>${s.email}</td>
                         <td>${s.telefone}</td>
                     `;
