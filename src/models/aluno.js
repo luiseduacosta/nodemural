@@ -34,7 +34,7 @@ const Aluno = {
                 WHEN 4 THEN 'Integral'
                 ELSE 'Sem turno'
             END AS turno,
-            a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes
+            a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes, a.inscricao_count
             FROM alunos a`;
         let params = [];
         if (req && req.query && req.query.search) {

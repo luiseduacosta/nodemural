@@ -33,6 +33,12 @@ $(document).ready(async function () {
       { data: 'nome', render: function (data, type, row) { return `<a href="view-aluno.html?id=${row.id}">${row.nome}</a>` } },
       { data: 'email' },
       { data: 'ingresso' },
+      { 
+        data: 'inscricao_count', 
+        render: function (data, type, row) { 
+          return data > 0 ? `<span class="badge bg-info">${data}</span>` : '<span class="badge bg-secondary">0</span>';
+        } 
+      },
       {
         data: null,
         render: function (data, type, row) {
