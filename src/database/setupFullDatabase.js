@@ -126,7 +126,8 @@ async function setupDatabase() {
                 municipio VARCHAR(30),
                 bairro VARCHAR(30),
                 observacoes TEXT,
-                user_id INT NOT NULL COMMENT 'user.id'  
+                user_id INT NOT NULL COMMENT 'user.id',
+                inscricao_count INT DEFAULT 0 COMMENT 'Number of registrations'
             )`,
 
             // 10. inscricoes (registrations of interns to the internship board)
