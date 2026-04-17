@@ -97,7 +97,7 @@ async function setupDatabase() {
                 entidade_id INT COMMENT 'alunoId, professorId, supervisorId',
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             )`,
 
             // 8. Turno (turn of the student)
@@ -125,7 +125,8 @@ async function setupDatabase() {
                 endereco VARCHAR(50),
                 municipio VARCHAR(30),
                 bairro VARCHAR(30),
-                observacoes TEXT
+                observacoes TEXT,
+                user_id INT NOT NULL COMMENT 'user.id'  
             )`,
 
             // 10. inscricoes (registrations of interns to the internship board)
@@ -156,7 +157,8 @@ async function setupDatabase() {
                 departamento VARCHAR(30),
                 dataegresso DATE,
                 motivoegresso TEXT,
-                observacoes TEXT
+                observacoes TEXT,
+                user_id INT NOT NULL COMMENT 'user.id'  
             )`,
 
             // 12. supervisores (supervisors of the students at the institutions)
@@ -172,7 +174,8 @@ async function setupDatabase() {
                 escola varchar(255) NULL, 
                 ano_formacao INT NULL,
                 cargo VARCHAR(30) NULL,
-                observacoes TEXT
+                observacoes TEXT,
+                user_id INT NOT NULL COMMENT 'user.id'  
             )`,
 
             // 13. inst_super (Relationship Many-to-Many between institutions and supervisors)
@@ -189,7 +192,7 @@ async function setupDatabase() {
                 registro VARCHAR(9) NOT NULL,
                 nivel CHAR(1) NOT NULL,
                 periodo VARCHAR(6) NOT NULL,
-                tc CHAR(1) DEFAULT NULL,
+                tc CHAR(1) DEFAULT NULL COMMENT 'tc_entregue 1=Sim, 0=Não',
                 tc_solicitacao DATE DEFAULT NULL,
                 instituicao_id INT NOT NULL,
                 supervisor_id INT NULL,
@@ -200,7 +203,7 @@ async function setupDatabase() {
                 complemento_id INT NULL,
                 benetransporte tinyint DEFAULT NULL COMMENT '0=Não, 1=Sim',
                 benealimentacao tinyint DEFAULT NULL COMMENT '0=Não, 1=Sim',
-                benebolsa VARCHAR(5) DEFAULT NULL COMMENT 'Velue in money of Brasil R$',
+                benebolsa VARCHAR(5) DEFAULT NULL COMMENT 'Value in money of Brasil R$',
                 observacoes TEXT
             )`,
 
