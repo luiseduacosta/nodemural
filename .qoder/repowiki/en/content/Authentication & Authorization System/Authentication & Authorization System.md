@@ -27,6 +27,8 @@
 ## Update Summary
 **Changes Made**
 - Enhanced authentication system with comprehensive impersonation endpoints and improved user management capabilities
+- Updated database schema to use `users` table instead of `auth_users` with enhanced `identificacao` and `entidade_id` columns
+- Expanded authentication middleware to support the new user management structure with entity-based permissions
 - Added detailed documentation for impersonation feature including admin-only access control, session management, and audit trails
 - Updated authentication middleware to support impersonation context detection and validation
 - Expanded API endpoints to include impersonation management routes with proper security validation
@@ -55,8 +57,10 @@
 ## Introduction
 This document explains the enhanced authentication and authorization system used by NodeMural. The system features JWT-based authentication with advanced role-based access control (RBAC), entity-based permissions, comprehensive ownership validation, and a powerful impersonation system. The impersonation feature allows administrators to temporarily assume user identities for debugging, support, and administrative purposes while maintaining full audit trails. It covers token generation and validation, role enforcement, specialized ownership middleware for different entity types, user registration and login flows with bcryptjs password hashing, and frontend integration patterns with enhanced session management capabilities.
 
+**Updated** The system now uses a unified `users` table (replacing the previous `auth_users`) with enhanced schema supporting `identificacao` (DRE/SIAPE/CRESS) and `entidade_id` columns for comprehensive entity-based permissions.
+
 ## Project Structure
-The authentication system spans backend Express routes, controllers, middleware, and models, plus frontend utilities and pages for login, registration, impersonation management, and menu integration. Environment variables are loaded via dotenv, and both auth_users and impersonations tables are initialized by setup scripts. The enhanced system now includes specialized middleware for different entity types, comprehensive ownership validation, and robust impersonation tracking with database persistence.
+The authentication system spans backend Express routes, controllers, middleware, and models, plus frontend utilities and pages for login, registration, impersonation management, and menu integration. Environment variables are loaded via dotenv, and both `users` and impersonations tables are initialized by setup scripts. The enhanced system now includes specialized middleware for different entity types, comprehensive ownership validation, and robust impersonation tracking with database persistence.
 
 ```mermaid
 graph TB
@@ -123,12 +127,14 @@ MENU --> IPU
 
 ## Core Components
 - **JWT-based authentication**: tokens are generated upon successful login and validated on protected routes with enhanced error handling and impersonation context detection.
-- **Advanced RBAC**: roles define access levels with entity-based permissions using entidade_id field for fine-grained control.
+- **Advanced RBAC**: roles define access levels with entity-based permissions using `entidade_id` field for fine-grained control.
 - **Enhanced ownership validation**: specialized middleware for activities, internships, and registrations with role-specific access patterns.
 - **Impersonation system**: administrators can temporarily assume user identities with comprehensive audit trails and session management.
 - **Password hashing**: bcryptjs is used to hash passwords during registration.
-- **Entity-based permissions**: users can only access entities linked to their role through the entidade_id relationship.
+- **Entity-based permissions**: users can only access entities linked to their role through the `entidade_id` relationship.
 - **Frontend utilities**: helpers for storing tokens, attaching Authorization headers, enforcing login requirements, and managing impersonation sessions.
+
+**Updated** The system now uses the enhanced `users` table schema with `identificacao` column supporting DRE (student), SIAPE (professor), and CRESS (supervisor) identifiers, along with `entidade_id` for entity relationships.
 
 Key implementation references:
 - JWT secret and expiry are configured via environment variables.
@@ -215,7 +221,7 @@ AuthCtrl-->>FE : {token, admin user}
 ## Detailed Component Analysis
 
 ### JWT-Based Authentication
-- **Token generation**: On successful login, a signed JWT is created containing user identity, role, and entidade_id, with an expiry configured via environment variables.
+- **Token generation**: On successful login, a signed JWT is created containing user identity, role, and `entidade_id`, with an expiry configured via environment variables.
 - **Token validation**: Middleware extracts the Authorization header, verifies the token signature, and attaches decoded user data including role and entity permissions to the request.
 - **Enhanced error handling**: Improved error messages for token expiration, invalid tokens, and missing tokens.
 - **Token storage**: Frontend utilities store the token in localStorage and automatically include it in authenticated requests.
@@ -246,7 +252,7 @@ ReturnToken --> End(["Client Stores Token"])
 ### Enhanced Role-Based Access Control (RBAC)
 - **Supported roles**: admin, supervisor, professor, aluno with entity-based permissions.
 - **Role enforcement**: A higher-order middleware checks whether the authenticated user's role is included in the allowed roles.
-- **Entity-based ownership**: Specialized middleware allows admins full access and validates entity relationships through entidade_id comparisons.
+- **Entity-based ownership**: Specialized middleware allows admins full access and validates entity relationships through `entidade_id` comparisons.
 - **Role-specific access patterns**: Different validation rules for each role type (aluno, professor, supervisor).
 
 ```mermaid
@@ -299,7 +305,7 @@ RegCheck --> |Yes| Next
 - **verifyToken**: Extracts Bearer token from Authorization header, verifies it, and sets req.user with role and entity information.
 - **checkRole**: Enforces role-based access by ensuring the user's role is within the allowed set.
 - **getCurrentUser**: Returns decoded user info from a valid token without invoking controllers.
-- **checkOwnership**: Allows admin access or validates that the user's entidade_id matches the requested resource.
+- **checkOwnership**: Allows admin access or validates that the user's `entidade_id` matches the requested resource.
 - **checkAtividadeOwnership**: Validates ownership for atividade records by checking activity-entity relationships.
 - **checkEstagiarioOwnership**: Validates ownership for estagiario records with role-specific rules (aluno vs professor).
 - **checkInscricaoOwnership**: Validates ownership for inscricao records by matching aluno_id to the user's entity.
@@ -352,8 +358,8 @@ AuthMiddleware --> InscricaoModel : "uses for registration ownership"
 - [src/middleware/auth.js:8-216](file://src/middleware/auth.js#L8-L216)
 
 ### User Registration and Login
-- **Registration**: Validates inputs, confirms password match, hashes password, and inserts a new user into auth_users with role and entity_id. Redirect behavior depends on role and entity existence.
-- **Login**: Finds user by email, verifies password, and generates a JWT with role and entity_id for comprehensive access control.
+- **Registration**: Validates inputs, confirms password match, hashes password, and inserts a new user into `users` table with role and `entidade_id`. The `identificacao` field supports DRE (student), SIAPE (professor), and CRESS (supervisor) identifiers. Redirect behavior depends on role and entity existence.
+- **Login**: Finds user by email, verifies password, and generates a JWT with role and `entidade_id` for comprehensive access control.
 - **Enhanced validation**: Improved input validation with role-specific entity requirements.
 
 ```mermaid
@@ -370,7 +376,7 @@ AuthCtrl->>UserModel : findByEmail(email)
 UserModel-->>AuthCtrl : existing?
 AuthCtrl->>BC : hash(password)
 BC-->>AuthCtrl : hashed
-AuthCtrl->>UserModel : insert {email,hashed,role,entidade_id}
+AuthCtrl->>UserModel : insert {email,hashed,role,entidade_id,identificacao}
 UserModel-->>AuthCtrl : user
 AuthCtrl-->>FE : {user, redirect info}
 FE->>AuthRoute : POST /auth/login
@@ -445,12 +451,14 @@ Restore --> Normal["Normal Session"]
 ## Enhanced Authentication & Authorization Features
 
 ### Entity-Based Permission System
-The system now implements a sophisticated entity-based permission model using the entidade_id field to establish relationships between users and their managed entities:
+The system now implements a sophisticated entity-based permission model using the `entidade_id` field to establish relationships between users and their managed entities:
 
-- **Admin users**: Full access to all entities regardless of entidade_id
+- **Admin users**: Full access to all entities regardless of `entidade_id`
 - **Aluno users**: Access only to their own student records and related activities
 - **Professor users**: Access to students they supervise and related activities
 - **Supervisor users**: Access to their supervised students and related activities
+
+**Updated** The `identificacao` field provides role-specific identifiers (DRE for alunos, SIAPE for professores, CRESS for supervisores) enabling precise entity linking and validation.
 
 ```mermaid
 flowchart TD
@@ -485,7 +493,7 @@ Each validator performs:
 1. Admin bypass check
 2. Entity existence validation
 3. Role-specific relationship validation
-4. Entity ID comparison with user's entidade_id
+4. Entity ID comparison with user's `entidade_id`
 
 **Section sources**
 - [src/middleware/auth.js:105-140](file://src/middleware/auth.js#L105-L140)
@@ -535,19 +543,20 @@ timestamp started_at
 timestamp ended_at
 boolean is_active
 }
-AUTH_USERS {
+USERS {
 int id PK
 varchar email UK
 varchar password
 varchar nome
-enum role
+varchar identificacao
 int entidade_id
+enum role
 boolean ativo
 timestamp criado_em
 timestamp atualizado_em
 }
-IMPERSONATIONS }o--|| AUTH_USERS : "admin_id"
-IMPERSONATIONS }o--|| AUTH_USERS : "impersonated_user_id"
+IMPERSONATIONS }o--|| USERS : "admin_id"
+IMPERSONATIONS }o--|| USERS : "impersonated_user_id"
 ```
 
 **Diagram sources**
@@ -606,7 +615,7 @@ EndSession --> NormalMode["Back to Normal Mode"]
 
 ### Authentication Endpoints
 - **Public endpoints**:
-  - POST /auth/register: Creates a new user with hashed password and role.
+  - POST /auth/register: Creates a new user with hashed password, role, and `identificacao` field.
   - POST /auth/login: Authenticates and returns a JWT with role and entity information.
   - GET /auth/me: Returns decoded user info from the token.
 - **Protected endpoints**:
@@ -622,13 +631,14 @@ EndSession --> NormalMode["Back to Normal Mode"]
 
 ```mermaid
 erDiagram
-AUTH_USERS {
+USERS {
 int id PK
 varchar email UK
 varchar password
 varchar nome
-enum role
+varchar identificacao
 int entidade_id
+enum role
 boolean ativo
 timestamp criado_em
 timestamp atualizado_em
@@ -641,8 +651,8 @@ timestamp started_at
 timestamp ended_at
 boolean is_active
 }
-IMPERSONATIONS }o--|| AUTH_USERS : "admin_id"
-IMPERSONATIONS }o--|| AUTH_USERS : "impersonated_user_id"
+IMPERSONATIONS }o--|| USERS : "admin_id"
+IMPERSONATIONS }o--|| USERS : "impersonated_user_id"
 ```
 
 **Diagram sources**
@@ -689,28 +699,30 @@ The impersonation system implements strict security measures:
 
 ## Database Schema
 
-### Auth Users Table
-The auth_users table stores user authentication and authorization information:
+### Users Table
+**Updated** The `users` table (formerly `auth_users`) stores user authentication and authorization information with enhanced schema:
+
 - **id**: Auto-incrementing primary key
 - **email**: Unique user email address
 - **password**: Hashed user password
 - **nome**: User's full name
-- **role**: User role (admin, supervisor, professor, aluno)
+- **identificacao**: Role-specific identifier (DRE for alunos, SIAPE for professores, CRESS for supervisores)
 - **entidade_id**: Entity identifier for role-specific access control
+- **role**: User role (admin, supervisor, professor, aluno)
 - **ativo**: Active status flag
 - **criado_em/atualizado_em**: Timestamps for record creation and updates
 
 ### Impersonations Table
 The impersonations table tracks all impersonation sessions:
 - **id**: Auto-incrementing primary key
-- **admin_id**: Foreign key to auth_users representing the administrator
-- **impersonated_user_id**: Foreign key to auth_users representing the impersonated user
+- **admin_id**: Foreign key to users representing the administrator
+- **impersonated_user_id**: Foreign key to users representing the impersonated user
 - **started_at**: Timestamp when impersonation began
 - **ended_at**: Timestamp when impersonation ended (null for active sessions)
 - **is_active**: Boolean flag indicating current session status
 
 ### Database Constraints and Indexes
-- **Foreign key constraints**: Both admin_id and impersonated_user_id reference auth_users with CASCADE deletion
+- **Foreign key constraints**: Both admin_id and impersonated_user_id reference users with CASCADE deletion
 - **Indexes**: Composite indexes on (admin_id, is_active) and (impersonated_user_id, is_active) for performance
 - **Default values**: is_active defaults to TRUE for new sessions
 - **Timestamps**: Automatic timestamp management for session tracking
@@ -830,10 +842,10 @@ Common errors and resolutions with enhanced authentication system:
 - **500 Internal errors**: Database or server issues during ownership validation or impersonation.
 
 Enhanced troubleshooting scenarios:
-- **Entity relationship errors**: Verify that user's entidade_id matches the target resource entity.
+- **Entity relationship errors**: Verify that user's `entidade_id` matches the target resource entity.
 - **Role-specific access issues**: Check that the user's role has permission for the requested operation.
 - **Ownership validation failures**: Review the specific ownership middleware being used and its validation logic.
-- **Token claim mismatches**: Ensure tokens contain correct role and entidade_id information.
+- **Token claim mismatches**: Ensure tokens contain correct role and `entidade_id` information.
 - **Impersonation errors**: Verify admin exists, user is not admin, and impersonation session is properly tracked.
 - **Session conflicts**: Check for active impersonation sessions that need cleanup.
 - **Database connectivity issues**: Verify database connection settings and table existence.
@@ -842,7 +854,7 @@ Enhanced troubleshooting scenarios:
 Recommendations:
 - Verify environment variables (JWT_SECRET, JWT_EXPIRY).
 - Ensure frontend includes Authorization: Bearer <token> for protected endpoints.
-- Confirm the auth_users and impersonations tables exist and user is active.
+- Confirm the `users` and impersonations tables exist and user is active.
 - Use the provided test token to validate JWT decoding.
 - Check entity relationships in the database for ownership validation.
 - Monitor impersonation sessions for proper cleanup and audit trails.
@@ -859,7 +871,9 @@ Recommendations:
 - [src/controllers/authController.js:263-327](file://src/controllers/authController.js#L263-L327)
 
 ## Conclusion
-NodeMural's enhanced authentication system provides a robust foundation with JWT-based login, bcryptjs password hashing, sophisticated RBAC enforcement with entity-based permissions, and a powerful impersonation system. The new impersonation feature allows administrators to temporarily assume user identities for debugging, support, and administrative purposes while maintaining comprehensive audit trails and security validation. The system's entity-based permission model enables fine-grained access control through the entidade_id field, supporting role-specific relationships for students, professors, and supervisors. The frontend utilities streamline token handling, route protection, and impersonation management with enhanced role awareness. By following the documented patterns and best practices, teams can extend protection to additional routes, enhance security with rate limiting, HTTPS, comprehensive input validation, and robust impersonation oversight.
+NodeMural's enhanced authentication system provides a robust foundation with JWT-based login, bcryptjs password hashing, sophisticated RBAC enforcement with entity-based permissions, and a powerful impersonation system. The new impersonation feature allows administrators to temporarily assume user identities for debugging, support, and administrative purposes while maintaining comprehensive audit trails and security validation. The system's entity-based permission model enables fine-grained access control through the `entidade_id` field, supporting role-specific relationships for students, professors, and supervisors. The frontend utilities streamline token handling, route protection, and impersonation management with enhanced role awareness. By following the documented patterns and best practices, teams can extend protection to additional routes, enhance security with rate limiting, HTTPS, comprehensive input validation, and robust impersonation oversight.
+
+**Updated** The system now uses the enhanced `users` table schema with `identificacao` and `entidade_id` columns, providing more precise entity linking and validation capabilities.
 
 ## Appendices
 
@@ -900,6 +914,8 @@ The system's entity-based permission model provides several advantages:
 - **Audit trail**: Clear logging of permission decisions and access patterns.
 - **Impersonation support**: Seamless switching between user and admin contexts.
 - **Flexible relationships**: Supports complex organizational structures and hierarchies.
+
+**Updated** The `identificacao` field enhances entity linking precision by providing role-specific identifiers (DRE, SIAPE, CRESS) for accurate entity validation.
 
 ### Impersonation System Benefits
 The impersonation system offers significant advantages:

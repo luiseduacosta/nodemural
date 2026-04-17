@@ -6,6 +6,8 @@
 - [repair_inscricoes.py](file://scripts/repair_inscricoes.py)
 - [report_estagiarios_supervisor_instituicao.py](file://scripts/report_estagiarios_supervisor_instituicao.py)
 - [update_phone_numbers.py](file://scripts/update_phone_numbers.py)
+- [add_inscricao_counter_cache.sql](file://src/database/add_inscricao_counter_cache.sql)
+- [test_counter_cache_inscricoes.sql](file://test/test_counter_cache_inscricoes.sql)
 - [db.js](file://src/database/db.js)
 - [setupFullDatabase.js](file://src/database/setupFullDatabase.js)
 - [aluno.js](file://src/models/aluno.js)
@@ -15,6 +17,13 @@
 - [README.md](file://README.md)
 - [package.json](file://package.json)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added documentation for new counter cache maintenance functionality
+- Updated architecture overview to include automatic student registration count synchronization
+- Enhanced duplicate resolution component to include counter cache synchronization
+- Added new section covering counter cache triggers and automatic maintenance
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -31,6 +40,8 @@
 This document provides comprehensive documentation for the Database Integrity Maintenance Scripts in the NodeMural application. These Python scripts are designed to maintain data quality and consistency across the MariaDB database, focusing on three critical areas: data migration and normalization, duplicate record resolution, referential integrity validation, and data formatting standardization.
 
 The NodeMural application is a Node.js web application built with Express and MariaDB that manages student internship programs, featuring user authentication, student management, teacher management, and comprehensive internship tracking systems. The maintenance scripts address common database integrity challenges that arise during data migration, system upgrades, and ongoing operational activities.
+
+**Updated** Added new counter cache maintenance functionality for automatic student registration count synchronization, providing real-time tracking of student enrollment counts through database triggers.
 
 ## Project Structure
 The database maintenance functionality is organized within the scripts directory, alongside the main application code. The structure follows a clear separation between application logic and maintenance utilities:
@@ -61,6 +72,8 @@ N[db.js - Connection Pool]
 O[setupFullDatabase.js - Schema]
 P[setupAuthUsers.js - Auth Table]
 Q[create_impersonations_table.sql - Impersonation Tracking]
+R[add_inscricao_counter_cache.sql - Counter Cache Setup]
+S[test_counter_cache_inscricoes.sql - Counter Cache Testing]
 end
 B --> F
 B --> G
@@ -71,6 +84,8 @@ J --> N
 J --> O
 J --> P
 J --> Q
+J --> R
+J --> S
 ```
 
 **Diagram sources**
@@ -82,13 +97,13 @@ J --> Q
 - [package.json:1-33](file://package.json#L1-L33)
 
 ## Core Components
-The database maintenance scripts ecosystem consists of four specialized tools, each addressing specific integrity challenges:
+The database maintenance scripts ecosystem consists of four specialized tools, each addressing specific integrity challenges, plus new counter cache maintenance functionality:
 
 ### Data Migration and Normalization Scripts
 The backfill_alunos_turno_id.py script handles data migration from legacy text-based fields to normalized integer identifiers. This transformation improves data consistency and enables efficient querying capabilities.
 
 ### Duplicate Resolution Systems
-The repair_inscricoes.py script implements sophisticated duplicate detection and removal mechanisms for registration records, maintaining referential integrity while preserving historical data.
+The repair_inscricoes.py script implements sophisticated duplicate detection and removal mechanisms for registration records, maintaining referential integrity while preserving historical data. **Updated** Now includes automatic counter cache synchronization to maintain student registration counts.
 
 ### Referential Integrity Validation
 The report_estagiarios_supervisor_instituicao.py script provides comprehensive validation of supervisor-institution relationships, identifying inconsistencies that could compromise data reliability.
@@ -96,14 +111,18 @@ The report_estagiarios_supervisor_instituicao.py script provides comprehensive v
 ### Data Formatting Standardization
 The update_phone_numbers.py script standardizes phone number formatting across multiple tables, ensuring consistent data presentation and improving data quality.
 
+### Counter Cache Maintenance System
+**New** The counter cache system provides automatic student registration count synchronization through database triggers that maintain real-time counts of student enrollments in the alunos table.
+
 **Section sources**
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 - [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
 - [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
 - [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
 
 ## Architecture Overview
-The database maintenance architecture follows a modular design pattern with clear separation of concerns:
+The database maintenance architecture follows a modular design pattern with clear separation of concerns and includes new counter cache functionality:
 
 ```mermaid
 graph TB
@@ -112,41 +131,51 @@ A[Data Migration Scripts]
 B[Duplicate Resolution Scripts]
 C[Integrity Validation Scripts]
 D[Formatting Standardization Scripts]
+E[Counter Cache Maintenance Scripts]
 end
 subgraph "Database Layer"
-E[MariaDB Connection Pool]
-F[Schema Management]
-G[Table Relationships]
-H[Constraint Enforcement]
+F[MariaDB Connection Pool]
+G[Schema Management]
+H[Table Relationships]
+I[Constraint Enforcement]
+J[Counter Cache Triggers]
+K[Automatic Synchronization]
 end
 subgraph "Application Integration"
-I[Environment Configuration]
-J[Error Handling]
-K[Logging Mechanisms]
-L[Transaction Management]
+L[Environment Configuration]
+M[Error Handling]
+N[Logging Mechanisms]
+O[Transaction Management]
+P[Real-time Count Updates]
 end
-A --> E
-B --> E
-C --> E
-D --> E
+A --> F
+B --> F
+C --> F
+D --> F
 E --> F
 F --> G
 G --> H
 H --> I
 I --> J
 J --> K
-K --> L
+K --> P
+L --> M
+M --> N
+N --> O
+O --> P
 ```
 
 **Diagram sources**
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 - [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
+- [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
 
-The architecture emphasizes robust error handling, transaction safety, and configurable database connectivity. Each script maintains independence while leveraging shared database infrastructure and configuration management.
+The architecture emphasizes robust error handling, transaction safety, configurable database connectivity, and automatic counter cache maintenance. Each script maintains independence while leveraging shared database infrastructure and configuration management.
 
 **Section sources**
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 - [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
 
 ## Detailed Component Analysis
 
@@ -188,7 +217,7 @@ The script implements a sophisticated CASE-based transformation that maps textua
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 
 ### Duplicate Resolution and Referential Integrity Component
-The repair_inscricoes.py script demonstrates advanced database maintenance techniques:
+The repair_inscricoes.py script demonstrates advanced database maintenance techniques with new counter cache integration:
 
 ```mermaid
 flowchart TD
@@ -214,10 +243,49 @@ Success --> End
 **Diagram sources**
 - [repair_inscricoes.py:12-117](file://scripts/repair_inscricoes.py#L12-L117)
 
+**Updated** The script now includes automatic counter cache synchronization to maintain accurate student registration counts after duplicate resolution operations. The counter cache update ensures data integrity by recalculating counts for affected students.
+
 The script implements a multi-stage approach to duplicate resolution, prioritizing data integrity through careful record selection and counter cache synchronization.
 
 **Section sources**
 - [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+
+### Counter Cache Maintenance Component
+**New** The counter cache system provides automatic student registration count synchronization through database triggers:
+
+```mermaid
+flowchart TD
+Start([Database Operation]) --> CheckOperation{"Operation Type?"}
+CheckOperation --> |INSERT| InsertTrigger["INSERT Trigger Activated"]
+CheckOperation --> |DELETE| DeleteTrigger["DELETE Trigger Activated"]
+CheckOperation --> |UPDATE| UpdateTrigger["UPDATE Trigger Activated"]
+InsertTrigger --> IncrementCount["Increment Student Count"]
+DeleteTrigger --> DecrementCount["Decrement Student Count"]
+UpdateTrigger --> CheckAlunoChange{"Aluno ID Changed?"}
+CheckAlunoChange --> |Yes| TransferCount["Transfer Count Between Students"]
+CheckAlunoChange --> |No| NoAction["No Action Required"]
+IncrementCount --> UpdateAluno["Update alunos Table"]
+DecrementCount --> UpdateAluno
+TransferCount --> UpdateBoth["Update Both Student Counts"]
+NoAction --> End([Operation Complete])
+UpdateAluno --> End
+UpdateBoth --> End
+```
+
+**Diagram sources**
+- [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
+
+The counter cache system consists of three triggers that automatically maintain student registration counts:
+
+1. **INSERT Trigger**: Automatically increments the student's registration count when new enrollment records are created
+2. **DELETE Trigger**: Automatically decrements the student's registration count when enrollment records are removed
+3. **UPDATE Trigger**: Handles cases where enrollment records are transferred between students
+
+The system uses the `inscricao_count` column in the `alunos` table to store real-time counts, eliminating the need for expensive COUNT queries during normal operations.
+
+**Section sources**
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
 
 ### Referential Integrity Validation Component
 The report_estagiarios_supervisor_instituicao.py script provides comprehensive validation capabilities:
@@ -302,7 +370,7 @@ The script implements intelligent phone number formatting with support for inter
 - [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 
 ## Dependency Analysis
-The maintenance scripts share common dependencies and architectural patterns:
+The maintenance scripts share common dependencies and architectural patterns with enhanced counter cache integration:
 
 ```mermaid
 graph TB
@@ -311,43 +379,55 @@ A[mysql.connector]
 B[Environment Configuration]
 C[Error Handling]
 D[Transaction Management]
+E[Counter Cache Triggers]
 end
 subgraph "Script-Specific Dependencies"
-E[Argument Parsing - Backfill Script]
-F[Regex Processing - Phone Script]
-G[DateTime - Report Script]
+F[Argument Parsing - Backfill Script]
+G[Regex Processing - Phone Script]
+H[DateTime - Report Script]
+I[Counter Cache Synchronization - Repair Script]
 end
 subgraph "Database Dependencies"
-H[Connection Pooling]
-I[Schema Definitions]
-J[Table Relationships]
-K[Constraint Definitions]
+J[Connection Pooling]
+K[Schema Definitions]
+L[Table Relationships]
+M[Constraint Definitions]
+N[Trigger Management]
+O[Counter Cache Column]
 end
-A --> H
-B --> H
+A --> J
+B --> J
 C --> D
 D --> I
-I --> J
+I --> E
+E --> N
+N --> O
 J --> K
-E --> A
+K --> L
+L --> M
+M --> N
 F --> A
 G --> A
+H --> A
+I --> A
 ```
 
 **Diagram sources**
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 - [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 - [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [repair_inscricoes.py:78-89](file://scripts/repair_inscricoes.py#L78-L89)
 
-The dependency structure reveals a clear separation between database connectivity and script-specific functionality, enabling maintainable and testable code.
+The dependency structure reveals a clear separation between database connectivity and script-specific functionality, with enhanced integration for counter cache maintenance operations.
 
 **Section sources**
 - [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 - [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 - [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [repair_inscricoes.py:78-89](file://scripts/repair_inscricoes.py#L78-L89)
 
 ## Performance Considerations
-The maintenance scripts are designed with several performance optimization strategies:
+The maintenance scripts are designed with several performance optimization strategies, including new counter cache benefits:
 
 ### Connection Management
 Each script implements efficient connection pooling and proper resource cleanup to minimize database overhead and prevent connection leaks.
@@ -360,6 +440,13 @@ The database schema includes strategic indexing to support the maintenance opera
 
 ### Memory Efficiency
 The scripts process data incrementally rather than loading entire datasets into memory, making them suitable for large-scale database maintenance operations.
+
+### Counter Cache Benefits
+**New** The counter cache system provides significant performance improvements by:
+- Eliminating expensive COUNT queries during normal operations
+- Maintaining real-time student registration counts through automatic triggers
+- Reducing database load through cached calculations
+- Improving query performance for student enrollment statistics
 
 ## Troubleshooting Guide
 
@@ -385,6 +472,11 @@ The scripts process data incrementally rather than loading entire datasets into 
 - **Solution**: Review referential integrity constraints and data patterns
 - **Prevention**: Implement pre-validation checks and data quality metrics
 
+#### Counter Cache Synchronization Issues
+**New** **Issue**: Student registration counts don't match actual enrollments
+**Solution**: Verify trigger installation and check for manual database modifications
+**Prevention**: Regular counter cache verification and automatic synchronization monitoring
+
 **Section sources**
 - [backfill_alunos_turno_id.py:95-106](file://scripts/backfill_alunos_turno_id.py#L95-L106)
 - [repair_inscricoes.py:95-105](file://scripts/repair_inscricoes.py#L95-L105)
@@ -394,6 +486,8 @@ The scripts process data incrementally rather than loading entire datasets into 
 ## Conclusion
 The Database Integrity Maintenance Scripts represent a comprehensive solution for maintaining data quality and consistency in the NodeMural application. Each script addresses specific integrity challenges while following established best practices for database maintenance operations.
 
+**Updated** The addition of counter cache maintenance functionality significantly enhances the system's ability to maintain real-time student registration counts through automatic database triggers, providing substantial performance improvements and data consistency benefits.
+
 The modular architecture enables targeted maintenance operations without disrupting core application functionality. The scripts demonstrate professional-grade error handling, transaction management, and performance optimization techniques that are essential for reliable database maintenance in production environments.
 
 Key strengths of the implementation include:
@@ -402,5 +496,8 @@ Key strengths of the implementation include:
 - Configurable database connectivity and environment management
 - Scalable processing approaches for large datasets
 - Clear separation of concerns between different maintenance tasks
+- **New** Automatic counter cache maintenance through database triggers
+- **New** Real-time student registration count synchronization
+- **New** Performance optimizations through cached calculations
 
-These scripts provide a foundation for ongoing database maintenance and quality assurance, supporting the long-term reliability and performance of the NodeMural application.
+These scripts provide a foundation for ongoing database maintenance and quality assurance, supporting the long-term reliability and performance of the NodeMural application while ensuring accurate student enrollment tracking through automated counter cache maintenance.

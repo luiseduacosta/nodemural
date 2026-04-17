@@ -5,16 +5,23 @@
 - [db.js](file://src/database/db.js)
 - [setupFullDatabase.js](file://src/database/setupFullDatabase.js)
 - [setupAuthUsers.js](file://src/database/setupAuthUsers.js)
+- [setupImpersonationsTable.js](file://src/database/setupImpersonationsTable.js)
+- [add_inscricao_counter_cache.sql](file://src/database/add_inscricao_counter_cache.sql)
+- [create_impersonations_table.sql](file://src/database/create_impersonations_table.sql)
 - [user.js](file://src/models/user.js)
 - [aluno.js](file://src/models/aluno.js)
 - [complemento.js](file://src/models/complemento.js)
-- [estagiario.js](file://src/models/estagiario.js)
 - [authController.js](file://src/controllers/authController.js)
 - [authRoutes.js](file://src/routers/authRoutes.js)
 - [complementoController.js](file://src/controllers/complementoController.js)
 - [complementoRoutes.js](file://src/routers/complementoRoutes.js)
 - [auth.js](file://src/middleware/auth.js)
 - [server.js](file://src/server.js)
+- [backfill_alunos_turno_id.py](file://scripts/backfill_alunos_turno_id.py)
+- [repair_inscricoes.py](file://scripts/repair_inscricoes.py)
+- [report_estagiarios_supervisor_instituicao.py](file://scripts/report_estagiarios_supervisor_instituicao.py)
+- [update_phone_numbers.py](file://scripts/update_phone_numbers.py)
+- [test_counter_cache_inscricoes.sql](file://test/test_counter_cache_inscricoes.sql)
 - [check_tables_temp.js](file://test/check_tables_temp.js)
 - [create_instituicao_table.js](file://test/create_instituicao_table.js)
 - [check_questionarios.js](file://test/check_questionarios.js)
@@ -25,12 +32,12 @@
 
 ## Update Summary
 **Changes Made**
-- Added documentation for the new complementos table and its integration with the estagiarios table
-- Updated database schema overview to include the 20-table structure with complementos as the latest addition
-- Enhanced relationship documentation showing how complementos connects to estagiarios
-- Updated server routing to include complementoRoutes
-- Added comprehensive CRUD operations for complementos management
-- Updated database initialization section to reflect the expanded schema with 20 tables
+- Added documentation for new counter cache maintenance scripts and enhanced database schema with users table improvements
+- Updated database initialization to include counter cache triggers for inscricao_count column
+- Enhanced users table with improved role management and entity relationships
+- Added comprehensive Python maintenance scripts for data cleanup and validation
+- Updated database schema to include impersonations table for admin session tracking
+- Enhanced relationship documentation showing counter cache triggers and foreign key constraints
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -48,7 +55,7 @@
 This document describes the database architecture and connection management for NodeMural, focusing on the MariaDB connection pool configuration, connection lifecycle management, database abstraction patterns, and operational practices. It covers connection pooling strategies, timeout configurations, error handling mechanisms, database initialization and schema management, migration strategies, security considerations, performance optimization, monitoring and health checks, transaction management, and backup and disaster recovery procedures.
 
 ## Project Structure
-The database layer is organized around a shared connection pool module and model abstractions that encapsulate SQL operations. A comprehensive initialization script creates all required tables and initial data structures, while controllers and middleware orchestrate authentication and authorization flows. The new complementos table enhances the system's ability to manage special academic periods for students. Test scripts demonstrate schema inspection and migration patterns.
+The database layer is organized around a shared connection pool module and model abstractions that encapsulate SQL operations. A comprehensive initialization script creates all required tables and initial data structures, while controllers and middleware orchestrate authentication and authorization flows. The enhanced users table provides improved role management, and counter cache maintenance scripts ensure data integrity through automatic counting mechanisms. Python maintenance scripts handle complex data operations and validation tasks.
 
 ```mermaid
 graph TB
@@ -65,11 +72,21 @@ POOL["MariaDB Pool<br/>src/database/db.js"]
 MODEL_USER["User Model<br/>src/models/user.js"]
 MODEL_ALUNO["Aluno Model<br/>src/models/aluno.js"]
 MODEL_COMP["Complemento Model<br/>src/models/complemento.js"]
-MODEL_EST["Estagiario Model<br/>src/models/estagiario.js"]
 end
-subgraph "Comprehensive Initialization"
+subgraph "Enhanced Database Schema"
 FULL_SETUP["Full Database Setup<br/>src/database/setupFullDatabase.js"]
 AUTH_SETUP["Auth Users Setup<br/>src/database/setupAuthUsers.js"]
+IMP_SETUP["Impersonations Setup<br/>src/database/setupImpersonationsTable.js"]
+COUNTER_CACHE["Counter Cache Setup<br/>src/database/add_inscricao_counter_cache.sql"]
+end
+subgraph "Maintenance Scripts"
+BACKFILL["Backfill Script<br/>scripts/backfill_alunos_turno_id.py"]
+REPAIR["Repair Script<br/>scripts/repair_inscricoes.py"]
+REPORT["Report Script<br/>scripts/report_estagiarios_supervisor_instituicao.py"]
+PHONE["Phone Update Script<br/>scripts/update_phone_numbers.py"]
+end
+subgraph "Testing & Validation"
+TEST_COUNTER["Counter Cache Test<br/>test/test_counter_cache_inscricoes.sql"]
 TEST_INSPECT["Inspect Tables<br/>test/check_tables_temp.js"]
 TEST_CREATE["Create Table<br/>test/create_instituicao_table.js"]
 TEST_ALTER["Alter Table<br/>test/alter_instituicao_table.js"]
@@ -83,9 +100,15 @@ SRV --> MW_AUTH
 MODEL_USER --> POOL
 MODEL_ALUNO --> POOL
 MODEL_COMP --> POOL
-MODEL_EST --> POOL
 FULL_SETUP --> POOL
 AUTH_SETUP --> POOL
+IMP_SETUP --> POOL
+COUNTER_CACHE --> POOL
+BACKFILL --> POOL
+REPAIR --> POOL
+REPORT --> POOL
+PHONE --> POOL
+TEST_COUNTER --> POOL
 TEST_INSPECT --> POOL
 TEST_CREATE --> POOL
 TEST_ALTER --> POOL
@@ -101,12 +124,18 @@ TEST_COUNT --> POOL
 - [complementoController.js:1-72](file://src/controllers/complementoController.js#L1-L72)
 - [auth.js:1-137](file://src/middleware/auth.js#L1-L137)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 - [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
+- [setupImpersonationsTable.js:1-60](file://src/database/setupImpersonationsTable.js#L1-L60)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
 - [check_tables_temp.js:1-40](file://test/check_tables_temp.js#L1-L40)
 - [create_instituicao_table.js:1-41](file://test/create_instituicao_table.js#L1-L41)
 - [alter_instituicao_table.js:1-39](file://test/alter_instituicao_table.js#L1-L39)
@@ -121,30 +150,42 @@ TEST_COUNT --> POOL
 ## Core Components
 - MariaDB connection pool configured via environment variables and exported for reuse across models.
 - Models encapsulate CRUD operations against MariaDB tables using the shared pool.
-- **Updated**: Comprehensive initialization script creates all required tables and initial data structures in a single operation, now including the 20th table - complementos.
+- Enhanced database initialization script creates all required tables and initial data structures in a single operation, now including counter cache triggers and impersonations table.
+- **Updated**: Counter cache maintenance scripts ensure automatic counting of inscricoes for each aluno through database triggers.
+- **Updated**: Users table improvements include enhanced role management and entity relationship fields.
+- **Updated**: Python maintenance scripts provide comprehensive data cleanup, validation, and formatting capabilities.
 - Controllers and middleware handle authentication and authorization flows, interacting with models.
-- **New**: Complemento model and controller provide CRUD operations for managing special academic periods.
+- Complemento model and controller provide CRUD operations for managing special academic periods.
 
 Key implementation references:
 - Pool creation and configuration: [db.js:5-13](file://src/database/db.js#L5-L13)
-- User model operations: [user.js:18-34](file://src/models/user.js#L18-L34)
+- User model operations: [user.js:7-184](file://src/models/user.js#L7-L184)
 - Aluno model operations: [aluno.js:15-20](file://src/models/aluno.js#L15-L20)
-- **Updated**: Full database setup script: [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- **New**: Complemento model: [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- **New**: Complemento controller: [complementoController.js:1-72](file://src/controllers/complementoController.js#L1-L72)
-- **New**: Complemento routes: [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
-- Legacy auth setup script: [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
+- Enhanced database setup script: [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- Counter cache setup: [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- Impersonations table setup: [setupImpersonationsTable.js:1-60](file://src/database/setupImpersonationsTable.js#L1-L60)
+- Complemento model: [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
+- Complemento controller: [complementoController.js:1-72](file://src/controllers/complementoController.js#L1-L72)
+- Complemento routes: [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
+- Maintenance scripts: [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111), [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117), [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173), [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- Legacy auth setup script: [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
 - Server bootstrap and routes: [server.js:31-64](file://src/server.js#L31-L64)
 
 **Section sources**
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 - [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
 - [complementoController.js:1-72](file://src/controllers/complementoController.js#L1-L72)
 - [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [setupImpersonationsTable.js:1-60](file://src/database/setupImpersonationsTable.js#L1-L60)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
 - [server.js:1-73](file://src/server.js#L1-L73)
 
 ## Architecture Overview
@@ -152,9 +193,11 @@ The system follows a layered architecture:
 - Presentation and routing handled by Express.
 - Controllers coordinate requests and responses.
 - Models abstract database operations using a shared MariaDB pool.
-- **Updated**: Comprehensive initialization script manages complete schema creation and initial data population, now including the complementos table.
+- Enhanced database initialization script manages complete schema creation, counter cache triggers, and initial data population.
 - Middleware enforces authentication and authorization.
-- **New**: Complemento routes provide RESTful endpoints for managing special academic periods.
+- **Updated**: Counter cache triggers automatically maintain inscricao_count for each aluno.
+- **Updated**: Python maintenance scripts provide automated data cleanup and validation.
+- Complemento routes provide RESTful endpoints for managing special academic periods.
 
 ```mermaid
 sequenceDiagram
@@ -190,19 +233,19 @@ Controller-->>Client : "JSON array"
 
 Operational characteristics:
 - Connection lifecycle: Connections are acquired via getConnection() and released via release() or end() depending on the operation.
-- **Updated**: Comprehensive setup script acquires a connection, executes all DDL statements for multiple tables, inserts initial configuration data, and then releases and terminates the pool to avoid lingering connections.
+- Enhanced database initialization script acquires a connection, executes all DDL statements for multiple tables including counter cache triggers, inserts initial configuration data, and then releases and terminates the pool to avoid lingering connections.
 
 References:
 - Pool creation and options: [db.js:5-13](file://src/database/db.js#L5-L13)
-- **Updated**: Full setup pattern: [setupFullDatabase.js:4-291](file://src/database/setupFullDatabase.js#L4-L291)
-- Legacy setup pattern: [setupAuthUsers.js:6-35](file://src/database/setupAuthUsers.js#L6-L35)
+- Enhanced setup pattern: [setupFullDatabase.js:4-295](file://src/database/setupFullDatabase.js#L4-L295)
+- Legacy setup pattern: [setupAuthUsers.js:6-39](file://src/database/setupAuthUsers.js#L6-L39)
 
 ```mermaid
 flowchart TD
 Start(["Process Start"]) --> LoadEnv["Load environment variables"]
 LoadEnv --> CreatePool["Create MariaDB Pool<br/>waitForConnections=true,<br/>queueLimit=0"]
 CreatePool --> UsePool["Acquire connection via getConnection()"]
-UsePool --> ExecuteDDL["Execute Multiple DDL Statements<br/>for all 20 application tables"]
+UsePool --> ExecuteDDL["Execute Multiple DDL Statements<br/>for all application tables with counter cache triggers"]
 ExecuteDDL --> InsertInitialData["Insert initial configuration data"]
 InsertInitialData --> ReleaseConn["Release connection via release()"]
 ReleaseConn --> EndPool["Terminate pool via end()"]
@@ -211,24 +254,25 @@ EndPool --> Complete(["Setup Complete"])
 
 **Diagram sources**
 - [db.js:5-13](file://src/database/db.js#L5-L13)
-- [setupFullDatabase.js:4-291](file://src/database/setupFullDatabase.js#L4-L291)
-- [setupAuthUsers.js:6-35](file://src/database/setupAuthUsers.js#L6-L35)
+- [setupFullDatabase.js:4-295](file://src/database/setupFullDatabase.js#L4-L295)
+- [setupAuthUsers.js:6-39](file://src/database/setupAuthUsers.js#L6-L39)
 
 **Section sources**
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
 
 ### Database Abstraction Patterns
 - Models encapsulate SQL operations, exposing asynchronous methods for create, read, update, and delete.
 - Queries leverage parameterized statements to prevent SQL injection.
 - Soft-delete and role-based filtering are applied in queries where appropriate.
-- **Updated**: Complemento model follows the same CRUD pattern as other models, providing comprehensive operations for managing special academic periods.
+- Enhanced user model includes improved role management and entity relationship handling.
+- **Updated**: Counter cache triggers automatically maintain inscricao_count for each aluno without manual intervention.
 
 References:
-- User model create/find/update/deactivate: [user.js:7-142](file://src/models/user.js#L7-L142)
+- Enhanced user model create/find/update/deactivate: [user.js:7-184](file://src/models/user.js#L7-L184)
 - Aluno model CRUD and joins: [aluno.js:6-143](file://src/models/aluno.js#L6-L143)
-- **Updated**: Complemento model CRUD operations: [complemento.js:3-41](file://src/models/complemento.js#L3-L41)
+- Complemento model CRUD operations: [complemento.js:3-41](file://src/models/complemento.js#L3-L41)
 - Estagiario model with complementos join: [estagiario.js:97-104](file://src/models/estagiario.js#L97-L104)
 
 ```mermaid
@@ -242,6 +286,7 @@ class UserModel {
 +findAll()
 +deactivate(id)
 +updateRole(id, role)
++update(id, userData)
 }
 class AlunoModel {
 +verifyRegistro(registro)
@@ -281,14 +326,14 @@ EstagiarioModel --> Pool : "uses"
 ```
 
 **Diagram sources**
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 - [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
 - [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 - [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
 - [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
@@ -297,6 +342,7 @@ EstagiarioModel --> Pool : "uses"
 - Routes define public and protected endpoints.
 - Middleware verifies JWT tokens and enforces role-based access.
 - Controllers interact with models to authenticate users and retrieve profiles.
+- **Updated**: Enhanced users table provides improved role management with admin, supervisor, professor, and aluno roles.
 
 References:
 - Auth routes: [authRoutes.js:1-20](file://src/routers/authRoutes.js#L1-L20)
@@ -330,156 +376,198 @@ Controller-->>Client : "User profile"
 - [authController.js:1-157](file://src/controllers/authController.js#L1-L157)
 - [auth.js:1-137](file://src/middleware/auth.js#L1-L137)
 
-### Database Initialization and Schema Management
-- **Updated**: Comprehensive initialization script creates all 20 application tables in a single operation, including users, alunos, professores, supervisores, instituicoes, areas, mural_estagios, inscricoes, estagiarios, turma_estagios, folhadeatividades, questionarios, questoes, respostas, visitas, configuracoes, inst_super, and the new complementos table.
-- **Updated**: The script automatically inserts initial configuration data if the configuracoes table is empty.
-- **New**: The complementos table provides management of special academic periods for students, with estagiarios having a foreign key relationship to complementos.
-- Legacy initialization scripts still exist but are superseded by the comprehensive setup approach.
-- Test scripts demonstrate schema inspection, table creation, column alterations, and row counting.
+### Enhanced Database Schema and Counter Cache Management
+- **Updated**: Comprehensive initialization script creates all application tables in a single operation, including counter cache triggers for inscricao_count column in alunos table.
+- **Updated**: Enhanced users table with improved role management, entity relationships, and audit timestamps.
+- **Updated**: Impersonations table provides admin session tracking with foreign key constraints to users table.
+- **Updated**: Counter cache triggers automatically maintain inscricao_count for each aluno through INSERT, DELETE, and UPDATE operations on inscricoes table.
+- **Updated**: Python maintenance scripts handle complex data operations including phone number formatting, duplicate repair, and supervisor-institution validation.
+- Legacy initialization scripts still exist but are superseded by the enhanced comprehensive setup approach.
 
-**Updated** The new comprehensive setup script provides a complete database initialization solution that replaces the previous fragmented approach and now includes the 20th table for enhanced academic period management.
+**Updated** The enhanced comprehensive setup script provides a complete database initialization solution that includes counter cache triggers, improved users table, and impersonations table for enhanced functionality.
 
 References:
-- **Updated**: Full database setup: [setupFullDatabase.js:10-263](file://src/database/setupFullDatabase.js#L10-L263)
-- **Updated**: Initial configuration insertion: [setupFullDatabase.js:273-278](file://src/database/setupFullDatabase.js#L273-L278)
-- **New**: Complementos table definition: [setupFullDatabase.js:259-263](file://src/database/setupFullDatabase.js#L259-L263)
-- Legacy auth users setup: [setupAuthUsers.js:6-35](file://src/database/setupAuthUsers.js#L6-L35)
-- Schema inspection: [check_tables_temp.js:11-37](file://test/check_tables_temp.js#L11-L37)
-- Table creation: [create_instituicao_table.js:11-38](file://test/create_instituicao_table.js#L11-L38)
-- Column alteration: [alter_instituicao_table.js:11-37](file://test/alter_instituicao_table.js#L11-L37)
-- Column metadata: [check_questionarios.js:12-26](file://test/check_questionarios.js#L12-L26)
-- Row count: [check_instituicao_data.js:11-23](file://test/check_instituicao_data.js#L11-L23)
+- Enhanced database setup: [setupFullDatabase.js:10-295](file://src/database/setupFullDatabase.js#L10-L295)
+- Counter cache setup: [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- Impersonations table setup: [setupImpersonationsTable.js:16-60](file://src/database/setupImpersonationsTable.js#L16-L60)
+- Users table improvements: [user.js:7-184](file://src/models/user.js#L7-L184)
+- Maintenance scripts: [backfill_alunos_turno_id.py:67-77](file://scripts/backfill_alunos_turno_id.py#L67-L77), [repair_inscricoes.py:78-94](file://scripts/repair_inscricoes.py#L78-L94), [report_estagiarios_supervisor_instituicao.py:135-148](file://scripts/report_estagiarios_supervisor_instituicao.py#L135-L148), [update_phone_numbers.py:185-198](file://scripts/update_phone_numbers.py#L185-L198)
+- Legacy auth users setup: [setupAuthUsers.js:6-39](file://src/database/setupAuthUsers.js#L6-L39)
 
 ```mermaid
 flowchart TD
-InitStart(["Run Comprehensive Setup Script"]) --> Connect["pool.getConnection()"]
-Connect --> ExecDDL["Execute CREATE TABLE for all 20 application tables"]
+InitStart(["Run Enhanced Setup Script"]) --> Connect["pool.getConnection()"]
+Connect --> ExecDDL["Execute CREATE TABLE for all application tables<br/>with counter cache triggers and impersonations"]
 ExecDDL --> InsertConfig["Insert initial configuration data"]
-InsertConfig --> LogSuccess["Log success message"]
+InsertConfig --> CreateTriggers["Create counter cache triggers for inscricao_count"]
+CreateTriggers --> LogSuccess["Log success message"]
 LogSuccess --> Release["conn.release()"]
 Release --> EndPool["pool.end()"]
-EndPool --> InitEnd(["Complete Setup"])
+EndPool --> InitEnd(["Complete Enhanced Setup"])
 ```
 
 **Diagram sources**
-- [setupFullDatabase.js:4-291](file://src/database/setupFullDatabase.js#L4-L291)
+- [setupFullDatabase.js:4-295](file://src/database/setupFullDatabase.js#L4-L295)
+- [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
 
 **Section sources**
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
-- [check_tables_temp.js:1-40](file://test/check_tables_temp.js#L1-L40)
-- [create_instituicao_table.js:1-41](file://test/create_instituicao_table.js#L1-L41)
-- [alter_instituicao_table.js:1-39](file://test/alter_instituicao_table.js#L1-L39)
-- [check_questionarios.js:1-28](file://test/check_questionarios.js#L1-L28)
-- [check_instituicao_data.js:1-25](file://test/check_instituicao_data.js#L1-L25)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [setupImpersonationsTable.js:1-60](file://src/database/setupImpersonationsTable.js#L1-L60)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
 
-### Migration Strategies
-- **Updated**: The comprehensive setup script handles all table creation and initial data population in a single operation, including the new complementos table.
-- **Updated**: For future schema changes, the setup script can be extended to include conditional migrations that check for existing table structures and apply necessary alterations.
-- **New**: The complementos table maintains referential integrity with the estagiarios table through the complemento_id foreign key.
-- Legacy DDL change scripts still exist for testing and development scenarios.
-- Schema inspection scripts verify presence and structure of tables and columns.
+### Counter Cache Maintenance and Data Integrity
+- **Updated**: Counter cache triggers automatically maintain inscricao_count for each aluno through INSERT, DELETE, and UPDATE operations on inscricoes table.
+- **Updated**: Test script validates counter cache functionality by inserting, verifying, and deleting inscricoes records.
+- **Updated**: Python repair script identifies and removes duplicate inscricoes entries while maintaining counter cache integrity.
+- **Updated**: Backfill script populates turno_id based on turno field values for improved data consistency.
+- **Updated**: Phone number formatting script standardizes phone numbers across alunos, professores, and supervisores tables.
 
-**Updated** The new approach consolidates all database initialization into a single, comprehensive script that handles both table creation and initial data population, now including the 20th table for enhanced academic period management.
+**Updated** The counter cache system ensures automatic data integrity through database triggers, while Python maintenance scripts handle complex data cleanup and validation tasks.
 
 References:
-- **Updated**: Comprehensive table creation: [setupFullDatabase.js:10-263](file://src/database/setupFullDatabase.js#L10-L263)
-- **Updated**: Initial configuration handling: [setupFullDatabase.js:273-278](file://src/database/setupFullDatabase.js#L273-L278)
-- **New**: Complementos table relationship: [estagiario.js:200-220](file://src/models/estagiario.js#L200-L220)
-- Legacy alter table operations: [alter_instituicao_table.js:17-28](file://test/alter_instituicao_table.js#L17-L28)
-- Inspect tables/columns: [check_tables_temp.js:14-29](file://test/check_tables_temp.js#L14-L29), [check_questionarios.js:15-18](file://test/check_questionarios.js#L15-L18)
+- Counter cache triggers: [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
+- Counter cache test: [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- Repair script: [repair_inscricoes.py:12-117](file://scripts/repair_inscricoes.py#L12-L117)
+- Backfill script: [backfill_alunos_turno_id.py:58-111](file://scripts/backfill_alunos_turno_id.py#L58-L111)
+- Phone formatting script: [update_phone_numbers.py:64-242](file://scripts/update_phone_numbers.py#L64-L242)
 
 **Section sources**
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+
+### Migration Strategies
+- **Updated**: Enhanced comprehensive setup script handles all table creation, counter cache triggers, and initial data population in a single operation.
+- **Updated**: For future schema changes, the setup script can be extended to include conditional migrations that check for existing table structures and apply necessary alterations.
+- **Updated**: Counter cache triggers provide automatic maintenance for inscricao_count without manual intervention.
+- **Updated**: Python maintenance scripts can be scheduled for periodic data cleanup and validation tasks.
+- Legacy DDL change scripts still exist for testing and development scenarios.
+
+**Updated** The enhanced approach consolidates all database initialization and maintenance into comprehensive scripts that handle both table creation and ongoing data integrity tasks.
+
+References:
+- Enhanced table creation: [setupFullDatabase.js:10-295](file://src/database/setupFullDatabase.js#L10-L295)
+- Counter cache triggers: [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
+- Maintenance scripts: [backfill_alunos_turno_id.py:58-111](file://scripts/backfill_alunos_turno_id.py#L58-L111), [repair_inscricoes.py:12-117](file://scripts/repair_inscricoes.py#L12-L117), [report_estagiarios_supervisor_instituicao.py:37-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L37-L173), [update_phone_numbers.py:64-242](file://scripts/update_phone_numbers.py#L64-L242)
+- Legacy alter table operations: [alter_instituicao_table.js:17-28](file://test/alter_instituicao_table.js#L17-L28)
+
+**Section sources**
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 - [alter_instituicao_table.js:1-39](file://test/alter_instituicao_table.js#L1-L39)
-- [check_tables_temp.js:1-40](file://test/check_tables_temp.js#L1-L40)
-- [check_questionarios.js:1-28](file://test/check_questionarios.js#L1-L28)
 
 ### Connection Security Considerations
 - Credentials are loaded from environment variables and injected into the pool configuration.
 - JWT secret and expiry are environment-controlled for authentication.
-- **Updated**: The comprehensive setup script runs with the same security considerations as the legacy setup scripts, using environment variables for database credentials.
+- Enhanced setup scripts run with the same security considerations as the legacy setup scripts, using environment variables for database credentials.
+- **Updated**: Impersonations table includes foreign key constraints to users table for secure session tracking.
 - No explicit TLS/SSL configuration is present in the pool module; production deployments should configure SSL/TLS according to MariaDB client requirements.
 
 References:
 - Pool credentials: [db.js:5-9](file://src/database/db.js#L5-L9)
-- **Updated**: Setup script security: [setupFullDatabase.js:2-2](file://src/database/setupFullDatabase.js#L2-L2)
+- Enhanced setup script security: [setupFullDatabase.js:2-2](file://src/database/setupFullDatabase.js#L2-L2)
+- Impersonations table security: [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
 - JWT configuration: [authController.js:99-109](file://src/controllers/authController.js#L99-L109), [auth.js:14-16](file://src/middleware/auth.js#L14-L16)
 
 **Section sources**
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
 - [authController.js:1-157](file://src/controllers/authController.js#L1-L157)
 - [auth.js:1-137](file://src/middleware/auth.js#L1-L137)
 
 ### Transaction Management and Consistency Guarantees
 - Current models perform individual statements without explicit transaction blocks.
-- **Updated**: The comprehensive setup script executes all table creation statements sequentially within a single connection context, providing atomicity for the entire initialization process.
-- **New**: Complemento model operations are atomic per request, ensuring data consistency for special academic period management.
+- **Updated**: Enhanced setup script executes all table creation statements and counter cache triggers sequentially within a single connection context, providing atomicity for the entire initialization process.
+- **Updated**: Counter cache triggers ensure atomic updates for inscricao_count through database-level transaction management.
+- **Updated**: Python maintenance scripts use proper transaction handling with commit/rollback operations.
 - For multi-statement consistency in application operations, wrap operations in transaction boundaries using conn.beginTransaction(), conn.commit(), and conn.rollback().
 
-**Updated** The setup script ensures atomic database initialization by executing all DDL statements within a single connection context, and complemento operations maintain consistency through individual atomic transactions.
+**Updated** The enhanced setup script ensures atomic database initialization, while counter cache triggers and Python scripts provide robust transaction management for data integrity.
 
 References:
-- **Updated**: Setup script connection management: [setupFullDatabase.js:4-291](file://src/database/setupFullDatabase.js#L4-L291)
-- **New**: Complemento model transaction patterns: [complemento.js:19-41](file://src/models/complemento.js#L19-L41)
+- Enhanced setup script connection management: [setupFullDatabase.js:4-295](file://src/database/setupFullDatabase.js#L4-L295)
+- Counter cache trigger patterns: [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
+- Python transaction handling: [repair_inscricoes.py:95-105](file://scripts/repair_inscricoes.py#L95-L105), [backfill_alunos_turno_id.py:86-107](file://scripts/backfill_alunos_turno_id.py#L86-L107)
 - Connection acquisition/release pattern: [user.js:18-21](file://src/models/user.js#L18-L21), [aluno.js:15-19](file://src/models/aluno.js#L15-L19)
 
 **Section sources**
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 
 ### Monitoring, Health Checks, and Failover
 - No explicit health check endpoint or pool metrics are implemented in the current codebase.
-- **Updated**: The comprehensive setup script provides console logging for successful table creation and initial configuration insertion, aiding in monitoring and debugging.
-- **New**: Complemento routes support monitoring through standard HTTP status codes and error handling.
+- **Updated**: Enhanced setup script provides comprehensive console logging for successful table creation, counter cache trigger creation, and initial configuration insertion.
+- **Updated**: Counter cache test script validates trigger functionality through automated testing.
+- **Updated**: Python maintenance scripts provide detailed progress reporting and error handling.
 - Recommendations include adding a GET /health endpoint that pings the database and exposes pool statistics.
 
-**Updated** The setup script includes comprehensive logging to aid in monitoring and debugging the database initialization process, and complemento routes provide standard RESTful monitoring capabilities.
+**Updated** The enhanced setup script includes comprehensive logging for monitoring and debugging, while Python scripts provide detailed operational feedback.
 
 References:
-- **Updated**: Setup script logging: [setupFullDatabase.js:8-278](file://src/database/setupFullDatabase.js#L8-L278)
-- **New**: Complemento route monitoring: [complementoRoutes.js:9-13](file://src/routers/complementoRoutes.js#L9-L13)
+- Enhanced setup script logging: [setupFullDatabase.js:8-282](file://src/database/setupFullDatabase.js#L8-L282)
+- Counter cache test: [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- Python script logging: [repair_inscricoes.py:14-105](file://scripts/repair_inscricoes.py#L14-L105), [backfill_alunos_turno_id.py:86-107](file://scripts/backfill_alunos_turno_id.py#L86-L107)
 - Server bootstrap and routes: [server.js:31-64](file://src/server.js#L31-L64)
 
 **Section sources**
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
 - [server.js:1-73](file://src/server.js#L1-L73)
 
 ### Enhanced Relationship Management
-- **New**: The complementos table establishes a many-to-one relationship with the estagiarios table through the complemento_id foreign key.
-- **New**: This relationship enables management of special academic periods for students, allowing different period types to be associated with student internships.
-- **New**: The estagiario model includes LEFT JOIN operations to retrieve complemento period names alongside student data.
-- **New**: Complemento routes provide RESTful endpoints for CRUD operations on special academic periods.
+- **Updated**: Counter cache triggers establish automatic relationship management between inscricoes and alunos tables through inscricao_count column.
+- **Updated**: Impersonations table establishes secure relationship with users table through foreign key constraints.
+- **Updated**: Enhanced users table provides improved role-based access control with entity relationship fields.
+- **Updated**: Python maintenance scripts validate and maintain referential integrity across multiple tables.
+- **Updated**: Complemento routes support monitoring through standard HTTP status codes and error handling.
 
-**Updated** The addition of the complementos table significantly enhances the system's ability to manage diverse academic period types for student internships.
+**Updated** The enhanced relationship management includes automatic counter cache maintenance, secure impersonation tracking, and improved data validation through Python scripts.
 
 References:
-- **New**: Complementos table definition: [setupFullDatabase.js:259-263](file://src/database/setupFullDatabase.js#L259-L263)
-- **New**: Complemento model operations: [complemento.js:3-41](file://src/models/complemento.js#L3-L41)
-- **New**: Estagiario complemento relationship: [estagiario.js:97-104](file://src/models/estagiario.js#L97-L104)
-- **New**: Complemento routes definition: [complementoRoutes.js:9-13](file://src/routers/complementoRoutes.js#L9-L13)
+- Counter cache triggers: [add_inscricao_counter_cache.sql:15-57](file://src/database/add_inscricao_counter_cache.sql#L15-L57)
+- Impersonations table: [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
+- Enhanced users table: [user.js:7-184](file://src/models/user.js#L7-L184)
+- Python maintenance scripts: [report_estagiarios_supervisor_instituicao.py:37-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L37-L173)
+- Complemento routes monitoring: [complementoRoutes.js:9-13](file://src/routers/complementoRoutes.js#L9-L13)
 
 **Section sources**
-- [setupFullDatabase.js:259-263](file://src/database/setupFullDatabase.js#L259-L263)
-- [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- [estagiario.js:97-104](file://src/models/estagiario.js#L97-L104)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
 - [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
 
 ## Dependency Analysis
-The application depends on the MariaDB driver and dotenv for configuration. Models depend on the shared pool module. **Updated**: The comprehensive setup script demonstrates direct pool usage for complete schema operations, while legacy scripts show the previous fragmented approach. **New**: Complemento routes integrate seamlessly with the existing routing structure.
+The application depends on the MariaDB driver and dotenv for configuration. Models depend on the shared pool module. **Updated**: The enhanced comprehensive setup script demonstrates direct pool usage for complete schema operations including counter cache triggers, while legacy scripts show the previous fragmented approach. **Updated**: Python maintenance scripts provide additional operational dependencies for data cleanup and validation. **Updated**: Complemento routes integrate seamlessly with the existing routing structure.
 
-**Updated** The dependency structure now centers around a single comprehensive setup script that handles all database initialization needs, plus the new complemento routing system.
+**Updated** The dependency structure now centers around enhanced comprehensive setup scripts, counter cache triggers, Python maintenance scripts, and the new complemento routing system.
 
 ```mermaid
 graph LR
 PJSON["package.json"] --> MARIADB["mariadb"]
 PJSON --> DOTENV["dotenv"]
+PJSON --> MYSQL2["mysql2"]
+PJSON --> PYTHON["python3"]
 SERVER["server.js"] --> ROUTES["authRoutes.js"]
 SERVER --> COMP_ROUTES["complementoRoutes.js"]
 ROUTES --> CTRL["authController.js"]
@@ -489,9 +577,14 @@ COMP_CTRL --> MODEL_COMP["complemento.js"]
 MODEL_USER --> POOL["db.js"]
 MODEL_ALUNO["aluno.js"] --> POOL
 MODEL_COMP --> POOL
-MODEL_EST["estagiario.js"] --> POOL
 FULL_SETUP["setupFullDatabase.js"] --> POOL
 AUTH_SETUP["setupAuthUsers.js"] --> POOL
+IMP_SETUP["setupImpersonationsTable.js"] --> POOL
+COUNTER_CACHE["add_inscricao_counter_cache.sql"] --> POOL
+BACKFILL["backfill_alunos_turno_id.py"] --> POOL
+REPAIR["repair_inscricoes.py"] --> POOL
+REPORT["report_estagiarios_supervisor_instituicao.py"] --> POOL
+PHONE["update_phone_numbers.py"] --> POOL
 TESTS["test/*"] --> POOL
 ```
 
@@ -502,13 +595,18 @@ TESTS["test/*"] --> POOL
 - [complementoRoutes.js:1-16](file://src/routers/complementoRoutes.js#L1-L16)
 - [authController.js:1-157](file://src/controllers/authController.js#L1-L157)
 - [complementoController.js:1-72](file://src/controllers/complementoController.js#L1-L72)
-- [user.js:1-146](file://src/models/user.js#L1-L146)
+- [user.js:1-184](file://src/models/user.js#L1-L184)
 - [aluno.js:1-146](file://src/models/aluno.js#L1-L146)
 - [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- [estagiario.js:1-334](file://src/models/estagiario.js#L1-L334)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
+- [setupImpersonationsTable.js:1-60](file://src/database/setupImpersonationsTable.js#L1-L60)
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 
 **Section sources**
 - [package.json:1-33](file://package.json#L1-L33)
@@ -518,45 +616,52 @@ TESTS["test/*"] --> POOL
 - Connection pooling: Use waitForConnections and queueLimit to control queue behavior; tune DB_POOL_LIMIT based on workload.
 - Query patterns: Prefer parameterized queries and limit result sets with pagination where applicable.
 - Connection reuse: Acquire connections only when needed and release them promptly; avoid long-lived connections in request handlers.
-- **Updated**: The comprehensive setup script optimizes performance by using a single connection for all table creation operations, reducing connection overhead.
-- **New**: Complemento operations benefit from the same connection pooling optimizations as other models.
-- Indexing: Ensure appropriate indexes on frequently filtered columns (e.g., email, role, identifiers, complemento period names).
+- **Updated**: Enhanced setup script optimizes performance by using a single connection for all table creation operations including counter cache triggers, reducing connection overhead.
+- **Updated**: Counter cache triggers provide efficient counting without expensive JOIN operations during query time.
+- **Updated**: Python maintenance scripts use batch operations and proper transaction handling to minimize database overhead.
+- Indexing: Ensure appropriate indexes on frequently filtered columns (e.g., email, role, identifiers, complemento period names, counter cache columns).
 - Batch operations: Group related updates to reduce round-trips.
 
-**Updated** The new setup script improves performance by minimizing connection overhead through sequential table creation within a single connection context, and complemento operations follow the same performance patterns.
+**Updated** The enhanced setup script improves performance through optimized connection usage, while counter cache triggers provide efficient data access patterns without complex queries.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
 - Connection errors: Verify DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, and DB_POOL_LIMIT in the environment.
 - Authentication failures: Confirm JWT_SECRET and JWT_EXPIRY are set appropriately.
-- **Updated**: Setup failures: Use the comprehensive setup script to initialize the complete database structure, which includes logging for successful table creation and initial configuration insertion, now including the complementos table.
-- **Updated**: Legacy setup scripts: The previous setupUsers.js and setupAuthUsers.js scripts are still available but are superseded by the comprehensive approach.
-- **New**: Complemento-related issues: Check that complemento_id foreign keys in estagiarios table reference valid complementos table entries.
-- Schema inconsistencies: Use the comprehensive setup script to recreate the complete database structure if needed, including the 20th table.
-- Resource leaks: Ensure every acquired connection is released; the setup scripts demonstrate proper release and pool termination.
+- **Updated**: Setup failures: Use the enhanced comprehensive setup script to initialize the complete database structure, which includes logging for successful table creation, counter cache trigger creation, and initial configuration insertion.
+- **Updated**: Counter cache failures: Use the counter cache test script to validate trigger functionality and identify issues with inscricao_count maintenance.
+- **Updated**: Data integrity issues: Use Python maintenance scripts for duplicate repair, phone number formatting, and supervisor-institution validation.
+- **Updated**: Legacy setup scripts: The previous setupUsers.js and setupAuthUsers.js scripts are still available but are superseded by the enhanced comprehensive approach.
+- **Updated**: Impersonation tracking: Use the impersonations table to monitor admin session activities and troubleshoot access issues.
+- Schema inconsistencies: Use the enhanced setup script to recreate the complete database structure if needed, including counter cache triggers and impersonations table.
+- Resource leaks: Ensure every acquired connection is released; the enhanced setup scripts demonstrate proper release and pool termination.
 
-**Updated** The troubleshooting guide now emphasizes the comprehensive setup script as the primary solution for database initialization issues and includes guidance for complemento-related problems.
+**Updated** The troubleshooting guide now emphasizes the enhanced comprehensive setup script and Python maintenance scripts as primary solutions for database initialization and maintenance issues.
 
 References:
 - Environment variables and defaults: [README.md:18-28](file://README.md#L18-L28)
 - Pool configuration: [db.js:5-13](file://src/database/db.js#L5-L13)
-- **Updated**: Comprehensive setup script: [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- **New**: Complemento troubleshooting: [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- Legacy setup patterns: [setupAuthUsers.js:6-35](file://src/database/setupAuthUsers.js#L6-L35)
-- Schema inspection: [check_tables_temp.js:11-37](file://test/check_tables_temp.js#L11-L37)
+- Enhanced comprehensive setup script: [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- Counter cache test: [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- Python maintenance scripts: [repair_inscricoes.py:12-117](file://scripts/repair_inscricoes.py#L12-L117), [report_estagiarios_supervisor_instituicao.py:37-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L37-L173), [update_phone_numbers.py:64-242](file://scripts/update_phone_numbers.py#L64-L242)
+- Legacy setup patterns: [setupAuthUsers.js:6-39](file://src/database/setupAuthUsers.js#L6-L39)
+- Impersonations table: [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
 
 **Section sources**
 - [README.md:1-61](file://README.md#L1-L61)
 - [db.js:1-15](file://src/database/db.js#L1-L15)
-- [setupFullDatabase.js:1-291](file://src/database/setupFullDatabase.js#L1-L291)
-- [complemento.js:1-45](file://src/models/complemento.js#L1-L45)
-- [setupAuthUsers.js:1-38](file://src/database/setupAuthUsers.js#L1-L38)
-- [check_tables_temp.js:1-40](file://test/check_tables_temp.js#L1-L40)
+- [setupFullDatabase.js:1-295](file://src/database/setupFullDatabase.js#L1-L295)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+- [setupAuthUsers.js:1-39](file://src/database/setupAuthUsers.js#L1-L39)
+- [create_impersonations_table.sql:1-14](file://src/database/create_impersonations_table.sql#L1-L14)
 
 ## Conclusion
-NodeMural's database layer centers on a shared MariaDB connection pool and model abstractions that encapsulate SQL operations. **Updated**: The comprehensive setupFullDatabase.js script provides a complete database initialization solution that creates all necessary tables, indexes, and initial data structures in a single operation, now including the 20th table - complementos. **New**: The complementos table enhances the system's ability to manage special academic periods for students, establishing important relationships with the estagiarios table. While the current implementation focuses on simplicity and modularity, production deployments should incorporate explicit TLS configuration, transaction boundaries for multi-step operations, health checks, and performance tuning aligned with workload characteristics.
+NodeMural's database layer centers on a shared MariaDB connection pool and model abstractions that encapsulate SQL operations. **Updated**: The enhanced comprehensive setupFullDatabase.js script provides a complete database initialization solution that creates all necessary tables, counter cache triggers, and initial data structures in a single operation, now including the enhanced users table with improved role management and impersonations table for admin session tracking. **Updated**: The counter cache system automatically maintains inscricao_count for each aluno through database triggers, while Python maintenance scripts handle complex data operations and validation tasks. **Updated**: The addition of counter cache triggers, enhanced users table, and Python maintenance scripts significantly improves data integrity, operational efficiency, and administrative capabilities. While the current implementation focuses on simplicity and modularity, production deployments should incorporate explicit TLS configuration, transaction boundaries for multi-step operations, health checks, and performance tuning aligned with workload characteristics.
 
-**Updated** The new comprehensive setup script significantly simplifies database initialization and reduces the complexity of managing multiple separate setup scripts, while the addition of the complementos table provides enhanced academic period management capabilities.
+**Updated** The enhanced comprehensive setup script significantly simplifies database initialization and maintenance while the counter cache system and Python scripts provide robust data integrity and operational automation capabilities.
 
 ## Appendices
 
@@ -579,37 +684,70 @@ References:
 - [authController.js:1-157](file://src/controllers/authController.js#L1-L157)
 - [auth.js:1-137](file://src/middleware/auth.js#L1-L137)
 
-### Comprehensive Database Schema Overview
-**Updated** The new setupFullDatabase.js script creates the following 20 application tables:
+### Enhanced Database Schema Overview
+**Updated** The enhanced setupFullDatabase.js script creates the following comprehensive application tables:
 
-1. **users** - System users with roles (admin, supervisor, professor, aluno)
-2. **alunos** - University students with personal and academic information
-3. **professores** - University professors with professional details
-4. **supervisores** - External supervisors for internships
-5. **instituicoes** - Host institutions for internships
-6. **areas** - Institutional areas/fields of study
-7. **mural_estagios** - Internship opportunities board
-8. **inscricoes** - Student internship registrations
-9. **estagiarios** - Students assigned to specific internships with complemento_id relationship
-10. **turma_estagios** - Student groups by area and period
-11. **folhadeatividades** - Daily activity tracking for interns
-12. **questionarios** - Evaluation questionnaires
-13. **questoes** - Individual questionnaire questions
-14. **respostas** - Supervisor evaluations of students
-15. **visitas** - Institution visit records
-16. **configuracoes** - System configuration settings
-17. **inst_super** - Many-to-many relationship between supervisors and institutions
-18. **turnos** - Student shift/period management
-19. **questionarios** - Evaluation questionnaires
-20. **complementos** - Special academic periods for student internships (NEW)
+1. **configuracoes** - System configuration settings
+2. **areas** - Institutional areas/fields of study
+3. **instituicoes** - Host institutions for internships
+4. **visitas** - Institution visit records
+5. **mural_estagios** - Internship opportunities board
+6. **users** - System users with enhanced role management (admin, supervisor, professor, aluno)
+7. **turnos** - Student shift/period management
+8. **alunos** - University students with enhanced user_id relationship and inscricao_count counter cache
+9. **inscricoes** - Student internship registrations with counter cache triggers
+10. **professores** - University professors with user_id relationship
+11. **supervisores** - External supervisors for internships with user_id relationship
+12. **inst_super** - Many-to-many relationship between supervisors and institutions
+13. **estagiarios** - Students assigned to specific internships with complemento_id relationship
+14. **turma_estagios** - Student groups by area and period
+15. **folhadeatividades** - Daily activity tracking for interns
+16. **questionarios** - Evaluation questionnaires
+17. **questoes** - Individual questionnaire questions
+18. **respostas** - Supervisor evaluations of students
+19. **complementos** - Special academic periods for student internships (NEW)
+20. **impersonations** - Admin session tracking for impersonation activities (NEW)
 
-**Updated** This comprehensive schema provides complete coverage of the internship management system requirements in a single initialization operation, with the addition of the complementos table enabling enhanced academic period management.
+**Updated** This comprehensive schema provides complete coverage of the internship management system requirements with enhanced data integrity through counter cache triggers and improved administrative capabilities through impersonation tracking.
 
 **Section sources**
-- [setupFullDatabase.js:10-263](file://src/database/setupFullDatabase.js#L10-L263)
+- [setupFullDatabase.js:10-295](file://src/database/setupFullDatabase.js#L10-L295)
+
+### Counter Cache System Features
+**Updated** The counter cache system provides automatic data maintenance:
+
+- **Automatic Counting**: Counter cache triggers maintain inscricao_count for each aluno without manual intervention
+- **Trigger Operations**: INSERT, DELETE, and UPDATE triggers ensure data integrity across inscricoes table operations
+- **Test Validation**: Automated test script verifies counter cache functionality through insert, verify, and delete operations
+- **Maintenance Scripts**: Python scripts handle complex data operations including duplicate repair, phone number formatting, and supervisor-institution validation
+
+**Updated** The counter cache system eliminates the need for expensive JOIN operations during query time while ensuring data consistency through database-level triggers.
+
+**Section sources**
+- [add_inscricao_counter_cache.sql:1-73](file://src/database/add_inscricao_counter_cache.sql#L1-L73)
+- [test_counter_cache_inscricoes.sql:1-35](file://test/test_counter_cache_inscricoes.sql#L1-L35)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
+
+### Python Maintenance Scripts Overview
+**Updated** The Python maintenance scripts provide comprehensive operational capabilities:
+
+- **backfill_alunos_turno_id.py**: Populates turno_id based on turno field values for improved data consistency
+- **repair_inscricoes.py**: Identifies and removes duplicate inscricoes entries while maintaining counter cache integrity
+- **report_estagiarios_supervisor_instituicao.py**: Generates reports for supervisor-institution consistency validation
+- **update_phone_numbers.py**: Standardizes phone numbers across alunos, professores, and supervisores tables
+
+**Updated** These scripts provide automated solutions for complex data operations that would otherwise require manual intervention, improving system reliability and data quality.
+
+**Section sources**
+- [backfill_alunos_turno_id.py:1-111](file://scripts/backfill_alunos_turno_id.py#L1-L111)
+- [repair_inscricoes.py:1-117](file://scripts/repair_inscricoes.py#L1-L117)
+- [report_estagiarios_supervisor_instituicao.py:1-173](file://scripts/report_estagiarios_supervisor_instituicao.py#L1-L173)
+- [update_phone_numbers.py:1-242](file://scripts/update_phone_numbers.py#L1-L242)
 
 ### Complemento Management Features
-**New** The complementos table and associated components provide:
+**Updated** The complementos table and associated components provide:
 
 - **RESTful API Endpoints**:
   - GET `/complementos` - Retrieve all special academic periods

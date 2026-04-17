@@ -365,7 +365,7 @@ The system uses JWT tokens for authentication with the following structure:
 Supported roles with their permissions:
 - **admin**: Full access to all endpoints
 - **aluno**: Can view own data, create/update own records
-- **professor**: Can manage alunos, atividades
+- **docente**: Can manage alunos, atividades
 - **supervisor**: Can manage estagiarios, view inscriptions
 
 #### Ownership Verification

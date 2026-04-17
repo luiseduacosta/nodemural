@@ -155,7 +155,7 @@ end
 The impersonations table includes several key design elements:
 
 - **Primary Key**: Auto-incrementing ID for unique identification
-- **Foreign Key Constraints**: References to users table with cascade delete
+- **Foreign Key Constraints**: References to auth_users table with cascade delete
 - **Timestamp Tracking**: Comprehensive timing information for audit purposes
 - **Index Optimization**: Specialized indexes for active session queries
 - **Audit Trail**: Complete history of all impersonation activities
@@ -440,7 +440,7 @@ The system supports multiple integration approaches:
 #### Authentication Issues
 **Issue**: Permission denied when trying to impersonate
 **Solutions**:
-- Verify user role is 'admin' in users table
+- Verify user role is 'admin' in auth_users table
 - Check that admin is not trying to impersonate another admin
 - Ensure JWT token is valid and properly formatted
 - Confirm token includes required authorization claims

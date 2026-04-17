@@ -180,13 +180,13 @@ participant JWT as "JWT Service"
 participant DB as "MariaDB"
 Client->>AuthController : POST /auth/register
 AuthController->>UserModel : create(email, password, role)
-UserModel->>DB : INSERT INTO users
+UserModel->>DB : INSERT INTO auth_users
 DB-->>UserModel : User created
 UserModel-->>AuthController : User object
 AuthController-->>Client : Registration successful
 Client->>AuthController : POST /auth/login
 AuthController->>UserModel : findByEmail(email)
-UserModel->>DB : SELECT FROM users
+UserModel->>DB : SELECT FROM auth_users
 DB-->>UserModel : User data
 UserModel-->>AuthController : User found
 AuthController->>JWT : sign(tokenPayload)
