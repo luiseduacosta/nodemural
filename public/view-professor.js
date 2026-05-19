@@ -33,8 +33,8 @@ $(document).ready(async function () {
 
         if (!professor) {
             throw new Error('Professor(a) não encontrado');
-        } 
-        
+        }
+
         // Populate the view fields
         $('#view-id').text(professor.id);
         $('#view-siape').text(professor.siape);
