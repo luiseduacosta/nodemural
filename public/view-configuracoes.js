@@ -23,6 +23,7 @@ function loadConfig() {
             if (!dateStr) return '';
             return new Date(dateStr).toISOString().split('T')[0];
         }
+        $('#instituicao').val(data.instituicao || 'ESS/UFRJ');
         $('#mural_periodo_atual').val(data.mural_periodo_atual);
 
         $('#termo_compromisso_periodo').val(data.termo_compromisso_periodo);
@@ -46,6 +47,7 @@ function loadConfig() {
 function saveConfig() {
     const formData = {
         id: 1,  // Always update the configuration with ID 1
+        instituicao: $('#instituicao').val() || 'ESS/UFRJ',
         mural_periodo_atual: $('#mural_periodo_atual').val(),
         termo_compromisso_periodo: $('#termo_compromisso_periodo').val(),
         termo_compromisso_inicio: $('#termo_compromisso_inicio').val(),

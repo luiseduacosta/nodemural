@@ -47,6 +47,7 @@ $(document).ready(async function () {
         $('#view-telefone').text(professor.telefone || '-');
         $('#view-dataingresso').text(professor.dataingresso ? new Date(professor.dataingresso).toLocaleDateString('pt-BR') : '-');
         $('#view-departamento').text(professor.departamento || 'Sem dados');
+        $('#view-status').text(professor.status || 'Ativo');
         $('#view-curriculolattes').html(professor.curriculolattes ? `<a href="http://lattes.cnpq.br/${professor.curriculolattes.split('/').pop()}" target="_blank">${professor.curriculolattes}</a>` : '-');
         $('#view-atualizacaolattes').text(professor.atualizacaolattes ? new Date(professor.atualizacaolattes).toLocaleDateString('pt-BR') : '-');
         $('#view-dataegresso').text(professor.dataegresso ? new Date(professor.dataegresso).toLocaleDateString('pt-BR') : '-');

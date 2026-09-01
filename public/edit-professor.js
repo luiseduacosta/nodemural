@@ -101,6 +101,7 @@ $(document).ready(async function () {
         document.getElementById('atualizacaolattes').value = formatDateForInput(professor.atualizacaolattes);
         document.getElementById('dataingresso').value = formatDateForInput(professor.dataingresso);
         document.getElementById('departamentoID').value = professor.departamento || 'Sem dados';
+        document.getElementById('status').value = professor.status || 'Ativo';
         document.getElementById('dataegresso').value = formatDateForInput(professor.dataegresso);
         document.getElementById('motivoegresso').value = professor.motivoegresso || '';
         
@@ -132,6 +133,7 @@ $(document).ready(async function () {
             atualizacaolattes: document.getElementById('atualizacaolattes').value || null,
             dataingresso: document.getElementById('dataingresso').value || null,
             departamento: document.getElementById('departamentoID').value || null,
+            status: document.getElementById('status').value || 'Ativo',
             dataegresso: document.getElementById('dataegresso').value || null,
             motivoegresso: document.getElementById('motivoegresso').value || null,
             observacoes: observacoesMDE.value() || null

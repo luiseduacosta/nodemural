@@ -4,7 +4,7 @@ import pool from '../database/db.js';
 const Supervisor = {
     async findAll() {
         const rows = await pool.query(
-            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes FROM supervisores ORDER BY nome ASC'
+            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id, estagiarios_count FROM supervisores ORDER BY nome ASC'
         );
         return rows;
     },
@@ -12,7 +12,7 @@ const Supervisor = {
     // Find supervisor by cress. There is only one supervisor per cress
     async findByCress(cress) {
         const rows = await pool.query(
-            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes FROM supervisores WHERE cress = ?',
+            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id, estagiarios_count FROM supervisores WHERE cress = ?',
             [cress]
         );
         return rows[0];
@@ -20,24 +20,31 @@ const Supervisor = {
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes FROM supervisores WHERE id = ?',
+            'SELECT id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id, estagiarios_count FROM supervisores WHERE id = ?',
             [id]
         );
         return rows[0];
     },
 
-    async create(nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) {
+    async create(nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id = null) {
         const result = await pool.query(
-            'INSERT INTO supervisores (nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes]
+            'INSERT INTO supervisores (nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id]
         );
-        return { id: Number(result.insertId), nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes };
+        return { id: Number(result.insertId), nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id, estagiarios_count: 0 };
     },
 
-    async update(id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes) {
+    async update(id, nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, user_id = undefined) {
+        const fields = ['nome = ?', 'cress = ?', 'regiao = ?', 'cpf = ?', 'email = ?', 'telefone = ?', 'celular = ?', 'escola = ?', 'ano_formacao = ?', 'cargo = ?', 'observacoes = ?'];
+        const values = [nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes];
+        if (user_id !== undefined) {
+            fields.push('user_id = ?');
+            values.push(user_id);
+        }
+        values.push(id);
         const result = await pool.query(
-            'UPDATE supervisores SET nome = ?, cress = ?, regiao = ?, cpf = ?, email = ?, telefone = ?, celular = ?, escola = ?, ano_formacao = ?, cargo = ?, observacoes = ? WHERE id = ?',
-            [nome, cress, regiao, cpf, email, telefone, celular, escola, ano_formacao, cargo, observacoes, id]
+            `UPDATE supervisores SET ${fields.join(', ')} WHERE id = ?`,
+            values
         );
         return result.affectedRows > 0;
     },

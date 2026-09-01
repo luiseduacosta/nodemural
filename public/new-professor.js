@@ -59,6 +59,7 @@ $(document).ready(async function () {
             curriculolattes: document.getElementById('curriculolattes').value || null,
             atualizacaolattes: document.getElementById('atualizacaolattes').value || null,
             departamento: document.getElementById('departamentoId').value,
+            status: document.getElementById('status').value || 'Ativo',
             dataegresso: document.getElementById('dataegresso').value || null,
             motivoegresso: document.getElementById('motivoegresso').value || null,
             observacoes: observacoesMDE.value() || null

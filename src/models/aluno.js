@@ -7,16 +7,16 @@ const Aluno = {
         const rows = await pool.query('SELECT * FROM alunos WHERE registro = ?', [registro]);
         return rows[0];
     },
-    async create(nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
+    async create(nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id = null) {
         if (await this.verifyRegistro(registro)) {
             console.log('Registro já em uso');
             throw new Error('Registro já em uso');
         }
         const result = await pool.query(
-            'INSERT INTO alunos (nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes]
+            'INSERT INTO alunos (nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id]
         );
-        return { id: Number(result.insertId), nome, nomesocial, ingresso, turno_id };
+        return { id: Number(result.insertId), nome, nomesocial, ingresso, turno_id, user_id };
     },
 
     // Find aluno by registro. There is only one aluno per registro
@@ -34,7 +34,7 @@ const Aluno = {
                 WHEN 4 THEN 'Integral'
                 ELSE 'Sem turno'
             END AS turno,
-            a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes, a.inscricao_count
+            a.turno_id, a.telefone, a.celular, a.cpf, a.identidade, a.orgao, a.nascimento, a.cep, a.endereco, a.municipio, a.bairro, a.observacoes, a.user_id, a.estagiarios_count, a.inscricao_count
             FROM alunos a`;
         let params = [];
         if (req && req.query && req.query.search) {
@@ -113,10 +113,17 @@ const Aluno = {
     },
 
     // Update aluno by id
-    async update(id, nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes) {
+    async update(id, nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id = undefined) {
+        const fields = ['nome = ?', 'nomesocial = ?', 'ingresso = ?', 'turno_id = ?', 'registro = ?', 'telefone = ?', 'celular = ?', 'email = ?', 'cpf = ?', 'identidade = ?', 'orgao = ?', 'nascimento = ?', 'cep = ?', 'endereco = ?', 'municipio = ?', 'bairro = ?', 'observacoes = ?'];
+        const values = [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes];
+        if (user_id !== undefined) {
+            fields.push('user_id = ?');
+            values.push(user_id);
+        }
+        values.push(id);
         const result = await pool.query(
-            'UPDATE alunos SET nome = ?, nomesocial = ?, ingresso = ?, turno_id = ?, registro = ?, telefone = ?, celular = ?, email = ?, cpf = ?, identidade = ?, orgao = ?, nascimento = ?, cep = ?, endereco = ?, municipio = ?, bairro = ?, observacoes = ? WHERE id = ?',
-            [nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, id]
+            `UPDATE alunos SET ${fields.join(', ')} WHERE id = ?`,
+            values
         );
         return result.affectedRows > 0;
     },

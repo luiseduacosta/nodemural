@@ -16,7 +16,7 @@ $(document).ready(async function () {
         window.location.href = 'mural.html';
         return;
     }
-    
+
     const form = document.getElementById('editMuralForm');
 
     // Initialize EasyMDE

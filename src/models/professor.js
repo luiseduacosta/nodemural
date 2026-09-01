@@ -2,16 +2,16 @@
 import pool from '../database/db.js';
 
 const Professor = {
-    async create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
+    async create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id = null) {
         const result = await pool.query(
-            'INSERT INTO professores (nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes]
+            'INSERT INTO professores (nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status || 'Ativo', dataegresso, motivoegresso, observacoes, user_id]
         );
-        return { id: Number(result.insertId), nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes };
+        return { id: Number(result.insertId), nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status: status || 'Ativo', dataegresso, motivoegresso, observacoes, user_id };
     },
 
     async findAll(search = null) {
-        let query = 'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores';
+        let query = 'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id FROM professores';
         let params = [];
 
         if (search) {
@@ -28,7 +28,7 @@ const Professor = {
 
     async findById(id) {
         const rows = await pool.query(
-            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores WHERE id = ?',
+            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id FROM professores WHERE id = ?',
             [id]
         );
         return rows[0];
@@ -37,16 +37,23 @@ const Professor = {
     // Find professor by siape. There is only one professor per siape
     async findBySiape(siape) {
         const rows = await pool.query(
-            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes FROM professores WHERE siape = ?',
+            'SELECT id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id FROM professores WHERE siape = ?',
             [siape]
         );
         return rows[0];
     },
 
-    async update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes) {
+    async update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id = undefined) {
+        const fields = ['nome = ?', 'cpf = ?', 'siape = ?', 'cress = ?', 'regiao = ?', 'telefone = ?', 'celular = ?', 'email = ?', 'curriculolattes = ?', 'atualizacaolattes = ?', 'dataingresso = ?', 'departamento = ?', 'status = ?', 'dataegresso = ?', 'motivoegresso = ?', 'observacoes = ?'];
+        const values = [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status || 'Ativo', dataegresso, motivoegresso, observacoes];
+        if (user_id !== undefined) {
+            fields.push('user_id = ?');
+            values.push(user_id);
+        }
+        values.push(id);
         const result = await pool.query(
-            'UPDATE professores SET nome = ?, cpf = ?, siape = ?, cress = ?, regiao = ?, telefone = ?, celular = ?, email = ?, curriculolattes = ?, atualizacaolattes = ?, dataingresso = ?, departamento = ?, dataegresso = ?, motivoegresso = ?, observacoes = ? WHERE id = ?',
-            [nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes, id]
+            `UPDATE professores SET ${fields.join(', ')} WHERE id = ?`,
+            values
         );
         return result.affectedRows > 0;
     },

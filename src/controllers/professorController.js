@@ -4,8 +4,9 @@ import Professor from '../models/professor.js';
 // Create a new professor
 export const createProfessor = async (req, res) => {
     try {
-        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
-        const professor = await Professor.create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
+        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id } = req.body;
+        const parsedUserId = user_id !== undefined && user_id !== null && user_id !== '' ? parseInt(user_id, 10) : null;
+        const professor = await Professor.create(nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, parsedUserId);
         res.status(201).json(professor);
     } catch (error) {
         console.error('Error creating professor:', error);
@@ -59,8 +60,9 @@ export const getProfessorBySiape = async (req, res) => {
 export const updateProfessor = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes } = req.body;
-        const success = await Professor.update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, dataegresso, motivoegresso, observacoes);
+        const { nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, user_id } = req.body;
+        const parsedUserId = user_id !== undefined ? (user_id !== null && user_id !== '' ? parseInt(user_id, 10) : null) : undefined;
+        const success = await Professor.update(id, nome, cpf, siape, cress, regiao, telefone, celular, email, curriculolattes, atualizacaolattes, dataingresso, departamento, status, dataegresso, motivoegresso, observacoes, parsedUserId);
         if (!success) {
             return res.status(404).json({ error: 'Professor not found' });
         }

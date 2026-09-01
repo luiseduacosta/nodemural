@@ -97,14 +97,14 @@ async function setupDatabase() {
                 entidade_id INT COMMENT 'alunoId, professorId, supervisorId',
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )`,
 
             // 8. Turno (turn of the student)
             `CREATE TABLE IF NOT EXISTS turnos (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 turno VARCHAR(10) NOT NULL
-            )`
+            )`,
 
             // 9. alunos (students of the university)
             `CREATE TABLE IF NOT EXISTS alunos (
@@ -126,7 +126,8 @@ async function setupDatabase() {
                 municipio VARCHAR(30),
                 bairro VARCHAR(30),
                 observacoes TEXT,
-                user_id INT NOT NULL COMMENT 'user.id',
+                user_id INT NULL COMMENT 'user.id',
+                estagiarios_count INT DEFAULT 0 COMMENT 'Number of interns',
                 inscricao_count INT DEFAULT 0 COMMENT 'Number of registrations'
             )`,
 
@@ -134,11 +135,11 @@ async function setupDatabase() {
             `CREATE TABLE IF NOT EXISTS inscricoes (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 registro VARCHAR(9) NOT NULL,
-                aluno_id INT NOT NULL,
                 muralestagio_id INT NOT NULL,
                 data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                timestamp timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-                periodo VARCHAR(6) NOT NULL
+                periodo VARCHAR(6) NOT NULL,
+                aluno_id INT NOT NULL,
+                timestamp timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
             )`,
 
             // 11. professores (university professors)
@@ -156,10 +157,11 @@ async function setupDatabase() {
                 atualizacaolattes DATE,
                 dataingresso DATE,
                 departamento VARCHAR(30),
+                status varchar(10) DEFAULT 'Ativo',
                 dataegresso DATE,
                 motivoegresso TEXT,
                 observacoes TEXT,
-                user_id INT NOT NULL COMMENT 'user.id'  
+                user_id INT NULL COMMENT 'user.id'  
             )`,
 
             // 12. supervisores (supervisors of the students at the institutions)
@@ -167,23 +169,25 @@ async function setupDatabase() {
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 nome VARCHAR(255) NOT NULL,
                 cpf VARCHAR(14) NULL,
-                email VARCHAR(255),
                 telefone VARCHAR(20) COMMENT 'Deprecated: Phone number',
                 celular VARCHAR(20),
+                ano_formacao INT NULL,
+                email VARCHAR(255),
+                escola varchar(255) NULL, 
                 cress VARCHAR(10) UNIQUE,
                 regiao VARCHAR(2) NULL,
-                escola varchar(255) NULL, 
-                ano_formacao INT NULL,
                 cargo VARCHAR(30) NULL,
                 observacoes TEXT,
-                user_id INT NOT NULL COMMENT 'user.id'  
+                user_id INT NULL COMMENT 'user.id',
+                estagiarios_count INT DEFAULT 0 COMMENT 'Number of interns'
             )`,
 
             // 13. inst_super (Relationship Many-to-Many between institutions and supervisors)
             `CREATE TABLE IF NOT EXISTS inst_super (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 supervisor_id INT NOT NULL,
                 instituicao_id INT NOT NULL,
-                PRIMARY KEY (supervisor_id, instituicao_id)
+                UNIQUE KEY uk_supervisor_instituicao (supervisor_id, instituicao_id)
             )`,
 
             // 14. estagiarios (students for each internship. Each student can have multiple internships)
@@ -211,7 +215,7 @@ async function setupDatabase() {
             // 15. turma_estagios (groups of students for each professor by period)
             `CREATE TABLE IF NOT EXISTS turma_estagios (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                area VARCHAR(30) NOT NULL COMMENT 'Change area to turma',
+                area VARCHAR(30) NOT NULL COMMENT 'Change area to turma'
             )`,
 
             // 16. folhadeatividades (internship activity sheet fill by the intern)
@@ -277,7 +281,12 @@ async function setupDatabase() {
         // Insert initial configuration if empty
         const configRows = await conn.query('SELECT COUNT(*) as count FROM configuracoes');
         if (configRows[0].count === 0) {
-            await conn.query('INSERT INTO configuracoes (mural_periodo_atual) VALUES ("2026-1")');
+            await conn.query(
+                `INSERT INTO configuracoes 
+                 (instituicao, mural_periodo_atual, curso_turma_atual, termo_compromisso_periodo, periodo_calendario_academico) 
+                 VALUES (?, ?, ?, ?, ?)`,
+                ['ESS/UFRJ', '2026-1', 1, '2026-1', '2026-1']
+            );
             console.log('📝 Initial configuration inserted.');
         }
 

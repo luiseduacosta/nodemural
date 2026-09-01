@@ -22,12 +22,13 @@ const turnoIdFromTurno = (turno) => {
 // Create a new aluno
 export const createAluno = async (req, res) => {
     try {
-        const { nome, nomesocial, ingresso, turno, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
+        const { nome, nomesocial, ingresso, turno, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id } = req.body;
 
         const normalizedTurnoId = normalizeTurnoId(turno_id);
         const finalTurnoId = normalizedTurnoId !== null ? normalizedTurnoId : turnoIdFromTurno(turno);
         const normalizedNascimento = typeof nascimento === 'string' && nascimento.trim() === '' ? null : nascimento;
-        const aluno = await Aluno.create(nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes);
+        const parsedUserId = user_id !== undefined && user_id !== null && user_id !== '' ? parseInt(user_id, 10) : null;
+        const aluno = await Aluno.create(nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes, parsedUserId);
         res.status(201).json(aluno);
     } catch (error) {
         console.error('Error creating aluno:', error);
@@ -107,13 +108,14 @@ export const getInscricoesByAlunoId = async (req, res) => {
 export const updateAluno = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes } = req.body;
+        const { nome, nomesocial, ingresso, turno_id, registro, telefone, celular, email, cpf, identidade, orgao, nascimento, cep, endereco, municipio, bairro, observacoes, user_id } = req.body;
         const { turno } = req.body;
 
         const normalizedTurnoId = normalizeTurnoId(turno_id);
         const finalTurnoId = normalizedTurnoId !== null ? normalizedTurnoId : turnoIdFromTurno(turno);
         const normalizedNascimento = typeof nascimento === 'string' && nascimento.trim() === '' ? null : nascimento;
-        const aluno = await Aluno.update(id, nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes);
+        const parsedUserId = user_id !== undefined ? (user_id !== null && user_id !== '' ? parseInt(user_id, 10) : null) : undefined;
+        const aluno = await Aluno.update(id, nome, nomesocial, ingresso, finalTurnoId, registro, telefone, celular, email, cpf, identidade, orgao, normalizedNascimento, cep, endereco, municipio, bairro, observacoes, parsedUserId);
         if (!aluno) {
             return res.status(404).json({ error: 'Aluno not found' });
         }

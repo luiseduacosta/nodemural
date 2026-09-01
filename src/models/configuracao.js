@@ -14,10 +14,10 @@ const Configuracao = {
         return rows[0];
     },
 
-    async update(mural_periodo_atual, curso_turma_atual, curso_abertura_inscricoes, curso_encerramento_inscricoes, termo_compromisso_periodo, termo_compromisso_inicio, termo_compromisso_final, periodo_calendario_academico, id) {
+    async update(instituicao, mural_periodo_atual, curso_turma_atual, curso_abertura_inscricoes, curso_encerramento_inscricoes, termo_compromisso_periodo, termo_compromisso_inicio, termo_compromisso_final, periodo_calendario_academico, id) {
         const result = await pool.query(
-            "UPDATE configuracoes SET mural_periodo_atual = ?, curso_turma_atual = ?, curso_abertura_inscricoes = ?, curso_encerramento_inscricoes = ?, termo_compromisso_periodo = ?, termo_compromisso_inicio = ?, termo_compromisso_final = ?, periodo_calendario_academico = ? WHERE id = ?",
-            [mural_periodo_atual, curso_turma_atual, curso_abertura_inscricoes, curso_encerramento_inscricoes, termo_compromisso_periodo, termo_compromisso_inicio, termo_compromisso_final, periodo_calendario_academico, id]
+            "UPDATE configuracoes SET instituicao = ?, mural_periodo_atual = ?, curso_turma_atual = ?, curso_abertura_inscricoes = ?, curso_encerramento_inscricoes = ?, termo_compromisso_periodo = ?, termo_compromisso_inicio = ?, termo_compromisso_final = ?, periodo_calendario_academico = ? WHERE id = ?",
+            [instituicao, mural_periodo_atual, curso_turma_atual, curso_abertura_inscricoes, curso_encerramento_inscricoes, termo_compromisso_periodo, termo_compromisso_inicio, termo_compromisso_final, periodo_calendario_academico, id]
         );
         return result.affectedRows > 0;
     },
