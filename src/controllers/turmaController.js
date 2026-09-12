@@ -4,8 +4,8 @@ import Turma from '../models/turma.js';
 // Create a new turma
 export const createTurma = async (req, res) => {
     try {
-        const { area } = req.body;
-        const newTurma = await Turma.create(area);
+        const { turma } = req.body;
+        const newTurma = await Turma.create(turma);
         res.status(201).json(newTurma);
     } catch (error) {
         console.error('Error creating turma:', error);
@@ -43,9 +43,9 @@ export const getAllTurmas = async (req, res) => {
 export const updateTurma = async (req, res) => {
     try {
         const { id } = req.params;
-        const { area } = req.body;
+        const { turma } = req.body;
 
-        const success = await Turma.update(id, area);
+        const success = await Turma.update(id, turma);
         if (!success) {
             return res.status(404).json({ error: 'Turma de estágio not found' });
         }

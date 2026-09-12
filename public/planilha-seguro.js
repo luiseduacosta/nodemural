@@ -89,7 +89,7 @@ $(document).ready(async function () {
             { data: 'instituicao', defaultContent: '-' }
         ],
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
         }
     });
 

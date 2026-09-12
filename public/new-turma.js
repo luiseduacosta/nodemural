@@ -14,11 +14,11 @@ $(document).ready(async function () {
         e.preventDefault();
 
         const turma = {
-            area: document.getElementById('area').value.trim()
+            turma: document.getElementById('turma').value.trim()
         };
 
         try {
-            const response = await authenticatedFetch('/turmaestagios', {
+            const response = await authenticatedFetch('/turmas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

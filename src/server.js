@@ -56,7 +56,7 @@ app.use("/questionarios", questionarioRoutes);
 app.use("/questoes", questaoRoutes);
 app.use("/atividades", atividadesRoutes);
 app.use("/visitas", visitaRoutes);
-app.use("/turmaestagios", turmaRoutes);
+app.use("/turmas", turmaRoutes);
 app.use("/configuracoes", configuracaoRoutes);
 app.use("/respostas", respostaRoutes);
 app.use("/areas", areaRoutes);

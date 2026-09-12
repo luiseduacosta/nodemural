@@ -10,7 +10,7 @@ $(document).ready(function () {
     const table = $('#turmasTable').DataTable({
         order: [[1, 'asc']],
         ajax: {
-            url: '/turmaestagios',
+            url: '/turmas',
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + getToken()
@@ -21,9 +21,9 @@ $(document).ready(function () {
         columns: [
             { data: 'id' },
             {
-                data: 'area',
+                data: 'turma',
                 render: function (data, type, row) {
-                    return `<a href="view-turma.html?id=${row.id}">${row.area}</a>`
+                    return `<a href="view-turma.html?id=${row.id}">${row.turma}</a>`
                 }
             },
             {
@@ -37,14 +37,14 @@ $(document).ready(function () {
             }
         ],
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
         }
     });
 
     window.deleteTurma = async (id) => {
         if (confirm('Tem certeza que deseja excluir esta turma de estágio?')) {
             try {
-                const response = await authenticatedFetch(`/turmaestagios/${id}`, { method: 'DELETE' });
+                const response = await authenticatedFetch(`/turmas/${id}`, { method: 'DELETE' });
                 if (!response.ok) {
                     throw new Error('Failed to delete turma');
                 }

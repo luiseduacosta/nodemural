@@ -3,34 +3,34 @@ import pool from '../database/db.js';
 
 const Turma = {
 
-    async create(area) {
+    async create(turma) {
         const result = await pool.query(
-            "INSERT INTO turma_estagios (area) VALUES (?)",
-            [area]
+            "INSERT INTO turmas (turma) VALUES (?)",
+            [turma]
         );
-        return { id: Number(result.insertId), area };
+        return { id: Number(result.insertId), turma };
     },
 
     async findById(id) {
-        const rows = await pool.query("SELECT * FROM turma_estagios WHERE id = ?", [id]);
+        const rows = await pool.query("SELECT * FROM turmas WHERE id = ?", [id]);
         return rows[0];
     },
 
     async findAll() {
-        const rows = await pool.query("SELECT * FROM turma_estagios ORDER BY area ASC");
+        const rows = await pool.query("SELECT * FROM turmas ORDER BY turma ASC");
         return rows;
     },
 
-    async update(id, area) {
+    async update(id, turma) {
         const result = await pool.query(
-            "UPDATE turma_estagios SET area = ? WHERE id = ?",
-            [area, id]
+            "UPDATE turmas SET turma = ? WHERE id = ?",
+            [turma, id]
         );
         return result.affectedRows > 0;
     },
 
     async delete(id) {
-        const result = await pool.query("DELETE FROM turma_estagios WHERE id = ?", [id]);
+        const result = await pool.query("DELETE FROM turmas WHERE id = ?", [id]);
         return result.affectedRows > 0;
     }
 };

@@ -18,7 +18,7 @@ $(document).ready(async function () {
 
     // Load turma data
     try {
-        const response = await authenticatedFetch(`/turmaestagios/${id}`);
+        const response = await authenticatedFetch(`/turmas/${id}`);
         if (!response.ok) {
             throw new Error('Failed to fetch turma');
         }
@@ -26,7 +26,7 @@ $(document).ready(async function () {
         const turma = await response.json();
 
         document.getElementById('id').value = turma.id;
-        document.getElementById('area').value = turma.area;
+        document.getElementById('turma').value = turma.turma;
 
     } catch (error) {
         console.error('Error loading turma:', error);
@@ -40,11 +40,11 @@ $(document).ready(async function () {
         e.preventDefault();
 
         const turma = {
-            area: document.getElementById('area').value.trim()
+            turma: document.getElementById('turma').value.trim()
         };
 
         try {
-            const response = await authenticatedFetch(`/turmaestagios/${id}`, {
+            const response = await authenticatedFetch(`/turmas/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(turma)

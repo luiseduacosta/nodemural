@@ -49,6 +49,11 @@ $(document).ready(async function () {
             return map[value] || 'N/A';
         };
 
+        const formatFinalDeSemana = (value) => {
+            const map = { 0: 'Não', 1: 'Sim', 2: 'Parcial', '0': 'Não', '1': 'Sim', '2': 'Parcial' };
+            return map[value] ?? 'N/A';
+        };
+
         const formatLocalInscricao = (value) => {
             const map = {
                 '0': 'Somente no mural da Coordenação de Estágio',
@@ -65,10 +70,10 @@ $(document).ready(async function () {
             // Se não estiver logado, não pode ver o link do estágio
             document.getElementById('view-link-estagio').href = (getToken() == null) ? '#' : `/view-instituicao.html?id=${mural.instituicao_id}`;
         }
-        document.getElementById('view-vagas').textContent = mural.vagas;
-        document.getElementById('view-convenio').textContent = mural.convenio === '1' ? 'Sim' : 'Não';
-        document.getElementById('view-carga_horaria').textContent = mural.cargaHoraria || 'N/A';
-        document.getElementById('view-final_de_semana').textContent = mural.final_de_semana === 'S' ? 'Sim' : (mural.final_de_semana === 'N' ? 'Não' : 'N/A');
+        document.getElementById('view-vagas').textContent = mural.vagas ?? 'N/A';
+        document.getElementById('view-convenio').textContent = String(mural.convenio) === '1' ? 'Sim' : 'Não';
+        document.getElementById('view-carga_horaria').textContent = mural.carga_horaria ?? 'N/A';
+        document.getElementById('view-final_de_semana').textContent = formatFinalDeSemana(mural.final_de_semana);
         document.getElementById('view-horario').textContent = formatHorario(mural.horario) || 'N/A';
         document.getElementById('view-beneficios').textContent = mural.beneficios || 'N/A';
         document.getElementById('view-requisitos').innerHTML = mural.requisitos ? marked.parse(mural.requisitos) : 'N/A';
@@ -157,7 +162,7 @@ async function loadInscricoes(currentMuralId) {
             }
         ],
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/2.3.6/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json'
         }
     });
 }

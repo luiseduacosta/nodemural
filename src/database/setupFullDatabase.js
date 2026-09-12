@@ -69,11 +69,11 @@ async function setupDatabase() {
                 instituicao VARCHAR(255) NOT NULL COMMENT 'value = instituicoes.instituicao',
                 convenio char(1) NOT NULL DEFAULT '0',
                 vagas INT DEFAULT NULL,
-                beneficios TEXT DEFAULT NULL,
+                beneficios VARCHAR(70) DEFAULT NULL,
                 final_de_semana BOOLEAN DEFAULT FALSE,
-                carga_horaria CHAR(10) NOT NULL,
+                carga_horaria INT NOT NULL,
                 requisitos TEXT,
-                horario CHAR(1) COMMENT 'D, 'N', 'A',
+                horario CHAR(1) COMMENT 'D=Diurno, N=Noturno, I=Indeterminado',
                 data_selecao DATE,
                 horario_selecao TIME,
                 data_inscricao DATE,
@@ -81,8 +81,8 @@ async function setupDatabase() {
                 forma_selecao char(1) NOT NULL DEFAULT '0',
                 contato TEXT,
                 periodo VARCHAR(6) NOT NULL COMMENT 'value = configuracoes.mural_estagio_periodo',
-                local_inscricao char(1) NOT NULL DEFAULT '0' COMMENT '0=Instituição, 1=Coordenação de Estágio',
                 email VARCHAR(255),
+                local_inscricao char(1) NOT NULL DEFAULT '0' COMMENT '0=Instituição, 1=Coordenação de Estágio',
                 outras TEXT
             )`,
 
@@ -212,10 +212,10 @@ async function setupDatabase() {
                 observacoes TEXT
             )`,
 
-            // 15. turma_estagios (groups of students for each professor by period)
-            `CREATE TABLE IF NOT EXISTS turma_estagios (
+            // 15. turmas (groups of students for each professor by period)
+            `CREATE TABLE IF NOT EXISTS turmas (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                area VARCHAR(30) NOT NULL COMMENT 'Change area to turma'
+                turma VARCHAR(30) NOT NULL
             )`,
 
             // 16. folhadeatividades (internship activity sheet fill by the intern)

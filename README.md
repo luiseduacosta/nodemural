@@ -20,7 +20,7 @@ This is a Node.js web application built with Express and MariaDB.
    DB_HOST=localhost
    DB_USER=root
    DB_PASSWORD=root
-   DB_NAME=tccess
+   DB_NAME=ess_apps
    DB_POOL_LIMIT=10
    JWT_SECRET=your_jwt_secret_key_change_this_in_production
    JWT_EXPIRY=7d

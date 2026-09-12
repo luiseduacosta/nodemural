@@ -1,0 +1,105 @@
+# Nodemural turmas rename - Independent Review
+
+- [ ] CP-R1: Schema CREATE block uses new identifiers `turmas` table + `turma` column
+  - **Type**: `rule`
+  - **Covers**: AC-1, FR-1
+  - **Evidence**:
+    - grep -n "turma_estagios" src/database/setupFullDatabase.js → 0 hits
+    - grep -n "CREATE TABLE IF NOT EXISTS turmas" src/database/setupFullDatabase.js → line 216, 1 hit
+    - grep block // 15. turmas shows `turma VARCHAR(30) NOT NULL` (no `area`, no stale COMMENT)
+    - node --check src/database/setupFullDatabase.js → exit 0
+    - Result: `pass`
+- [ ] CP-R2: Model turma.js SQL only references TABLE turmas and COLUMN turma; return object keyed `turma`; findAll ORDER BY turma
+  - **Type**: `rule`
+  - **Covers**: AC-2, FR-2/FR-3/FR-4/FR-5
+  - **Evidence**:
+    - grep `turma_estagios|\barea\b` src/models/turma.js → 0 hits (capital `Turma` class name/filename excluded by case since regex is lowercase `\barea\b`)
+    - node --check src/models/turma.js → exit 0
+    - Dynamic node inline test:
+      - findAll body ORDER BY turma ASC → PASS
+      - create(turma) signature → PASS
+      - update(id, turma) signature → PASS
+      - Live MariaDB Turma.findAll() → 34 rows, keys `id,turma`
+    - Result: `pass`
+- [ ] CP-R3: Controller destructures `{ turma }` from req.body (NOT area); Turma.create/update called with `turma` arg
+  - **Type**: `rule`
+  - **Covers**: AC-3, FR-6/FR-7
+  - **Evidence**:
+    - grep `\barea\b` src/controllers/turmaController.js → 0 hits (3 occurrences of "Turma de estágio" capital-T are user-facing text, not identifier `\barea\b`)
+    - node --check src/controllers/turmaController.js → exit 0
+    - Result: `pass`
+- [ ] CP-R4: Server mounts turmaRoutes at `"/turmas"` (NOT `/turmaestagios`)
+  - **Type**: `rule`
+  - **Covers**: AC-4, AC-7, FR-8
+  - **Evidence**:
+    - grep `/turmaestagios` src/server.js → 0 hits
+    - grep `"/turmas"` src/server.js → line 59: `app.use("/turmas", turmaRoutes)`
+    - node --check src/server.js → exit 0
+    - Result: `pass`
+- [ ] CP-R5: Frontend turmas list (html+js) uses `Turma` thead, data=`turma`, row.turma, ajax `/turmas`
+  - **Type**: `rule`
+  - **Covers**: AC-5, AC-6, FR-9, FR-13
+  - **Evidence**:
+    - grep `turmaestagios|data: 'area'|row\.area|<th>Área</th>` public/turmas.html public/turmas.js → 0 hits
+    - `<th>Turma</th>` confirmed at turmas.html:27
+    - `data: 'turma'` + `${row.turma}` confirmed in turmas.js:24,26
+    - `ajax.url: '/turmas'` confirmed turmas.js:13
+    - delete URL `/turmas/${id}` confirmed turmas.js:47
+    - node --check public/turmas.js → exit 0
+    - Result: `pass`
+- [ ] CP-R6: Frontend new/edit/view (6 files) rename identifiers: id=`turma`/`view-turma`, label=`Turma`, API=`/turmas/*`, body key=`turma`
+  - **Type**: `rule`
+  - **Covers**: AC-6, FR-10/FR-11/FR-12
+  - **Evidence**:
+    - grep `turmaestagios` across 6 files → 0 hits
+    - grep `id="area"|getElementById\('area'\)|#view-area|\.area|area:` across {new,edit,view}-turma.{html,js} → 0 hits
+    - new-turma: label=Turma, id=turma, maxlength=30, POST /turmas, body=`turma:`
+    - edit-turma: label=Turma, id=turma, maxlength=30, GET/PUT /turmas/:id, populate `turma.turma`, body=`turma:`
+    - view-turma: label=Turma, id=view-turma, GET/DELETE /turmas/:id, set `#view-turma` = turma.turma
+    - node --check on new-turma.js, edit-turma.js, view-turma.js → all exit 0
+    - Result: `pass`
+- [ ] CP-R7: Zero leftover `turma_estagios` table or `/turmaestagios` path identifiers anywhere in src/ + public/; areas entity unmodified
+  - **Type**: `rule`
+  - **Covers**: AC-7, FR-14
+  - **Evidence**:
+    - grep -rn "turma_estagios" src/ public/ → 0 lines (HITS = 0)
+    - grep -rn "/turmaestagios" src/ public/ → 0 lines (HITS = 0)
+    - areas entity survival:
+      - src/models/area.js:6 SELECT * FROM areas ORDER BY area ASC
+      - src/models/area.js:13 SELECT * FROM areas WHERE id = ?
+      - src/models/area.js:21 INSERT INTO areas (area) VALUES (?)
+      - src/models/area.js:37 DELETE FROM areas WHERE id = ?
+      - public/areas.js:13 url: '/areas'
+      - src/server.js:62 app.use("/areas", areaRoutes)
+    - Result: `pass`
+- [ ] CP-R8: Syntax clean across all modified files; GetDiagnostics empty
+  - **Type**: `rule`
+  - **Covers**: AC-8, NFR-1/NFR-2
+  - **Evidence**:
+    - node --check on setupFullDatabase.js, turma.js, turmaController.js, server.js, turmas.js, new-turma.js, edit-turma.js, view-turma.js → 8/8 exit 0
+    - GetDiagnostics → [] (empty array, no warnings or errors)
+    - Result: `pass`
+- [ ] CP-U1: Full-stack naming consistency / end-to-end functional shape correctness
+  - **Type**: `rubric`
+  - **Covers**: AC-9, FR-1 through FR-14
+  - **Scale**: 1-5
+  - **Anchors**: 1 = Old names still used end-to-end, no layers match; 3 = Some layers updated correctly, others still reference old names, would 404; 5 = Every layer (schema DDL → model SQL → controller req.body → Express route mount → DataTables config → all HTML forms/views) uses consistent new identifiers, live model call against MariaDB returns rows with new key `turma`, mount path `/turmas` correctly registered.
+  - **Pass Threshold**: >= 4
+  - **Evidence**:
+    - Live dynamic import call: Turma.findAll() → 34 rows from ess_apps, keys = `id,turma` (NOT id,area). Code matches live DB exactly. ← Score anchor 5 alignment (full e2e match).
+    - Server grep confirms mount `/turmas` registered for turmaRoutes. ← Score 5 alignment.
+    - All 6 frontend files (new/edit/view x html+js) have 0 old-id references. ← Score 5 alignment.
+    - No `turma_estagios` string remains in code. ← Score 5 alignment.
+    - Score: 5/5; rationale = entire chain (DDL → SQL → API → UI) correctly renamed, and the live database actually has the new column name already so zero 404/unknown-column runtime risk.
+    - Result: `pass`
+
+## Review History
+
+### Review R1
+- **Result**: `pass`
+- **Evidence**:
+  - All 8 rule checkpoints CP-R1 … CP-R8 = `pass`.
+  - Rubric CP-U1 = 5/5 (>= 4 threshold, `pass`).
+  - No environment/permission blocker; live DB connectivity verified for turma model (34 rows returned with correct new keys).
+- **Blocked By**: None
+- **Resume When**: N/A

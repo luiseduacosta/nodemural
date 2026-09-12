@@ -56,10 +56,32 @@ export const getInscricoesByMuralId = async (req, res) => {
     }
 };
 
+const parseIntOrNull = (val) => (val !== undefined && val !== null && val !== '' ? parseInt(val, 10) : null);
+
 // Create a new mural entry
 export const createMural = async (req, res) => {
     try {
-        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email } = req.body;
+        const raw = req.body;
+        const instituicao_id = parseIntOrNull(raw.instituicao_id);
+        const instituicao = raw.instituicao || null;
+        const convenio = raw.convenio ?? '0';
+        const vagas = parseIntOrNull(raw.vagas);
+        const beneficios = raw.beneficios || null;
+        const final_de_semana = parseIntOrNull(raw.final_de_semana);
+        const carga_horaria = parseIntOrNull(raw.carga_horaria);
+        const requisitos = raw.requisitos || null;
+        const horario = raw.horario || null;
+        const data_selecao = raw.data_selecao || null;
+        const data_inscricao = raw.data_inscricao || null;
+        const horario_selecao = raw.horario_selecao || null;
+        const local_selecao = raw.local_selecao || null;
+        const forma_selecao = raw.forma_selecao ?? '0';
+        const contato = raw.contato || null;
+        const outras = raw.outras || null;
+        const periodo = raw.periodo || null;
+        const local_inscricao = raw.local_inscricao ?? '0';
+        const email = raw.email || null;
+
         const mural = await Mural.create(instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email);
         res.status(201).json(mural);
     } catch (error) {
@@ -72,7 +94,27 @@ export const createMural = async (req, res) => {
 export const updateMural = async (req, res) => {
     try {
         const { id } = req.params;
-        const { instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email } = req.body;
+        const raw = req.body;
+        const instituicao_id = parseIntOrNull(raw.instituicao_id);
+        const instituicao = raw.instituicao || null;
+        const convenio = raw.convenio ?? '0';
+        const vagas = parseIntOrNull(raw.vagas);
+        const beneficios = raw.beneficios || null;
+        const final_de_semana = parseIntOrNull(raw.final_de_semana);
+        const carga_horaria = parseIntOrNull(raw.carga_horaria);
+        const requisitos = raw.requisitos || null;
+        const horario = raw.horario || null;
+        const data_selecao = raw.data_selecao || null;
+        const data_inscricao = raw.data_inscricao || null;
+        const horario_selecao = raw.horario_selecao || null;
+        const local_selecao = raw.local_selecao || null;
+        const forma_selecao = raw.forma_selecao ?? '0';
+        const contato = raw.contato || null;
+        const outras = raw.outras || null;
+        const periodo = raw.periodo || null;
+        const local_inscricao = raw.local_inscricao ?? '0';
+        const email = raw.email || null;
+
         const success = await Mural.update(id, instituicao_id, instituicao, convenio, vagas, beneficios, final_de_semana, carga_horaria, requisitos, horario, data_selecao, data_inscricao, horario_selecao, local_selecao, forma_selecao, contato, outras, periodo, local_inscricao, email);
         if (!success) {
             return res.status(404).json({ error: 'Mural not found' });

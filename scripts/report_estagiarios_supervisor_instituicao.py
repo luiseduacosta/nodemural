@@ -17,7 +17,7 @@ DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
     'password': 'root',
-    'database': 'mural5'
+    'database': 'ess_apps'
 }
 
 
