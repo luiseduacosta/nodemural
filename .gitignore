@@ -41,3 +41,6 @@ Thumbs.db
 *.cache
 /nbproject/private/
 >>>>>>> origin/main
+
+# Metadados da IDE NetBeans (nao fazem parte do projeto)
+nbproject/
